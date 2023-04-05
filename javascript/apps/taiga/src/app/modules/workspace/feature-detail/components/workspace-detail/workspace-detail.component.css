@@ -26,6 +26,7 @@ Copyright (c) 2023-present Kaleidos INC
   margin-block: 0;
   margin-inline: auto;
   max-inline-size: 1440px;
+  min-block-size: 100%;
   min-inline-size: 1440px;
 }
 
@@ -102,8 +103,8 @@ tg-project-card {
 
 .wks-detail-nav {
   background-color: var(--color-gray10);
-  block-size: 100%;
   max-inline-size: var(--menu-size);
+  min-block-size: 100%;
   min-inline-size: var(--menu-size);
 }
 

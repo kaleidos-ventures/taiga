@@ -33,6 +33,7 @@ import {
   Status,
   Story,
   StoryDetail,
+  StoryUpdate,
   StoryView,
   User,
 } from '@taiga/data';
@@ -245,6 +246,35 @@ export class StoryDetailComponent {
     }
   }
 
+  public getStoryUpdate(): StoryUpdate {
+    const story: StoryUpdate = {
+      ref: this.state.get('story').ref,
+      version: this.state.get('story').version,
+    };
+
+    const form = this.form?.value;
+
+    if (form) {
+      const status = this.state
+        .get('statuses')
+        .find((status) => status.name === form.status);
+
+      if (status && this.state.get('story').status.slug !== status.slug) {
+        story.status = status.slug;
+      }
+
+      if (this.state.get('story').title !== form.title) {
+        story.title = form.title;
+      }
+
+      if (this.state.get('story').description !== form.description) {
+        story.description = form.description;
+      }
+    }
+
+    return story;
+  }
+
   public initStory() {
     this.state.set({ fieldFocus: false, fieldEdit: false });
 
@@ -265,22 +295,7 @@ export class StoryDetailComponent {
         this.store.dispatch(
           StoryDetailActions.updateStory({
             projectId: this.state.get('project').id,
-            story: {
-              ref: this.state.get('story').ref,
-              version: this.state.get('story').version,
-              status:
-                this.state.get('story').status.slug !== status.slug
-                  ? status.slug
-                  : undefined,
-              title:
-                this.state.get('story').title !== form.title
-                  ? form.title
-                  : undefined,
-              description:
-                this.state.get('story').description !== form.description
-                  ? form.description
-                  : undefined,
-            },
+            story: this.getStoryUpdate(),
           })
         );
       }

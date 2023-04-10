@@ -6,9 +6,18 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { randDepartment, randNumber, randSlug, randUuid } from '@ngneat/falso';
+import {
+  rand,
+  randDepartment,
+  randFirstName,
+  randNumber,
+  randSlug,
+  randUserName,
+  randUuid,
+  randWord,
+} from '@ngneat/falso';
 import { ProjectMockFactory } from '../lib/project.model.mock';
-import { Workspace } from './workspace.model';
+import { Workspace, WorkspaceMembership } from './workspace.model';
 
 export const WorkspaceMockFactory = (): Workspace => {
   const workspace: Workspace = {
@@ -187,4 +196,21 @@ export const EmptyWorkspaceAdminMockFactory = (): Workspace => {
   };
 
   return workspace;
+};
+
+export const WorkspaceMembershipMockFactory = (): WorkspaceMembership => {
+  return {
+    user: {
+      username: '@' + randUserName(),
+      fullName: randFirstName(),
+      color: rand([1, 2, 3, 4, 5, 7, 8]),
+    },
+    workspace: {
+      id: randUuid(),
+      slug: randSlug(),
+      name: randDepartment(),
+    },
+    role: randWord(),
+    projects: [],
+  };
 };

@@ -15,12 +15,16 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
 import {
   EmptyWorkspaceAdminMockFactory,
+  WorkspaceMembershipMockFactory,
   WorkspaceMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
-import { workspaceActions } from '../actions/workspace-detail.actions';
+import {
+  workspaceActions,
+  workspaceDetailApiActions,
+} from '../actions/workspace-detail.actions';
 import { WorkspaceDetailEffects } from './workspace-detail.effects';
 
 describe('WorkspaceEffects', () => {
@@ -81,5 +85,55 @@ describe('WorkspaceEffects', () => {
     });
 
     expect(effects.deleteWorkspace$).toBeObservable(expected);
+  });
+
+  it('load workspace people', () => {
+    const id = randUuid();
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const membersResponse = {
+      members: [
+        WorkspaceMembershipMockFactory(),
+        WorkspaceMembershipMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    const nonMembersResponse = {
+      members: [
+        WorkspaceMembershipMockFactory(),
+        WorkspaceMembershipMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    workspaceApiService.getWorkspaceMembers.mockReturnValue(
+      cold('-b|', { b: membersResponse })
+    );
+    workspaceApiService.getWorkspaceNonMembers.mockReturnValue(
+      cold('-b|', { b: nonMembersResponse })
+    );
+
+    actions$ = hot('-a', {
+      a: workspaceDetailApiActions.initWorkspacePeople({ id }),
+    });
+
+    const expected = cold('--a', {
+      a: workspaceDetailApiActions.initWorkspacePeopleSuccess({
+        members: {
+          members: membersResponse.members,
+          totalMembers: 2,
+          offset: 0,
+        },
+        nonMembers: {
+          members: nonMembersResponse.members,
+          totalMembers: 2,
+          offset: 0,
+        },
+      }),
+    });
+
+    expect(effects.initWorkspacePeople$).toBeObservable(expected);
   });
 });

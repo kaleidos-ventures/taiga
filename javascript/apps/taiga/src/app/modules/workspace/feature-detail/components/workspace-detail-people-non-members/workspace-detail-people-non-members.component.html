@@ -41,7 +41,12 @@ Copyright (c) 2023-present Kaleidos INC
                     [user]="nonMember.user"
                     [navigateToUser]="true"></tg-user-card>
                 </tg-ui-dtable-cell>
-                <tg-ui-dtable-cell> </tg-ui-dtable-cell>
+                <tg-ui-dtable-cell>
+                  <tg-workspace-detail-people-members-projects
+                    [member]="
+                      nonMember
+                    "></tg-workspace-detail-people-members-projects>
+                </tg-ui-dtable-cell>
                 <tg-ui-dtable-cell class="action-column"> </tg-ui-dtable-cell>
               </tg-ui-dtable-row>
             </ng-container>

@@ -30,7 +30,6 @@ import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.p
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { TitleComponent } from '~/app/shared/title/title.component';
-import { TitleDirective } from '~/app/shared/title/title.directive';
 import { WorkspaceEffects } from './+state/effects/workspace.effects';
 import { workspaceFeature } from './+state/reducers/workspace.reducer';
 import { WorkspaceCreateComponent } from './components/workspace-create/workspace-create.component';
@@ -47,7 +46,6 @@ import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-rout
     WorkspaceSkeletonComponent,
   ],
   imports: [
-    TitleDirective,
     ReactiveFormsModule,
     TuiSvgModule,
     CommonTemplateModule,

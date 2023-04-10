@@ -35,7 +35,6 @@ import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.p
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { TitleComponent } from '~/app/shared/title/title.component';
-import { TitleDirective } from '~/app/shared/title/title.directive';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { WorkspaceDetailEffects } from './+state/effects/workspace-detail.effects';
 import { workspaceDetailFeature } from './+state/reducers/workspace-detail.reducer';
@@ -64,7 +63,6 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     WorkspaceDetailPeopleMembersProjectsComponent,
   ],
   imports: [
-    TitleDirective,
     TuiLinkModule,
     RouterModule,
     AvatarModule,

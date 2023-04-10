@@ -7,7 +7,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import hotkeys from 'hotkeys-js';
+import hotkeys, { HotkeysEvent } from 'hotkeys-js';
 import { Subject } from 'rxjs';
 import { finalize, share } from 'rxjs/operators';
 import shortcuts from './shortcuts';
@@ -28,7 +28,10 @@ export class ShortcutsService {
   public scopes: string[] = [];
 
   public task(taskName: string, options: Parameters<typeof hotkeys>[1] = {}) {
-    const subject = new Subject();
+    const subject = new Subject<{
+      event: KeyboardEvent;
+      handler: HotkeysEvent;
+    }>();
     const shortcut = shortcuts.find((it) => it.task === taskName);
 
     if (shortcut) {
@@ -39,7 +42,12 @@ export class ShortcutsService {
           ...options,
         },
         (event, handler) => {
-          subject.next({ event, handler });
+          // prevent override tinymce shortcuts such as ESC
+          const isTinyEditor = (event.target as HTMLElement).closest('editor');
+
+          if (!isTinyEditor) {
+            subject.next({ event, handler });
+          }
         }
       );
 

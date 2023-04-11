@@ -8,24 +8,36 @@
 
 export DJANGO_SETTINGS_MODULE=taiga.base.django.settings
 
-show_answer=true
-while [ $# -gt 0 ]; do
-  	case "$1" in
-    	-y)
-    	  	show_answer=false
-      	;;
-  	esac
-	shift
+show_answer="true"
+load_demo="true"
+load_test="true"
+
+while getopts 'ydt' opt; do
+    case $opt in
+        y)
+            show_answer="false"
+        ;;
+        d)
+            load_demo="true"
+            load_test="false"
+            shift
+        ;;
+        t)
+            load_demo="false"
+            load_test="true"
+            shift
+        ;;
+    esac
 done
 
-if $show_answer ; then
-	echo "WARNING!! This script will REMOVE your Taiga's database and you'll LOSE all the data."
-	read -p "Are you sure you want to proceed? (Press Y to continue): " -n 1 -r
-	echo    # (optional) move to a new line
-	if [[ ! $REPLY =~ ^[Yy]$ ]] ; then
-		exit 1
-	fi
-	echo
+if $show_answer == "true" ; then
+    echo "WARNING!! This script will REMOVE your Taiga's database and you'll LOSE all the data."
+    read -p "Are you sure you want to proceed? (Press Y to continue): " -n 1 -r
+    echo    # (optional) move to a new line
+    if [[ ! $REPLY =~ ^[Yy]$ ]] ; then
+        exit 1
+    fi
+    echo
 fi
 
 read -p 'Specify a Postgres user [default: postgres]: ' dbuser
@@ -56,12 +68,22 @@ else
   python -m taiga db load-fixtures initial_user
   echo "-> Load initial project_templates (kanban)"
   python -m taiga db load-fixtures initial_project_templates
-  echo "-> Generate sampledata (test and demo data)"
-  python -m taiga sampledata
-  # echo "-> Generate test data"
-  # python -m taiga sampledata --no-demo
-  # echo "-> Generate demo data"
-  # python -m taiga sampledata --no-test
+
+  if [[ "$load_test" == "true" && "$load_demo" == "true" ]] ; then
+    echo "-> Generate test and demo data"
+    python -m taiga sampledata
+  fi
+
+  if [[ "$load_test" == "true"  && "$load_demo" == "false" ]] ; then
+    echo "-> Generate test data"
+    python -m taiga sampledata --no-demo
+  fi
+
+  if [[ "$load_test" == "false" && "$load_demo" == "true" ]] ; then
+    echo "-> Generate demo data"
+    python -m taiga sampledata --no-test
+  fi
+
   echo "-> Compile translations"
   python -m taiga i18n compile-catalog
 fi

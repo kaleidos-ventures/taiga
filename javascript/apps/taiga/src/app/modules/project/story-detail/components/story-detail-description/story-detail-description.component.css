@@ -45,10 +45,14 @@ Copyright (c) 2023-present Kaleidos INC
     border-block-start: 1px solid var(--color-gray10);
   }
 
+  & .editor::ng-deep .tox {
+    border: 2px solid var(--color-gray40);
+    border-radius: 3px;
+  }
+
   &.editor-focused {
     & .editor::ng-deep .tox {
-      border: 2px solid var(--color-secondary);
-      border-radius: 3px;
+      border-color: var(--color-secondary);
     }
   }
 }

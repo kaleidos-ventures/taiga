@@ -91,6 +91,21 @@ def _apply_filters_to_queryset(
     return qs.filter(**filter_data)
 
 
+UserOrderBy = list[
+    Literal[
+        "full_name",
+        "username",
+    ]
+]
+
+
+def _apply_order_by_to_queryset(
+    qs: QuerySet[User],
+    order_by: UserOrderBy,
+) -> QuerySet[User]:
+    return qs.order_by(*order_by)
+
+
 ##########################################################
 # create user
 ##########################################################
@@ -122,10 +137,12 @@ def create_user(email: str, username: str, full_name: str, color: int, lang: str
 @sync_to_async
 def list_users(
     filters: UserFilters = {},
+    order_by: UserOrderBy = ["full_name"],
     offset: int | None = None,
     limit: int | None = None,
 ) -> list[User]:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_order_by_to_queryset(order_by=order_by, qs=qs)
 
     if limit is not None and offset is not None:
         limit += offset
@@ -221,7 +238,7 @@ def _list_users_by_text_qs(
 
 def _sort_queryset_if_unsorted(users_qs: QuerySet[User], text_search: str) -> QuerySet[User]:
     if not text_search:
-        return users_qs.order_by("full_name", "username")
+        return _apply_order_by_to_queryset(order_by=["full_name", "username"], qs=users_qs)
 
     # the queryset has already been sorted by the "Full Text Search" and its annotated 'rank' field
     return users_qs

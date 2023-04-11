@@ -11,10 +11,12 @@ import {
   Component,
   EventEmitter,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { selectLoadingStory } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
+import { StoryDetailComponent } from '../story-detail/story-detail.component';
 
 export interface StoryState {
   loadingStory: boolean;
@@ -27,6 +29,9 @@ export interface StoryState {
   providers: [RxState],
 })
 export class ProjectFeatureStoryWrapperModalViewComponent {
+  @ViewChild(StoryDetailComponent)
+  public storyDetailComponent?: StoryDetailComponent;
+
   @Output()
   public closeModal = new EventEmitter();
 

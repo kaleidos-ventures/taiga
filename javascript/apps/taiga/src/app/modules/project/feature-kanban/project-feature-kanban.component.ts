@@ -7,7 +7,7 @@
  */
 
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { concatLatestFrom } from '@ngrx/effects';
@@ -45,7 +45,8 @@ import { PermissionUpdateNotificationService } from '~/app/shared/permission-upd
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { filterNil } from '~/app/shared/utils/operators';
-import { StoryDetailActions } from '../story-detail/data-access/+state/actions/story-detail.actions';
+import { ProjectFeatureStoryWrapperModalViewComponent } from '../feature-story-wrapper-modal-view/project-feature-story-wrapper-modal-view.component';
+import { ProjectFeatureStoryWrapperSideViewComponent } from '../feature-story-wrapper-side-view/project-feature-story-wrapper-side-view.component';
 import {
   selectStory,
   selectStoryView,
@@ -81,6 +82,12 @@ interface ComponentState {
   providers: [RxState],
 })
 export class ProjectFeatureKanbanComponent {
+  @ViewChild(ProjectFeatureStoryWrapperModalViewComponent)
+  public projectFeatureStoryWrapperModalViewComponent?: ProjectFeatureStoryWrapperModalViewComponent;
+
+  @ViewChild(ProjectFeatureStoryWrapperSideViewComponent)
+  public projectFeatureStoryWrapperSideViewComponent?: ProjectFeatureStoryWrapperSideViewComponent;
+
   public invitePeopleModal = false;
   public kanbanWidth = 0;
   public model$ = this.state.select().pipe(
@@ -193,23 +200,7 @@ export class ProjectFeatureKanbanComponent {
   }
 
   public closeSideview() {
-    const selectedStory = this.state.get('selectedStory');
-    setTimeout(() => {
-      if (selectedStory.ref) {
-        const mainFocus = document.querySelector(
-          `tg-kanban-story[data-ref='${selectedStory.ref}'] .story-kanban-ref-focus .story-title`
-        );
-        if (mainFocus) {
-          (mainFocus as HTMLElement).focus();
-        }
-      }
-    }, 200);
-    this.store.dispatch(StoryDetailActions.leaveStoryDetail());
-    this.location.replaceState(
-      `project/${this.state.get('project').id}/${
-        this.state.get('project').slug
-      }/kanban`
-    );
+    this.projectFeatureStoryWrapperSideViewComponent?.storyDetailComponent?.requestCloseStory();
     this.shortcutsService.deleteScope('side-view');
   }
 
@@ -218,24 +209,7 @@ export class ProjectFeatureKanbanComponent {
   }
 
   public closeViewModal() {
-    const selectedStory = this.state.get('selectedStory');
-    setTimeout(() => {
-      if (selectedStory.ref) {
-        const mainFocus = document.querySelector(
-          `tg-kanban-story[data-ref='${selectedStory.ref}'] .story-kanban-ref-focus .story-title`
-        );
-        if (mainFocus) {
-          (mainFocus as HTMLElement).focus();
-        }
-      }
-    }, 200);
-
-    this.store.dispatch(StoryDetailActions.leaveStoryDetail());
-    this.location.replaceState(
-      `project/${this.state.get('project').id}/${
-        this.state.get('project').slug
-      }/kanban`
-    );
+    this.projectFeatureStoryWrapperModalViewComponent?.storyDetailComponent?.requestCloseStory();
   }
 
   public trackBySlug(_index: number, obj: { slug: string }) {

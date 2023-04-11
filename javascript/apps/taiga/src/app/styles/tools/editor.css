@@ -18,10 +18,8 @@ body .tox {
   /* Toolbar general buttons */
 
   & .tox-toolbar__group {
-    &:not(:first-child) {
-      border-inline-end: solid 1px var(--color-gray30);
-      border-inline-start: solid 1px var(--color-gray30);
-    }
+    padding-block: 0;
+    padding-inline: var(--spacing-8);
 
     & .tox-tbtn,
     & .tox-split-button {

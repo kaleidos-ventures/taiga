@@ -37,7 +37,7 @@ import { LanguageService } from '~/app/services/language/language.service';
 export interface StoryDetailDescriptionState {
   projectId: Project['id'];
   story: StoryDetail;
-  editedStory: StoryDetail;
+  editedStory: StoryDetail['version'];
   conflict: boolean;
   edit: boolean;
   editorFocused: boolean;
@@ -152,7 +152,7 @@ export class StoryDetailDescriptionComponent
   public editDescription() {
     this.reset();
 
-    this.state.set({ editedStory: this.state.get('story') });
+    this.state.set({ editedStory: this.state.get('story').version });
 
     this.setEdit(true);
   }
@@ -169,7 +169,7 @@ export class StoryDetailDescriptionComponent
     this.descriptionForm.get('description')?.setValue(this.description);
 
     const newVersion =
-      this.state.get('story').version !== this.state.get('editedStory').version;
+      this.state.get('story').version !== this.state.get('editedStory');
 
     if (newVersion && this.hasChanges()) {
       this.setConflict(true);
@@ -271,11 +271,12 @@ export class StoryDetailDescriptionComponent
       this.localStorageService.get<{
         edit: boolean;
         value: string;
+        version: number;
       }>(key) ?? null;
 
     if (obj && obj.edit) {
       this.setDescription(obj.value);
-      this.state.set({ editedStory: this.state.get('story') });
+      this.state.set({ editedStory: obj.version });
       this.setEdit(true);
     }
   }
@@ -287,6 +288,7 @@ export class StoryDetailDescriptionComponent
       this.localStorageService.set(key, {
         edit: true,
         value: this.descriptionForm.get('description')!.value,
+        version: this.state.get('editedStory'),
       });
     } else {
       this.removeLocalState();

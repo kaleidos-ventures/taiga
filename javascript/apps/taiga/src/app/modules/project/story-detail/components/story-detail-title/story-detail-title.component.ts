@@ -43,7 +43,7 @@ import { filterNil } from '~/app/shared/utils/operators';
 export interface StoryDetailTitleState {
   projectId: Project['id'];
   story: StoryDetail;
-  editedStory: StoryDetail;
+  editedStory: StoryDetail['version'];
   conflict: boolean;
   edit: boolean;
   hasPermissionToEdit: boolean;
@@ -165,7 +165,7 @@ export class StoryDetailTitleComponent
   public editTitle() {
     this.reset();
 
-    this.state.set({ editedStory: this.state.get('story') });
+    this.state.set({ editedStory: this.state.get('story').version });
 
     this.setEdit(true);
   }
@@ -180,7 +180,7 @@ export class StoryDetailTitleComponent
 
   public save() {
     const newVersion =
-      this.state.get('story').version !== this.state.get('editedStory').version;
+      this.state.get('story').version !== this.state.get('editedStory');
 
     if (newVersion && this.hasChanges()) {
       this.setConflict(true);
@@ -260,11 +260,12 @@ export class StoryDetailTitleComponent
       this.localStorageService.get<{
         edit: boolean;
         value: string;
+        version: number;
       }>(key) ?? null;
 
     if (obj && obj.edit) {
       this.titleForm.get('title')!.setValue(obj.value);
-      this.state.set({ editedStory: this.state.get('story') });
+      this.state.set({ editedStory: obj.version });
       this.setEdit(true);
     }
   }

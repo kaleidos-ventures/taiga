@@ -16,6 +16,7 @@ import {
   TuiDataListModule,
   TuiHintModule,
   TuiLinkModule,
+  TuiScrollbarModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { TuiTabsModule } from '@taiga-ui/kit';
@@ -93,6 +94,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     UserCardComponent,
     PaginationComponent,
     TitleComponent,
+    TuiScrollbarModule,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

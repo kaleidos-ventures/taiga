@@ -48,30 +48,32 @@ Copyright (c) 2023-present Kaleidos INC
           id="project-list-dropdown-title">
           {{ t('common_members_tabs.column_projects.projects_list_title') }}
         </div>
-        <ul class="project-list-listmenu">
-          <li
-            class="project-list-listmenu-item"
-            *ngFor="let project of member.projects; trackBy: trackByProject">
-            <a
-              tuiOption
-              class="project-data"
-              role="menuitem"
-              routerLinkActive
-              [routerLink]="['/project', project.id, project.slug]">
-              <tg-ui-avatar
-                class="project-data-image"
-                type="light"
-                [color]="project.color"
-                aria-hidden="true"
-                [avatarUrl]="project.logoSmall"
-                [name]="project.name">
-              </tg-ui-avatar>
-              <span class="project-data-name">
-                {{ project.name }}
-              </span>
-            </a>
-          </li>
-        </ul>
+        <tui-scrollbar>
+          <ul class="project-list-listmenu">
+            <li
+              class="project-list-listmenu-item"
+              *ngFor="let project of member.projects; trackBy: trackByProject">
+              <a
+                tuiOption
+                class="project-data"
+                role="menuitem"
+                routerLinkActive
+                [routerLink]="['/project', project.id, project.slug]">
+                <tg-ui-avatar
+                  class="project-data-image"
+                  type="light"
+                  [color]="project.color"
+                  aria-hidden="true"
+                  [avatarUrl]="project.logoSmall"
+                  [name]="project.name">
+                </tg-ui-avatar>
+                <span class="project-data-name">
+                  {{ project.name }}
+                </span>
+              </a>
+            </li>
+          </ul>
+        </tui-scrollbar>
       </tui-data-list>
     </div>
   </ng-template>

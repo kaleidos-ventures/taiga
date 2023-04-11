@@ -26,7 +26,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .display-project-list:is(button) {
-  color: var(--color-secondary);
+  color: var(--color-secondary90);
 
   &:active,
   &:hover {
@@ -60,7 +60,6 @@ Copyright (c) 2023-present Kaleidos INC
   list-style-type: none;
   margin: 0;
   max-block-size: calc(50px * 8);
-  overflow: auto;
   padding: 0;
 }
 

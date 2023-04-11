@@ -24,6 +24,7 @@ import {
   selectLoadingStory,
   selectStoryView,
 } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
+import { StoryDetailComponent } from '../story-detail/story-detail.component';
 interface WrapperSideViewState {
   selectedStoryView: StoryView;
   loadingStory: boolean;
@@ -37,6 +38,9 @@ interface WrapperSideViewState {
   providers: [RxState],
 })
 export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
+  @ViewChild(StoryDetailComponent)
+  public storyDetailComponent?: StoryDetailComponent;
+
   @ViewChild('resizeSidepanel') public sidepanel?: ElementRef<HTMLElement>;
   @ViewChild('dragHandle') public dragHandle!: ElementRef<HTMLElement>;
 

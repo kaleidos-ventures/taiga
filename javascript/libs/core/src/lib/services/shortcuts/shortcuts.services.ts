@@ -43,7 +43,9 @@ export class ShortcutsService {
         },
         (event, handler) => {
           // prevent override tinymce shortcuts such as ESC
-          const isTinyEditor = (event.target as HTMLElement).closest('editor');
+          const isTinyEditor = (event.target as HTMLElement).closest(
+            'editor,.tox'
+          );
 
           if (!isTinyEditor) {
             subject.next({ event, handler });

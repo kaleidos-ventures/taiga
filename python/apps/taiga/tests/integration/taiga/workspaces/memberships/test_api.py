@@ -68,11 +68,11 @@ async def test_list_workspace_memberships_not_a_member(client):
 
 
 ##########################################################
-# LIST /workspaces/<id>/non-members
+# LIST /workspaces/<id>/guests
 ##########################################################
 
 
-async def test_list_workspace_non_members(client):
+async def test_list_workspace_guests(client):
     user = await f.create_user()
     member = await f.create_user()
     workspace = await f.create_workspace(created_by=user)
@@ -81,11 +81,11 @@ async def test_list_workspace_non_members(client):
     await f.create_project_membership(user=member, project=project, role=general_role)
 
     client.login(user)
-    response = client.get(f"/workspaces/{workspace.b64id}/non-members")
+    response = client.get(f"/workspaces/{workspace.b64id}/guests")
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_list_workspace_non_members_with_pagination(client):
+async def test_list_workspace_guests_with_pagination(client):
     user = await f.create_user()
     member1 = await f.create_user()
     member2 = await f.create_user()
@@ -98,7 +98,7 @@ async def test_list_workspace_non_members_with_pagination(client):
     limit = 1
 
     client.login(user)
-    response = client.get(f"/workspaces/{workspace.b64id}/non-members?offset={offset}&limit={limit}")
+    response = client.get(f"/workspaces/{workspace.b64id}/guests?offset={offset}&limit={limit}")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert len(response.json()) == 1
     assert response.headers["Pagination-Offset"] == "0"
@@ -106,21 +106,21 @@ async def test_list_workspace_non_members_with_pagination(client):
     assert response.headers["Pagination-Total"] == "2"
 
 
-async def test_list_workspace_non_members_wrong_id(client):
+async def test_list_workspace_guests_wrong_id(client):
     workspace = await f.create_workspace()
     non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(workspace.created_by)
 
-    response = client.get(f"/workspaces/{non_existent_id}/non-members")
+    response = client.get(f"/workspaces/{non_existent_id}/guests")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_list_workspace_non_members_not_a_member(client):
+async def test_list_workspace_guests_not_a_member(client):
     workspace = await f.create_workspace()
     not_a_member = await f.create_user()
 
     client.login(not_a_member)
 
-    response = client.get(f"/workspaces/{workspace.b64id}/non-members")
+    response = client.get(f"/workspaces/{workspace.b64id}/guests")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text

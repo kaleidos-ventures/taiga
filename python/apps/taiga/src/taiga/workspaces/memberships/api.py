@@ -16,19 +16,16 @@ from taiga.exceptions.api.errors import ERROR_404, ERROR_422
 from taiga.permissions import IsWorkspaceAdmin
 from taiga.routers import routes
 from taiga.workspaces.memberships import services as memberships_services
-from taiga.workspaces.memberships.serializers import (
-    WorkspaceMembershipDetailSerializer,
-    WorkspaceNonMemberDetailSerializer,
-)
+from taiga.workspaces.memberships.serializers import WorkspaceGuestDetailSerializer, WorkspaceMembershipDetailSerializer
 from taiga.workspaces.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
 LIST_WORKSPACE_MEMBERSHIPS = IsWorkspaceAdmin()
-LIST_WORKSPACE_NON_MEMBERS = IsWorkspaceAdmin()
+LIST_WORKSPACE_GUESTS = IsWorkspaceAdmin()
 
 # HTTP 200 RESPONSES
 LIST_WS_MEMBERSHIP_DETAIL_200 = responses.http_status_200(model=list[WorkspaceMembershipDetailSerializer])
-LIST_WS_NON_MEMBERS_DETAIL_200 = responses.http_status_200(model=list[WorkspaceNonMemberDetailSerializer])
+LIST_WS_GUESTS_DETAIL_200 = responses.http_status_200(model=list[WorkspaceGuestDetailSerializer])
 
 
 ##########################################################
@@ -63,31 +60,31 @@ async def list_workspace_memberships(
 
 
 ##########################################################
-# list workspace non members
+# list workspace guests
 ##########################################################
 
 
 @routes.workspaces.get(
-    "/{id}/non-members",
-    name="workspace.non-members.list",
-    summary="List workspace non members",
-    responses=LIST_WS_NON_MEMBERS_DETAIL_200 | ERROR_404 | ERROR_422,
+    "/{id}/guests",
+    name="workspace.guests.list",
+    summary="List workspace guests",
+    responses=LIST_WS_GUESTS_DETAIL_200 | ERROR_404 | ERROR_422,
 )
-async def list_workspace_non_members(
+async def list_workspace_guests(
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
     id: B64UUID = Query(None, description="the workspace id (B64UUID)"),
-) -> list[WorkspaceNonMemberDetailSerializer]:
+) -> list[WorkspaceGuestDetailSerializer]:
     """
-    List workspace non members
+    List workspace guests
     """
     workspace = await get_workspace_or_404(id)
-    await check_permissions(permissions=LIST_WORKSPACE_NON_MEMBERS, user=request.user, obj=workspace)
+    await check_permissions(permissions=LIST_WORKSPACE_GUESTS, user=request.user, obj=workspace)
 
-    pagination, non_members = await memberships_services.list_paginated_workspace_non_members(
+    pagination, guests = await memberships_services.list_paginated_workspace_guests(
         workspace=workspace, offset=pagination_params.offset, limit=pagination_params.limit
     )
     api_pagination.set_pagination(response=response, pagination=pagination)
 
-    return non_members
+    return guests

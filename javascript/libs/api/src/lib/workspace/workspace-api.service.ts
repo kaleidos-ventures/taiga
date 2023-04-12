@@ -107,7 +107,7 @@ export class WorkspaceApiService {
   ): Observable<{ totalMembers: number; members: WorkspaceMembership[] }> {
     return this.http
       .get<WorkspaceMembership[]>(
-        `${this.config.apiUrl}/workspaces/${id}/non-members`,
+        `${this.config.apiUrl}/workspaces/${id}/guests`,
         {
           observe: 'response',
           params: {

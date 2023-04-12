@@ -33,7 +33,7 @@ class WorkspaceMembershipInline(admin.TabularInline[WorkspaceMembership, Workspa
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-class WorkspaceNonMembersInline(admin.NonrelatedTabularInline[User, Workspace]):
+class WorkspaceGuestsInline(admin.NonrelatedTabularInline[User, Workspace]):
     model = User
     fields = ["username", "full_name", "list_projects"]
     extra = 0
@@ -42,7 +42,7 @@ class WorkspaceNonMembersInline(admin.NonrelatedTabularInline[User, Workspace]):
         "full_name",
         "list_projects",
     )
-    verbose_name = "Workspace non member"
+    verbose_name = "Workspace guest"
 
     def list_projects(self, obj: User) -> list[str]:
         return list(obj.projects.filter(workspace=self.parent_obj).values_list("name", flat=True))
@@ -75,4 +75,4 @@ class WorkspaceAdmin(admin.ModelAdmin[Workspace]):
     list_filter = ["created_by"]
     search_fields = ["id", "name"]
     ordering = ("name",)
-    inlines = [WorkspaceMembershipInline, WorkspaceNonMembersInline]
+    inlines = [WorkspaceMembershipInline, WorkspaceGuestsInline]

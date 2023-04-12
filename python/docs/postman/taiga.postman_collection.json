@@ -821,7 +821,7 @@
 					"response": []
 				},
 				{
-					"name": "workspace non-members",
+					"name": "workspace guests",
 					"event": [
 						{
 							"listen": "test",
@@ -855,7 +855,7 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/non-members?offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/guests?offset={{offset}}&limit={{limit}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -863,7 +863,7 @@
 							"path": [
 								"workspaces",
 								"{{ws-id}}",
-								"non-members"
+								"guests"
 							],
 							"query": [
 								{

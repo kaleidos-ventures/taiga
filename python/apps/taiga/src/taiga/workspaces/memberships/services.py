@@ -13,10 +13,7 @@ from taiga.projects.memberships import repositories as projects_memberships_repo
 from taiga.projects.projects import repositories as projects_repositories
 from taiga.users import repositories as users_repositories
 from taiga.workspaces.memberships import repositories as workspace_memberships_repositories
-from taiga.workspaces.memberships.serializers import (
-    WorkspaceMembershipDetailSerializer,
-    WorkspaceNonMemberDetailSerializer,
-)
+from taiga.workspaces.memberships.serializers import WorkspaceGuestDetailSerializer, WorkspaceMembershipDetailSerializer
 from taiga.workspaces.memberships.serializers import services as serializer_services
 from taiga.workspaces.workspaces.models import Workspace
 
@@ -58,34 +55,34 @@ async def list_paginated_workspace_memberships(
 
 
 ##########################################################
-# list workspace non members
+# list workspace guests
 ##########################################################
 
 
-async def list_paginated_workspace_non_members(
+async def list_paginated_workspace_guests(
     workspace: Workspace, offset: int, limit: int
-) -> tuple[Pagination, list[WorkspaceNonMemberDetailSerializer]]:
+) -> tuple[Pagination, list[WorkspaceGuestDetailSerializer]]:
 
-    ws_non_members = await users_repositories.list_users(
+    ws_guests = await users_repositories.list_users(
         filters={"guests_in_workspace": workspace},
         offset=offset,
         limit=limit,
     )
-    total_non_members = await users_repositories.get_total_users(
+    total_guests = await users_repositories.get_total_users(
         filters={"guests_in_workspace": workspace},
     )
-    pagination = Pagination(offset=offset, limit=limit, total=total_non_members)
-    serialized_non_members = [
-        serializer_services.serialize_workspace_non_member_detail(
-            user=ws_non_member,
+    pagination = Pagination(offset=offset, limit=limit, total=total_guests)
+    serialized_guests = [
+        serializer_services.serialize_workspace_guest_detail(
+            user=ws_guest,
             projects=await projects_repositories.list_projects(
-                filters={"workspace_id": workspace.id, "project_member_id": ws_non_member.id},
+                filters={"workspace_id": workspace.id, "project_member_id": ws_guest.id},
             ),
         )
-        for ws_non_member in ws_non_members
+        for ws_guest in ws_guests
     ]
 
-    return pagination, serialized_non_members
+    return pagination, serialized_guests
 
 
 ##########################################################

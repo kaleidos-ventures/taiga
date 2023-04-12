@@ -59,7 +59,7 @@ async def test_list_paginated_workspace_memberships():
         )
 
 
-async def test_list_paginated_workspace_non_members():
+async def test_list_paginated_workspace_guests():
     user = await f.create_user()
     workspace = await f.create_workspace()
     project = await f.create_project(created_by=workspace.created_by, workspace=workspace)
@@ -76,7 +76,7 @@ async def test_list_paginated_workspace_non_members():
         fake_users_repos.get_total_users.return_value = 1
         fake_pj_repositories.list_projects.return_value = [project]
 
-        await services.list_paginated_workspace_non_members(workspace=workspace, offset=offset, limit=limit)
+        await services.list_paginated_workspace_guests(workspace=workspace, offset=offset, limit=limit)
         fake_users_repos.list_users.assert_awaited_once_with(
             filters={"guests_in_workspace": workspace},
             offset=offset,
@@ -85,7 +85,7 @@ async def test_list_paginated_workspace_non_members():
         fake_users_repos.get_total_users.assert_awaited_once_with(
             filters={"guests_in_workspace": workspace},
         )
-        fake_serializer_services.serialize_workspace_non_member_detail.assert_called_once_with(
+        fake_serializer_services.serialize_workspace_guest_detail.assert_called_once_with(
             user=user,
             projects=[project],
         )

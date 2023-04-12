@@ -29,18 +29,21 @@ export class ClickActionAreaDirective {
 
   @HostListener('mousedown', ['$event'])
   public mousedown(eventMouseDown: MouseEvent) {
-    document.body.addEventListener(
-      'mouseup',
-      (eventMouseUp: MouseEvent) => {
-        const x = Math.abs(eventMouseDown.clientX - eventMouseUp.clientX);
-        const y = Math.abs(eventMouseDown.clientY - eventMouseUp.clientY);
-
-        if (x < this.threshold && y < this.threshold) {
-          this.clickAction.emit();
-        }
-      },
-      { once: true }
-    );
+    const target = (eventMouseDown.target as HTMLElement).tagName;
+    // prevent links from opening the editor on click
+    if (target !== 'A') {
+      document.body.addEventListener(
+        'mouseup',
+        (eventMouseUp: MouseEvent) => {
+          const x = Math.abs(eventMouseDown.clientX - eventMouseUp.clientX);
+          const y = Math.abs(eventMouseDown.clientY - eventMouseUp.clientY);
+          if (x < this.threshold && y < this.threshold) {
+            this.clickAction.emit();
+          }
+        },
+        { once: true }
+      );
+    }
   }
 
   public get nativeElement() {

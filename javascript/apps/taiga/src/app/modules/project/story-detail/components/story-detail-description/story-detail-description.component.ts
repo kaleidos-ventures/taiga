@@ -9,6 +9,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   HostBinding,
   HostListener,
@@ -17,22 +18,23 @@ import {
   OnDestroy,
   Output,
   SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, StoryDetail } from '@taiga/data';
 import { map } from 'rxjs';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { StoryDetailForm } from '~/app/modules/project/story-detail/story-detail.component';
+import { LanguageService } from '~/app/services/language/language.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import {
   HasChanges,
-  HasChangesService,
+  HasChangesService
 } from '~/app/shared/utils/has-changes.service';
 import { filterNil } from '~/app/shared/utils/operators';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { LanguageService } from '~/app/services/language/language.service';
 
 export interface StoryDetailDescriptionState {
   projectId: Project['id'];
@@ -59,6 +61,9 @@ export interface StoryDetailDescriptionState {
 export class StoryDetailDescriptionComponent
   implements OnChanges, HasChanges, OnDestroy
 {
+  @ViewChild('descriptionContent')
+  public descriptionContent!: ElementRef;
+
   @Input()
   public form!: FormGroup<StoryDetailForm>;
 
@@ -105,6 +110,8 @@ export class StoryDetailDescriptionComponent
     return !this.hasChanges();
   }
 
+  public descriptionHeight = 200;
+
   // https://github.com/tinymce/tinymce-angular/issues/311
   public description = '';
 
@@ -149,7 +156,22 @@ export class StoryDetailDescriptionComponent
     });
   }
 
+  public setEditorInitialHeight() {
+    const descriptionHeight = (
+      this.descriptionContent.nativeElement as HTMLElement
+    ).offsetHeight;
+    const headerCompensation = 39;
+    const actionCompensation = 32;
+    const borderCompensation = 8;
+    this.descriptionHeight =
+      descriptionHeight +
+      headerCompensation +
+      actionCompensation +
+      borderCompensation;
+  }
+
   public editDescription() {
+    this.setEditorInitialHeight();
     this.reset();
 
     this.state.set({ editedStory: this.state.get('story').version });

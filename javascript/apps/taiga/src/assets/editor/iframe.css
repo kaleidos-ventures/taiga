@@ -42,12 +42,20 @@ a {
 }
 
 .mce-content-body [data-mce-selected="inline-boundary"] {
+  background-color: rgba(0, 124, 165, 0.1);
+}
+
+.mce-content-body code {
   background-color: #dadfe9;
   border-radius: 3px;
   font-family: "Consolas", "Courier", monospace;
   line-height: 1.5;
   padding-block: 0.1rem;
   padding-inline: 0.2rem;
+}
+
+.mce-content-body code[data-mce-selected="inline-boundary"] {
+  background-color: #dadfe9;
 }
 
 ul {

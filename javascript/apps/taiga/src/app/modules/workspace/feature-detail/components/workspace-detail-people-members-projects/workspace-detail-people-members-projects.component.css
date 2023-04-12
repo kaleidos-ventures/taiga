@@ -26,10 +26,11 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .display-project-list:is(button) {
-  color: var(--color-secondary90);
+  color: var(--color-secondary);
 
   &:active,
   &:hover {
+    color: var(--color-secondary-90);
     text-decoration: underline;
   }
 }
@@ -75,12 +76,8 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .project-data-name {
-  @mixin font-inline;
-
   /* stylelint-disable */
-  color: var(--color-gray90);
   display: -webkit-box;
-  font-weight: var(--font-weight-medium);
   overflow: hidden;
   text-align: start;
   -webkit-box-orient: vertical;

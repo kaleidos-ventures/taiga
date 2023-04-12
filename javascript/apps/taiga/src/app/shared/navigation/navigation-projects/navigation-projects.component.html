@@ -10,7 +10,6 @@ Copyright (c) 2023-present Kaleidos INC
   <ng-container *ngIf="latestProjects$ | async as latestProjects">
     <tui-data-list
       id="navigation-projects"
-      tgAutoFocus
       tabindex="-1"
       class="pinned-projects"
       [attr.aria-label]="
@@ -59,27 +58,18 @@ Copyright (c) 2023-present Kaleidos INC
         </p>
       </ng-container>
       <a
-        tuiOption
-        role="menuitem"
         class="view-projects"
         href="">
         {{ t('navigation_projects.view_projects') }}
       </a>
       <a
-        tuiOption
         class="project-action"
-        role="menuitem"
+        appearance="primary"
+        tuiIconButton
+        type="button"
+        icon="plus"
         [routerLink]="['/new-project']">
-        <button
-          role="menuitem"
-          appearance="primary"
-          class="new-project"
-          tuiButton
-          tabIndex="-1"
-          type="button"
-          icon="plus">
-          {{ t('navigation_projects.new_project') }}
-        </button>
+        {{ t('navigation_projects.new_project') }}
       </a>
     </tui-data-list>
   </ng-container>

@@ -198,12 +198,6 @@ Copyright (c) 2023-present Kaleidos INC
 
 .story-option {
   justify-content: flex-start;
-
-  &:hover {
-    & .story-option-name {
-      color: var(--color-secondary);
-    }
-  }
 }
 
 .story-option-icon {

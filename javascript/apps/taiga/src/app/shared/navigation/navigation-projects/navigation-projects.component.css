@@ -55,10 +55,6 @@ li {
   }
 }
 
-.project-name {
-  color: var(--color-gray90);
-}
-
 .project-data {
   display: flex;
   flex-direction: column;
@@ -68,13 +64,6 @@ li {
 
   & span {
     display: block;
-  }
-
-  & .project-name {
-    @mixin ellipsis;
-
-    font-weight: var(--font-weight-medium);
-    line-height: 1.4;
   }
 
   & .project-workspace {
@@ -95,14 +84,6 @@ li {
   max-inline-size: 100%;
   overflow: hidden;
   padding: var(--spacing-8);
-
-  &:hover {
-    background-color: var(--color-gray20);
-
-    & .project-name {
-      color: var(--color-secondary80);
-    }
-  }
 }
 
 .project-image {
@@ -118,6 +99,11 @@ li {
   display: inline-block;
   font-weight: var(--font-weight-semibold);
   margin-block-end: 1rem;
+}
+
+.project-action {
+  block-size: var(--spacing-16);
+  inline-size: var(--spacing-16);
 }
 
 .empty-recent {

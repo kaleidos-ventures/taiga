@@ -100,11 +100,17 @@ Used across all Taiga
 
   &[tuiiconbutton] {
     & .t-left {
+      inline-size: auto !important;
       margin: 0 !important;
     }
 
     & .t-right {
       margin: 0 !important;
+    }
+
+    & .t-icon {
+      block-size: 1rem !important;
+      inline-size: 1rem !important;
     }
   }
 

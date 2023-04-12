@@ -6,6 +6,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
+@import "tools/typography.css";
+
 /* stylelint-disable selector-max-type */
 /* stylelint-disable declaration-no-important */
 
@@ -19,28 +21,31 @@ tui-data-list {
     outline: none;
   }
 
-  & a,
-  & button {
+  & a[tuiOption],
+  & button[tuiOption] {
+    @mixin font-paragraph;
+
     --tui-data-list-margin: 0;
+    --tui-text-01: var(--color-gray90);
 
     border: solid 1px var(--color-white) !important;
+    font-weight: var(--font-weight-medium) !important;
     inline-size: 100%;
     min-block-size: var(--spacing-24);
     padding: var(--spacing-8) !important;
     transition: none !important;
 
+    &:hover,
     &.active-option {
-      background: var(--color-gray20);
-      color: var(--color-secondary80);
+      --tui-text-01: var(--color-secondary80);
 
+      background: var(--color-gray20) !important;
+    }
+
+    &.active-option {
       & tui-svg {
         display: none;
       }
-    }
-
-    &:hover {
-      background: var(--color-gray20) !important;
-      color: var(--color-secondary80) !important;
     }
 
     &:focus {
@@ -48,13 +53,10 @@ tui-data-list {
     }
 
     &:focus-visible {
+      --tui-text-01: var(--color-secondary80);
+
       border-color: var(--color-secondary) !important;
     }
-  }
-
-  & .selected {
-    background: var(--color-gray20) !important;
-    color: var(--color-secondary80) !important;
   }
 
   & [data-size="s"] {

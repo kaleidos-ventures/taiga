@@ -20,7 +20,7 @@ class WorkspaceMembershipDetailSerializer(BaseModel):
         orm_mode = True
 
 
-class WorkspaceNonMemberDetailSerializer(BaseModel):
+class WorkspaceGuestDetailSerializer(BaseModel):
     user: UserNestedSerializer
     projects: list[ProjectNestedSerializer]
 

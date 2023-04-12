@@ -66,6 +66,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .description-wrapper {
+  cursor: pointer;
   position: relative;
 }
 

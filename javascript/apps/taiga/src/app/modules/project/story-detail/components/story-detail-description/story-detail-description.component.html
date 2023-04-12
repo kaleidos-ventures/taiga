@@ -9,7 +9,9 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <ng-container *ngIf="vm.edit">
-      <div class="description-wrapper">
+      <div
+        #descriptionContent
+        class="description-wrapper">
         <form
           [formGroup]="descriptionForm"
           (ngSubmit)="save()">
@@ -26,6 +28,7 @@ Copyright (c) 2023-present Kaleidos INC
               language: vm.lan.code,
               language_url: vm.lan.url,
               menubar: '',
+              height: descriptionHeight,
               toolbar:
                 'blocks | bold italic underline strikethrough | bullist numlist | link image codesample| emoticons |  alignleft aligncenter alignright | outdent indent | forecolor backcolor removeformat | hr',
               toolbar_mode: 'sliding',
@@ -136,6 +139,7 @@ Copyright (c) 2023-present Kaleidos INC
         <div class="description-wrapper">
           <div class="shape-outside-text float-inline-end"></div>
           <div
+            #descriptionContent
             tgCodeHightlight
             data-test="description-content"
             (tgClickActionArea)="editDescription()"
@@ -146,7 +150,9 @@ Copyright (c) 2023-present Kaleidos INC
       </ng-container>
 
       <ng-template #emptyTpl>
-        <div class="description-wrapper">
+        <div
+          #descriptionContent
+          class="description-wrapper">
           <p
             class="empty"
             (click)="editDescription()">

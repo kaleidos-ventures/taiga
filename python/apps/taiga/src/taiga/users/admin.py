@@ -43,7 +43,7 @@ class ProjectMembershipsInline(admin.TabularInline[ProjectMembership, User]):
 
 class WorkspaceMembershipsInline(admin.TabularInline[WorkspaceMembership, User]):
     model = WorkspaceMembership
-    fields = ("workspace", "role")
+    fields = ("workspace",)
     extra = 0
 
     def has_change_permission(self, request: HttpRequest, obj: Any = None) -> bool:

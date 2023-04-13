@@ -51,6 +51,15 @@ tags_metadata.append(
     }
 )
 
+# /workspaces/{id}/memberships
+workspaces_memberships = AuthAPIRouter(tags=["workspaces memberships"])
+tags_metadata.append(
+    {
+        "name": "workspaces memberships",
+        "description": "Endpoint for workspaces memberships resources.",
+    }
+)
+
 # /my
 my = AuthAPIRouter(prefix="/my", tags=["my"])
 tags_metadata.append({"name": "my", "description": "Endpoints for logged-in user's resources."})

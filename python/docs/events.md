@@ -398,6 +398,24 @@ Content for:
   }
   ```
 
+#### **workspacesmemberships.delete**
+
+It happens when a workspace membership is deleted
+
+Content for:
+- workspace channel:
+  ```
+  {
+      "membership": {... "workspace membership object" ...}
+  }
+  ```
+
+- user channel:
+  ```
+  {
+      "membership": {... "workspace membership object" ...}
+  }
+  ```
 
 #### **projects.delete**
 

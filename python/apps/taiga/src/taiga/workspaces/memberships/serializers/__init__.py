@@ -11,6 +11,14 @@ from taiga.users.serializers.nested import UserNestedSerializer
 from taiga.workspaces.workspaces.serializers.nested import WorkspaceSmallNestedSerializer
 
 
+class WorkspaceMembershipDeletedSerializer(BaseModel):
+    user: UserNestedSerializer
+    workspace: WorkspaceSmallNestedSerializer
+
+    class Config:
+        orm_mode = True
+
+
 class WorkspaceMembershipDetailSerializer(BaseModel):
     user: UserNestedSerializer
     workspace: WorkspaceSmallNestedSerializer

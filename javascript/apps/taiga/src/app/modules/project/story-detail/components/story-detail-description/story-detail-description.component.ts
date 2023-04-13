@@ -12,28 +12,23 @@ import {
   ElementRef,
   EventEmitter,
   HostBinding,
-  HostListener,
   Input,
   OnChanges,
   OnDestroy,
   Output,
   SimpleChanges,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, StoryDetail } from '@taiga/data';
-import { map } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { StoryDetailForm } from '~/app/modules/project/story-detail/story-detail.component';
 import { LanguageService } from '~/app/services/language/language.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
-import {
-  HasChanges,
-  HasChangesService
-} from '~/app/shared/utils/has-changes.service';
 import { filterNil } from '~/app/shared/utils/operators';
 
 export interface StoryDetailDescriptionState {
@@ -58,9 +53,7 @@ export interface StoryDetailDescriptionState {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class StoryDetailDescriptionComponent
-  implements OnChanges, HasChanges, OnDestroy
-{
+export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
   @ViewChild('descriptionContent')
   public descriptionContent!: ElementRef;
 
@@ -105,11 +98,6 @@ export class StoryDetailDescriptionComponent
     this.state.set({ story });
   }
 
-  @HostListener('window:beforeunload')
-  public unloadHandler() {
-    return !this.hasChanges();
-  }
-
   public descriptionHeight = 200;
 
   // https://github.com/tinymce/tinymce-angular/issues/311
@@ -126,14 +114,11 @@ export class StoryDetailDescriptionComponent
 
   constructor(
     public state: RxState<StoryDetailDescriptionState>,
-    private hasChangesService: HasChangesService,
     private hasPermissions: PermissionsService,
     private store: Store,
     private localStorageService: LocalStorageService,
     private languageService: LanguageService
   ) {
-    this.hasChangesService.addComponent(this);
-
     this.state.connect(
       'hasPermissionToEdit',
       this.hasPermissions.hasPermissions$('story', ['modify'])
@@ -154,6 +139,17 @@ export class StoryDetailDescriptionComponent
         this.discard();
       }
     });
+
+    this.state.hold(
+      this.descriptionForm.get('description')!.valueChanges.pipe(
+        filter((value) => value !== this.state.get('story').description),
+        distinctUntilChanged(),
+        debounceTime(500)
+      ),
+      () => {
+        this.saveState();
+      }
+    );
   }
 
   public setEditorInitialHeight() {

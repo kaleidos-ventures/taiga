@@ -44,7 +44,6 @@ import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
 import { PermissionUpdateNotificationService } from '~/app/shared/permission-update-notification/permission-update-notification.service';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
-import { HasChangesService } from '~/app/shared/utils/has-changes.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { StoryDetailActions } from './data-access/+state/actions/story-detail.actions';
 import {
@@ -86,7 +85,6 @@ export interface StoryDetailForm {
       provide: TRANSLOCO_SCOPE,
       useValue: 'story',
     },
-    HasChangesService,
   ],
   hostDirectives: [
     {
@@ -119,11 +117,6 @@ export class StoryDetailComponent {
   @HostListener('window:popstate')
   public onPopState() {
     this.closeStory();
-  }
-
-  @HostListener('window:beforeunload')
-  public unloadHandler() {
-    return !this.hasChangesService.check();
   }
 
   public storyRef!: ElementRef;
@@ -178,7 +171,6 @@ export class StoryDetailComponent {
     private state: RxState<StoryDetailState>,
     private appService: AppService,
     private router: Router,
-    private hasChangesService: HasChangesService,
     private permissionUpdateNotificationService: PermissionUpdateNotificationService,
     private resizedDirective: ResizedDirective
   ) {
@@ -417,14 +409,6 @@ export class StoryDetailComponent {
           (mainFocus as HTMLElement).focus();
         }
       });
-    }
-  }
-
-  public requestCloseStory() {
-    if (this.hasChangesService.check()) {
-      this.state.set({ showDiscardChangesModal: true });
-    } else {
-      this.closeStory();
     }
   }
 

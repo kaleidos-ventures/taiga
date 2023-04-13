@@ -200,7 +200,7 @@ export class ProjectFeatureKanbanComponent {
   }
 
   public closeSideview() {
-    this.projectFeatureStoryWrapperSideViewComponent?.storyDetailComponent?.requestCloseStory();
+    this.projectFeatureStoryWrapperSideViewComponent?.storyDetailComponent?.closeStory();
     this.shortcutsService.deleteScope('side-view');
   }
 
@@ -209,7 +209,7 @@ export class ProjectFeatureKanbanComponent {
   }
 
   public closeViewModal() {
-    this.projectFeatureStoryWrapperModalViewComponent?.storyDetailComponent?.requestCloseStory();
+    this.projectFeatureStoryWrapperModalViewComponent?.storyDetailComponent?.closeStory();
   }
 
   public trackBySlug(_index: number, obj: { slug: string }) {

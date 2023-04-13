@@ -124,3 +124,38 @@ async def test_list_workspace_guests_not_a_member(client):
 
     response = client.get(f"/workspaces/{workspace.b64id}/guests")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+##########################################################
+# DELETE /workspaces/<id>/memberships/<username>
+##########################################################
+
+
+async def test_delete_workspace_membership(client):
+    user = await f.create_user()
+    member = await f.create_user()
+    workspace = await f.create_workspace(created_by=user)
+    await f.create_workspace_membership(workspace=workspace, user=member)
+
+    client.login(user)
+    response = client.delete(f"/workspaces/{workspace.b64id}/memberships/{member.username}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_delete_workspace_membership_no_permission(client):
+    user = await f.create_user()
+    member = await f.create_user()
+    workspace = await f.create_workspace(created_by=user)
+
+    client.login(member)
+    response = client.delete(f"/workspaces/{workspace.b64id}/memberships/{user.username}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_workspace_membership_latest_membership(client):
+    user = await f.create_user()
+    workspace = await f.create_workspace(created_by=user)
+
+    client.login(user)
+    response = client.delete(f"/workspaces/{workspace.b64id}/memberships/{user.username}")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text

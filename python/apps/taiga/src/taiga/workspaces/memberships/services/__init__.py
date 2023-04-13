@@ -12,9 +12,12 @@ from taiga.base.api import Pagination
 from taiga.projects.memberships import repositories as projects_memberships_repositories
 from taiga.projects.projects import repositories as projects_repositories
 from taiga.users import repositories as users_repositories
+from taiga.workspaces.memberships import events as workspace_memberships_events
 from taiga.workspaces.memberships import repositories as workspace_memberships_repositories
+from taiga.workspaces.memberships.models import WorkspaceMembership
 from taiga.workspaces.memberships.serializers import WorkspaceGuestDetailSerializer, WorkspaceMembershipDetailSerializer
 from taiga.workspaces.memberships.serializers import services as serializer_services
+from taiga.workspaces.memberships.services import exceptions as ex
 from taiga.workspaces.workspaces.models import Workspace
 
 WS_ROLE_NAME_ADMIN: Final = "admin"
@@ -83,6 +86,44 @@ async def list_paginated_workspace_guests(
     ]
 
     return pagination, serialized_guests
+
+
+##########################################################
+# get workspace membership
+##########################################################
+
+
+async def get_workspace_membership(
+    workspace_id: UUID,
+    username: str,
+) -> WorkspaceMembership:
+    return await workspace_memberships_repositories.get_workspace_membership(
+        filters={"workspace_id": workspace_id, "username": username}, select_related=["workspace", "user"]
+    )
+
+
+##########################################################
+# delete workspace membership
+##########################################################
+
+
+async def delete_workspace_membership(
+    membership: WorkspaceMembership,
+) -> bool:
+    workspace_total_members = await workspace_memberships_repositories.get_total_workspace_memberships(
+        filters={"workspace_id": membership.workspace_id},
+    )
+    if workspace_total_members == 1:
+        raise ex.MembershipIsTheOnlyMemberError("Membership is the only member")
+
+    deleted = await workspace_memberships_repositories.delete_workspace_memberships(
+        filters={"id": membership.id},
+    )
+    if deleted > 0:
+        await workspace_memberships_events.emit_event_when_workspace_membership_is_deleted(membership=membership)
+        return True
+
+    return False
 
 
 ##########################################################

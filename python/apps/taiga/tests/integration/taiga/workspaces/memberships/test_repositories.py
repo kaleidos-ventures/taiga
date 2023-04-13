@@ -63,12 +63,38 @@ async def test_get_workspace_membership():
     assert membership.workspace == workspace
     assert membership.user == user
 
+    membership = await repositories.get_workspace_membership(
+        filters={"id": membership.id}, select_related=["workspace", "user"]
+    )
+    assert membership.workspace == workspace
+    assert membership.user == user
+
+    membership = await repositories.get_workspace_membership(
+        filters={"username": user.username}, select_related=["workspace", "user"]
+    )
+    assert membership.workspace == workspace
+    assert membership.user == user
+
 
 async def test_get_workspace_membership_none():
     membership = await repositories.get_workspace_membership(
         filters={"user_id": uuid.uuid1(), "workspace_id": uuid.uuid1()}
     )
     assert membership is None
+
+
+##########################################################
+# delete workspace memberships
+##########################################################
+
+
+async def test_delete_stories() -> None:
+    user = await f.create_user()
+    member = await f.create_user()
+    workspace = await f.create_workspace(created_by=user)
+    membership = await f.create_workspace_membership(workspace=workspace, user=member)
+    deleted = await repositories.delete_workspace_memberships(filters={"id": membership.id})
+    assert deleted == 1
 
 
 ##########################################################

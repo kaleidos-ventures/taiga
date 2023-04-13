@@ -23,15 +23,22 @@ DEFAULT_QUERYSET = WorkspaceMembership.objects.all()
 
 
 class WorkspaceMembershipFilters(TypedDict, total=False):
+    id: UUID
     workspace_id: UUID
     user_id: UUID
+    username: str
 
 
 def _apply_filters_to_queryset(
     qs: QuerySet[WorkspaceMembership],
     filters: WorkspaceMembershipFilters = {},
 ) -> QuerySet[WorkspaceMembership]:
-    return qs.filter(**filters)
+    filter_data = dict(filters.copy())
+
+    if "username" in filters:
+        filter_data["user__username"] = filter_data.pop("username")
+
+    return qs.filter(**filter_data)
 
 
 WorkspaceMembershipSelectRelated = list[
@@ -120,6 +127,18 @@ def get_workspace_membership(
         return qs.get()
     except WorkspaceMembership.DoesNotExist:
         return None
+
+
+##########################################################
+# delete workspace memberships
+##########################################################
+
+
+@sync_to_async
+def delete_workspace_memberships(filters: WorkspaceMembershipFilters = {}) -> int:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    count, _ = qs.delete()
+    return count
 
 
 ##########################################################

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f9a39c2f-c4e8-4b0d-843e-9a66c311eea2",
+		"_postman_id": "e380526d-5d4e-43c5-a33a-f17a0d69587e",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -36,7 +36,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"1001user\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -760,7 +760,12 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "workspace memberships",
+			"item": [
 				{
 					"name": "workspace memberships",
 					"event": [
@@ -874,6 +879,46 @@
 									"key": "limit",
 									"value": "{{limit}}"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete workspace membership",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/memberships/{{username}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"workspaces",
+								"{{ws-id}}",
+								"memberships",
+								"{{username}}"
 							]
 						}
 					},

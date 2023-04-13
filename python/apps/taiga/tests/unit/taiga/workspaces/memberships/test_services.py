@@ -11,6 +11,7 @@ from uuid import uuid1
 import pytest
 from taiga.workspaces.memberships import services
 from taiga.workspaces.memberships.services import WS_ROLE_NAME_ADMIN, WS_ROLE_NAME_GUEST, WS_ROLE_NAME_NONE
+from taiga.workspaces.memberships.services import exceptions as ex
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -92,6 +93,65 @@ async def test_list_paginated_workspace_guests():
         fake_pj_repositories.list_projects.assert_awaited_once_with(
             filters={"workspace_id": workspace.id, "project_member_id": user.id}
         )
+
+
+##########################################################
+# delete workspace membership
+##########################################################
+
+
+async def test_delete_workspace_membership():
+    workspace = f.build_workspace()
+    user = f.build_user()
+    membership = f.build_workspace_membership(workspace=workspace, user=user)
+
+    with (
+        patch(
+            "taiga.workspaces.memberships.services.workspace_memberships_repositories", autospec=True
+        ) as fake_ws_memberships_repo,
+        patch(
+            "taiga.workspaces.memberships.services.workspace_memberships_events", autospec=True
+        ) as fake_ws_memberships_events,
+    ):
+        fake_ws_memberships_repo.get_total_workspace_memberships.return_value = 2
+        fake_ws_memberships_repo.delete_workspace_memberships.return_value = 1
+
+        await services.delete_workspace_membership(membership=membership)
+
+        fake_ws_memberships_repo.get_total_workspace_memberships.assert_awaited_once_with(
+            filters={"workspace_id": workspace.id},
+        )
+        fake_ws_memberships_repo.delete_workspace_memberships.assert_awaited_once_with(
+            filters={"id": membership.id},
+        )
+        fake_ws_memberships_events.emit_event_when_workspace_membership_is_deleted.assert_awaited_once_with(
+            membership=membership
+        )
+
+
+async def test_delete_workspace_latest_membership():
+    workspace = f.build_workspace()
+    user = f.build_user()
+    membership = f.build_workspace_membership(workspace=workspace, user=user)
+
+    with (
+        patch(
+            "taiga.workspaces.memberships.services.workspace_memberships_repositories", autospec=True
+        ) as fake_ws_memberships_repo,
+        patch(
+            "taiga.workspaces.memberships.services.workspace_memberships_events", autospec=True
+        ) as fake_ws_memberships_events,
+        pytest.raises(ex.MembershipIsTheOnlyMemberError),
+    ):
+        fake_ws_memberships_repo.get_total_workspace_memberships.return_value = 1
+
+        await services.delete_workspace_membership(membership=membership)
+
+        fake_ws_memberships_repo.get_total_workspace_memberships.assert_awaited_once_with(
+            filters={"workspace_id": workspace.id},
+        )
+        fake_ws_memberships_repo.delete_workspace_memberships.assert_not_awaited()
+        fake_ws_memberships_events.emit_event_when_workspace_membership_is_deleted.assert_not_awaited()
 
 
 ##########################################################

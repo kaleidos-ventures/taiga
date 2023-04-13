@@ -12,7 +12,6 @@ import {
   Component,
   EventEmitter,
   HostBinding,
-  HostListener,
   Input,
   OnChanges,
   OnDestroy,
@@ -28,12 +27,8 @@ import {
   StoryTitleMaxLength,
   StoryTitleValidation,
 } from '~/app/shared/story/title-validation';
-import {
-  HasChanges,
-  HasChangesService,
-} from '~/app/shared/utils/has-changes.service';
 import { Project, StoryDetail } from '@taiga/data';
-import { auditTime, map } from 'rxjs';
+import { auditTime, debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -57,9 +52,7 @@ export interface StoryDetailTitleState {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
 })
-export class StoryDetailTitleComponent
-  implements OnChanges, HasChanges, OnDestroy
-{
+export class StoryDetailTitleComponent implements OnChanges, OnDestroy {
   @Input()
   public form!: FormGroup<StoryDetailForm>;
 
@@ -96,11 +89,6 @@ export class StoryDetailTitleComponent
     this.state.set({ story });
   }
 
-  @HostListener('window:beforeunload')
-  public unloadHandler() {
-    return !this.hasChanges();
-  }
-
   public titleForm = new FormGroup({
     title: new FormControl('', {
       nonNullable: true,
@@ -113,7 +101,6 @@ export class StoryDetailTitleComponent
   public maxLength = StoryTitleMaxLength;
 
   constructor(
-    private hasChangesService: HasChangesService,
     private state: RxState<StoryDetailTitleState>,
     private shortcutsService: ShortcutsService,
     private cd: ChangeDetectorRef,
@@ -121,8 +108,6 @@ export class StoryDetailTitleComponent
     private store: Store,
     private localStorageService: LocalStorageService
   ) {
-    this.hasChangesService.addComponent(this);
-
     this.state.connect(
       'projectId',
       this.store.select(selectCurrentProject).pipe(
@@ -160,6 +145,15 @@ export class StoryDetailTitleComponent
         this.discard();
       }
     });
+
+    this.state.hold(
+      this.titleForm
+        .get('title')!
+        .valueChanges.pipe(distinctUntilChanged(), debounceTime(500)),
+      () => {
+        this.saveState();
+      }
+    );
   }
 
   public editTitle() {
@@ -277,6 +271,7 @@ export class StoryDetailTitleComponent
       this.localStorageService.set(key, {
         edit: true,
         value: this.titleForm.get('title')!.value,
+        version: this.state.get('editedStory'),
       });
     } else {
       this.removeLocalState();

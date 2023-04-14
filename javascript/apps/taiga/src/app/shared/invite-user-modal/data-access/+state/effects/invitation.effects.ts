@@ -17,26 +17,30 @@ import {
   Contact,
   ErrorManagementToastOptions,
   InvitationResponse,
+  SearchUserRequest,
 } from '@taiga/data';
 import { throwError } from 'rxjs';
 import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import * as NewProjectActions from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { AppService } from '~/app/services/app.service';
 import { InvitationService } from '~/app/services/invitation.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
-import * as InvitationActions from '../actions/invitation.action';
+import {
+  revokeInvitation,
+  invitationActions,
+  invitationProjectActions,
+} from '../actions/invitation.action';
 
 @Injectable()
 export class InvitationEffects {
   public revokeInvitation$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.revokeInvitation),
+      ofType(revokeInvitation),
       map((action) => {
-        return InvitationActions.acceptInvitationIdError({
+        return invitationProjectActions.acceptInvitationIdError({
           projectId: action.projectId,
         });
       })
@@ -45,7 +49,7 @@ export class InvitationEffects {
 
   public sendInvitations$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(NewProjectActions.inviteUsersToProject),
+      ofType(invitationProjectActions.inviteUsers),
       pessimisticUpdate({
         run: (action) => {
           this.buttonLoadingService.start();
@@ -54,7 +58,7 @@ export class InvitationEffects {
             .pipe(
               switchMap(this.buttonLoadingService.waitLoading()),
               map((response: InvitationResponse) => {
-                return InvitationActions.inviteUsersSuccess({
+                return invitationProjectActions.inviteUsersSuccess({
                   totalInvitations: action.invitation.length,
                   newInvitations: response.invitations,
                   alreadyMembers: response.alreadyMembers,
@@ -78,7 +82,7 @@ export class InvitationEffects {
             400: options,
             500: options,
           });
-          return InvitationActions.inviteUsersError();
+          return invitationProjectActions.inviteUsersError();
         },
       })
     );
@@ -87,7 +91,7 @@ export class InvitationEffects {
   public sendInvitationsSuccess$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(InvitationActions.inviteUsersSuccess),
+        ofType(invitationProjectActions.inviteUsersSuccess),
         tap((action) => {
           let labelText;
           let messageText;
@@ -132,7 +136,7 @@ export class InvitationEffects {
 
   public acceptInvitationId$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.acceptInvitationId),
+      ofType(invitationProjectActions.acceptInvitationId),
       optimisticUpdate({
         run: (action) => {
           return this.projectApiService.acceptInvitationId(action.id).pipe(
@@ -140,7 +144,7 @@ export class InvitationEffects {
               this.store.select(selectUser).pipe(filterNil())
             ),
             map(([, user]) => {
-              return InvitationActions.acceptInvitationIdSuccess({
+              return invitationProjectActions.acceptInvitationIdSuccess({
                 projectId: action.id,
                 username: user.username,
               });
@@ -161,7 +165,7 @@ export class InvitationEffects {
             status: TuiNotification.Error,
           });
 
-          return InvitationActions.acceptInvitationIdError({
+          return invitationProjectActions.acceptInvitationIdError({
             projectId: action.id,
           });
         },
@@ -171,7 +175,7 @@ export class InvitationEffects {
 
   public searchUser$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.searchUser),
+      ofType(invitationActions.searchUsers),
       debounceTime(200),
       concatLatestFrom(() => this.store.select(selectUser).pipe(filterNil())),
       switchMap(([action, userState]) => {
@@ -182,38 +186,41 @@ export class InvitationEffects {
         const peopleAddedUsernameList = action.peopleAdded.map(
           (i) => i.username
         );
-        return this.invitationApiService
-          .searchUser({
-            text: UtilsService.normalizeText(action.searchUser.text),
-            project: action.searchUser.project,
-            offset: 0,
-            // to show 6 results at least and being possible to get the current user in the list we always will ask for 7 + the matched users that are on the list
-            limit: peopleAddedMatch.length + 7,
-          })
-          .pipe(
-            map((suggestedUsers: Contact[]) => {
-              let suggestedList = suggestedUsers.filter(
-                (suggestedUser) =>
-                  suggestedUser.username !== userState.username &&
-                  !peopleAddedUsernameList.includes(suggestedUser.username) &&
-                  !suggestedUser.userIsMember
-              );
-              const alreadyMembers = suggestedUsers.filter(
-                (suggestedUser) =>
-                  suggestedUser.username !== userState.username &&
-                  suggestedUser.userIsMember
-              );
-              suggestedList = [
-                ...alreadyMembers,
-                ...peopleAddedMatch,
-                ...suggestedList,
-              ].slice(0, 6);
+        const payload: SearchUserRequest = {
+          text: UtilsService.normalizeText(action.searchUser.text),
+          offset: 0,
+          // to show 6 results at least and being possible to get the current user in the list we always will ask for 7 + the matched users that are on the list
+          limit: peopleAddedMatch.length + 7,
+        };
+        if (action.searchUser.project) {
+          payload.project = action.searchUser.project;
+        } else {
+          payload.workspace = action.searchUser.workspace;
+        }
+        return this.invitationApiService.searchUser(payload).pipe(
+          map((suggestedUsers: Contact[]) => {
+            let suggestedList = suggestedUsers.filter(
+              (suggestedUser) =>
+                suggestedUser.username !== userState.username &&
+                !peopleAddedUsernameList.includes(suggestedUser.username) &&
+                !suggestedUser.userIsMember
+            );
+            const alreadyMembers = suggestedUsers.filter(
+              (suggestedUser) =>
+                suggestedUser.username !== userState.username &&
+                suggestedUser.userIsMember
+            );
+            suggestedList = [
+              ...alreadyMembers,
+              ...peopleAddedMatch,
+              ...suggestedList,
+            ].slice(0, 6);
 
-              return InvitationActions.searchUserSuccess({
-                suggestedUsers: suggestedList,
-              });
-            })
-          );
+            return invitationActions.searchUsersSuccess({
+              suggestedUsers: suggestedList,
+            });
+          })
+        );
       }),
       catchError((httpResponse: HttpErrorResponse) => {
         this.appService.errorManagement(httpResponse);

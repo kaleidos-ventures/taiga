@@ -29,7 +29,7 @@ import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/
 import { InViewportDirective } from '~/app/shared/directives/in-viewport.directive';
 import { DragModule } from '~/app/shared/drag/drag.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
-import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
+import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
@@ -71,7 +71,7 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     CommonTemplateModule,
     TuiSvgModule,
     ModalModule,
-    InviteToProjectModule,
+    InviteUserModalModule,
     DataAccessKanbanModule,
     ScrollingModule,
     TuiScrollbarModule,

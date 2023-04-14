@@ -34,6 +34,10 @@ Copyright (c) 2023-present Kaleidos INC
   color: var(--color-gray80);
   margin-block: 0;
 
+  &.first {
+    margin-block-end: var(--spacing-20);
+  }
+
   &::ng-deep .strong {
     color: var(--color-gray90);
     font-weight: var(--font-weight-medium);

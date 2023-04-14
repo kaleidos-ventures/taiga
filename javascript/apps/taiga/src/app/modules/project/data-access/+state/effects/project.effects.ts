@@ -20,7 +20,7 @@ import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
-import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { NavigationService } from '~/app/shared/navigation/navigation.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import * as ProjectActions from '../actions/project.actions';
@@ -103,7 +103,7 @@ export class ProjectEffects {
 
   public acceptedInvitation$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.acceptInvitationIdSuccess),
+      ofType(invitationProjectActions.acceptInvitationIdSuccess),
       tap(() => {
         this.appService.toastNotification({
           message: 'invitation_accept_message',
@@ -120,7 +120,7 @@ export class ProjectEffects {
 
   public acceptedInvitationError$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.acceptInvitationIdError),
+      ofType(invitationProjectActions.acceptInvitationIdError),
       map(({ projectId }) => {
         return ProjectActions.fetchProject({ id: projectId });
       })
@@ -129,7 +129,7 @@ export class ProjectEffects {
 
   public revokeInvitationBannerIdError$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(InvitationActions.revokeInvitationBannerIdError),
+      ofType(invitationProjectActions.revokeInvitationBannerIdError),
       fetch({
         run: ({ projectId }) => {
           return this.projectApiService.getProject(projectId).pipe(

@@ -27,7 +27,7 @@ import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
-import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
+import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
 import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
@@ -76,7 +76,7 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     CommonTemplateModule,
     DynamicTableModule,
     ModalModule,
-    InviteToProjectModule,
+    InviteUserModalModule,
     PaginationComponent,
     StoreModule.forFeature(membersFeature),
     EffectsModule.forFeature([MembersEffects]),

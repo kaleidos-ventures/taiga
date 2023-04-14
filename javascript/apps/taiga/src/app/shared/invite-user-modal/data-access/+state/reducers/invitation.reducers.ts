@@ -13,7 +13,10 @@ import * as RolesPermissionsActions from '~/app/modules/project/settings/feature
 import * as WorkspaceActions from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { workspaceEventActions } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { createImmerReducer } from '~/app/shared/utils/store';
-import * as InvitationActions from '../actions/invitation.action';
+import {
+  invitationActions,
+  invitationProjectActions,
+} from '../actions/invitation.action';
 
 export interface InvitationState {
   memberRoles: Role[] | null;
@@ -37,24 +40,27 @@ export const initialState: InvitationState = {
 
 export const reducer = createImmerReducer(
   initialState,
-  on(InvitationActions.inviteUsersSuccess, (state, action): InvitationState => {
-    const currentInvitations = state.invitations.map((invitation) =>
-      invitation.user ? invitation.user?.username : invitation.email
-    );
-    action.newInvitations.forEach((newInvitation) => {
-      if (
-        !currentInvitations.includes(newInvitation.email) &&
-        !(
-          newInvitation.user &&
-          currentInvitations.includes(newInvitation.user?.username)
-        )
-      ) {
-        state.invitations.push(...action.newInvitations);
-      }
-    });
+  on(
+    invitationProjectActions.inviteUsersSuccess,
+    (state, action): InvitationState => {
+      const currentInvitations = state.invitations.map((invitation) =>
+        invitation.user ? invitation.user?.username : invitation.email
+      );
+      action.newInvitations.forEach((newInvitation) => {
+        if (
+          !currentInvitations.includes(newInvitation.email) &&
+          !(
+            newInvitation.user &&
+            currentInvitations.includes(newInvitation.user?.username)
+          )
+        ) {
+          state.invitations.push(...action.newInvitations);
+        }
+      });
 
-    return state;
-  }),
+      return state;
+    }
+  ),
   on(
     RolesPermissionsActions.fetchMemberRolesSuccess,
     (state, { roles }): InvitationState => {
@@ -77,13 +83,13 @@ export const reducer = createImmerReducer(
       return state;
     }
   ),
-  on(InvitationActions.searchUser, (state): InvitationState => {
+  on(invitationActions.searchUsers, (state): InvitationState => {
     state.searchFinished = false;
 
     return state;
   }),
   on(
-    InvitationActions.searchUserSuccess,
+    invitationActions.searchUsersSuccess,
     (state, { suggestedUsers }): InvitationState => {
       state.suggestedUsers = [...suggestedUsers];
       state.searchFinished = true;
@@ -91,11 +97,14 @@ export const reducer = createImmerReducer(
       return state;
     }
   ),
-  on(InvitationActions.acceptInvitationId, (state, { id }): InvitationState => {
-    state.acceptedInvite.push(id);
+  on(
+    invitationProjectActions.acceptInvitationId,
+    (state, { id }): InvitationState => {
+      state.acceptedInvite.push(id);
 
-    return state;
-  }),
+      return state;
+    }
+  ),
   on(
     WorkspaceActions.acceptInvitationEvent,
     (state, { projectId }): InvitationState => {
@@ -105,7 +114,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    InvitationActions.acceptInvitationIdError,
+    invitationProjectActions.acceptInvitationIdError,
     (state, { projectId }): InvitationState => {
       state.acceptedInvite = state.acceptedInvite.filter((invitation) => {
         return invitation !== projectId;
@@ -115,7 +124,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    InvitationActions.addSuggestedContact,
+    invitationProjectActions.addSuggestedContact,
     (state, { contact }): InvitationState => {
       state.contacts = [contact];
       return state;

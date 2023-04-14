@@ -42,12 +42,8 @@ import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/featur
 import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 import { WsService } from '~/app/services/ws';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
-import {
-  acceptInvitationId,
-  acceptInvitationIdSuccess,
-  inviteUsersSuccess,
-} from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { InviteToProjectModule } from '~/app/shared/invite-to-project/invite-to-project.module';
+import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
+import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
 import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectMembersListComponent } from '../project-members-list/project-members-list.component';
 import { ProjectMembersModalComponent } from '../project-members-modal/project-members-modal.component';
@@ -77,7 +73,7 @@ import { ProjectMembersModalComponent } from '../project-members-modal/project-m
     ProjectMembersModalComponent,
     SkeletonsModule,
     ProjectMembersListComponent,
-    InviteToProjectModule,
+    InviteUserModalModule,
   ],
 })
 export class ProjectMembersComponent {
@@ -189,7 +185,7 @@ export class ProjectMembersComponent {
     );
 
     const invitationAccepted = this.actions$.pipe(
-      ofType(acceptInvitationIdSuccess),
+      ofType(invitationProjectActions.acceptInvitationIdSuccess),
       delay(WaitingForToastNotification),
       take(1)
     );
@@ -205,7 +201,7 @@ export class ProjectMembersComponent {
     });
 
     this.actions$
-      .pipe(ofType(inviteUsersSuccess))
+      .pipe(ofType(invitationProjectActions.inviteUsersSuccess))
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.projectMembersList.animateUser();
@@ -294,7 +290,7 @@ export class ProjectMembersComponent {
 
   public acceptInvitationId() {
     this.store.dispatch(
-      acceptInvitationId({
+      invitationProjectActions.acceptInvitationId({
         id: this.state.get('project').id,
       })
     );

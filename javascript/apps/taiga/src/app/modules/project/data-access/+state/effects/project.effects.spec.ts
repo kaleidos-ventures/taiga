@@ -20,7 +20,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AppService } from '~/app/services/app.service';
 import { WsService, WsServiceMock } from '~/app/services/ws';
-import { acceptInvitationIdSuccess } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import {
   fetchProject,
   fetchProjectSuccess,
@@ -79,13 +79,19 @@ describe('ProjectEffects', () => {
     const effects = spectator.inject(ProjectEffects);
 
     actions$ = hot('-a', {
-      a: acceptInvitationIdSuccess({ projectId: id, username }),
+      a: invitationProjectActions.acceptInvitationIdSuccess({
+        projectId: id,
+        username,
+      }),
     });
 
     testScheduler.run((helpers) => {
       const { hot, expectObservable } = helpers;
       actions$ = hot('-a', {
-        a: acceptInvitationIdSuccess({ projectId: id, username }),
+        a: invitationProjectActions.acceptInvitationIdSuccess({
+          projectId: id,
+          username,
+        }),
       });
 
       expectObservable(effects.acceptedInvitation$).toBe('-c', {

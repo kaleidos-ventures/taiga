@@ -9,7 +9,7 @@
 import { createFeature, on } from '@ngrx/store';
 import { Invitation, Membership } from '@taiga/data';
 import { InvitationService } from '~/app/services/invitation.service';
-import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import * as ProjectOverviewActions from '../actions/project-overview.actions';
 
@@ -139,7 +139,7 @@ export const reducer = createImmerReducer(
     return state;
   }),
   on(
-    InvitationActions.inviteUsersSuccess,
+    invitationProjectActions.inviteUsersSuccess,
     (state, action): ProjectOverviewState => {
       state.membersToAnimate = [];
       state.invitationsToAnimate = action.newInvitations.map((invitation) => {
@@ -192,31 +192,34 @@ export const reducer = createImmerReducer(
     state.notificationClosed = false;
     return state;
   }),
-  on(InvitationActions.acceptInvitationIdSuccess, (state, { username }) => {
-    state.totalInvitations -= 1;
-    state.totalMemberships += 1;
-    state.invitationsToAnimate = [];
-    state.membersToAnimate.push(username);
+  on(
+    invitationProjectActions.acceptInvitationIdSuccess,
+    (state, { username }) => {
+      state.totalInvitations -= 1;
+      state.totalMemberships += 1;
+      state.invitationsToAnimate = [];
+      state.membersToAnimate.push(username);
 
-    const acceptedUser = state.invitations.find(
-      (invitation) => invitation.user?.username === username
-    );
+      const acceptedUser = state.invitations.find(
+        (invitation) => invitation.user?.username === username
+      );
 
-    state.invitations = state.invitations.filter(
-      (invitation) => invitation.user?.username !== username
-    );
+      state.invitations = state.invitations.filter(
+        (invitation) => invitation.user?.username !== username
+      );
 
-    if (acceptedUser) {
-      const member: Membership = {
-        role: acceptedUser.role!,
-        user: acceptedUser.user!,
-      };
+      if (acceptedUser) {
+        const member: Membership = {
+          role: acceptedUser.role!,
+          user: acceptedUser.user!,
+        };
 
-      state.members = [member, ...state.members];
+        state.members = [member, ...state.members];
+      }
+
+      return state;
     }
-
-    return state;
-  }),
+  ),
   on(
     ProjectOverviewActions.updateShowAllMembers,
     (state, action): ProjectOverviewState => {

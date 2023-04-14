@@ -38,7 +38,10 @@ export const selectMemberRolesOrdered = createSelector(
   }
 );
 
-export const selectUsersToInvite = (inviteIdentifiers: string[]) => {
+export const selectUsersToInvite = (
+  inviteIdentifiers: string[],
+  hasRole: boolean
+) => {
   // from the introdued identifiers to invite to the project, we must complete data with the user contacts
   return createSelector(
     selectMemberRolesOrdered,
@@ -46,7 +49,6 @@ export const selectUsersToInvite = (inviteIdentifiers: string[]) => {
     selectInvitations,
     (roles, contacts, invitations): Partial<User>[] => {
       const users: Partial<User>[] = [];
-      const defaultRole = roles ? [roles[1].name] : undefined;
       inviteIdentifiers.forEach((identifier) => {
         const myContact = contacts?.find(
           (contact) => contact.username === identifier
@@ -54,20 +56,20 @@ export const selectUsersToInvite = (inviteIdentifiers: string[]) => {
         const hasPendingInvitation = invitations?.find(
           (invitation) => invitation.user?.username === identifier
         );
-        const role = hasPendingInvitation?.role?.name
-          ? [hasPendingInvitation.role.name]
-          : defaultRole;
+        let tempUser: Partial<User> = {};
         if (myContact) {
-          users.push({
-            ...myContact,
-            roles: role,
-          });
+          tempUser = { ...myContact };
         } else if (identifier.includes('@')) {
-          users.push({
-            email: identifier,
-            roles: role,
-          });
+          tempUser = { email: identifier };
         }
+        if (hasRole) {
+          const defaultRole = roles ? [roles[1].name] : undefined;
+          const role = hasPendingInvitation?.role?.name
+            ? [hasPendingInvitation.role.name]
+            : defaultRole;
+          tempUser.roles = role;
+        }
+        Object.keys(tempUser).length && users.push(tempUser);
       });
       return users;
     }

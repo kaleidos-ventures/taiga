@@ -8,6 +8,8 @@
 
 import { NumberSymbol } from '@angular/common';
 import { Membership } from './membership.model';
+import { Project } from './project.model';
+import { Workspace } from './workspace.model';
 export interface Invitation extends Partial<Membership> {
   email: string;
 }
@@ -53,7 +55,8 @@ export interface InvitationParams {
 
 export interface SearchUserRequest {
   text: string;
-  project: string;
+  project?: Project['id'];
+  workspace?: Workspace['id'];
   offset: number;
   limit: number;
 }

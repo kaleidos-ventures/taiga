@@ -33,6 +33,8 @@ interface WorkspaceDetailState {
 export class WorkspaceDetailPeopleComponent implements OnInit {
   public model$ = this.state.select();
   public selectedTab = 1;
+  public invitePeople = false;
+  public resetForm = false;
 
   constructor(
     private state: RxState<WorkspaceDetailState>,
@@ -59,5 +61,14 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
         );
       }
     });
+  }
+
+  public invitePeopleModal() {
+    this.resetForm = this.invitePeople;
+    this.invitePeople = !this.invitePeople;
+  }
+
+  public onInviteSuccess() {
+    // init members
   }
 }

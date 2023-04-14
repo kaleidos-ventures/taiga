@@ -12,11 +12,19 @@ Copyright (c) 2023-present Kaleidos INC
   align-items: start;
   display: grid;
   gap: var(--spacing-16);
-  grid-template-columns: 32px 275px 16px 1fr 32px;
+  grid-template-columns: 32px 1fr 32px;
   padding-block-start: var(--spacing-8);
   padding-inline: var(--spacing-40) var(--spacing-8);
 
+  &.has-role {
+    grid-template-columns: 32px 275px 16px 1fr 32px;
+  }
+
   &.content {
-    grid-template-columns: 307px 1fr 32px;
+    grid-template-columns: 1fr 32px;
+
+    &.has-role {
+      grid-template-columns: 307px 1fr 32px;
+    }
   }
 }

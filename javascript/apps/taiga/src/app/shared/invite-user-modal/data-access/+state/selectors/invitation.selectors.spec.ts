@@ -12,6 +12,37 @@ import {
   selectUsersToInvite,
 } from './invitation.selectors';
 
+export const rolesOrdered: Role[] = [
+  {
+    isAdmin: true,
+    name: 'Administrator',
+    numMembers: 1,
+    order: 1,
+    permissions: [
+      'add_story',
+      'comment_story',
+      'delete_story',
+      'modify_story',
+      'view_story',
+    ] as Permissions[],
+    slug: 'admin',
+  },
+  {
+    isAdmin: false,
+    name: 'General',
+    numMembers: 1,
+    order: 2,
+    permissions: [
+      'add_story',
+      'comment_story',
+      'delete_story',
+      'modify_story',
+      'view_story',
+    ] as Permissions[],
+    slug: 'general',
+  },
+];
+
 describe('invite selectors', () => {
   it('member roles ordered', () => {
     const roles: Role[] = [
@@ -77,45 +108,15 @@ describe('invite selectors', () => {
     ]);
   });
 
-  it('users to invite', () => {
+  it('project: users to invite', () => {
     const userIdentifier = ['user1', 'test2@test.com'];
-    const rolesOrdered: Role[] = [
-      {
-        isAdmin: true,
-        name: 'Administrator',
-        numMembers: 1,
-        order: 1,
-        permissions: [
-          'add_story',
-          'comment_story',
-          'delete_story',
-          'modify_story',
-          'view_story',
-        ] as Permissions[],
-        slug: 'admin',
-      },
-      {
-        isAdmin: false,
-        name: 'General',
-        numMembers: 1,
-        order: 2,
-        permissions: [
-          'add_story',
-          'comment_story',
-          'delete_story',
-          'modify_story',
-          'view_story',
-        ] as Permissions[],
-        slug: 'general',
-      },
-    ];
     const contacts: Contact[] = [
       {
         username: 'user1',
         fullName: 'user one',
       },
     ];
-    const userToInvite = selectUsersToInvite(userIdentifier).projector(
+    const userToInvite = selectUsersToInvite(userIdentifier, true).projector(
       rolesOrdered,
       contacts,
       []
@@ -129,6 +130,30 @@ describe('invite selectors', () => {
       {
         email: 'test2@test.com',
         roles: ['General'],
+      },
+    ]);
+  });
+
+  it('workspace: users to invite', () => {
+    const userIdentifier = ['user1', 'test2@test.com'];
+    const contacts: Contact[] = [
+      {
+        username: 'user1',
+        fullName: 'user one',
+      },
+    ];
+    const userToInvite = selectUsersToInvite(userIdentifier, false).projector(
+      rolesOrdered,
+      contacts,
+      []
+    );
+    expect(userToInvite).toEqual([
+      {
+        username: 'user1',
+        fullName: 'user one',
+      },
+      {
+        email: 'test2@test.com',
       },
     ]);
   });

@@ -15,12 +15,17 @@ Copyright (c) 2023-present Kaleidos INC
     <h1
       class="modal-title"
       id="invite-modal">
-      {{ t('invitation_modal.title', { project: project.name }) }}
+      {{ t('invitation_modal.title', { name: titleName }) }}
     </h1>
     <form
       class="form-container"
-      [formGroup]="inviteProjectForm">
+      [formGroup]="inviteUsersForm">
       <tui-scrollbar class="padding-scroll">
+        <p
+          *ngIf="workspace"
+          class="text first">
+          {{ t('invitation_modal.workspace_instructions') }}
+        </p>
         <p
           class="text"
           [innerHtml]="t('invitation_modal.instructions')"></p>
@@ -217,22 +222,37 @@ Copyright (c) 2023-present Kaleidos INC
           *ngIf="users.length"
           class="user-list"
           data-test="user-list">
-          <div class="user">
+          <div
+            class="user"
+            [class.has-role]="project">
             <span></span>
             <span class="user-title">{{
               t('invitation_modal.name_email')
             }}</span>
-            <span class="user-title">{{ t('invitation_modal.role') }}</span>
+            <span
+              *ngIf="project"
+              class="user-title"
+              >{{ t('invitation_modal.role') }}</span
+            >
             <span></span>
           </div>
 
           <ng-container
             *ngFor="let user of users; index as i; trackBy: trackByIndex">
-            <ng-container *ngIf="memberRoles$ | async as memberRoles">
+            <ng-container *ngIf="project">
+              <ng-container *ngIf="memberRoles$ | async as memberRoles">
+                <tg-user-to-invite
+                  [user]="user"
+                  [userIndex]="i"
+                  [roles]="memberRoles"
+                  (delete)="deleteUser($event)">
+                </tg-user-to-invite>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="workspace">
               <tg-user-to-invite
                 [user]="user"
                 [userIndex]="i"
-                [roles]="memberRoles"
                 (delete)="deleteUser($event)">
               </tg-user-to-invite>
             </ng-container>
@@ -267,7 +287,7 @@ Copyright (c) 2023-present Kaleidos INC
             appearance="tertiary"
             data-test="close-modal">
             {{
-              fromOverview
+              fromOverview || !this.project
                 ? t('invitation_modal.close')
                 : t('invitation_modal.later')
             }}

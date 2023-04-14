@@ -284,12 +284,19 @@ export class StoryDetailComponent {
         .find((status) => status.name === form.status);
 
       if (status) {
-        this.store.dispatch(
-          StoryDetailActions.updateStory({
-            projectId: this.state.get('project').id,
-            story: this.getStoryUpdate(),
-          })
-        );
+        const story = this.getStoryUpdate();
+        const modifiedFields = Object.keys(story).filter((field) => {
+          return !['ref', 'version'].includes(field);
+        });
+
+        if (modifiedFields.length) {
+          this.store.dispatch(
+            StoryDetailActions.updateStory({
+              projectId: this.state.get('project').id,
+              story,
+            })
+          );
+        }
       }
     });
 

@@ -167,12 +167,14 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
   }
 
   public editDescription() {
-    this.setEditorInitialHeight();
-    this.reset();
+    if (this.state.get('hasPermissionToEdit')) {
+      this.setEditorInitialHeight();
+      this.reset();
 
-    this.state.set({ editedStory: this.state.get('story').version });
+      this.state.set({ editedStory: this.state.get('story').version });
 
-    this.setEdit(true);
+      this.setEdit(true);
+    }
   }
 
   public cancelEditDescription() {

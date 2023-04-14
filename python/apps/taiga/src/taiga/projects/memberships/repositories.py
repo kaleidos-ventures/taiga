@@ -53,6 +53,7 @@ ProjectMembershipSelectRelated = list[
         "project",
         "role",
         "user",
+        "project__workspace",
     ]
 ]
 
@@ -150,6 +151,18 @@ def update_project_membership(membership: ProjectMembership, values: dict[str, A
 
     membership.save()
     return membership
+
+
+##########################################################
+# delete project memberships
+##########################################################
+
+
+@sync_to_async
+def delete_project_memberships(filters: ProjectMembershipFilters = {}) -> int:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    count, _ = qs.delete()
+    return count
 
 
 ##########################################################

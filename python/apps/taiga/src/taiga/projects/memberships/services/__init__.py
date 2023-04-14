@@ -40,13 +40,14 @@ async def list_paginated_project_memberships(
 
 
 ##########################################################
-# get project memebership
+# get project membership
 ##########################################################
 
 
 async def get_project_membership(project_id: UUID, username: str) -> ProjectMembership:
     return await memberships_repositories.get_project_membership(
-        filters={"project_id": project_id, "username": username}
+        filters={"project_id": project_id, "username": username},
+        select_related=["user", "role", "project", "project__workspace"],
     )
 
 
@@ -63,8 +64,9 @@ async def update_project_membership(membership: ProjectMembership, role_slug: st
     if not project_role:
         raise ex.NonExistingRoleError("Role does not exist")
 
-    if await _is_membership_the_only_admin(membership_role=membership.role, project_role=project_role):
-        raise ex.MembershipIsTheOnlyAdminError("Membership is the only admin")
+    if not project_role.is_admin:
+        if await _is_membership_the_only_admin(membership_role=membership.role):
+            raise ex.MembershipIsTheOnlyAdminError("Membership is the only admin")
 
     # Check if new role has view_story permission
     view_story_is_deleted = False
@@ -89,7 +91,29 @@ async def update_project_membership(membership: ProjectMembership, role_slug: st
     return updated_membership
 
 
-# TODO: when there is a delete_project_membership service, we have to unassign stories too
+##########################################################
+# delete project membership
+##########################################################
+
+
+async def delete_project_membership(
+    membership: ProjectMembership,
+) -> bool:
+    if await _is_membership_the_only_admin(membership_role=membership.role):
+        raise ex.MembershipIsTheOnlyAdminError("Membership is the only admin")
+
+    deleted = await memberships_repositories.delete_project_memberships(
+        filters={"id": membership.id},
+    )
+    if deleted > 0:
+        # Delete stories assignments
+        await story_assignments_repositories.delete_stories_assignments(
+            filters={"project_id": membership.project_id, "username": membership.user.username}
+        )
+        await memberships_events.emit_event_when_project_membership_is_deleted(membership=membership)
+        return True
+
+    return False
 
 
 ##########################################################
@@ -97,8 +121,8 @@ async def update_project_membership(membership: ProjectMembership, role_slug: st
 ##########################################################
 
 
-async def _is_membership_the_only_admin(membership_role: ProjectRole, project_role: ProjectRole) -> bool:
-    if membership_role.is_admin and not project_role.is_admin:
+async def _is_membership_the_only_admin(membership_role: ProjectRole) -> bool:
+    if membership_role.is_admin:
         num_admins = await memberships_repositories.get_total_project_memberships(
             filters={"role_id": membership_role.id}
         )

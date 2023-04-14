@@ -84,6 +84,22 @@ async def test_update_project_membership():
 
 
 ##########################################################
+# delete_project_memberships
+##########################################################
+
+
+async def test_delete_project_memberships() -> None:
+    project = await f.create_project()
+    user = await f.create_user()
+    role = await f.create_project_role(project=project)
+    membership = await repositories.create_project_membership(user=user, project=project, role=role)
+    deleted = await repositories.delete_project_memberships(
+        filters={"id": membership.id},
+    )
+    assert deleted == 1
+
+
+##########################################################
 # misc - get_project_members
 ##########################################################
 

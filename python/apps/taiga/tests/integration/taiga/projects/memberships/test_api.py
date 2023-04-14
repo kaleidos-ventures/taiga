@@ -127,3 +127,47 @@ async def test_update_project_membership_role_ok(client):
     data = {"role_slug": "admin"}
     response = client.patch(f"projects/{project.b64id}/memberships/{username}", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
+
+
+##########################################################
+# DELETE /projects/<id>/memberships/<username>
+##########################################################
+
+
+async def test_delete_project_membership_not_exist(client):
+    project = await f.create_project()
+    username = "not_exist"
+
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{project.b64id}/memberships/{username}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_project_membership_without_permissions(client):
+    project = await f.create_project()
+    member = await f.create_user()
+    general_member_role = await f.create_project_role(
+        project=project,
+        permissions=choices.ProjectPermissions.values,
+        is_admin=False,
+    )
+    await f.create_project_membership(user=member, project=project, role=general_member_role)
+
+    client.login(member)
+    response = client.delete(f"/projects/{project.b64id}/memberships/{project.created_by.username}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_project_membership_ok(client):
+    project = await f.create_project()
+    member = await f.create_user()
+    general_member_role = await f.create_project_role(
+        project=project,
+        permissions=choices.ProjectPermissions.values,
+        is_admin=False,
+    )
+    await f.create_project_membership(user=member, project=project, role=general_member_role)
+
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{project.b64id}/memberships/{member.username}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text

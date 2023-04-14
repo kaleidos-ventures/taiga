@@ -6,8 +6,12 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.base.serializers import BaseModel
-from taiga.projects.memberships.serializers import ProjectMembershipSerializer
+from taiga.projects.memberships.serializers import ProjectMembershipDeletedSerializer, ProjectMembershipSerializer
 
 
 class ProjectMembershipContent(BaseModel):
     membership: ProjectMembershipSerializer
+
+
+class DeleteProjectMembershipContent(BaseModel):
+    membership: ProjectMembershipDeletedSerializer

@@ -6,10 +6,11 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.events import events_manager
-from taiga.projects.memberships.events.content import ProjectMembershipContent
+from taiga.projects.memberships.events.content import DeleteProjectMembershipContent, ProjectMembershipContent
 from taiga.projects.memberships.models import ProjectMembership
 
 UPDATE_PROJECT_MEMBERSHIP = "projectmemberships.update"
+DELETE_PROJECT_MEMBERSHIP = "projectmemberships.delete"
 
 
 async def emit_event_when_project_membership_is_updated(membership: ProjectMembership) -> None:
@@ -23,4 +24,24 @@ async def emit_event_when_project_membership_is_updated(membership: ProjectMembe
         project=membership.project,
         type=UPDATE_PROJECT_MEMBERSHIP,
         content=ProjectMembershipContent(membership=membership),
+    )
+
+
+async def emit_event_when_project_membership_is_deleted(membership: ProjectMembership) -> None:
+    await events_manager.publish_on_project_channel(
+        project=membership.project,
+        type=DELETE_PROJECT_MEMBERSHIP,
+        content=DeleteProjectMembershipContent(membership=membership),
+    )
+
+    await events_manager.publish_on_user_channel(
+        user=membership.user,
+        type=DELETE_PROJECT_MEMBERSHIP,
+        content=DeleteProjectMembershipContent(membership=membership),
+    )
+
+    await events_manager.publish_on_workspace_channel(
+        workspace=membership.project.workspace,
+        type=DELETE_PROJECT_MEMBERSHIP,
+        content=DeleteProjectMembershipContent(membership=membership),
     )

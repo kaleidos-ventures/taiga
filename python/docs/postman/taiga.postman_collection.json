@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "e380526d-5d4e-43c5-a33a-f17a0d69587e",
+		"_postman_id": "ecec6636-2092-49d8-b5b2-a9c31746677f",
 		"name": "taiga-next",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -1379,6 +1380,65 @@
 					"response": []
 				},
 				{
+					"name": "project workflows",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "project memberships",
+			"item": [
+				{
 					"name": "project memberships",
 					"event": [
 						{
@@ -1495,22 +1555,7 @@
 					"response": []
 				},
 				{
-					"name": "project workflows",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "delete project membership",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1522,7 +1567,7 @@
 								}
 							]
 						},
-						"method": "GET",
+						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -1534,7 +1579,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships/{{username}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -1542,7 +1587,8 @@
 							"path": [
 								"projects",
 								"{{pj-id}}",
-								"workflows"
+								"memberships",
+								"{{username}}"
 							]
 						}
 					},

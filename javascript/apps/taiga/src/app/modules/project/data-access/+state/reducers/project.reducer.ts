@@ -13,7 +13,7 @@ import {
   editProjectSuccess,
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import * as RolesPermissionsActions from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
-import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
 
@@ -53,7 +53,7 @@ export const reducer = createImmerReducer(
     return state;
   }),
   on(
-    InvitationActions.acceptInvitationIdSuccess,
+    invitationProjectActions.acceptInvitationIdSuccess,
     (state, { projectId }): ProjectState => {
       const project = state.projects[projectId];
 
@@ -65,7 +65,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    InvitationActions.acceptInvitationIdError,
+    invitationProjectActions.acceptInvitationIdError,
     (state, { projectId }): ProjectState => {
       const project = state.projects[projectId];
 

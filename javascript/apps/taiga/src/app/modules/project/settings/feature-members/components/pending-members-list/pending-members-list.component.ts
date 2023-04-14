@@ -38,7 +38,7 @@ import {
   selectUndoDoneAnimation,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
-import { selectMemberRolesOrdered } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+import { selectMemberRolesOrdered } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 const cssValue = getComputedStyle(document.documentElement);
 interface InvitationData {

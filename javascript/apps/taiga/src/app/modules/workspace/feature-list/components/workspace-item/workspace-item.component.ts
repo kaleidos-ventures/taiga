@@ -46,8 +46,8 @@ import {
   selectWorkspaceProject,
 } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import { WsService } from '~/app/services/ws';
-import { acceptInvitationId } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
-import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
+import { selectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 
 interface ViewModel {
@@ -527,7 +527,7 @@ export class WorkspaceItemComponent
 
   public acceptProjectInvite(id: Project['id'], name: Project['name']) {
     this.store.dispatch(
-      acceptInvitationId({
+      invitationProjectActions.acceptInvitationId({
         id,
         name,
       })

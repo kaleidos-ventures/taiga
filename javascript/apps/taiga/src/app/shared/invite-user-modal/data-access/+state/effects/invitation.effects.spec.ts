@@ -30,17 +30,12 @@ import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { selectInvitations } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { AppService } from '~/app/services/app.service';
 import {
-  acceptInvitationId,
-  acceptInvitationIdError,
-  acceptInvitationIdSuccess,
-  inviteUsersSuccess,
   revokeInvitation,
-  searchUser,
-  searchUserSuccess,
+  invitationActions,
+  invitationProjectActions,
 } from '../actions/invitation.action';
 import { InvitationEffects } from './invitation.effects';
 
@@ -86,14 +81,14 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: inviteUsersToProject({
+      a: invitationProjectActions.inviteUsers({
         id: randUuid(),
         invitation: invitationMockPayload,
       }),
     });
 
     const expected = cold('--a', {
-      a: inviteUsersSuccess({
+      a: invitationProjectActions.inviteUsersSuccess({
         newInvitations: invitationMockResponse.invitations,
         alreadyMembers: 1,
         totalInvitations: 1,
@@ -130,11 +125,14 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: acceptInvitationId({ id }),
+      a: invitationProjectActions.acceptInvitationId({ id }),
     });
 
     const expected = cold('--a', {
-      a: acceptInvitationIdSuccess({ projectId: id, username }),
+      a: invitationProjectActions.acceptInvitationIdSuccess({
+        projectId: id,
+        username,
+      }),
     });
 
     expect(effects.acceptInvitationId$).toBeObservable(expected);
@@ -161,11 +159,11 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: acceptInvitationId({ id }),
+      a: invitationProjectActions.acceptInvitationId({ id }),
     });
 
     const expected = cold('--a', {
-      a: acceptInvitationIdError({ projectId: id }),
+      a: invitationProjectActions.acceptInvitationIdError({ projectId: id }),
     });
 
     expect(effects.acceptInvitationId$).toBeObservable(expected);
@@ -196,7 +194,7 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: acceptInvitationId({ id }),
+      a: invitationProjectActions.acceptInvitationId({ id }),
     });
 
     const expected = cold('--a', {
@@ -230,14 +228,14 @@ describe('InvitationEffects', () => {
       );
 
       actions$ = hot('-a', {
-        a: searchUser({
+        a: invitationActions.searchUsers({
           searchUser: { text: searchText, project: randSlug() },
           peopleAdded: [],
         }),
       });
 
       expectObservable(effects.searchUser$).toBe('202ms a', {
-        a: searchUserSuccess({ suggestedUsers }),
+        a: invitationActions.searchUsersSuccess({ suggestedUsers }),
       });
     });
   });
@@ -268,7 +266,7 @@ describe('InvitationEffects', () => {
       );
 
       actions$ = hot('-a', {
-        a: searchUser({
+        a: invitationActions.searchUsers({
           searchUser: {
             text: searchText,
             project: randSlug(),
@@ -278,7 +276,7 @@ describe('InvitationEffects', () => {
       });
 
       expectObservable(effects.searchUser$).toBe('202ms a', {
-        a: searchUserSuccess({ suggestedUsers }),
+        a: invitationActions.searchUsersSuccess({ suggestedUsers }),
       });
     });
   });
@@ -315,7 +313,7 @@ describe('InvitationEffects', () => {
       );
 
       actions$ = hot('-a', {
-        a: searchUser({
+        a: invitationActions.searchUsers({
           searchUser: {
             text: searchText,
             project: randSlug(),
@@ -325,7 +323,7 @@ describe('InvitationEffects', () => {
       });
 
       expectObservable(effects.searchUser$).toBe('202ms a', {
-        a: searchUserSuccess({ suggestedUsers }),
+        a: invitationActions.searchUsersSuccess({ suggestedUsers }),
       });
     });
   });
@@ -368,7 +366,7 @@ describe('InvitationEffects', () => {
       );
 
       actions$ = hot('-a', {
-        a: searchUser({
+        a: invitationActions.searchUsers({
           searchUser: {
             text: searchText,
             project: randSlug(),
@@ -378,7 +376,7 @@ describe('InvitationEffects', () => {
       });
 
       expectObservable(effects.searchUser$).toBe('202ms a', {
-        a: searchUserSuccess({ suggestedUsers }),
+        a: invitationActions.searchUsersSuccess({ suggestedUsers }),
       });
     });
   });

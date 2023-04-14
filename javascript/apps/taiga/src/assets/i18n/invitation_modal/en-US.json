@@ -1,5 +1,6 @@
 {
-  "title": "Invite people to {{ project }}",
+  "title": "Invite people to {{ name }}",
+  "workspace_instructions": "Once they accept the invitation, they will be able to invite new members, create new projects and edit other workspace settings.",
   "instructions": "Start typing a <strong class='strong'>name</strong> or <strong class='strong'>username</strong>.",
   "alternative": "You can also invite by <strong class='strong'>email</strong> or enter multiple addresses separated by a comma.",
   "send_invites": "Send invites",

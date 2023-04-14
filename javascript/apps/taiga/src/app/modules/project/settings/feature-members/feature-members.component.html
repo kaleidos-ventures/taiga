@@ -93,11 +93,11 @@ Copyright (c) 2023-present Kaleidos INC
       [open]="invitePeopleModal"
       (requestClose)="closeModal()">
       <ng-container *ngIf="vm.project">
-        <tg-invite-to-project
+        <tg-invite-user-modal
           *ngIf="invitePeopleModal && vm.project.userIsAdmin"
           (inviteSuccess)="onInviteSuccess()"
           (closeModal)="closeModal()"
-          [project]="vm.project"></tg-invite-to-project>
+          [project]="vm.project"></tg-invite-user-modal>
       </ng-container>
     </tg-ui-modal>
   </ng-container>

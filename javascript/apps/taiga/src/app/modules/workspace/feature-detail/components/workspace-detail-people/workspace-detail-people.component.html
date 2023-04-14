@@ -10,12 +10,14 @@ Copyright (c) 2023-present Kaleidos INC
     <ng-container *ngIf="vm.workspace">
       <div class="wks-main-content-top">
         <h2 class="wks-main-content-title">{{ t('commons.people') }}</h2>
-        <a
+        <button
           *ngIf="vm.workspace.userRole === 'admin'"
           appearance="primary"
-          tuiButton>
+          tuiButton
+          type="button"
+          (click)="invitePeopleModal()">
           {{ t('workspace.invite_workspace') }}
-        </a>
+        </button>
       </div>
       <tui-tabs
         class="wks-people-tabs"
@@ -87,6 +89,20 @@ Copyright (c) 2023-present Kaleidos INC
         role="tabpanel">
         <router-outlet></router-outlet>
       </div>
+
+      <ng-container *ngIf="invitePeople">
+        <tg-ui-modal
+          *ngIf="vm.workspace"
+          [open]="invitePeople"
+          (requestClose)="invitePeopleModal()">
+          <tg-invite-user-modal
+            *ngIf="invitePeople"
+            (closeModal)="invitePeopleModal()"
+            (inviteSuccess)="onInviteSuccess()"
+            [reset]="resetForm"
+            [workspace]="vm.workspace"></tg-invite-user-modal>
+        </tg-ui-modal>
+      </ng-container>
     </ng-container>
   </ng-container>
 </ng-container>

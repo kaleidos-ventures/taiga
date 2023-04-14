@@ -30,7 +30,7 @@ import {
   selectShowBannerOnRevoke,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { WsService } from '~/app/services/ws';
-import { acceptInvitationId } from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import {
@@ -263,7 +263,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
 
   public acceptInvitationId() {
     this.store.dispatch(
-      acceptInvitationId({
+      invitationProjectActions.acceptInvitationId({
         id: this.state.get('project').id,
         isBanner: true,
       })

@@ -7,7 +7,7 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { InvitationRequest, Project, ProjectCreation } from '@taiga/data';
+import { Project, ProjectCreation } from '@taiga/data';
 
 export const createProject = createAction(
   '[NewProject] create project',
@@ -22,12 +22,4 @@ export const createProjectSuccess = createAction(
 export const createProjectError = createAction(
   '[NewProject] create project error',
   props<{ error: unknown }>()
-);
-
-export const inviteUsersToProject = createAction(
-  '[NewProject] invite users',
-  props<{
-    id: string;
-    invitation: InvitationRequest[];
-  }>()
 );

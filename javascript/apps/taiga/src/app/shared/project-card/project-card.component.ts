@@ -31,11 +31,11 @@ import { Project, Workspace } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { distinctUntilChanged, map, skip } from 'rxjs/operators';
-import { selectAcceptedInvite } from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+import { selectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 import { CommonTemplateModule } from '../common-template.module';
 import { DropdownModule } from '../dropdown/dropdown.module';
-import { DataAccessInvitationToProjectModule } from '../invite-to-project/data-access/+state/invite-to-project-data-access.module';
-import { InviteToProjectModule } from '../invite-to-project/invite-to-project.module';
+import { DataAccessInviteUserModalModule } from '../invite-user-modal/data-access/+state/invite-user-modal-data-access.module';
+import { InviteUserModalModule } from '../invite-user-modal/invite-user-modal.module';
 import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module';
 const cssValue = getComputedStyle(document.documentElement);
 
@@ -52,9 +52,9 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
     TuiSvgModule,
     CommonTemplateModule,
     AvatarModule,
-    InviteToProjectModule,
+    InviteUserModalModule,
     TuiHintModule,
-    DataAccessInvitationToProjectModule,
+    DataAccessInviteUserModalModule,
     BadgeModule,
     CapitalizePipeModule,
     TuiDataListModule,

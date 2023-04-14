@@ -26,18 +26,23 @@ import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiScrollbarComponent } from '@taiga-ui/core';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
-import { Contact, InvitationRequest, Project, Role, User } from '@taiga/data';
+import {
+  Contact,
+  InvitationRequest,
+  Project,
+  Role,
+  User,
+  Workspace,
+} from '@taiga/data';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map, share, startWith, switchMap, throttleTime } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { inviteUsersToProject } from '~/app/modules/feature-new-project/+state/actions/new-project.actions';
 import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import { InvitationService } from '~/app/services/invitation.service';
 import {
-  addSuggestedContact,
-  inviteUsersSuccess,
-  searchUser,
-} from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+  invitationActions,
+  invitationProjectActions,
+} from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import {
   selectContacts,
   selectInvitations,
@@ -45,7 +50,7 @@ import {
   selectSearchFinished,
   selectSuggestedUsers,
   selectUsersToInvite,
-} from '~/app/shared/invite-to-project/data-access/+state/selectors/invitation.selectors';
+} from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 
 interface InvitationForm {
   fullName: string;
@@ -56,11 +61,11 @@ interface InvitationForm {
 }
 @UntilDestroy()
 @Component({
-  selector: 'tg-invite-to-project',
-  templateUrl: './invite-to-project.component.html',
+  selector: 'tg-invite-user-modal',
+  templateUrl: './invite-user-modal.component.html',
   styleUrls: [
-    './styles/invite-to-project.shared.css',
-    './invite-to-project.component.css',
+    './styles/invite-user-modal.shared.css',
+    './invite-user-modal.component.css',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -73,12 +78,15 @@ interface InvitationForm {
     },
   ],
 })
-export class InviteToProjectComponent implements OnInit, OnChanges {
+export class InviteUserModalComponent implements OnInit, OnChanges {
   @ViewChild(TuiScrollbarComponent, { read: ElementRef })
   private readonly scrollBar?: ElementRef<HTMLElement>;
 
   @Input()
-  public project!: Project;
+  public project?: Project;
+
+  @Input()
+  public workspace?: Workspace;
 
   @Input()
   public fromOverview?: boolean;
@@ -121,7 +129,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     bulkError: false,
     moreThanFifty: false,
   };
-  public inviteProjectForm: FormGroup = this.fb.group({
+  public inviteUsersForm: FormGroup = this.fb.group({
     users: new FormArray([]),
   });
   public orderedRoles!: Role[] | null;
@@ -141,6 +149,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public search$: Subject<string | null> = new Subject();
   public notInBulkMode = true;
   public emailInputIsFocus = false;
+  public titleName = '';
 
   constructor(
     private fb: FormBuilder,
@@ -149,7 +158,10 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     private invitationService: InvitationService
   ) {
     this.actions$
-      .pipe(ofType(inviteUsersSuccess), untilDestroyed(this))
+      .pipe(
+        ofType(invitationProjectActions.inviteUsersSuccess),
+        untilDestroyed(this)
+      )
       .subscribe(() => {
         this.inviteSuccess.emit();
         this.close();
@@ -172,7 +184,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   }
 
   public get users() {
-    return (this.inviteProjectForm.controls['users'] as FormArray)
+    return (this.inviteUsersForm.controls['users'] as FormArray)
       .controls as FormGroup[];
   }
 
@@ -200,11 +212,14 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   public ngOnInit() {
     this.usersToInvite$ = this.validEmails$.pipe(
       switchMap((validEmails) => {
-        return this.store.select(selectUsersToInvite(validEmails));
+        return this.store.select(
+          selectUsersToInvite(validEmails, !!this.project)
+        );
       })
     );
 
-    this.store.dispatch(initRolesPermissions({ project: this.project }));
+    this.project &&
+      this.store.dispatch(initRolesPermissions({ project: this.project }));
 
     // when we add users to invite its necessary to add the result to the form
     this.usersToInvite$
@@ -234,9 +249,10 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
         this.emailInput?.nativeFocusableElement?.focus();
       });
 
-    this.memberRoles$.pipe(untilDestroyed(this)).subscribe((memberRoles) => {
-      this.orderedRoles = memberRoles;
-    });
+    this.project &&
+      this.memberRoles$.pipe(untilDestroyed(this)).subscribe((memberRoles) => {
+        this.orderedRoles = memberRoles;
+      });
 
     this.suggestedUsers$
       .pipe(untilDestroyed(this))
@@ -250,6 +266,8 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
         });
         this.suggestionSelected = this.elegibleSuggestions?.[0] || 0;
       });
+
+    this.titleName = this.project ? this.project.name : this.workspace!.name;
   }
 
   public ngOnChanges(changes: SimpleChanges) {
@@ -341,12 +359,19 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     } else if (emails.trim().length > 1) {
       this.notInBulkMode = true;
       const searchText = this.inviteIdentifier.replace(/^@/, '');
+      const searchPayload: {
+        text: string;
+        project?: Project['id'];
+        workspace?: Workspace['id'];
+      } = { text: searchText };
+      if (this.project) {
+        searchPayload.project = this.project.id;
+      } else if (this.workspace) {
+        searchPayload.workspace = this.workspace.id;
+      }
       this.store.dispatch(
-        searchUser({
-          searchUser: {
-            text: searchText,
-            project: this.project.id,
-          },
+        invitationActions.searchUsers({
+          searchUser: searchPayload,
           peopleAdded: this.getPeopleAdded(),
         })
       );
@@ -406,7 +431,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
   }
 
   public deleteUser(i: number) {
-    (this.inviteProjectForm.controls['users'] as FormArray).removeAt(i);
+    (this.inviteUsersForm.controls['users'] as FormArray).removeAt(i);
     // force recalculate scroll height in Firefox
     requestAnimationFrame(() => {
       if (this.scrollBar) {
@@ -425,7 +450,9 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
       !this.suggestedUsers[index].userIsMember
     ) {
       this.store.dispatch(
-        addSuggestedContact({ contact: this.suggestedUsers[index] })
+        invitationProjectActions.addSuggestedContact({
+          contact: this.suggestedUsers[index],
+        })
       );
       this.validEmails$.next([this.suggestedUsers[index].username]);
     }
@@ -485,12 +512,15 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
 
   public generatePayload(): InvitationRequest[] {
     return this.users.map((user) => {
-      return {
+      const data: InvitationRequest = {
         email: user.get('email')?.value as string,
         username: user.get('username')?.value as string,
-        roleSlug:
-          this.getRoleSlug(user.get('roles')?.value as string)?.slug || '',
       };
+      if (this.project) {
+        data.roleSlug =
+          this.getRoleSlug(user.get('roles')?.value as string)?.slug || '';
+      }
+      return data;
     });
   }
 
@@ -499,12 +529,7 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     if (this.users.length > 50) {
       this.inviteIdentifierErrors.moreThanFifty = true;
     } else if (this.users.length && this.inviteIdentifier === '') {
-      this.store.dispatch(
-        inviteUsersToProject({
-          id: this.project.id,
-          invitation: this.generatePayload(),
-        })
-      );
+      this.handleDispatch();
     } else if (this.inviteIdentifier === '') {
       this.inviteIdentifierErrors.listEmpty = true;
       this.emailInput?.nativeFocusableElement?.focus();
@@ -512,10 +537,23 @@ export class InviteToProjectComponent implements OnInit, OnChanges {
     this.inviteIdentifierErrors.peopleNotAdded = !!this.inviteIdentifier;
   }
 
+  public handleDispatch() {
+    if (this.project) {
+      this.store.dispatch(
+        invitationProjectActions.inviteUsers({
+          id: this.project.id,
+          invitation: this.generatePayload(),
+        })
+      );
+    } else if (this.workspace) {
+      // dispatch invite users to wks
+    }
+  }
+
   public cleanFormBeforeClose() {
     this.resetErrors();
     this.resetField();
-    this.inviteProjectForm = this.fb.group({
+    this.inviteUsersForm = this.fb.group({
       users: new FormArray([]),
     });
   }

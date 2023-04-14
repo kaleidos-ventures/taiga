@@ -9,7 +9,9 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container
   *transloco="let t"
   [formGroup]="user">
-  <div class="user content">
+  <div
+    class="user content"
+    [class.has-role]="user.get('roles')">
     <tg-user-card [user]="userObj">
       <div
         invitation
@@ -28,6 +30,7 @@ Copyright (c) 2023-present Kaleidos INC
       </ng-template>
     </tg-user-card>
     <tg-ui-select
+      *ngIf="user.get('roles')"
       [label]="t('invitation_modal.role')"
       labelVisuallyHidden>
       <tui-select

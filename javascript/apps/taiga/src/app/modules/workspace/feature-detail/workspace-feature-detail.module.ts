@@ -50,6 +50,7 @@ import { WorkspaceDetailProjectsComponent } from './components/workspace-detail-
 import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-skeleton/workspace-detail-skeleton.component';
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
+import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     PaginationComponent,
     TitleComponent,
     TuiScrollbarModule,
+    InviteUserModalModule,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

@@ -18,4 +18,4 @@ import { invitationFeature } from './reducers/invitation.reducers';
     EffectsModule.forFeature([InvitationEffects]),
   ],
 })
-export class DataAccessInvitationToProjectModule {}
+export class DataAccessInviteUserModalModule {}

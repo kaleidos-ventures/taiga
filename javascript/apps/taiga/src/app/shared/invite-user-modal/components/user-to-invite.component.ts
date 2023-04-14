@@ -22,7 +22,7 @@ import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
   standalone: true,
   templateUrl: './user-to-invite.component.html',
   styleUrls: [
-    '../styles/invite-to-project.shared.css',
+    '../styles/invite-user-modal.shared.css',
     './user-to-invite.component.css',
   ],
   imports: [
@@ -60,7 +60,7 @@ export class UserToInviteComponent {
   public userIndex!: number;
 
   @Input()
-  public roles!: Role[] | null;
+  public roles?: Role[] | null;
 
   public get userObj(): Partial<User> {
     return {

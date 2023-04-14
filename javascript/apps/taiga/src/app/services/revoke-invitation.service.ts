@@ -14,7 +14,10 @@ import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { genericResponseError, InvitationInfo } from '@taiga/data';
 import { catchError, EMPTY, map, of } from 'rxjs';
-import * as InvitationActions from '~/app/shared/invite-to-project/data-access/+state/actions/invitation.action';
+import {
+  revokeInvitation,
+  invitationProjectActions,
+} from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { revokedError } from '../modules/errors/+state/actions/errors.actions';
 import { AppService } from './app.service';
 @Injectable({
@@ -172,11 +175,11 @@ export class RevokeInvitationService {
       closeOnNavigation: false,
     });
     if (isBanner) {
-      return InvitationActions.revokeInvitationBannerIdError({
+      return invitationProjectActions.revokeInvitationBannerIdError({
         projectId: id,
       });
     }
-    return InvitationActions.revokeInvitation({
+    return revokeInvitation({
       projectId: id,
     });
   }

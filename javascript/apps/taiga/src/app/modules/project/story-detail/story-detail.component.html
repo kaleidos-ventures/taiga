@@ -90,58 +90,58 @@ Copyright (c) 2023-present Kaleidos INC
               [tuiHint]="t('story.next')"
               (click)="navigateToNextStory(vm.story.next!.ref)"
               type="button"></button>
-          </div>
-          <tui-hosted-dropdown
-            [tuiDropdownAlign]="'right'"
-            [content]="changeView"
-            [(open)]="dropdownState">
-            <button
-              role="menu"
-              aria-haspopup="true"
-              [attr.aria-expanded]="dropdownState"
-              tabindex="0"
-              [attr.aria-label]="
-                t('story.change_view_sr', {
-                  currentView: t(getCurrentViewTranslation)
-                })
-              "
-              [icon]="vm.selectedStoryView"
-              appearance="tertiary"
-              class="change-view"
-              tuiIconButton
-              type="button"
-              tuiHintDirection="top-right"
-              [tuiHint]="t('story.change_view')"
-              (click)="(!dropdownState)"></button>
-          </tui-hosted-dropdown>
-          <tui-hosted-dropdown
-            [tuiDropdownAlign]="'right'"
-            [content]="storyOptions"
-            [(open)]="storyOptionsState">
-            <button
-              role="menu"
-              aria-haspopup="true"
-              [attr.aria-expanded]="storyOptionsState"
-              tabindex="0"
-              [attr.aria-label]="t('story.story_options')"
-              icon="more-vertical"
-              data-test="story-options"
-              appearance="tertiary"
-              tuiIconButton
-              type="button"
-              tuiHintDirection="top-right"
-              (click)="(storyOptionsState)"></button>
-          </tui-hosted-dropdown>
-          <button
-            *ngIf="vm.selectedStoryView !== 'full-view'"
-            [attr.aria-label]="t('story.close')"
-            icon="close"
-            appearance="action-button"
-            (click)="closeStory()"
-            tuiIconButton
-            class="close-button"
-            type="button"></button>
 
+            <tui-hosted-dropdown
+              [tuiDropdownAlign]="'right'"
+              [content]="changeView"
+              [(open)]="dropdownState">
+              <button
+                role="menu"
+                aria-haspopup="true"
+                [attr.aria-expanded]="dropdownState"
+                tabindex="0"
+                [attr.aria-label]="
+                  t('story.change_view_sr', {
+                    currentView: t(getCurrentViewTranslation)
+                  })
+                "
+                [icon]="vm.selectedStoryView"
+                appearance="tertiary"
+                class="change-view"
+                tuiIconButton
+                type="button"
+                tuiHintDirection="top-right"
+                [tuiHint]="t('story.change_view')"
+                (click)="(!dropdownState)"></button>
+            </tui-hosted-dropdown>
+            <tui-hosted-dropdown
+              [tuiDropdownAlign]="'right'"
+              [content]="storyOptions"
+              [(open)]="storyOptionsState">
+              <button
+                role="menu"
+                aria-haspopup="true"
+                [attr.aria-expanded]="storyOptionsState"
+                tabindex="0"
+                [attr.aria-label]="t('story.story_options')"
+                icon="more-vertical"
+                data-test="story-options"
+                appearance="tertiary"
+                tuiIconButton
+                type="button"
+                tuiHintDirection="top-right"
+                (click)="(storyOptionsState)"></button>
+            </tui-hosted-dropdown>
+            <button
+              *ngIf="vm.selectedStoryView !== 'full-view'"
+              [attr.aria-label]="t('story.close')"
+              icon="close"
+              appearance="action-button"
+              (click)="closeStory()"
+              tuiIconButton
+              class="close-button"
+              type="button"></button>
+          </div>
           <ng-template #changeView>
             <tui-data-list
               class="view-options-list"

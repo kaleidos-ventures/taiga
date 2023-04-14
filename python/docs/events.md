@@ -505,6 +505,7 @@ Content for:
   ```
 
 #### `projectmemberships.update`
+
 It happens when a project membership role is updated.
 
 Content for:
@@ -520,6 +521,31 @@ Content for:
       "membership": {... "project membership object" ...}
   }
   ```
+
+#### `projectmemberships.delete`
+
+It happens when a project membership is deleted
+
+Content for:
+- user channel:
+  ```
+  {
+      "membership": {... "project membership object" ...}
+  }
+  ```
+- project channel:
+  ```
+  {
+      "membership": {... "project membership object" ...}
+  }
+  ```
+- workspace channel:
+  ```
+  {
+      "membership": {... "project membership object" ...}
+  }
+  ```
+
 
 #### `projectroles.update`
 

@@ -18,3 +18,11 @@ class ProjectMembershipSerializer(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ProjectMembershipDeletedSerializer(BaseModel):
+    user: UserNestedSerializer
+    project: ProjectNestedSerializer
+
+    class Config:
+        orm_mode = True

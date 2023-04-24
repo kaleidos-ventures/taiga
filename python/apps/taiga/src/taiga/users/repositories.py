@@ -32,6 +32,9 @@ from taiga.projects.projects.models import Project
 from taiga.tokens.models import OutstandingToken
 from taiga.users.models import AuthData, User
 from taiga.users.tokens import VerifyUserToken
+from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
+from taiga.workspaces.invitations.models import WorkspaceInvitation
+from taiga.workspaces.memberships.models import WorkspaceMembership
 from taiga.workspaces.workspaces.models import Workspace
 
 ##########################################################
@@ -156,21 +159,60 @@ def list_users(
 
 
 @sync_to_async
-def list_users_by_text(
+def list_project_users_by_text(
     text_search: str = "",
     project_id: UUID | None = None,
     exclude_inactive: bool = True,
     offset: int = 0,
     limit: int = 0,
 ) -> list[User]:
-    qs = _list_users_by_text_qs(text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive)
+    qs = _list_project_users_by_text_qs(
+        text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive
+    )
     if limit:
         return list(qs[offset : offset + limit])
 
     return list(qs)
 
 
-def _list_users_by_text_qs(
+@sync_to_async
+def list_workspace_users_by_text(
+    text_search: str = "",
+    workspace_id: UUID | None = None,
+    exclude_inactive: bool = True,
+    offset: int = 0,
+    limit: int = 0,
+) -> list[User]:
+    qs = _list_workspace_users_by_text_qs(
+        text_search=text_search, workspace_id=workspace_id, exclude_inactive=exclude_inactive
+    )
+    if limit:
+        return list(qs[offset : offset + limit])
+
+    return list(qs)
+
+
+def _list_users_by_text_qs(text_search: str = "", exclude_inactive: bool = True) -> QuerySet[User]:
+    """
+    Get all the users that match a full text search (against their full_name and username fields).
+
+    :param text_search: The text the users should match in either their full names or usernames to be considered
+    :param exclude_inactive: true (return just active users), false (returns all users)
+    :return: a users queryset
+    """
+    users_qs = User.objects.all()
+
+    if exclude_inactive:
+        users_qs &= users_qs.exclude(is_active=False)
+
+    if text_search:
+        users_matching_full_text_search = _list_users_by_fullname_or_username(text_search, users_qs)
+        users_qs = users_matching_full_text_search
+
+    return users_qs
+
+
+def _list_project_users_by_text_qs(
     text_search: str = "", project_id: UUID | None = None, exclude_inactive: bool = True
 ) -> QuerySet[User]:
     """
@@ -182,14 +224,7 @@ def _list_users_by_text_qs(
     :param exclude_inactive: true (return just active users), false (returns all users)
     :return: a prioritized queryset of users
     """
-    users_qs = User.objects.all()
-
-    if exclude_inactive:
-        users_qs &= users_qs.exclude(is_active=False)
-
-    if text_search:
-        users_matching_full_text_search = _list_users_by_fullname_or_username(text_search, users_qs)
-        users_qs = users_matching_full_text_search
+    users_qs = _list_users_by_text_qs(text_search=text_search, exclude_inactive=exclude_inactive)
 
     if project_id:
         # List all the users matching the full-text search criteria, ordering results by their proximity to a project :
@@ -230,6 +265,66 @@ def _list_users_by_text_qs(
         # NOTE: `Union all` are important to keep the individual ordering when combining the different search criteria.
         users_qs = sorted_project_users_qs.union(
             sorted_workspace_users_qs.union(sorted_other_users_qs, all=True), all=True
+        )
+        return users_qs
+
+    return _sort_queryset_if_unsorted(users_qs, text_search)
+
+
+def _list_workspace_users_by_text_qs(
+    text_search: str = "", workspace_id: UUID | None = None, exclude_inactive: bool = True
+) -> QuerySet[User]:
+    """
+    Get all the users that match a full text search (against their full_name and username fields), returning a
+    prioritized (not filtered) list by their closeness to a given workspace (if any).
+
+    :param text_search: The text the users should match in either their full names or usernames to be considered
+    :param workspace_id: Users will be ordered by their proximity to this workspace excluding itself
+    :param exclude_inactive: true (return just active users), false (returns all users)
+    :return: a prioritized queryset of users
+    """
+    users_qs = _list_users_by_text_qs(text_search=text_search, exclude_inactive=exclude_inactive)
+
+    if workspace_id:
+        # List all the users matching the full-text search criteria, ordering results by their proximity to a workspace:
+        #     1st. workspace members
+        #     2nd. members of the workspace's projects
+        #     3rd. rest of users (the priority for this group is not too important)
+
+        # 1st: Users that share the same workspace
+        memberships = WorkspaceMembership.objects.filter(user__id=OuterRef("pk"), workspace__id=workspace_id)
+        pending_invitations = WorkspaceInvitation.objects.filter(
+            user__id=OuterRef("pk"), workspace__id=workspace_id, status=WorkspaceInvitationStatus.PENDING
+        )
+        workspace_users_qs = (
+            users_qs.filter(workspaces__id=workspace_id)
+            .annotate(user_is_member=Exists(memberships))
+            .annotate(user_has_pending_invitation=Exists(pending_invitations))
+        )
+        sorted_workspace_users_qs = _sort_queryset_if_unsorted(workspace_users_qs, text_search)
+
+        # # 2nd: Users that are members of the workspace's projects but are NOT workspace members
+        ws_projects_users_qs = (
+            users_qs.filter(projects__workspace_id=workspace_id)
+            .exclude(workspaces__id=workspace_id)
+            .annotate(user_is_member=Value(False, output_field=BooleanField()))
+            .annotate(user_has_pending_invitation=Exists(pending_invitations))
+            .distinct()
+        )
+        sorted_ws_projects_users_qs = _sort_queryset_if_unsorted(ws_projects_users_qs, text_search)
+
+        # 3rd: Users that are neither a workspace member nor a member of the workspace's projects
+        other_users_qs = (
+            users_qs.exclude(workspaces__id=workspace_id)
+            .exclude(projects__workspace_id=workspace_id)
+            .annotate(user_is_member=Value(False, output_field=BooleanField()))
+            .annotate(user_has_pending_invitation=Exists(pending_invitations))
+        )
+        sorted_other_users_qs = _sort_queryset_if_unsorted(other_users_qs, text_search)
+
+        # NOTE: `Union all` are important to keep the individual ordering when combining the different search criteria.
+        users_qs = sorted_workspace_users_qs.union(
+            sorted_ws_projects_users_qs.union(sorted_other_users_qs, all=True), all=True
         )
         return users_qs
 
@@ -356,10 +451,22 @@ def get_total_users(
 
 
 @sync_to_async
-def get_total_users_by_text(
+def get_total_project_users_by_text(
     text_search: str = "", project_id: UUID | None = None, exclude_inactive: bool = True
 ) -> int:
-    qs = _list_users_by_text_qs(text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive)
+    qs = _list_project_users_by_text_qs(
+        text_search=text_search, project_id=project_id, exclude_inactive=exclude_inactive
+    )
+    return qs.count()
+
+
+@sync_to_async
+def get_total_workspace_users_by_text(
+    text_search: str = "", workspace_id: UUID | None = None, exclude_inactive: bool = True
+) -> int:
+    qs = _list_workspace_users_by_text_qs(
+        text_search=text_search, workspace_id=workspace_id, exclude_inactive=exclude_inactive
+    )
     return qs.count()
 
 

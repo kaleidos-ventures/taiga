@@ -454,19 +454,55 @@ async def test_list_users_as_dict_with_usernames():
 
 
 #####################################################################
-# list_paginated_usrs_by_text (search users)
+# list_paginated_users_by_text (search users)
 #####################################################################
 
 
-async def test_list_paginated_users_by_text_ok():
+async def test_list_paginated_project_users_by_text_ok():
     with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
-        fake_users_repo.list_users_by_text.return_value = []
+        fake_users_repo.get_total_project_users_by_text.return_value = 0
+        fake_users_repo.list_project_users_by_text.return_value = []
 
         pagination, users = await services.list_paginated_users_by_text(
             text="text", project_id="id", offset=9, limit=10
         )
 
-        fake_users_repo.list_users_by_text.assert_awaited_with(text_search="text", project_id="id", offset=9, limit=10)
+        fake_users_repo.get_total_project_users_by_text.assert_awaited_with(text_search="text", project_id="id")
+        fake_users_repo.list_project_users_by_text.assert_awaited_with(
+            text_search="text", project_id="id", offset=9, limit=10
+        )
+
+        assert users == []
+
+
+async def test_list_paginated_workspace_users_by_text_ok():
+    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
+        fake_users_repo.get_total_workspace_users_by_text.return_value = 0
+        fake_users_repo.list_workspace_users_by_text.return_value = []
+
+        pagination, users = await services.list_paginated_users_by_text(
+            text="text", workspace_id="id", offset=9, limit=10
+        )
+
+        fake_users_repo.get_total_workspace_users_by_text.assert_awaited_with(text_search="text", workspace_id="id")
+        fake_users_repo.list_workspace_users_by_text.assert_awaited_with(
+            text_search="text", workspace_id="id", offset=9, limit=10
+        )
+
+        assert users == []
+
+
+async def test_list_paginated_default_project_users_by_text_ok():
+    with (patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,):
+        fake_users_repo.get_total_project_users_by_text.return_value = 0
+        fake_users_repo.list_project_users_by_text.return_value = []
+
+        pagination, users = await services.list_paginated_users_by_text(text="text", offset=9, limit=10)
+
+        fake_users_repo.get_total_project_users_by_text.assert_awaited_with(text_search="text", project_id=None)
+        fake_users_repo.list_project_users_by_text.assert_awaited_with(
+            text_search="text", project_id=None, offset=9, limit=10
+        )
 
         assert users == []
 

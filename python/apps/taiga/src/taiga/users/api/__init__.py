@@ -91,7 +91,8 @@ async def verify_user(form: VerifyTokenValidator) -> VerificationInfoSerializer:
 @routes.users.get(
     "/search",
     name="users.search",
-    summary="List all users matching a full text search, ordered (when provided) by their project closeness",
+    summary="List all users matching a full text search, ordered (when provided) by their closeness"
+    " to a project or a workspace.",
     response_model=list[UserSearchSerializer],
 )
 async def list_users_by_text(
@@ -100,18 +101,22 @@ async def list_users_by_text(
     pagination_params: PaginationQuery = Depends(),
     text: str = Query(None, description="search text (str)"),
     project: B64UUID = Query(None, description="the project id (B64UUID)"),
+    workspace: B64UUID = Query(None, description="the workspace id (B64UUID)"),
 ) -> list[User]:
     """
-    List all the users matching the full-text search criteria, ordering results by their proximity to a project :
-        1st. project members of this project
-        2nd. members of the project's workspace
-        3rd. rest of users (the priority for this group is not too important)
+    List all the users matching the full-text search criteria in their usernames and/or full names. The response will be
+    ***alphabetically ordered in blocks***, according to their proximity to a *<project/workspace>* when any of
+    these two parameters are received:
+      - 1st ordering block: *<project / workspace>* members,
+      - 2nd ordering block: *<members of the project's workspace / members of the workspace's projects>*
+      - 3rd ordering block: rest of the users
     """
     await check_permissions(permissions=LIST_USERS_BY_TEXT, user=request.user)
 
     pagination, users = await users_services.list_paginated_users_by_text(
         text=text,
         project_id=project,
+        workspace_id=workspace,
         offset=pagination_params.offset,
         limit=pagination_params.limit,
     )

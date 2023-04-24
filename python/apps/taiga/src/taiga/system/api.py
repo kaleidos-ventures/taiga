@@ -16,7 +16,7 @@ from taiga.system.serializers import LanguageSerializer
 
 
 @routes.system.get(
-    "/languages",
+    "/system/languages",
     name="system.languages.list",
     summary="List system available languages",
     response_model=list[LanguageSerializer],

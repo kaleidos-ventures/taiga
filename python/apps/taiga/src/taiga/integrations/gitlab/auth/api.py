@@ -17,7 +17,7 @@ ACCESS_TOKEN_200 = responses.http_status_200(model=AccessTokenWithRefreshSeriali
 
 
 @routes.unauth.post(
-    "/gitlab",
+    "/auth/gitlab",
     name="auth.gitlab",
     summary="Login / register with Gitlab",
     responses=ACCESS_TOKEN_200 | ERROR_400 | ERROR_422,

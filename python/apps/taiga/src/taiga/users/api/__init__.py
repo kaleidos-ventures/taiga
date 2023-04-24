@@ -127,7 +127,7 @@ async def list_users_by_text(
 
 
 @routes.my.get(
-    "/user",
+    "/my/user",
     name="my.user",
     summary="Get authenticated user",
     response_model=UserSerializer,
@@ -150,7 +150,7 @@ async def get_my_user(request: Request) -> User:
 
 
 @routes.my.put(
-    "/user",
+    "/my/user",
     name="my.user.update",
     summary="Update authenticated user",
     response_model=UserSerializer,

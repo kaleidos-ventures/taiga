@@ -13,8 +13,8 @@ tags_metadata = []
 
 
 # /auth
-auth = AuthAPIRouter(prefix="/auth", tags=["auth"])
-unauth = APIRouter(prefix="/auth", tags=["auth"], responses=ERROR_401)
+auth = AuthAPIRouter(tags=["auth"])
+unauth = APIRouter(tags=["auth"], responses=ERROR_401)
 tags_metadata.append(
     {
         "name": "auth",
@@ -32,18 +32,8 @@ tags_metadata.append(
     }
 )
 
-# /projects
-projects = AuthAPIRouter(prefix="/projects", tags=["projects"])
-unauth_projects = APIRouter(prefix="/projects", tags=["projects"])
-tags_metadata.append(
-    {
-        "name": "projects",
-        "description": "Endpoint for projects resources.",
-    }
-)
-
 # /workspaces
-workspaces = AuthAPIRouter(prefix="/workspaces", tags=["workspaces"])
+workspaces = AuthAPIRouter(tags=["workspaces"])
 tags_metadata.append(
     {
         "name": "workspaces",
@@ -60,13 +50,23 @@ tags_metadata.append(
     }
 )
 
+# /projects
+projects = AuthAPIRouter(prefix="/projects", tags=["projects"])
+unauth_projects = APIRouter(prefix="/projects", tags=["projects"])
+tags_metadata.append(
+    {
+        "name": "projects",
+        "description": "Endpoint for projects resources.",
+    }
+)
+
 # /my
-my = AuthAPIRouter(prefix="/my", tags=["my"])
+my = AuthAPIRouter(tags=["my"])
 tags_metadata.append({"name": "my", "description": "Endpoints for logged-in user's resources."})
 
 
 # /system
-system = APIRouter(prefix="/system", tags=["system"])
+system = APIRouter(tags=["system"])
 tags_metadata.append(
     {
         "name": "system",

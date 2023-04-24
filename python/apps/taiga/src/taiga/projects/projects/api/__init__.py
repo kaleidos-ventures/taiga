@@ -73,7 +73,7 @@ async def create_project(
 
 
 @routes.workspaces.get(
-    "/{workspace_id}/projects",
+    "/workspaces/{workspace_id}/projects",
     name="workspace.projects.list",
     summary="List workspace projects",
     response_model=list[ProjectSummarySerializer],
@@ -91,7 +91,7 @@ async def list_workspace_projects(
 
 
 @routes.workspaces.get(
-    "/{workspace_id}/invited-projects",
+    "/workspaces/{workspace_id}/invited-projects",
     name="workspace.invited-projects.list",
     summary="List of projects in a workspace where the user is invited",
     response_model=list[ProjectSummarySerializer],
@@ -227,7 +227,7 @@ async def delete_project(
 
 
 @routes.my.get(
-    "/projects/{id}/permissions",
+    "/my/projects/{id}/permissions",
     name="my.projects.permissions.list",
     summary="List my project permissions",
     response_model=list[str],

@@ -38,7 +38,7 @@ LIST_WORKSPACE_DETAIL_200 = responses.http_status_200(model=list[WorkspaceDetail
 
 
 @routes.workspaces.post(
-    "",
+    "/workspaces",
     name="workspaces.post",
     summary="Create workspace",
     responses=WORKSPACE_DETAIL_200 | ERROR_422 | ERROR_403,
@@ -56,7 +56,7 @@ async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> Wo
 
 
 @routes.my.get(
-    "/workspaces",
+    "/my/workspaces",
     name="my.workspaces.list",
     summary="List the overview of the workspaces to which I belong",
     responses=LIST_WORKSPACE_DETAIL_200 | ERROR_403,
@@ -75,7 +75,7 @@ async def list_my_workspaces(request: AuthRequest) -> list[WorkspaceDetailSerial
 
 
 @routes.workspaces.get(
-    "/{id}",
+    "/workspaces/{id}",
     name="workspaces.get",
     summary="Get workspace",
     responses=WORKSPACE_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -92,7 +92,7 @@ async def get_workspace(
 
 
 @routes.my.get(
-    "/workspaces/{id}",
+    "/my/workspaces/{id}",
     name="my.workspaces.get",
     summary="Get the overview of a workspace to which I belong",
     responses=WORKSPACE_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -116,7 +116,7 @@ async def get_my_workspace(
 
 
 @routes.workspaces.patch(
-    "/{id}",
+    "/workspaces/{id}",
     name="workspace.update",
     summary="Update workspace",
     responses=WORKSPACE_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -142,7 +142,7 @@ async def update_workspace(
 
 
 @routes.workspaces.delete(
-    "/{id}",
+    "/workspaces/{id}",
     name="workspace.delete",
     summary="Delete workspace",
     responses=ERROR_400 | ERROR_404 | ERROR_403,

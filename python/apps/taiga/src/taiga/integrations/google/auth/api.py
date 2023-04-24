@@ -17,7 +17,7 @@ ACCESS_TOKEN_200 = responses.http_status_200(model=AccessTokenWithRefreshSeriali
 
 
 @routes.unauth.post(
-    "/google",
+    "/auth/google",
     name="auth.google",
     summary="Login / register with Google",
     responses=ACCESS_TOKEN_200 | ERROR_400 | ERROR_422,

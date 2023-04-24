@@ -17,7 +17,7 @@ from taiga.routers import routes
 
 
 @routes.unauth.post(
-    "/token",
+    "/auth/token",
     name="auth.token",
     summary="Get token",
     response_model=AccessTokenWithRefreshSerializer,
@@ -34,7 +34,7 @@ async def token(form: AccessTokenValidator) -> AccessTokenWithRefreshSerializer:
 
 
 @routes.unauth.post(
-    "/token/refresh",
+    "/auth/token/refresh",
     name="auth.token.refresh",
     summary="Refresh token",
     response_model=AccessTokenWithRefreshSerializer,
@@ -51,7 +51,7 @@ async def refresh(form: RefreshTokenValidator) -> AccessTokenWithRefreshSerializ
 
 
 @routes.auth.post(
-    "/token/deny",
+    "/auth/token/deny",
     name="auth.token.deny",
     summary="Deny a refresh token",
     responses=ERROR_422 | ERROR_400 | ERROR_403,

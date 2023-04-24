@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "1b5b7074-7e62-4728-9399-05fae0aa1461",
+		"_postman_id": "f884802f-642d-41f7-a417-6f372f87c2a8",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3299216"
 	},
 	"item": [
 		{
@@ -808,6 +809,7 @@
 									"pm.test(\"Environment variable settings\", function () {",
 									"    pm.environment.set(\"auth_token\", pm.response.json().token);",
 									"    pm.environment.set(\"refresh_token\", pm.response.json().refresh);",
+									"    pm.environment.set(\"search-text\", pm.response.json().username);",
 									"});",
 									"",
 									"// Tests",
@@ -913,6 +915,162 @@
 							],
 							"path": [
 								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "N/A my.user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.set(\"search-text\", pm.response.json().username);",
+									"});",
+									"   ",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API fields",
+									"    pm.expect(jsonRes).to.have.property(\"username\");",
+									"    pm.expect(jsonRes).to.have.property(\"fullName\");",
+									"    pm.expect(jsonRes).to.have.property(\"email\");",
+									"    pm.expect(jsonRes).to.have.property(\"lang\");",
+									"    pm.expect(jsonRes).to.have.property(\"color\");",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/user",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.users.search (by workspace)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.length).to.be.equal(1);",
+									"",
+									"    for (const [i, user] of jsonRes.entries()) {      ",
+									" ",
+									"        pm.expect(user).to.have.property(\"username\");",
+									"        pm.expect(user).to.have.property(\"fullName\");",
+									"        pm.expect(user).to.have.property(\"color\");",
+									"        pm.expect(user).to.have.property(\"userIsMember\");",
+									"        pm.expect(user).to.have.property(\"userHasPendingInvitation\");",
+									"    }",
+									"});// Post-request execution tasks"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/search?text={{search-text}}&offset={{offset}}&limit={{limit}}&workspace={{ws-id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "text",
+									"value": "{{search-text}}"
+								},
+								{
+									"key": "project",
+									"value": "{{pj-id}}",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								},
+								{
+									"key": "workspace",
+									"value": "{{ws-id}}"
+								}
 							]
 						}
 					},
@@ -1586,6 +1744,99 @@
 							],
 							"path": [
 								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.users.search (by project)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.length).to.be.equal(1);",
+									"",
+									"    for (const [i, user] of jsonRes.entries()) {      ",
+									" ",
+									"        pm.expect(user).to.have.property(\"username\");",
+									"        pm.expect(user).to.have.property(\"fullName\");",
+									"        pm.expect(user).to.have.property(\"color\");",
+									"        pm.expect(user).to.have.property(\"userIsMember\");",
+									"        pm.expect(user).to.have.property(\"userHasPendingInvitation\");",
+									"    }",
+									"});// Post-request execution tasks"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/users/search?text={{search-text}}&project={{pj-id}}&offset={{offset}}&limit={{limit}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "text",
+									"value": "{{search-text}}"
+								},
+								{
+									"key": "project",
+									"value": "{{pj-id}}"
+								},
+								{
+									"key": "offset",
+									"value": "{{offset}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								},
+								{
+									"key": "workspace",
+									"value": "{{ws-id}}",
+									"disabled": true
+								}
 							]
 						}
 					},

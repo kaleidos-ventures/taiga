@@ -51,7 +51,7 @@ class ProjectInvitation(models.BaseModel, CreatedAtMetaInfoMixin):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        verbose_name="inviited by",
+        verbose_name="invited by",
     )
     num_emails_sent = models.IntegerField(default=1, null=False, blank=False, verbose_name="num emails sent")
     resent_at = models.DateTimeField(null=True, blank=True, verbose_name="resent at")

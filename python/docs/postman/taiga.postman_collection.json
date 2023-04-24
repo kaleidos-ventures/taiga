@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "a79393ca-a6a5-40d1-a921-934ef215d0fa",
+		"_postman_id": "c6b8fa0a-3d8b-49ff-8f5e-8f4f1e1ad679",
 		"name": "taiga-next",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3299216"
 	},
 	"item": [
 		{
@@ -331,6 +332,11 @@
 								{
 									"key": "limit",
 									"value": "{{limit}}"
+								},
+								{
+									"key": "workspace",
+									"value": "{{ws-id}}",
+									"disabled": true
 								}
 							]
 						}

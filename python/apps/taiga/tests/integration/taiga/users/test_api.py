@@ -136,13 +136,14 @@ async def test_list_users_by_text_anonymous(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_list_users_by_text(client):
+async def test_list_project_users_by_text(client):
+    project = await f.create_project()
     user = await f.create_user()
     user2 = await f.create_user()
     client.login(user)
 
     text = user2.username
-    project_id = "6JgsbGyoEe2VExhWgGrI2w"
+    project_id = project.b64id
     offset = 0
     limit = 10
 
@@ -154,13 +155,33 @@ async def test_list_users_by_text(client):
     assert response.headers["Pagination-Total"] == "1"
 
 
+async def test_list_workspace_users_by_text(client):
+    workspace = await f.create_workspace()
+    user = await f.create_user()
+    user2 = await f.create_user()
+    client.login(user)
+
+    text = user2.username
+    workspace_id = workspace.b64id
+    offset = 0
+    limit = 10
+
+    response = client.get(f"/users/search?text={text}&workspace={workspace_id}&offset={offset}&limit={limit}")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert len(response.json()) == 1
+    assert response.headers["Pagination-Offset"] == "0"
+    assert response.headers["Pagination-Limit"] == "10"
+    assert response.headers["Pagination-Total"] == "1"
+
+
 async def test_list_users_by_text_no_results(client):
+    project = await f.create_project()
     user = await f.create_user()
     await f.create_user()
     client.login(user)
 
     text = "noresults"
-    project_id = "6JgsbGyoEe2VExhWgGrI2w"
+    project_id = project.b64id
     offset = 0
     limit = 10
 

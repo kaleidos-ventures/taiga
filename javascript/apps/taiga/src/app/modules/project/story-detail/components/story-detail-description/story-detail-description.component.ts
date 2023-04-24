@@ -30,6 +30,7 @@ import { LanguageService } from '~/app/services/language/language.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
+import { ProjectApiService } from '@taiga/api';
 
 export interface StoryDetailDescriptionState {
   projectId: Project['id'];
@@ -117,7 +118,8 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
     private hasPermissions: PermissionsService,
     private store: Store,
     private localStorageService: LocalStorageService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private projectApiService: ProjectApiService
   ) {
     this.state.connect(
       'hasPermissionToEdit',
@@ -150,6 +152,25 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
         this.saveState();
       }
     );
+  }
+
+  public imageUploadHandler(blobInfo: {
+    filename: () => string;
+    blob: () => Blob;
+  }): Promise<string> {
+    const file = new File([blobInfo.blob()], blobInfo.filename());
+
+    return new Promise((resolve) => {
+      this.projectApiService
+        .uploadStoriesMediafiles(
+          this.state.get('projectId'),
+          this.state.get('story').ref,
+          [file]
+        )
+        .subscribe((result) => {
+          resolve(result[0].file);
+        });
+    });
   }
 
   public setEditorInitialHeight() {

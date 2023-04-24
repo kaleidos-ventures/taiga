@@ -14,6 +14,7 @@ import {
   Contact,
   EditProject,
   Invitation,
+  MediaFile,
   Membership,
   Project,
   ProjectCreation,
@@ -449,6 +450,23 @@ export class ProjectApiService {
   public removeMember(projectId: Project['id'], username: User['username']) {
     return this.http.delete(
       `${this.config.apiUrl}/projects/${projectId}/memberships/${username}`
+    );
+  }
+
+  public uploadStoriesMediafiles(
+    projectId: string,
+    ref: Story['ref'],
+    files: File[]
+  ) {
+    const formData = new FormData();
+
+    files.forEach((file) => {
+      formData.append('files', file);
+    });
+
+    return this.http.post<MediaFile[]>(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${ref}/mediafiles`,
+      formData
     );
   }
 }

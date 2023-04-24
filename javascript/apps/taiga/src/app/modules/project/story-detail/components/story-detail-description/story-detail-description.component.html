@@ -93,7 +93,10 @@ Copyright (c) 2023-present Kaleidos INC
                 '/assets/editor/iframe.css',
                 '/assets/editor/prism.css'
               ],
-              codesample_global_prismjs: true
+              codesample_global_prismjs: true,
+              images_upload_handler: imageUploadHandler.bind(this),
+              images_file_types:
+                'jpeg,jpg,jpe,jfi,jif,jfif,png,gif,bmp,webp,svg'
             }"></editor>
 
           <div

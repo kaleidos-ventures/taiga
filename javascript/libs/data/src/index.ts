@@ -31,3 +31,4 @@ export * from './lib/workflow.model';
 export * from './lib/workflow.model.mock';
 export * from './lib/workspace.model';
 export * from './lib/workspace.model.mock';
+export * from './lib/media-file.model';

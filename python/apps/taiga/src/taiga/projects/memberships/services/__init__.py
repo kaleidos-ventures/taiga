@@ -9,6 +9,7 @@ from uuid import UUID
 
 from taiga.base.api.pagination import Pagination
 from taiga.permissions import services as permissions_services
+from taiga.projects.invitations import repositories as project_invitations_repositories
 from taiga.projects.memberships import events as memberships_events
 from taiga.projects.memberships import repositories as memberships_repositories
 from taiga.projects.memberships.models import ProjectMembership
@@ -102,13 +103,17 @@ async def delete_project_membership(
     if await _is_membership_the_only_admin(membership_role=membership.role):
         raise ex.MembershipIsTheOnlyAdminError("Membership is the only admin")
 
-    deleted = await memberships_repositories.delete_project_memberships(
+    deleted = await memberships_repositories.delete_project_membership(
         filters={"id": membership.id},
     )
     if deleted > 0:
         # Delete stories assignments
         await story_assignments_repositories.delete_stories_assignments(
             filters={"project_id": membership.project_id, "username": membership.user.username}
+        )
+        # Delete project invitations
+        await project_invitations_repositories.delete_project_invitation(
+            filters={"project_id": membership.project_id, "username_or_email": membership.user.email},
         )
         await memberships_events.emit_event_when_project_membership_is_deleted(membership=membership)
         return True

@@ -186,15 +186,21 @@ async def test_delete_project_membership_ok():
         patch(
             "taiga.projects.memberships.services.story_assignments_repositories", autospec=True
         ) as fake_story_assignments_repository,
+        patch(
+            "taiga.projects.memberships.services.project_invitations_repositories", autospec=True
+        ) as fake_project_invitations_repository,
         patch("taiga.projects.memberships.services.memberships_events", autospec=True) as fake_membership_events,
     ):
-        fake_membership_repository.delete_project_memberships.return_value = 1
+        fake_membership_repository.delete_project_membership.return_value = 1
         await services.delete_project_membership(membership=membership)
-        fake_membership_repository.delete_project_memberships.assert_awaited_once_with(
+        fake_membership_repository.delete_project_membership.assert_awaited_once_with(
             filters={"id": membership.id},
         )
         fake_story_assignments_repository.delete_stories_assignments.assert_awaited_once_with(
             filters={"project_id": membership.project_id, "username": membership.user.username}
+        )
+        fake_project_invitations_repository.delete_project_invitation.assert_awaited_once_with(
+            filters={"project_id": membership.project_id, "username_or_email": membership.user.email}
         )
         fake_membership_events.emit_event_when_project_membership_is_deleted.assert_awaited_once_with(
             membership=membership

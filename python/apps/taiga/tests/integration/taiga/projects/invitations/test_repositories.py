@@ -296,6 +296,25 @@ async def test_bulk_update_project_invitations():
 
 
 ##########################################################
+# delete_project_invitation
+##########################################################
+
+
+async def test_delete_project_invitation():
+    project = await f.create_project()
+    user = await f.create_user()
+    role = await f.create_project_role(project=project)
+    await f.create_project_invitation(
+        user=user, email=user.email, project=project, status=ProjectInvitationStatus.PENDING, role=role
+    )
+
+    deleted_invitation = await repositories.delete_project_invitation(
+        filters={"project_id": project.id, "username_or_email": user.email},
+    )
+    assert deleted_invitation == 1
+
+
+##########################################################
 # misc - get_total_project_invitations
 ##########################################################
 

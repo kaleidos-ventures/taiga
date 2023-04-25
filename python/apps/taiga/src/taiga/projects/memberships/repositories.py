@@ -154,12 +154,12 @@ def update_project_membership(membership: ProjectMembership, values: dict[str, A
 
 
 ##########################################################
-# delete project memberships
+# delete project membership
 ##########################################################
 
 
 @sync_to_async
-def delete_project_memberships(filters: ProjectMembershipFilters = {}) -> int:
+def delete_project_membership(filters: ProjectMembershipFilters = {}) -> int:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     count, _ = qs.delete()
     return count

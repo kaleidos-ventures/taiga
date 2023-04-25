@@ -15,7 +15,7 @@ import { fetch } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
@@ -276,6 +276,50 @@ export class ProjectEffects {
             status: action.error ? TuiNotification.Error : TuiNotification.Info,
           });
         })
+      );
+    },
+    { dispatch: false }
+  );
+
+  public userLostProjectMembership$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(projectEventActions.userLostProjectMembership),
+        concatLatestFrom(() =>
+          this.store.select(selectCurrentProject).pipe(filterNil())
+        ),
+        switchMap(([action, project]) =>
+          this.projectApiService.getProject(project.id).pipe(
+            map((project) => {
+              if (action.isSelf) {
+                this.appService.toastNotification({
+                  message: 'common_members_tabs.no_longer_member',
+                  paramsMessage: { project_name: action.projectName },
+                  status: TuiNotification.Info,
+                  closeOnNavigation: false,
+                });
+                return this.router.navigate([
+                  'project',
+                  project.id,
+                  project.slug,
+                ]);
+              }
+              return EMPTY;
+            }),
+            catchError(() => {
+              if (action.isSelf) {
+                this.appService.toastNotification({
+                  message: 'common_members_tabs.no_longer_member',
+                  paramsMessage: { project_name: action.projectName },
+                  status: TuiNotification.Info,
+                  closeOnNavigation: false,
+                });
+                return this.router.navigate(['/']);
+              }
+              return EMPTY;
+            })
+          )
+        )
       );
     },
     { dispatch: false }

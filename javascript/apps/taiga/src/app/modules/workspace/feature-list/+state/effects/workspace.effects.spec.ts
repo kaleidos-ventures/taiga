@@ -11,11 +11,11 @@ import { randUuid } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
 import { ProjectMockFactory, WorkspaceMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { AppService } from '~/app/services/app.service';
 import {
@@ -23,7 +23,11 @@ import {
   fetchWorkspaceListSuccess,
   fetchWorkspaceProjects,
   fetchWorkspaceProjectsSuccess,
+  membershipLostSuccess,
+  projectDeletedSuccess,
+  workspaceEventActions,
 } from '../actions/workspace.actions';
+import { selectWorkspaceState } from '../selectors/workspace.selectors';
 import { WorkspaceEffects } from './workspace.effects';
 
 describe('WorkspaceEffects', () => {
@@ -84,5 +88,72 @@ describe('WorkspaceEffects', () => {
         a: fetchWorkspaceProjectsSuccess({ id, projects: [project] }),
       });
     });
+  });
+  it('should dispatch projectDeletedSuccess with updated workspace when projectDeleted effect is triggered', () => {
+    const workspace = WorkspaceMockFactory();
+    const updatedWorkspace = { ...workspace, totalProjects: 2 };
+    const projectId = '08f6ba0c-597c-4d8c-83cb-b6b60d47ed32';
+
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    workspaceApiService.fetchWorkspace.mockReturnValue(of(updatedWorkspace));
+
+    const store = spectator.inject(MockStore);
+    store.overrideSelector(selectWorkspaceState, {
+      workspaces: [workspace],
+    });
+
+    const effects = spectator.inject(WorkspaceEffects);
+
+    actions$ = hot('-a', {
+      a: workspaceEventActions.projectDeleted({
+        workspaceId: workspace.id,
+        projectId,
+        name: 'Test Project',
+      }),
+    });
+
+    const expected = cold('-b', {
+      b: projectDeletedSuccess({
+        updatedWorkspace,
+        workspaceId: workspace.id,
+        projectId,
+      }),
+    });
+
+    expect(effects.projectDeleted$).toBeObservable(expected);
+  });
+
+  it('should dispatch membershipLostSuccess with updated workspace when membershipLost effect is triggered', () => {
+    const workspace = WorkspaceMockFactory();
+    const updatedWorkspace = { ...workspace, totalProjects: 2 };
+    const projectId = 'bef17ca2-1c53-4bee-8a3a-5681b022a589';
+
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    workspaceApiService.fetchWorkspace.mockReturnValue(of(updatedWorkspace));
+
+    const store = spectator.inject(MockStore);
+    store.overrideSelector(selectWorkspaceState, {
+      workspaces: [workspace],
+    });
+
+    const effects = spectator.inject(WorkspaceEffects);
+
+    actions$ = hot('-a', {
+      a: workspaceEventActions.projectMembershipLost({
+        workspaceId: workspace.id,
+        projectId,
+        name: 'Test Project',
+      }),
+    });
+
+    const expected = cold('-b', {
+      b: membershipLostSuccess({
+        updatedWorkspace,
+        workspaceId: workspace.id,
+        projectId,
+      }),
+    });
+
+    expect(effects.membershipLost$).toBeObservable(expected);
   });
 });

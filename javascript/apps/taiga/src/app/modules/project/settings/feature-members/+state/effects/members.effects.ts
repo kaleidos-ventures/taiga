@@ -25,7 +25,10 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  fetchProject,
+  projectEventActions,
+} from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
@@ -389,6 +392,32 @@ export class MembersEffects {
       filter(([, project]) => project.userIsAdmin),
       map(() => {
         return membersActions.updateMembersList({ eventType: 'update' });
+      })
+    );
+  });
+
+  public removeMember$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.removeMember),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      exhaustMap(([action, project]) => {
+        return this.projectApiService
+          .removeMember(project.id, action.username)
+          .pipe(
+            map(() => {
+              return projectEventActions.userLostProjectMembership({
+                username: action.username,
+                projectName: project.name,
+                isSelf: action.isSelf,
+              });
+            }),
+            catchError((httpResponse: HttpErrorResponse) => {
+              this.appService.errorManagement(httpResponse);
+              return EMPTY;
+            })
+          );
       })
     );
   });

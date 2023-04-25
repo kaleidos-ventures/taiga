@@ -1,0 +1,113 @@
+<!--removeUserFromProject(member.user.username)
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <button
+    *ngIf="member.user.username !== user?.username"
+    appearance="primary"
+    tuiLink
+    class="row-action"
+    (click)="openRemoveDropdown()"
+    [tuiDropdown]="removeFromProject"
+    [tuiDropdownManual]="removeDropdownState"
+    (tuiActiveZoneChange)="closeDropdown()"
+    [tuiDropdownAlign]="'right'"
+    type="button">
+    {{ t('common_members_tabs.remove') }}
+  </button>
+  <button
+    *ngIf="member.user.username === user?.username"
+    appearance="primary"
+    tuiLink
+    class="row-action"
+    (click)="openLeaveDropdown()"
+    [tuiDropdown]="leaveAsAdmin"
+    [tuiDropdownManual]="leaveDropdownState"
+    [tuiDropdownAlign]="'right'"
+    (tuiActiveZoneChange)="closeDropdown()"
+    type="button">
+    {{ t('common_members_tabs.leave') }}
+  </button>
+
+  <ng-template #leaveAsAdmin>
+    <div
+      class="action-dialog"
+      cdkTrapFocus>
+      <ng-container *ngIf="!hasSingleAdmin">
+        <p class="action-dialog-title">
+          {{
+            t('common_members_tabs.leave_title', {
+              project_name: project.name
+            })
+          }}
+        </p>
+        <p class="action-dialog-description">
+          {{ t('common_members_tabs.leave_description') }}
+        </p>
+        <div class="action-dialog-actions">
+          <button
+            tuiLink
+            data-test="cancel-leave"
+            appearance="tertiary"
+            (click)="closeDropdown()">
+            {{ t('common_members_tabs.no_cancel') }}
+          </button>
+          <button
+            data-test="confirm-leave"
+            tuiButton
+            icon="leave"
+            appearance="secondary"
+            (click)="removeUserFromProject(member.user.username, true)">
+            {{ t('common_members_tabs.leave_confirm') }}
+          </button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="hasSingleAdmin">
+        <p class="action-dialog-title">
+          {{ t('common_members_tabs.last_admin_warning_title') }}
+        </p>
+        <p class="action-dialog-description">
+          {{ t('common_members_tabs.last_admin_warning_description') }}
+        </p>
+      </ng-container>
+    </div>
+  </ng-template>
+
+  <ng-template #removeFromProject>
+    <div
+      class="action-dialog"
+      cdkTrapFocus>
+      <p class="action-dialog-title">
+        {{
+          t('common_members_tabs.remove_title', {
+            user_name: member.user.username
+          })
+        }}
+      </p>
+      <p class="action-dialog-description">
+        {{ t('common_members_tabs.remove_description') }}
+      </p>
+      <div class="action-dialog-actions">
+        <button
+          tuiLink
+          data-test="cancel-leave"
+          appearance="tertiary"
+          (click)="closeDropdown()">
+          {{ t('common_members_tabs.no_cancel') }}
+        </button>
+        <button
+          data-test="confirm-leave"
+          tuiButton
+          icon="trash"
+          appearance="destructive"
+          (click)="removeUserFromProject(member.user.username, false)">
+          {{ t('common_members_tabs.remove_confirm') }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</ng-container>

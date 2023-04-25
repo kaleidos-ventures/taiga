@@ -7,7 +7,7 @@
  */
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Invitation, Membership } from '@taiga/data';
+import { Invitation, Membership, User } from '@taiga/data';
 
 export const membersActions = createActionGroup({
   source: 'Settings members',
@@ -109,5 +109,9 @@ export const membersActions = createActionGroup({
     }>(),
     'Update invitation role error': emptyProps(),
     'Update member info': emptyProps(),
+    'Remove member': props<{
+      username: User['username'];
+      isSelf?: boolean;
+    }>(),
   },
 });

@@ -49,6 +49,15 @@ export const projectDeletedSuccess = createAction(
   }>()
 );
 
+export const membershipLostSuccess = createAction(
+  '[WorkspaceList] Lost project membership Success',
+  props<{
+    updatedWorkspace?: Workspace;
+    projectId: Project['id'];
+    workspaceId: Workspace['id'];
+  }>()
+);
+
 export const deleteWorkspaceFromUI = createAction(
   '[WorkspaceList] Delete workspace from UI',
   props<{ workspaceId: Workspace['id'] }>()
@@ -129,6 +138,13 @@ export const workspaceEventActions = createActionGroup({
   source: 'Workspace ws',
   events: {
     'Project Deleted': props<{
+      projectId: string;
+      workspaceId: string;
+      name: string;
+      deleted_by?: User;
+      error?: boolean;
+    }>(),
+    'Project Membership lost': props<{
       projectId: string;
       workspaceId: string;
       name: string;

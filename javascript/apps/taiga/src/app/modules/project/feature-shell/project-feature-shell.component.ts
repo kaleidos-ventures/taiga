@@ -140,6 +140,24 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
   }
 
   public watchProject() {
+    this.wsService
+      .userEvents<{
+        membership: Membership;
+        workspace: string;
+      }>('projectmemberships.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        if (eventResponse.event.content.membership.project) {
+          this.store.dispatch(
+            projectEventActions.userLostProjectMembership({
+              projectName: eventResponse.event.content.membership.project?.name,
+              username: eventResponse.event.content.membership.user.fullName,
+              isSelf: true,
+            })
+          );
+        }
+      });
+
     merge(
       this.wsService
         .userEvents<{ membership: Membership }>('projectmemberships.update')

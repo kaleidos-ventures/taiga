@@ -23,6 +23,11 @@ export default [
     scope: 'assign-user',
   },
   {
+    task: 'remove-user.close',
+    defaultKey: 'esc',
+    scope: 'remove-user',
+  },
+  {
     task: 'edit-field.close',
     defaultKey: 'esc',
     scope: 'edit-field',

@@ -35,6 +35,7 @@ import { MembersEffects } from './+state/effects/members.effects';
 import { membersFeature } from './+state/reducers/members.reducer';
 import { MembersListComponent } from './components/members-list/members-list.component';
 import { PendingMembersListComponent } from './components/pending-members-list/pending-members-list.component';
+import { RemoveMemberComponent } from './components/remove-member/remove-member.component';
 import { RevokeInvitationComponent } from './components/revoke-invitation/revoke-invitation.component';
 import { RoleSelectComponent } from './components/role-select/role-select.component';
 import { ProjectsSettingsFeatureMembersComponent } from './feature-members.component';
@@ -46,6 +47,7 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     PendingMembersListComponent,
     RevokeInvitationComponent,
     RoleSelectComponent,
+    RemoveMemberComponent,
   ],
   providers: [
     {

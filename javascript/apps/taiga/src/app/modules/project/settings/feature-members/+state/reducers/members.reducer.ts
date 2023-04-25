@@ -8,6 +8,7 @@
 
 import { createFeature, on } from '@ngrx/store';
 import { Invitation, Membership, User } from '@taiga/data';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import { membersActions } from '../actions/members.actions';
 
@@ -185,6 +186,16 @@ export const reducer = createImmerReducer(
         (inv: Invitation) => inv.id === id
       );
       state.invitations[index].role = newRole;
+
+      return state;
+    }
+  ),
+  on(
+    projectEventActions.userLostProjectMembership,
+    (state, { username }): MembersState => {
+      state.members = state.members.filter(
+        (member) => member.user.username !== username
+      );
 
       return state;
     }

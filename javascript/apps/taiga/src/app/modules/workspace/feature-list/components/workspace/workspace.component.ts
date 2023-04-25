@@ -23,7 +23,7 @@ import { User } from '@ngneat/falso';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Project, Workspace } from '@taiga/data';
+import { Membership, Project, Workspace } from '@taiga/data';
 import { Subject } from 'rxjs';
 import { filter, map, switchMap, take } from 'rxjs/operators';
 import {
@@ -256,6 +256,46 @@ export class WorkspaceComponent implements OnDestroy, OnInit {
               projectId: eventResponse.event.content.project,
               workspaceId: eventResponse.event.content.workspace,
               name: eventResponse.event.content.name,
+            })
+          );
+        }
+      });
+
+    this.wsService
+      .userEvents<{
+        membership: Membership;
+        workspace: string;
+      }>('projectmemberships.delete')
+      .pipe(
+        untilDestroyed(this),
+        switchMap((eventResponse) => {
+          return this.state.select('workspaceList').pipe(
+            filter((workspaceList) => !!workspaceList.length),
+            take(1),
+            map((workspaceList) => {
+              return { eventResponse, workspaceList };
+            })
+          );
+        })
+      )
+      .subscribe(({ eventResponse, workspaceList }) => {
+        const workspace = workspaceList.find(
+          (it) => it.id === eventResponse.event.content.workspace
+        );
+        if (
+          workspace?.userRole === 'guest' &&
+          eventResponse.event.content.membership.project
+        ) {
+          this.eventsSubject.next({
+            event: 'projects.delete',
+            project: eventResponse.event.content.membership.project?.id,
+            workspace: eventResponse.event.content.workspace,
+          });
+          this.store.dispatch(
+            workspaceEventActions.projectDeleted({
+              projectId: eventResponse.event.content.membership.project?.id,
+              workspaceId: eventResponse.event.content.workspace,
+              name: eventResponse.event.content.membership.project?.name,
             })
           );
         }

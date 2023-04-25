@@ -12,7 +12,7 @@ import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
-import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
+import { WorkspaceApiService } from '@taiga/api';
 import { Project, Workspace } from '@taiga/data';
 import { timer, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -217,10 +217,50 @@ export class WorkspaceEffects {
     );
   });
 
+  public membershipLost$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceEventActions.projectMembershipLost),
+      concatLatestFrom(() => [this.store.select(selectWorkspaceState)]),
+      pessimisticUpdate({
+        run: (action, workspaceState) => {
+          const workspace = workspaceState.workspaces.find((workspace) => {
+            return workspace.id === action.workspaceId;
+          });
+
+          // Check if there are any active projects or invitations on the workspace, and if you're a guest user, it will prevent you from attempting to fetch the workspace and simply deleting it.
+          if (
+            workspace &&
+            !(
+              workspace.invitedProjects.length + workspace.totalProjects - 1 <=
+                0 && workspace.userRole === 'guest'
+            )
+          ) {
+            return zip(
+              this.workspaceApiService.fetchWorkspace(action.workspaceId)
+            ).pipe(
+              map(([workspace]) => {
+                return WorkspaceActions.membershipLostSuccess({
+                  updatedWorkspace: workspace,
+                  workspaceId: action.workspaceId,
+                  projectId: action.projectId,
+                });
+              })
+            );
+          }
+          return WorkspaceActions.membershipLostSuccess({
+            workspaceId: action.workspaceId,
+            projectId: action.projectId,
+          });
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          return this.appService.errorManagement(httpResponse);
+        },
+      })
+    );
+  });
+
   constructor(
     private userStorageService: UserStorageService,
-    private projectApiService: ProjectApiService,
-
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService,
     private appService: AppService,

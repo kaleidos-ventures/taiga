@@ -28,7 +28,13 @@ import { randUserName } from '@ngneat/falso';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Project, User, Workspace, WorkspaceProject } from '@taiga/data';
+import {
+  Membership,
+  Project,
+  User,
+  Workspace,
+  WorkspaceProject,
+} from '@taiga/data';
 import { Observable, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import {
@@ -355,6 +361,27 @@ export class WorkspaceItemComponent
             name: eventResponse.event.content.name,
           })
         );
+      });
+
+    this.wsService
+      .events<{
+        membership: Membership;
+        workspace: string;
+      }>({
+        channel: `workspaces.${this.workspace.id}`,
+        type: 'projectmemberships.delete',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        if (eventResponse.event.content.membership.project) {
+          this.store.dispatch(
+            workspaceEventActions.projectMembershipLost({
+              projectId: eventResponse.event.content.membership.project?.id,
+              workspaceId: eventResponse.event.content.workspace,
+              name: eventResponse.event.content.membership.project?.name,
+            })
+          );
+        }
       });
 
     this.wsService

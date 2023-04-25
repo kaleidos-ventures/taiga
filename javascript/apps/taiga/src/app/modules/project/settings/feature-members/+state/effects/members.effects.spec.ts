@@ -15,7 +15,7 @@ import {
   randUserName,
   randUuid,
 } from '@ngneat/falso';
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';

@@ -10,7 +10,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Project } from '@taiga/data';
+import { Membership, Project } from '@taiga/data';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -114,6 +114,18 @@ export class ProjectsSettingsFeatureMembersComponent {
       .events<{ project: string }>({
         channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.update',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(
+          membersActions.updateMembersList({ eventType: 'update' })
+        );
+      });
+
+    this.wsService
+      .events<{ membership: Membership; workspace: string }>({
+        channel: `projects.${this.state.get('project').id}`,
+        type: 'projectmemberships.delete',
       })
       .pipe(untilDestroyed(this))
       .subscribe(() => {

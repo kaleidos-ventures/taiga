@@ -12,10 +12,11 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AppService } from '~/app/services/app.service';
@@ -26,7 +27,9 @@ import {
   fetchProjectSuccess,
   permissionsUpdate,
   permissionsUpdateSuccess,
+  projectEventActions,
 } from '../actions/project.actions';
+import { selectCurrentProject } from '../selectors/project.selectors';
 import { ProjectEffects } from './project.effects';
 
 describe('ProjectEffects', () => {
@@ -139,6 +142,48 @@ describe('ProjectEffects', () => {
     expect(effects.permissionsUpdate$).toSatisfyOnFlush(() => {
       expect(router.navigate).toHaveBeenCalledWith(['/']);
       expect(appService.errorManagement).toHaveBeenCalled();
+    });
+  });
+
+  it('should handle userLostProjectMembership effect when triggered', () => {
+    const projectSlug = 'test-project';
+    const projectMock = ProjectMockFactory();
+    const projectName = projectMock.name;
+    const projectId = projectMock.id;
+    const projectApiService = spectator.inject(ProjectApiService);
+    const router = spectator.inject(Router);
+    const appService = spectator.inject(AppService);
+    const effects = spectator.inject(ProjectEffects);
+    const store = spectator.inject(MockStore);
+
+    projectApiService.getProject.mockReturnValue(of(projectMock));
+    store.overrideSelector(selectCurrentProject, projectMock);
+
+    actions$ = hot('-a', {
+      a: projectEventActions.userLostProjectMembership({
+        isSelf: true,
+        projectName,
+        username: 'test-user',
+      }),
+    });
+
+    const expectedNavigation = cold('-b', { b: undefined });
+
+    expect(effects.userLostProjectMembership$).toBeObservable(
+      expectedNavigation
+    );
+    effects.userLostProjectMembership$.subscribe(() => {
+      expect(appService.toastNotification).toHaveBeenCalledWith({
+        message: 'common_members_tabs.no_longer_member',
+        paramsMessage: { project_name: projectName },
+        status: TuiNotification.Info,
+        closeOnNavigation: false,
+      });
+      expect(router.navigate).toHaveBeenCalledWith([
+        'project',
+        projectId,
+        projectSlug,
+      ]);
     });
   });
 });

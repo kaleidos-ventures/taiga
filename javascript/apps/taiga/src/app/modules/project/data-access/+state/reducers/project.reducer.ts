@@ -121,6 +121,17 @@ export const reducer = createImmerReducer(
       });
       return state;
     }
+  ),
+  on(
+    ProjectActions.projectEventActions.userLostProjectMembership,
+    (state, { isSelf }): ProjectState => {
+      // Project overview use this to show your user on the member list, setting it to false remove self from the list, the fetch remove self from the list.
+      if (isSelf && state.currentProjectId) {
+        state.projects[state.currentProjectId].userIsMember = false;
+        state.projects[state.currentProjectId].userIsAdmin = false;
+      }
+      return state;
+    }
   )
 );
 

@@ -445,4 +445,10 @@ export class ProjectApiService {
       `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}/assignments/${user}`
     );
   }
+
+  public removeMember(projectId: Project['id'], username: User['username']) {
+    return this.http.delete(
+      `${this.config.apiUrl}/projects/${projectId}/memberships/${username}`
+    );
+  }
 }

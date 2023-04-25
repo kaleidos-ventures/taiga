@@ -230,6 +230,16 @@ export class ProjectMembersComponent {
     this.wsService
       .events<{ project: string }>({
         channel: `projects.${this.state.get('project').id}`,
+        type: 'projectmemberships.delete',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(ProjectOverviewActions.updateMembersList());
+      });
+
+    this.wsService
+      .events<{ project: string }>({
+        channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.update',
       })
       .pipe(untilDestroyed(this))

@@ -63,6 +63,5 @@ tg-ui-user-skeleton {
   & > .header-row-action,
   & > .row-action {
     padding-block: var(--spacing-8);
-    padding-inline: 0;
   }
 }

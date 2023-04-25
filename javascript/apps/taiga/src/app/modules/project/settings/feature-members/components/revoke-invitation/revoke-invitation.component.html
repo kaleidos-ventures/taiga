@@ -24,19 +24,19 @@ Copyright (c) 2023-present Kaleidos INC
 
   <ng-template #confirmRevokeDialog>
     <div
-      class="revoke-dialog"
+      class="action-dialog"
       cdkTrapFocus>
-      <p class="revoke-dialog-title">
+      <p class="action-dialog-title">
         {{
           t('members.revoke.question', {
             user: invitation.user?.username ?? invitation.email
           })
         }}
       </p>
-      <p class="revoke-dialog-description">
+      <p class="action-dialog-description">
         {{ t('members.revoke.description') }}
       </p>
-      <div class="revoke-dialog-actions">
+      <div class="action-dialog-actions">
         <button
           tuiLink
           appearance="tertiary"

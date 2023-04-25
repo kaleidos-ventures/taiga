@@ -96,5 +96,10 @@ export const projectEventActions = createActionGroup({
       deleted_by?: User;
       error?: boolean;
     }>(),
+    'User lost project membership': props<{
+      projectName: string;
+      username: User['username'];
+      isSelf?: boolean;
+    }>(),
   },
 });

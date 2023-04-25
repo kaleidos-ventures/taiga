@@ -253,6 +253,7 @@ export const reducer = createImmerReducer(
   ),
   on(
     workspaceEventActions.projectDeleted,
+    workspaceEventActions.projectMembershipLost,
     (state, { workspaceId }): WorkspaceState => {
       const workspace = state.workspaces.find((workspace) => {
         return workspace.id === workspaceId;

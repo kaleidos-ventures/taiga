@@ -57,6 +57,7 @@ ProjectInvitationSelectRelated = list[
         "project",
         "role",
         "workspace",
+        "invited_by",
     ]
 ]
 
@@ -155,7 +156,7 @@ def get_project_invitations(
 
 
 ##########################################################
-# update invitations
+# update project invitations
 ##########################################################
 
 
@@ -176,6 +177,18 @@ def bulk_update_project_invitations(objs_to_update: list[ProjectInvitation], fie
 @sync_to_async
 def update_user_projects_invitations(user: User) -> None:
     ProjectInvitation.objects.filter(email=user.email).update(user=user)
+
+
+##########################################################
+# delete project invitation
+##########################################################
+
+
+@sync_to_async
+def delete_project_invitation(filters: ProjectInvitationFilters = {}) -> int:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    count, _ = qs.delete()
+    return count
 
 
 ##########################################################

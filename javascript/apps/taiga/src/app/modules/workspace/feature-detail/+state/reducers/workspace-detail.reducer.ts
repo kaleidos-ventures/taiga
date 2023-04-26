@@ -311,9 +311,11 @@ export const reducer = createImmerReducer(
       });
 
       if (member) {
-        state.members.membersList = state.members.membersList.filter((member) => {
-          return member.user.username !== username;
-        });
+        state.members.membersList = state.members.membersList.filter(
+          (member) => {
+            return member.user.username !== username;
+          }
+        );
 
         state.members.total--;
       }

@@ -194,7 +194,7 @@ export class WorkspaceItemComponent
       slideOutActive: false,
       loadingWorkspaces: [],
       acceptedInvites: [],
-      workspaceProjects: []
+      workspaceProjects: [],
     });
   }
 

@@ -143,9 +143,8 @@ describe('invite selectors', () => {
         fullName: 'user one',
       },
     ];
-    const userToInvite = selectWorkspaceUsersToInvite(userIdentifier).projector(
-      contacts
-    );
+    const userToInvite =
+      selectWorkspaceUsersToInvite(userIdentifier).projector(contacts);
     expect(userToInvite).toEqual([
       {
         username: 'user1',

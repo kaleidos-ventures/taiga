@@ -147,6 +147,11 @@ def delete_workspace_memberships(filters: WorkspaceMembershipFilters = {}) -> in
 
 
 @sync_to_async
+def list_workspace_members(workspace: Workspace) -> list[User]:
+    return list(workspace.members.all())
+
+
+@sync_to_async
 def get_total_workspace_memberships(filters: WorkspaceMembershipFilters = {}) -> int:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     return qs.count()

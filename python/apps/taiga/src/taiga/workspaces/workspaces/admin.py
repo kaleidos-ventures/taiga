@@ -12,6 +12,7 @@ from taiga.base.db.admin.forms import ModelChoiceField
 from taiga.base.db.admin.http import HttpRequest
 from taiga.base.db.models import ForeignKey, QuerySet
 from taiga.users.models import User
+from taiga.workspaces.invitations.models import WorkspaceInvitation
 from taiga.workspaces.memberships.models import WorkspaceMembership
 from taiga.workspaces.workspaces.models import Workspace
 
@@ -64,6 +65,23 @@ class WorkspaceGuestsInline(admin.NonrelatedTabularInline[User, Workspace]):
         return False
 
 
+class WorkspaceInvitationInline(admin.TabularInline[WorkspaceInvitation, Workspace]):
+    model = WorkspaceInvitation
+    extra = 0
+
+    def get_formset(self, request: HttpRequest, obj: Workspace | None = None, **kwargs: Any) -> Any:
+        self.parent_obj = obj  # Use in formfield_for_foreignkey()
+        return super().get_formset(request, obj, **kwargs)
+
+    def formfield_for_foreignkey(
+        self, db_field: ForeignKey[Any, Any], request: HttpRequest, **kwargs: Any
+    ) -> ModelChoiceField:
+        if db_field.name in ["role"]:
+            kwargs["queryset"] = db_field.related_model.objects.filter(project=self.parent_obj)
+
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
 @admin.register(Workspace)
 class WorkspaceAdmin(admin.ModelAdmin[Workspace]):
     fieldsets = (
@@ -75,4 +93,4 @@ class WorkspaceAdmin(admin.ModelAdmin[Workspace]):
     list_filter = ["created_by"]
     search_fields = ["id", "name"]
     ordering = ("name",)
-    inlines = [WorkspaceMembershipInline, WorkspaceGuestsInline]
+    inlines = [WorkspaceMembershipInline, WorkspaceInvitationInline, WorkspaceGuestsInline]

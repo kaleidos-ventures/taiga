@@ -417,6 +417,23 @@ Content for:
   }
   ```
 
+#### `workspaceinvitations.create`
+
+It happens when a new workspace invitation is created.
+
+Content for:
+- user channel:
+  ```
+  {
+      "workspace": "workspace_id",
+  }
+  ```
+
+- workspace channel:
+  ```
+  null
+  ```
+
 #### **projects.delete**
 
 It happens when a project is deleted

@@ -102,7 +102,7 @@ export class WorkspaceDetailPeoplePendingComponent implements OnInit {
   public getUser(invitation: InvitationWorkspaceMember): Partial<User> {
     if (invitation.user) {
       return invitation.user;
-      }
+    }
     return { email: invitation.email };
   }
 }

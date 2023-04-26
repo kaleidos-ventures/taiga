@@ -49,7 +49,7 @@ describe('WorkspaceItem', () => {
     invitation: {
       project: {
         acceptedInvite: [],
-      }
+      },
     },
     workspace: {
       rejectedInvites: [],

@@ -8,10 +8,11 @@ from enum import Enum
 
 
 class Emails(Enum):
-    SIGN_UP = "sign_up"
-    RESET_PASSWORD = "reset_password"
     PROJECT_INVITATION = "project_invitation"
+    RESET_PASSWORD = "reset_password"
+    SIGN_UP = "sign_up"
     SOCIAL_LOGIN_WARNING = "social_login_warning"
+    WORKSPACE_INVITATION = "workspace_invitation"
 
 
 class EmailPart(Enum):

@@ -73,6 +73,11 @@ class Settings(BaseSettings):
     VERIFY_USER_TOKEN_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
     RESET_PASSWORD_TOKEN_LIFETIME: int = 2 * 60  # 2 * 60 minutes = 2 hours
 
+    # Workspaces
+    WORKSPACE_INVITATION_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
+    WORKSPACE_INVITATION_RESEND_LIMIT: int = 10
+    WORKSPACE_INVITATION_RESEND_TIME: int = 10  # 10 minutes
+
     # Projects
     PROJECT_INVITATION_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
     PROJECT_INVITATION_RESEND_LIMIT: int = 10

@@ -1,0 +1,28 @@
+{#
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+#}
+
+{% set invitation_url = resolve_front_url("WORKSPACE_INVITATION", invitation_token=invitation_token) -%}
+
+{% trans %}emails.workspace_invitation.title{% endtrans %}
+
+{% if receiver_name -%}
+{% trans name=receiver_name %}emails.workspace_invitation.hi_name{% endtrans %}
+{% else -%}
+{% trans %}emails.workspace_invitation.hi_there{% endtrans %}
+{% endif -%}
+
+{% trans name=sender_name %}emails.workspace_invitation.sender{% endtrans %}
+
+{{ workspace_name }}
+
+{% if not receiver_name -%}
+{% trans %}emails.workspace_invitation.taiga_description{% endtrans %}
+{% endif -%}
+{{ invitation_url }}
+
+{% trans support_email=settings.SUPPORT_EMAIL %}emails.commons.support_txt{% endtrans %}

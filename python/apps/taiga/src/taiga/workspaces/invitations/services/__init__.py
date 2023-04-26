@@ -143,6 +143,20 @@ async def create_workspace_invitations(
 
 
 ##########################################################
+# update workspace invitations
+##########################################################
+
+
+async def update_user_workspaces_invitations(user: User) -> None:
+    await invitations_repositories.update_user_workspaces_invitations(user=user)
+    invitations = await invitations_repositories.list_workspace_invitations(
+        filters={"user": user, "status": WorkspaceInvitationStatus.PENDING},
+        select_related=["workspace"],
+    )
+    await invitations_events.emit_event_when_workspace_invitations_are_updated(invitations=invitations)
+
+
+##########################################################
 # send workspace invitation
 ##########################################################
 

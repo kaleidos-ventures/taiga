@@ -25,6 +25,7 @@ from taiga.users.serializers import VerificationInfoSerializer
 from taiga.users.serializers import services as serializers_services
 from taiga.users.services import exceptions as ex
 from taiga.users.tokens import ResetPasswordToken, VerifyUserToken
+from taiga.workspaces.invitations import services as workspaces_invitations_services
 
 #####################################################################
 # create user
@@ -124,6 +125,7 @@ async def verify_user_from_token(token: str) -> VerificationInfoSerializer:
 
     await verify_user(user=user)
     await invitations_services.update_user_projects_invitations(user=user)
+    await workspaces_invitations_services.update_user_workspaces_invitations(user=user)
 
     # Accept project invitation, if it exists and the user comes from the email's CTA. Errors will be ignored
     project_invitation_token = verify_token.get("project_invitation_token", None)

@@ -11,6 +11,7 @@ from unittest.mock import patch
 import pytest
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.workspaces.invitations import services
+from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
 from taiga.workspaces.invitations.services.exceptions import NonExistingUsernameError
 from tests.utils import factories as f
 
@@ -214,6 +215,28 @@ async def test_create_workspace_invitations_invalid_username(tqmanager):
         fake_users_services.list_users_usernames_as_dict.return_value = {}
 
         await services.create_workspace_invitations(workspace=workspace, invitations=invitations, invited_by=user1)
+
+
+#######################################################
+# update_user_workspaces_invitations
+#######################################################
+
+
+async def test_update_user_workspaces_invitations() -> None:
+    user = f.build_user()
+    with (
+        patch(
+            "taiga.workspaces.invitations.services.invitations_repositories", autospec=True
+        ) as fake_invitations_repositories,
+        patch("taiga.workspaces.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+    ):
+        await services.update_user_workspaces_invitations(user=user)
+        fake_invitations_repositories.update_user_workspaces_invitations.assert_awaited_once_with(user=user)
+        fake_invitations_repositories.list_workspace_invitations.assert_awaited_once_with(
+            filters={"user": user, "status": WorkspaceInvitationStatus.PENDING},
+            select_related=["workspace"],
+        )
+        fake_invitations_events.emit_event_when_workspace_invitations_are_updated.assert_awaited_once()
 
 
 #######################################################

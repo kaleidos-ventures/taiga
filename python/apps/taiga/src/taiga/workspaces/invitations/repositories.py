@@ -10,6 +10,7 @@ from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import Q, QuerySet
+from taiga.users.models import User
 from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
 from taiga.workspaces.invitations.models import WorkspaceInvitation
 
@@ -76,6 +77,27 @@ def create_workspace_invitations(
 
 
 ##########################################################
+# list workspace invitations
+##########################################################
+
+
+@sync_to_async
+def list_workspace_invitations(
+    filters: WorkspaceInvitationFilters = {},
+    offset: int | None = None,
+    limit: int | None = None,
+    select_related: WorkspaceInvitationSelectRelated = [],
+) -> list[WorkspaceInvitation]:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+
+    if limit is not None and offset is not None:
+        limit += offset
+
+    return list(qs[offset:limit])
+
+
+##########################################################
 # get workspace invitation
 ##########################################################
 
@@ -101,3 +123,8 @@ def get_workspace_invitation(
 @sync_to_async
 def bulk_update_workspace_invitations(objs_to_update: list[WorkspaceInvitation], fields_to_update: list[str]) -> None:
     WorkspaceInvitation.objects.bulk_update(objs_to_update, fields_to_update)
+
+
+@sync_to_async
+def update_user_workspaces_invitations(user: User) -> None:
+    WorkspaceInvitation.objects.filter(email=user.email).update(user=user)

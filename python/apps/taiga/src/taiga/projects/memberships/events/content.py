@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from taiga.base.serializers import BaseModel
+from taiga.base.serializers import UUIDB64, BaseModel
 from taiga.projects.memberships.serializers import ProjectMembershipDeletedSerializer, ProjectMembershipSerializer
 
 
@@ -15,3 +15,4 @@ class ProjectMembershipContent(BaseModel):
 
 class DeleteProjectMembershipContent(BaseModel):
     membership: ProjectMembershipDeletedSerializer
+    workspace: UUIDB64

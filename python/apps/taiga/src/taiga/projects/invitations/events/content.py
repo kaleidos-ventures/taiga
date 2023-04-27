@@ -5,9 +5,9 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from taiga.base.serializers import BaseModel
+from taiga.base.serializers import UUIDB64, BaseModel
 
 
 class ProjectInvitationContent(BaseModel):
-    workspace: str
-    project: str
+    workspace: UUIDB64
+    project: UUIDB64

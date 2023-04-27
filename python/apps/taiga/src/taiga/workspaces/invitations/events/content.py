@@ -5,8 +5,8 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from taiga.base.serializers import BaseModel
+from taiga.base.serializers import UUIDB64, BaseModel
 
 
 class WorkspaceInvitationContent(BaseModel):
-    workspace: str
+    workspace: UUIDB64

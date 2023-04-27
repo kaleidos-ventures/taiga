@@ -27,8 +27,8 @@ async def emit_event_when_project_invitations_are_created(
             user=invitation.user,  # type: ignore[arg-type]
             type=CREATE_PROJECT_INVITATION,
             content=ProjectInvitationContent(
-                workspace=invitation.project.workspace.b64id,
-                project=invitation.project.b64id,
+                workspace=invitation.project.workspace_id,
+                project=invitation.project_id,
             ),
         )
 
@@ -50,8 +50,8 @@ async def emit_event_when_project_invitation_is_updated(invitation: ProjectInvit
             user=invitation.user,
             type=UPDATE_PROJECT_INVITATION,
             content=ProjectInvitationContent(
-                workspace=invitation.project.workspace.b64id,
-                project=invitation.project.b64id,
+                workspace=invitation.project.workspace_id,
+                project=invitation.project_id,
             ),
         )
 
@@ -71,8 +71,8 @@ async def emit_event_when_project_invitation_is_accepted(invitation: ProjectInvi
             user=invitation.user,
             type=ACCEPT_PROJECT_INVITATION,
             content=ProjectInvitationContent(
-                workspace=invitation.project.workspace.b64id,
-                project=invitation.project.b64id,
+                workspace=invitation.project.workspace_id,
+                project=invitation.project_id,
             ),
         )
 
@@ -87,7 +87,7 @@ async def emit_event_when_project_invitation_is_revoked(invitation: ProjectInvit
             user=invitation.user,
             type=REVOKE_PROJECT_INVITATION,
             content=ProjectInvitationContent(
-                workspace=invitation.project.workspace.b64id,
-                project=invitation.project.b64id,
+                workspace=invitation.project.workspace_id,
+                project=invitation.project_id,
             ),
         )

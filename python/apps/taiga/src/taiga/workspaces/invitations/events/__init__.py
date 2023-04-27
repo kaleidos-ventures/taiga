@@ -26,7 +26,7 @@ async def emit_event_when_workspace_invitations_are_created(
             user=invitation.user,  # type: ignore[arg-type]
             type=CREATE_WORKSPACE_INVITATION,
             content=WorkspaceInvitationContent(
-                workspace=invitation.workspace.b64id,
+                workspace=invitation.workspace_id,
             ),
         )
 

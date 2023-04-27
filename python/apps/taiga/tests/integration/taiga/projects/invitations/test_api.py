@@ -101,11 +101,11 @@ async def test_create_project_invitations(client):
 
 
 ##########################################################
-# GET /projects/<id>/invitations
+# LIST /projects/<id>/invitations
 ##########################################################
 
 
-async def test_get_project_invitations_admin(client):
+async def test_list_project_invitations_admin(client):
     project = await f.create_project()
 
     client.login(project.created_by)
@@ -113,7 +113,7 @@ async def test_get_project_invitations_admin(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_get_project_invitations_admin_with_pagination(client):
+async def test_list_project_invitations_admin_with_pagination(client):
     project = await f.create_project()
     general_role = await sync_to_async(project.roles.get)(slug="general")
 
@@ -149,7 +149,7 @@ async def test_get_project_invitations_admin_with_pagination(client):
     assert response.headers["Pagination-Total"] == "3"
 
 
-async def test_get_project_invitations_allowed_to_public_users(client):
+async def test_list_project_invitations_allowed_to_public_users(client):
     project = await f.create_project()
     not_a_member = await f.create_user()
 
@@ -159,7 +159,7 @@ async def test_get_project_invitations_allowed_to_public_users(client):
     assert response.json() == []
 
 
-async def test_get_project_invitations_not_allowed_to_anonymous_users(client):
+async def test_list_project_invitations_not_allowed_to_anonymous_users(client):
     project = await f.create_project()
 
     response = client.get(f"/projects/{project.b64id}/invitations")
@@ -167,7 +167,7 @@ async def test_get_project_invitations_not_allowed_to_anonymous_users(client):
     assert response.json() == []
 
 
-async def test_get_project_invitations_wrong_id(client):
+async def test_list_project_invitations_wrong_id(client):
     project = await f.create_project()
     non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 

@@ -13,16 +13,16 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
-import { timer, zip, EMPTY } from 'rxjs';
-import { map, tap, exhaustMap, catchError } from 'rxjs/operators';
+import { EMPTY, timer, zip } from 'rxjs';
+import { catchError, exhaustMap, map, tap } from 'rxjs/operators';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 import { AppService } from '~/app/services/app.service';
 import {
   workspaceActions,
   workspaceDetailActions,
-  workspaceDetailEventActions,
   workspaceDetailApiActions,
+  workspaceDetailEventActions,
 } from '../actions/workspace-detail.actions';
-import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 
 @Injectable()
 export class WorkspaceDetailEffects {
@@ -360,6 +360,37 @@ export class WorkspaceDetailEffects {
               return EMPTY;
             })
           );
+      })
+    );
+  });
+
+  public removeMember$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceDetailApiActions.removeMember),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.workspaceApiService
+            .removeWorkspaceMember(action.id, action.member)
+            .pipe(
+              map(() => {
+                return workspaceDetailApiActions.removeMemberSuccess({
+                  member: action.member,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.errorManagement(httpResponse, {
+            any: {
+              type: 'toast',
+              options: {
+                label: 'errors.generic_toast_label',
+                message: 'errors.generic_toast_message',
+                status: TuiNotification.Error,
+              },
+            },
+          });
+        },
       })
     );
   });

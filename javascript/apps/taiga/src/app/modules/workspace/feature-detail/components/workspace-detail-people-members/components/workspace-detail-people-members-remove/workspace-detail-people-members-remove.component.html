@@ -1,0 +1,57 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <tui-hosted-dropdown
+    [tuiDropdownAlign]="'right'"
+    [content]="confirmRemoveDialog"
+    [(open)]="dropdownState">
+    <button
+      tuiLink
+      aria-haspopup="true"
+      [attr.aria-expanded]="dropdownState"
+      class="remove-user"
+      (click)="initRemoveMember()"
+      data-test="remove-user">
+      {{ t('commons.remove') }}
+    </button>
+  </tui-hosted-dropdown>
+
+  <ng-template #confirmRemoveDialog>
+    <div
+      class="remove-dialog"
+      cdkTrapFocus>
+      <p class="remove-dialog-title">
+        {{
+          t('workspace.people.remove.question', {
+            fullName: member.user?.fullName
+          })
+        }}
+      </p>
+      <p class="remove-dialog-description">
+        {{ t('workspace.people.remove.description') }}
+      </p>
+      <div class="remove-dialog-actions">
+        <button
+          tuiLink
+          appearance="tertiary"
+          (click)="keep()">
+          {{ t('workspace.people.remove.keep_member') }}
+        </button>
+        <button
+          data-test="confirm-cancel"
+          tuiButton
+          icon="trash"
+          appearance="destructive"
+          (click)="confirm()">
+          {{ t('workspace.people.remove.confirm_remove_member') }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</ng-container>

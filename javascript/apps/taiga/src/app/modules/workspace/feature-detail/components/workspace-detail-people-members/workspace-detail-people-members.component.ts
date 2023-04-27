@@ -6,11 +6,24 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  OnInit,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Workspace, WorkspaceMembership } from '@taiga/data';
+import { User, Workspace, WorkspaceMembership } from '@taiga/data';
 import { map } from 'rxjs/operators';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
   selectAnimationDisabled,
@@ -29,8 +42,105 @@ import { filterNil } from '~/app/shared/utils/operators';
   styleUrls: ['./workspace-detail-people-members.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  animations: [
+    trigger('removeAnimationCell', [
+      state(
+        'inactive',
+        style({
+          opacity: 1,
+          transform: 'translateY(0)',
+        })
+      ),
+      state(
+        'active',
+        style({
+          opacity: 0,
+          transform: 'translateY(-100%)',
+        })
+      ),
+      transition('inactive => active', [
+        style({ opacity: 0.7 }),
+        animate('0.3s 0.5s ease-in'),
+      ]),
+      transition('active => inactive', [animate('0.3s')]),
+    ]),
+    trigger('removeAnimationUndo', [
+      transition(
+        'void => *', // ---> Entering --->
+        [
+          style({
+            opacity: 0,
+            transform: 'translateY(0%)',
+          }),
+          animate(
+            '400ms ease-out',
+            style({
+              opacity: 1,
+              transform: 'translateY(-100%)',
+            })
+          ),
+        ]
+      ),
+      transition(
+        '* => void', // ---> Leaving --->
+        [
+          animate(
+            '400ms ease-out',
+            style({
+              opacity: 0,
+              transform: 'translateX(0%)',
+            })
+          ),
+        ]
+      ),
+    ]),
+    trigger('removeUndoDone', [
+      transition(
+        'void => *', // ---> Entering --->
+        [
+          style({
+            opacity: 0,
+            transform: 'translateX(100%)',
+          }),
+          animate(
+            '400ms ease-out',
+            style({
+              opacity: 1,
+              transform: 'translateX(0%)',
+            })
+          ),
+        ]
+      ),
+      transition(
+        '* => void', // ---> Leaving --->
+        [
+          animate(
+            '400ms 1s ease-out',
+            style({
+              opacity: 0,
+              transform: 'translateX(100%)',
+            })
+          ),
+        ]
+      ),
+    ]),
+  ],
 })
 export class WorkspaceDetailPeopleMembersComponent implements OnInit {
+  @HostListener('window:beforeunload')
+  public removePendingMembers() {
+    if (this.removeMemberConfirmTimeouts.size) {
+      for (const username of this.removeMemberConfirmTimeouts.keys()) {
+        const member = this.getMemberFromUsername(username);
+        if (member) {
+          this.execRemoveMember(member);
+        }
+      }
+      return false;
+    }
+    return true;
+  }
+
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public model$ = this.state.select().pipe(
     map((model) => {
@@ -43,9 +153,27 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
         pageEnd,
         hasNextPage: pageEnd < model.total,
         hasPreviousPage: !!model.offset,
+        members: model.members.map((member) => {
+          const cancelledId = model.removingMembers.includes(
+            member.user.username
+          );
+          const undoDoneActive = model.undoMemberRemove.includes(
+            member.user.username
+          );
+          return {
+            ...member,
+            cancelled: cancelledId ? 'active' : 'inactive',
+            undo: undoDoneActive,
+          };
+        }),
       };
     })
   );
+
+  private removeMemberConfirmTimeouts = new Map<
+    WorkspaceMembership['user']['username'],
+    ReturnType<typeof setTimeout>
+  >();
 
   constructor(
     private state: RxState<{
@@ -55,9 +183,15 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
       offset: number;
       animationDisabled: boolean;
       workspace: Workspace | null;
+      currentUser: User;
+      highlightedRow: WorkspaceMembership | null;
+      removingMembers: WorkspaceMembership['user']['username'][];
+      undoMemberRemove: WorkspaceMembership['user']['username'][];
     }>,
     private store: Store
-  ) {}
+  ) {
+    this.state.set({ removingMembers: [], undoMemberRemove: [] });
+  }
 
   public ngOnInit(): void {
     this.state.connect('members', this.store.select(selectMembers));
@@ -72,10 +206,18 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
       'workspace',
       this.store.select(selectWorkspace).pipe(filterNil())
     );
+    this.state.connect(
+      'currentUser',
+      this.store.select(selectUser).pipe(filterNil())
+    );
   }
 
   public trackByIndex(index: number) {
     return index;
+  }
+
+  public trackByUsername(index: number, member: WorkspaceMembership) {
+    return member.user.username;
   }
 
   public next() {
@@ -94,5 +236,88 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
       })
     );
+  }
+
+  public highlightRemoveMemberRow(member: WorkspaceMembership | null) {
+    this.state.set({ highlightedRow: member });
+  }
+
+  public initRemoveMember(member: WorkspaceMembership) {
+    const membersToRemove = this.state.get('removingMembers');
+    this.state.set({
+      removingMembers: [...membersToRemove, member.user.username],
+    });
+    this.removeMemberConfirmTimeouts.set(
+      member.user.username,
+      setTimeout(() => {
+        this.execRemoveMember(member);
+      }, 5000)
+    );
+  }
+
+  public cancelRemove(member: WorkspaceMembership) {
+    const membersToRemoveList = this.state.get('removingMembers');
+    const membersToRemoveFiltered = membersToRemoveList.filter(
+      (memberToRemove) => memberToRemove !== member.user.username
+    );
+    this.state.set({
+      removingMembers: membersToRemoveFiltered,
+    });
+    this.clearMemberToRemove(member);
+  }
+
+  public clearMemberToRemove(member: WorkspaceMembership) {
+    const timeout = this.removeMemberConfirmTimeouts.get(member.user.username);
+    if (timeout) {
+      clearTimeout(timeout);
+      this.removeMemberConfirmTimeouts.delete(member.user.username);
+    }
+  }
+
+  public execRemoveMember(member: WorkspaceMembership) {
+    this.store.dispatch(
+      workspaceDetailApiActions.removeMember({
+        id: this.state.get('workspace')!.id,
+        member: member.user.username,
+      })
+    );
+
+    this.clearMemberToRemove(member);
+  }
+
+  public animationUndoValidateRemoved(member: WorkspaceMembership) {
+    const removingMembers = this.state.get('removingMembers');
+    const currentMembers = this.state.get('members');
+
+    const memberHasNotBeenRemoved = currentMembers.find(
+      (currentMember) => currentMember.user.username === member.user.username
+    );
+    const memberIsNotBeingRemoved = !removingMembers.includes(
+      member.user.username
+    );
+
+    if (memberHasNotBeenRemoved && memberIsNotBeingRemoved) {
+      const undoMemberRemoveList = this.state.get('removingMembers');
+      this.state.set({
+        undoMemberRemove: [...undoMemberRemoveList, member.user.username],
+      });
+    }
+  }
+
+  public clearUndo(member: WorkspaceMembership) {
+    const undoMembers = this.state.get('undoMemberRemove');
+    const undoMemberRemoveFiltered = undoMembers.filter(
+      (memberToRemove) => memberToRemove !== member.user.username
+    );
+    this.state.set({
+      undoMemberRemove: undoMemberRemoveFiltered,
+    });
+  }
+
+  public getMemberFromUsername(
+    username: WorkspaceMembership['user']['username']
+  ) {
+    const members = this.state.get('members');
+    return members.find((member) => member.user.username === username);
   }
 }

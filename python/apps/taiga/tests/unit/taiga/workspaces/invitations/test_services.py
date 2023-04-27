@@ -218,6 +218,41 @@ async def test_create_workspace_invitations_invalid_username(tqmanager):
 
 
 #######################################################
+# list_paginated_pending_workspace_invitations
+#######################################################
+
+
+async def test_list_workspace_invitations():
+    invitation = f.build_workspace_invitation()
+
+    with (
+        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+    ):
+        fake_invitations_repo.list_workspace_invitations.return_value = [invitation]
+
+        pagination, invitations = await services.list_paginated_pending_workspace_invitations(
+            workspace=invitation.workspace, offset=0, limit=10
+        )
+
+        fake_invitations_repo.list_workspace_invitations.assert_awaited_once_with(
+            filters={
+                "workspace_id": invitation.workspace.id,
+                "status": WorkspaceInvitationStatus.PENDING,
+            },
+            select_related=["user", "workspace"],
+            offset=pagination.offset,
+            limit=pagination.limit,
+        )
+        fake_invitations_repo.get_total_workspace_invitations.assert_awaited_once_with(
+            filters={
+                "workspace_id": invitation.workspace.id,
+                "status": WorkspaceInvitationStatus.PENDING,
+            }
+        )
+        assert invitations == [invitation]
+
+
+#######################################################
 # update_user_workspaces_invitations
 #######################################################
 

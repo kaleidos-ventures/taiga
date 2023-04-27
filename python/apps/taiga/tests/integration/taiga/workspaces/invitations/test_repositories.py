@@ -241,7 +241,7 @@ async def get_workspace_invitation_by_id_not_found() -> None:
 
 
 ##########################################################
-# update_workspace_invitation
+# update_workspace_invitations
 ##########################################################
 
 
@@ -274,3 +274,36 @@ async def test_update_user_workspaces_invitations():
 
     invitation = await repositories.get_workspace_invitation(filters={"id": invitation.id}, select_related=["user"])
     assert invitation.user == user
+
+
+##########################################################
+# misc - get_total_workspace_invitations
+##########################################################
+
+
+async def test_get_total_workspace_invitations():
+    workspace = await f.create_workspace()
+
+    user1 = await f.create_user(full_name="AAA")
+    await f.create_workspace_invitation(
+        email=user1.email, user=user1, workspace=workspace, status=WorkspaceInvitationStatus.PENDING
+    )
+    user2 = await f.create_user(full_name="BBB")
+    await f.create_workspace_invitation(
+        email=user2.email, user=user2, workspace=workspace, status=WorkspaceInvitationStatus.PENDING
+    )
+    await f.create_workspace_invitation(
+        email="non-existing@email.com",
+        user=None,
+        workspace=workspace,
+        status=WorkspaceInvitationStatus.PENDING,
+    )
+    user = await f.create_user()
+    await f.create_workspace_invitation(
+        email=user.email, user=user, workspace=workspace, status=WorkspaceInvitationStatus.ACCEPTED
+    )
+
+    response = await repositories.get_total_workspace_invitations(
+        filters={"workspace_id": workspace.id, "status": WorkspaceInvitationStatus.PENDING}
+    )
+    assert response == 3

@@ -7,6 +7,7 @@
 
 from typing import Any
 
+from taiga.base.api.pagination import Pagination
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.base.utils.emails import is_email
 from taiga.conf import settings
@@ -140,6 +141,30 @@ async def create_workspace_invitations(
     return serializers_services.serialize_create_workspace_invitations(
         invitations=list(invitations_to_send_list), already_members=already_members
     )
+
+
+##########################################################
+# list workspace invitations
+##########################################################
+
+
+async def list_paginated_pending_workspace_invitations(
+    workspace: Workspace, offset: int, limit: int
+) -> tuple[Pagination, list[WorkspaceInvitation]]:
+    pagination = Pagination(offset=offset, limit=limit, total=0)
+
+    invitations = await invitations_repositories.list_workspace_invitations(
+        filters={"workspace_id": workspace.id, "status": WorkspaceInvitationStatus.PENDING},
+        select_related=["user", "workspace"],
+        offset=offset,
+        limit=limit,
+    )
+    total_invitations = await invitations_repositories.get_total_workspace_invitations(
+        filters={"workspace_id": workspace.id, "status": WorkspaceInvitationStatus.PENDING},
+    )
+
+    pagination.total = total_invitations
+    return pagination, invitations
 
 
 ##########################################################

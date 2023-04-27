@@ -26,6 +26,7 @@ class WorkspaceInvitationFilters(TypedDict, total=False):
     username_or_email: str
     workspace_id: UUID
     statuses: list[WorkspaceInvitationStatus]
+    status: WorkspaceInvitationStatus
 
 
 def _apply_filters_to_queryset(
@@ -62,6 +63,29 @@ def _apply_select_related_to_queryset(
     return qs.select_related(*select_related)
 
 
+WorkspaceInvitationOrderBy = list[
+    Literal[
+        "full_name",
+        "email",
+    ]
+]
+
+
+def _apply_order_by_to_queryset(
+    qs: QuerySet[WorkspaceInvitation],
+    order_by: WorkspaceInvitationOrderBy,
+) -> QuerySet[WorkspaceInvitation]:
+    order_by_data = []
+
+    for key in order_by:
+        if key == "full_name":
+            order_by_data.append("user__full_name")
+        else:
+            order_by_data.append(key)
+
+    return qs.order_by(*order_by_data)
+
+
 ##########################################################
 # create workspace invitations
 ##########################################################
@@ -87,9 +111,11 @@ def list_workspace_invitations(
     offset: int | None = None,
     limit: int | None = None,
     select_related: WorkspaceInvitationSelectRelated = [],
+    order_by: WorkspaceInvitationOrderBy = ["full_name", "email"],
 ) -> list[WorkspaceInvitation]:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+    qs = _apply_order_by_to_queryset(order_by=order_by, qs=qs)
 
     if limit is not None and offset is not None:
         limit += offset
@@ -128,3 +154,16 @@ def bulk_update_workspace_invitations(objs_to_update: list[WorkspaceInvitation],
 @sync_to_async
 def update_user_workspaces_invitations(user: User) -> None:
     WorkspaceInvitation.objects.filter(email=user.email).update(user=user)
+
+
+##########################################################
+# misc
+##########################################################
+
+
+@sync_to_async
+def get_total_workspace_invitations(
+    filters: WorkspaceInvitationFilters = {},
+) -> int:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    return qs.count()

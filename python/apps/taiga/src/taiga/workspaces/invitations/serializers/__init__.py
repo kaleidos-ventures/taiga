@@ -4,12 +4,15 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
+
+
 from typing import Any
 from uuid import UUID
 
 from pydantic import EmailStr, validator
 from taiga.base.serializers import BaseModel
 from taiga.users.serializers.nested import UserNestedSerializer
+from taiga.workspaces.workspaces.serializers.nested import WorkspaceSmallNestedSerializer
 
 
 class PrivateEmailWorkspaceInvitationSerializer(BaseModel):
@@ -32,6 +35,16 @@ class PrivateEmailWorkspaceInvitationSerializer(BaseModel):
 class CreateWorkspaceInvitationsSerializer(BaseModel):
     invitations: list[PrivateEmailWorkspaceInvitationSerializer]
     already_members: int
+
+    class Config:
+        orm_mode = True
+
+
+class WorkspaceInvitationSerializer(BaseModel):
+    id: UUID
+    workspace: WorkspaceSmallNestedSerializer
+    user: UserNestedSerializer | None
+    email: EmailStr
 
     class Config:
         orm_mode = True

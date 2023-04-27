@@ -547,19 +547,22 @@ Content for:
 - user channel:
   ```
   {
-      "membership": {... "project membership object" ...}
+      "membership": {... "project membership object" ...},
+      "workspace": "workspace_id",
   }
   ```
 - project channel:
   ```
   {
-      "membership": {... "project membership object" ...}
+      "membership": {... "project membership object" ...},
+      "workspace": "workspace_id",
   }
   ```
 - workspace channel:
   ```
   {
-      "membership": {... "project membership object" ...}
+      "membership": {... "project membership object" ...},
+      "workspace": "workspace_id",
   }
   ```
 

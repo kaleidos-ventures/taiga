@@ -88,8 +88,13 @@ class EventsManager:
                 await subscriber.put(response)
 
             logger.info(
-                f"Emit to {len(subscribers)} subscriber(s): {event}.",
-                extra={"action": "manager.emit", "event": event, "total_shipments": len(subscribers)},
+                f"Emit on channel {channel} to {len(subscribers)} subscriber(s): {event}",
+                extra={
+                    "action": "manager.emit",
+                    "event": event,
+                    "total_shipments": len(subscribers),
+                    "channel": channel,
+                },
             )
 
     @property

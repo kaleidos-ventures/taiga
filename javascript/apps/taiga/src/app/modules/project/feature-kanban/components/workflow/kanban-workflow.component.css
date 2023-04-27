@@ -9,32 +9,32 @@ Copyright (c) 2023-present Kaleidos INC
 :host {
   block-size: 100%;
   display: block;
-  inline-size: 100%;
+  /* todo taiga-ui scroll doesn't work +/
+  /* inline-size: 100%; */
+  inline-size: 800px;
 }
 
 tg-kanban-status {
+  flex-shrink: 0;
   inline-size: var(--column-width);
   margin-inline-end: var(--spacing-8);
 }
 
-cdk-virtual-scroll-viewport {
+.scroll-inner {
+  align-items: flex-start;
   block-size: 100%;
-
-  &::ng-deep > .cdk-virtual-scroll-content-wrapper {
-    align-items: flex-start;
-    display: flex;
-    max-block-size: 100%;
-  }
+  display: flex;
+  max-block-size: 100%;
 }
 
-tui-scrollbar {
+/* tui-scrollbar {
   block-size: 100%;
   user-select: none;
 
   &::ng-deep .t-content {
     block-size: 100%;
   }
-}
+} */
 
 tg-kanban-story {
   margin: 0;

@@ -87,64 +87,55 @@ export class KanbanStatusKeyboardNavigationDirective implements OnInit {
   }
 
   private statusNavigation(el: HTMLElement, key: 'ArrowRight' | 'ArrowLeft') {
-    const {
-      cdkScrollable,
-      workflow,
-      kanbanStatusComponents,
-      statusColumnSize,
-    } = this.kanbanWorkflowComponent;
-
-    const focusedComponent = kanbanStatusComponents.find((component) => {
-      return component.nativeElement === el;
-    });
-
-    let currentTabIndex = workflow.statuses.findIndex((status) => {
-      return status === focusedComponent?.status;
-    });
-
-    if (key === 'ArrowRight') {
-      currentTabIndex++;
-    } else {
-      currentTabIndex--;
-    }
-
-    if (currentTabIndex < 0) {
-      currentTabIndex = workflow.statuses.length - 1;
-    } else if (currentTabIndex > workflow.statuses.length - 1) {
-      currentTabIndex = 0;
-    }
-
-    const status = workflow.statuses[currentTabIndex];
-    const position = currentTabIndex * statusColumnSize;
-    const viewportSize = cdkScrollable.getViewportSize();
-
-    // get the component if it is rendered
-    const component = kanbanStatusComponents.find((component) => {
-      return component.status === status;
-    });
-
-    if (component) {
-      if (!inViewport(component.nativeElement)) {
-        if (key === 'ArrowRight') {
-          // scroll only the enough to the status to be visible
-          cdkScrollable.scrollTo({
-            left: statusColumnSize - (viewportSize - position),
-          });
-        } else {
-          cdkScrollable.scrollTo({ left: position });
-        }
-      }
-
-      component.nativeElement.focus();
-    } else {
-      cdkScrollable.scrollTo({ left: position });
-
-      this.safeGetStatusComponent(status, kanbanStatusComponents).subscribe(
-        (component) => {
-          component.nativeElement.focus();
-        }
-      );
-    }
+    // const {
+    //   cdkScrollable,
+    //   workflow,
+    //   kanbanStatusComponents,
+    //   statusColumnSize,
+    // } = this.kanbanWorkflowComponent;
+    // const focusedComponent = kanbanStatusComponents.find((component) => {
+    //   return component.nativeElement === el;
+    // });
+    // let currentTabIndex = workflow.statuses.findIndex((status) => {
+    //   return status === focusedComponent?.status;
+    // });
+    // if (key === 'ArrowRight') {
+    //   currentTabIndex++;
+    // } else {
+    //   currentTabIndex--;
+    // }
+    // if (currentTabIndex < 0) {
+    //   currentTabIndex = workflow.statuses.length - 1;
+    // } else if (currentTabIndex > workflow.statuses.length - 1) {
+    //   currentTabIndex = 0;
+    // }
+    // const status = workflow.statuses[currentTabIndex];
+    // const position = currentTabIndex * statusColumnSize;
+    // const viewportSize = cdkScrollable.getViewportSize();
+    // // get the component if it is rendered
+    // const component = kanbanStatusComponents.find((component) => {
+    //   return component.status === status;
+    // });
+    // if (component) {
+    //   if (!inViewport(component.nativeElement)) {
+    //     if (key === 'ArrowRight') {
+    //       // scroll only the enough to the status to be visible
+    //       cdkScrollable.scrollTo({
+    //         left: statusColumnSize - (viewportSize - position),
+    //       });
+    //     } else {
+    //       cdkScrollable.scrollTo({ left: position });
+    //     }
+    //   }
+    //   component.nativeElement.focus();
+    // } else {
+    //   cdkScrollable.scrollTo({ left: position });
+    //   this.safeGetStatusComponent(status, kanbanStatusComponents).subscribe(
+    //     (component) => {
+    //       component.nativeElement.focus();
+    //     }
+    //   );
+    // }
   }
 
   // wait until the status column is rendered

@@ -7,3 +7,26 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 @import url("app/styles/styles.css");
+
+/* ::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(196, 196, 196, 1);
+  border-radius: 6.25rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  opacity: 0.48;
+}
+
+html {
+  scrollbar-color: transparent;
+  scrollbar-width: thin;
+} */

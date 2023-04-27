@@ -14,7 +14,6 @@ Copyright (c) 2023-present Kaleidos INC
       inViewport
       [rootMargin]="columnSize"
       [threshold]="0"
-      root="cdk-virtual-scroll-viewport"
       (visible)="onVisible()"
       (notVisible)="onNotVisible()">
       <div class="header">
@@ -27,42 +26,36 @@ Copyright (c) 2023-present Kaleidos INC
         <div
           *ngIf="vm.stories.length"
           tgKanbanStoryKeyboardNavigation
-          class="stories"
-          [tgScrollDynamicHeight]="vm.stories">
-          <tui-scrollbar>
-            <cdk-virtual-scroll-viewport
-              appendOnly
-              tabindex="-1"
-              tuiScrollable
-              kanbanVirtualScrollStrategy
-              [itemHeights]="vm.itemHeights"
-              class="tui-zero-scrollbar">
-              <ng-container
-                *cdkVirtualFor="
-                  let story of vm.stories;
-                  let i = index;
-                  trackBy: trackByRef
-                ">
-                <tg-kanban-story
-                  [class.drag-a11y]="
-                    story.ref === vm.activeA11yDragDropStory.ref
-                  "
-                  [class.small-drag-shadow]="showSmallDragShadowClass(story)"
-                  [tgDraggable]="story.ref"
-                  [dragData]="story"
-                  [dragDisabled]="disableScroll(story)"
-                  [class.selected-story]="vm.currentStory?.ref === story.ref"
-                  [@slideIn]="
-                    vm.newEventStories.includes(story.ref) ? 'on' : 'off'
-                  "
-                  [story]="story"
-                  [index]="i"
-                  [total]="vm.stories.length"
-                  [attr.data-tmp-id]="story.tmpId">
-                </tg-kanban-story>
-              </ng-container>
-            </cdk-virtual-scroll-viewport>
-          </tui-scrollbar>
+          [tgScrollDynamicHeight]="vm.stories"
+          class="stories">
+          <rx-virtual-scroll-viewport
+            class="tui-zero-scrollbar-fake"
+            tabindex="-1"
+            [runwayItemsOpposite]="5"
+            [tombstoneSize]="75"
+            #virtualScroll
+            autosize>
+            <!-- trackBy: trackByRef -->
+            <div
+              class="story-wrapper"
+              *rxVirtualFor="let story of vm.stories; let i = index">
+              <tg-kanban-story
+                [class.drag-a11y]="story.ref === vm.activeA11yDragDropStory.ref"
+                [class.small-drag-shadow]="showSmallDragShadowClass(story)"
+                [tgDraggable]="story.ref"
+                [dragData]="story"
+                [dragDisabled]="disableScroll(story)"
+                [class.selected-story]="vm.currentStory?.ref === story.ref"
+                [@slideIn]="
+                  vm.newEventStories.includes(story.ref ?? -1) ? 'on' : 'off'
+                "
+                [story]="story"
+                [index]="i"
+                [total]="vm.stories.length"
+                [attr.data-tmp-id]="story?.tmpId">
+              </tg-kanban-story>
+            </div>
+          </rx-virtual-scroll-viewport>
         </div>
         <div
           class="create-story"

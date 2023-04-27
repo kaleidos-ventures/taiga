@@ -35,7 +35,7 @@ export interface PartialStory
   tmpId: string;
 }
 
-export type KanbanStory = PartialStory | BaseStory;
+export type KanbanStory = SetOptional<PartialStory, 'tmpId'>;
 
 export interface KanbanReorderEvent {
   reorder: {

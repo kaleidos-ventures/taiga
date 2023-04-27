@@ -246,20 +246,18 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
   }
 
   private scrollToDragStoryIfNotVisible() {
-    const statusScrollBottom =
-      this.kabanStatus.kanbanVirtualScroll?.scrollStrategy.viewport?.elementRef.nativeElement.getBoundingClientRect()
-        .bottom;
-
-    if (statusScrollBottom) {
-      const newTop =
-        this.nativeElement.getBoundingClientRect().bottom -
-        statusScrollBottom +
-        1;
-
-      if (newTop > 0) {
-        this.kabanStatus.kanbanVirtualScroll?.scrollStrategy.scrollTo({
-          top: newTop,
-        });
+    if (this.kabanStatus.virtualScroll) {
+      const statusScrollBottom = this.kabanStatus.virtualScroll
+        ?.scrollContainer()
+        .getBoundingClientRect().bottom;
+      if (statusScrollBottom) {
+        const newTop =
+          this.nativeElement.getBoundingClientRect().bottom -
+          statusScrollBottom +
+          1;
+        if (newTop > 0) {
+          this.kabanStatus.virtualScroll.scrollTo(newTop);
+        }
       }
     }
   }

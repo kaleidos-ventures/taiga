@@ -67,16 +67,15 @@ class Test {
 
 Scroll while you are dragging an element
 
+// todo
+
 ```ts
 class Test {
   @ViewChild(CdkVirtualScrollViewport)
   public cdkScrollable!: CdkVirtualScrollViewport;
 
   public listenAutoScroll() {
-    this.autoScrollService
-      .listen(this.cdkScrollable, 'horizontal', 300, 1)
-      .pipe(untilDestroyed(this))
-      .subscribe();
+    this.autoScrollService.listen(this.cdkScrollable, 'horizontal', 300, 1).pipe(untilDestroyed(this)).subscribe();
   }
 }
 ```

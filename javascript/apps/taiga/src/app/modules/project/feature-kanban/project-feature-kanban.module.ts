@@ -39,12 +39,17 @@ import { KanbanStatusComponent } from './components/status/kanban-status.compone
 import { A11yDragStoryDirective } from './components/story/kanban-story-a11y-drag.directive';
 import { KanbanStoryComponent } from './components/story/kanban-story.component';
 import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
-import { KanbanVirtualScrollDirective } from './custom-scroll-strategy/kanban-scroll-strategy';
 import { DataAccessKanbanModule } from './data-access/kanban-data-access.module';
 import { KanbanStatusKeyboardNavigationDirective } from './directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
 import { KanbanStoryKeyboardNavigationDirective } from './directives/kanban-story-keyboard-navigation/kanban-story-keyboard-navigation.directive';
 import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
+
+import {
+  AutoSizeVirtualScrollStrategy,
+  RxVirtualScrollViewportComponent,
+  RxVirtualFor,
+} from '@rx-angular/template/experimental/virtual-scrolling';
 
 @NgModule({
   declarations: [
@@ -56,7 +61,6 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     KanbanStoryComponent,
     KanbanCreateStoryInlineComponent,
     StatusScrollDynamicHeightDirective,
-    KanbanVirtualScrollDirective,
     A11yDragStoryDirective,
   ],
   exports: [ProjectFeatureKanbanComponent],
@@ -88,6 +92,9 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     DropdownModule,
     AssignUserComponent,
     OutsideClickDirective,
+    RxVirtualFor,
+    RxVirtualScrollViewportComponent,
+    AutoSizeVirtualScrollStrategy,
   ],
   providers: [
     {

@@ -7,16 +7,12 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 
 <tui-scrollbar>
-  <cdk-virtual-scroll-viewport
-    appendOnly
-    [maxBufferPx]="300"
+  <div
+    class="scroll-inner"
     orientation="horizontal"
-    [itemSize]="statusColumnSize"
-    tuiScrollable
-    class="tui-zero-scrollbar"
     role="row">
     <ng-container
-      *cdkVirtualFor="let status of workflow.statuses; trackBy: trackBySlug">
+      *ngFor="let status of workflow.statuses; trackBy: trackBySlug">
       <tg-kanban-status
         role="gridcell"
         tgKanbanStatusKeyboardNavigation
@@ -24,7 +20,7 @@ Copyright (c) 2023-present Kaleidos INC
         [status]="status"
         [workflow]="workflow"></tg-kanban-status>
     </ng-container>
-  </cdk-virtual-scroll-viewport>
+  </div>
 </tui-scrollbar>
 
 <tg-drag-in-progress *ngIf="movingStories$ | async as stories">

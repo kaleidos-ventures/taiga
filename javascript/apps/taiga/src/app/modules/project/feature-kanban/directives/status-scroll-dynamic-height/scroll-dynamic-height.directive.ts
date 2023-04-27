@@ -30,9 +30,6 @@ export class StatusScrollDynamicHeightDirective
   implements AfterViewInit, OnDestroy
 {
   @Input()
-  public cdkScrollable!: CdkVirtualScrollViewport;
-
-  @Input()
   public tgScrollDynamicHeight!: unknown[];
 
   @HostListener('window:resize')
@@ -51,18 +48,10 @@ export class StatusScrollDynamicHeightDirective
     return this.el.nativeElement as HTMLElement;
   }
 
-  public get scrollContentWrapper() {
-    return this.nativeElement.querySelector<HTMLElement>(
-      '.cdk-virtual-scroll-content-wrapper'
-    );
-  }
-
   private get virtualScrollViewPort() {
     if (!this._virtualScrollViewPort) {
       this._virtualScrollViewPort =
-        this.nativeElement.querySelector<HTMLElement>(
-          'cdk-virtual-scroll-viewport'
-        );
+        this.nativeElement.querySelector<HTMLElement>('.scroll-inner');
     }
 
     return this._virtualScrollViewPort;
@@ -96,18 +85,6 @@ export class StatusScrollDynamicHeightDirective
     }
 
     this.setBlockSize(blockSize);
-  }
-
-  public getSiblings() {
-    const parent = this.nativeElement.parentElement;
-
-    if (parent) {
-      return Array.from(parent.childNodes).filter((el) => {
-        return el !== this.nativeElement && el.nodeType === Node.ELEMENT_NODE;
-      }) as HTMLElement[];
-    }
-
-    return [];
   }
 
   public getElementFullSize(el: HTMLElement) {
@@ -150,20 +127,17 @@ export class StatusScrollDynamicHeightDirective
       if (Math.round(this.currentBlockSize) !== Math.round(blockSize)) {
         this.currentBlockSize = blockSize;
         this.virtualScrollViewPort.style.blockSize = `${blockSize}px`;
-        requestAnimationFrame(() => {
-          this.kanbanStatusComponent.cdkScrollable?.checkViewportSize();
-        });
+        // requestAnimationFrame(() => {
+        //   this.kanbanStatusComponent.cdkScrollable?.checkViewportSize();
+        // });
       }
     }
   }
 
   private getMaxHeight() {
-    this.siblings = this.getSiblings();
-
-    const siblingsSize = this.siblings.reduce((prev, el) => {
-      return prev + this.getElementFullSize(el);
-    }, 0);
-
+    const projectNavigation = document.querySelector('tg-project-navigation')!;
+    const workflow = this.nativeElement.closest('tg-kanban-workflow')!;
+    const columnHeight = projectNavigation.getBoundingClientRect().height;
     const statusBorder =
       Number(
         getComputedStyle(
@@ -171,15 +145,12 @@ export class StatusScrollDynamicHeightDirective
         ).borderWidth.replace('px', '')
       ) * 2;
 
-    const columnHeight = this.nativeElement
-      .closest('tg-kanban-workflow')!
-      .getBoundingClientRect().height;
-
     return (
       columnHeight -
-      siblingsSize -
       statusBorder -
-      this.getElementMargins(this.nativeElement)
+      this.getElementMargins(this.nativeElement) -
+      projectNavigation.getBoundingClientRect().top -
+      workflow.getBoundingClientRect().top
     );
   }
 }

@@ -33,6 +33,7 @@ import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service
 import { DragService } from '~/app/shared/drag/services/drag.service';
 import { KineticScrollService } from '~/app/shared/scroll/kinetic-scroll.service';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
+import { TuiScrollableDirective, TuiScrollbarComponent } from '@taiga-ui/core';
 
 @UntilDestroy()
 @Component({
@@ -48,8 +49,8 @@ export class KanbanWorkflowComponent
   @Input()
   public workflow!: Workflow;
 
-  @ViewChild(CdkVirtualScrollViewport)
-  public cdkScrollable!: CdkVirtualScrollViewport;
+  @ViewChild(TuiScrollbarComponent, { read: ElementRef })
+  public scrollBar?: ElementRef<HTMLElement>;
 
   @ViewChildren(KanbanStatusComponent)
   public kanbanStatusComponents!: QueryList<KanbanStatusComponent>;
@@ -76,6 +77,16 @@ export class KanbanWorkflowComponent
       '--column-width',
       `${this.statusColumnSize}px`
     );
+
+    // setTimeout(() => {
+    //   this.store.dispatch(KanbanActions.storyDragStart({ ref: 3 }));
+    // }, 5000);
+
+    // // setTimeout(() => {
+    // //   document
+    // //     .querySelectorAll<HTMLElement>('tg-kanban-story')[1]
+    // //     ?.classList.add('small-drag-shadow', 'drag-shadow');
+    // // }, 2000);
   }
 
   public dragAndDrop() {
@@ -141,10 +152,12 @@ export class KanbanWorkflowComponent
   }
 
   public listenAutoScroll() {
-    this.autoScrollService
-      .listen(this.cdkScrollable, 'horizontal', 300)
-      .pipe(untilDestroyed(this))
-      .subscribe();
+    if (this.scrollBar) {
+      this.autoScrollService
+        .listenHtmlElement(this.scrollBar.nativeElement, 'horizontal', 300)
+        .pipe(untilDestroyed(this))
+        .subscribe();
+    }
   }
 
   public animateDrop(dropEvent: {
@@ -252,6 +265,7 @@ export class KanbanWorkflowComponent
           }).finished;
         })
         .then(() => {
+          console.log('sdfsdf');
           this.store.dispatch(KanbanActions.storyDropped(dropEvent));
           document.body.classList.remove('drop-in-progress');
         });
@@ -270,8 +284,10 @@ export class KanbanWorkflowComponent
     const statusScroll =
       this.nativeElement.querySelector<HTMLElement>('tui-scrollbar');
 
-    if (statusScroll) {
-      this.kineticScrollService.start(statusScroll, this.cdkScrollable);
+    const el = this.scrollBar?.nativeElement;
+
+    if (statusScroll && el) {
+      this.kineticScrollService.start(statusScroll, el);
     }
   }
 

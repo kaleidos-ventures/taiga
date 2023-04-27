@@ -162,14 +162,14 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
         () => {
           setTimeout(() => {
             if (el) {
-              if (status?.cdkScrollable && this.currentDraggedStory.ref) {
-                scrollAndFocus(
-                  status,
-                  el,
-                  String(this.currentDraggedStory.ref)
-                );
-                focusRef(String(this.currentDraggedStory.ref));
-              }
+              // if (status?.cdkScrollable && this.currentDraggedStory.ref) {
+              //   scrollAndFocus(
+              //     status,
+              //     el,
+              //     String(this.currentDraggedStory.ref)
+              //   );
+              //   focusRef(String(this.currentDraggedStory.ref));
+              // }
             }
             this.liveAnnouncer.clear();
           }, 50);
@@ -237,15 +237,15 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
       const el = nextStory.querySelector<HTMLElement>(
         '.story-kanban-ref-focus .story-title'
       );
-      if (status?.cdkScrollable && el) {
-        const nextRef = nextStory.dataset.ref;
+      // if (status?.cdkScrollable && el) {
+      //   const nextRef = nextStory.dataset.ref;
 
-        if (nextRef) {
-          scrollAndFocus(status, el, nextRef);
+      //   if (nextRef) {
+      //     scrollAndFocus(status, el, nextRef);
 
-          focusRef(nextRef);
-        }
-      }
+      //     focusRef(nextRef);
+      //   }
+      // }
     }
   }
 

@@ -45,12 +45,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 tg-kanban-story {
-  margin-block-end: var(--spacing-8);
-
-  /* This will cause a weird scroll behavior if status doesn't have appendOnly (the scroll will move by itself a few px in loop), becasue the same story will have diffrent height when is calculate in kanban-scroll-strategy */
-  &:first-child {
-    margin-block-start: var(--spacing-4);
-  }
+  inline-size: 100%;
 }
 
 .empty {
@@ -88,4 +83,18 @@ tg-kanban-story {
 .create-story {
   margin-block-start: var(--spacing-8);
   padding-block-end: var(--spacing-8);
+}
+
+.story-wrapper {
+  inline-size: 100%;
+  padding-block-end: var(--spacing-8);
+
+  /* This will cause a weird scroll behavior if status doesn't have appendOnly (the scroll will move by itself a few px in loop), becasue the same story will have diffrent height when is calculate in kanban-scroll-strategy */
+  &:first-child {
+    padding-block-start: var(--spacing-4);
+  }
+}
+
+.tui-zero-scrollbar-fake {
+  block-size: 600px;
 }

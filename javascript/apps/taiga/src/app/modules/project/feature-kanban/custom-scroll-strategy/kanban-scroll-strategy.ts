@@ -6,6 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+// borrar
+
 import { ListRange } from '@angular/cdk/collections';
 import {
   CdkVirtualScrollViewport,

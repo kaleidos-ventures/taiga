@@ -6,7 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Injectable } from '@angular/core';
 import {
   finalize,
@@ -21,6 +20,7 @@ import {
   tap,
 } from 'rxjs';
 import { DragService } from './drag.service';
+import { RxVirtualScrollViewportComponent } from '@rx-angular/template/experimental/virtual-scrolling';
 
 @Injectable({
   providedIn: 'root',
@@ -28,8 +28,75 @@ import { DragService } from './drag.service';
 export class AutoScrollService {
   constructor(private dragService: DragService) {}
 
+  public listenHtmlElement(
+    element: HTMLElement,
+    type: 'horizontal' | 'vertical' = 'horizontal',
+    listenRange = 300,
+    speedModifier = 1
+  ) {
+    const getScroll = () => {
+      if (type === 'horizontal') {
+        return element.scrollLeft;
+      }
+
+      return element.scrollTop;
+    };
+
+    const scrollTo = (position: number) => {
+      console.log('scroll toooo', type);
+      if (type === 'horizontal') {
+        element.scrollTo(position, 0);
+      } else {
+        element.scrollTo(0, position);
+      }
+    };
+
+    const scrollableElement = () => {
+      return element;
+    };
+
+    return this.listen(
+      getScroll,
+      scrollTo,
+      scrollableElement,
+      type,
+      listenRange,
+      speedModifier
+    );
+  }
+
+  public listenVirtualScrollElement(
+    virtualScroll: RxVirtualScrollViewportComponent,
+    type: 'horizontal' | 'vertical' = 'horizontal',
+    listenRange = 300,
+    speedModifier = 1
+  ) {
+    const getScroll = () => {
+      return virtualScroll.getScrollTop();
+    };
+
+    const scrollTo = (position: number) => {
+      virtualScroll.scrollTo(position);
+    };
+
+    const scrollableElement = () => {
+      return virtualScroll.scrollContainer();
+    };
+
+    return this.listen(
+      getScroll,
+      scrollTo,
+      scrollableElement,
+      type,
+      listenRange,
+      speedModifier
+    );
+  }
+
   public listen(
-    cdkScrollable: CdkVirtualScrollViewport,
+    getScroll: (type: string) => number,
+    scrollTo: (position: number) => void,
+    scrollableElement: () => HTMLElement,
     type: 'horizontal' | 'vertical' = 'horizontal',
     listenRange = 300,
     speedModifier = 1
@@ -60,20 +127,18 @@ export class AutoScrollService {
           lastTime = time;
 
           if (type === 'horizontal') {
-            const scrollLeft =
-              cdkScrollable.elementRef.nativeElement.scrollLeft;
+            const scrollLeft = getScroll(type);
 
             let left = 0;
-
             if (dir === 'inc') {
               left = scrollLeft + delta * speed;
             } else {
               left = scrollLeft - delta * speed;
             }
 
-            cdkScrollable.scrollTo({ left });
+            scrollTo(left);
           } else {
-            const scrollTop = cdkScrollable.elementRef.nativeElement.scrollTop;
+            const scrollTop = getScroll(type);
 
             let top = 0;
 
@@ -83,7 +148,7 @@ export class AutoScrollService {
               top = scrollTop - delta * speed;
             }
 
-            cdkScrollable.scrollTo({ top });
+            scrollTo(top);
           }
 
           scrollLoop();
@@ -159,12 +224,22 @@ export class AutoScrollService {
             }
           }
 
-          const scrollPosition =
-            cdkScrollable.elementRef.nativeElement.getBoundingClientRect();
+          const scrollPosition = scrollableElement().getBoundingClientRect();
           const rscrollPosition = this.getRelativeScrollPosition(
             scrollPosition,
             type
           );
+
+          if (type === 'horizontal') {
+            console.log(position, type, rposition, rscrollPosition.end);
+          }
+
+          // console.log(
+          //   position.y > scrollPosition.top &&
+          //     position.y < scrollPosition.bottom,
+          //   position.x < scrollPosition.right &&
+          //     position.x > scrollPosition.left
+          // );
 
           if (
             position.y > scrollPosition.top &&

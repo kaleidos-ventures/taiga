@@ -6,7 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Injectable } from '@angular/core';
 import { filter, fromEvent, map, merge, switchMap, takeUntil } from 'rxjs';
 import { finalizeWithValue } from '../utils/operators/finalize-with-value';
@@ -15,13 +14,13 @@ import { finalizeWithValue } from '../utils/operators/finalize-with-value';
 export class KineticScrollService {
   private requestAnimationFrame?: ReturnType<typeof requestAnimationFrame>;
 
-  public start(el: HTMLElement, cdkScrollable: CdkVirtualScrollViewport) {
+  public start(el: HTMLElement, scrollBar: HTMLElement) {
     const movement = fromEvent(el, 'mousedown').pipe(
       filter((event) => {
         return !(event.target as HTMLElement).closest('tg-kanban-story');
       }),
       switchMap((event) => {
-        const initScrollPosition = cdkScrollable.measureScrollOffset('left');
+        const initScrollPosition = scrollBar.scrollLeft;
         const initMousePosition = (event as MouseEvent).clientX;
 
         return fromEvent(el, 'mousemove').pipe(
@@ -36,8 +35,7 @@ export class KineticScrollService {
             const newPosition =
               initScrollPosition + initMousePosition - mousemove.clientX;
 
-            const velocity =
-              newPosition - cdkScrollable.measureScrollOffset('left');
+            const velocity = newPosition - scrollBar.scrollLeft;
 
             return {
               mousemove: mousemove,
@@ -54,10 +52,9 @@ export class KineticScrollService {
             let velocity = mouseMoveEvent.velocity;
 
             const momentum = () => {
-              const left =
-                cdkScrollable.measureScrollOffset('left') + velocity * 3;
+              const left = scrollBar.scrollLeft + velocity * 3;
 
-              cdkScrollable.scrollTo({ left });
+              scrollBar.scrollTo({ left });
 
               velocity *= 0.95;
               if (Math.abs(velocity) > 0.5) {
@@ -76,7 +73,7 @@ export class KineticScrollService {
         mouseMoveEvent.initScrollPosition +
         mouseMoveEvent.initMousePosition -
         mouseMoveEvent.mousemove.clientX;
-      cdkScrollable.scrollTo({ left });
+      scrollBar.scrollTo({ left });
     });
   }
 }

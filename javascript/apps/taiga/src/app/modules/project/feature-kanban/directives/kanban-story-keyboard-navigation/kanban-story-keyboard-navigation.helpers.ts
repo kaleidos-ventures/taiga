@@ -137,14 +137,14 @@ export function scrollAndFocus(
   el: HTMLElement,
   ref: string
 ) {
-  status.cdkScrollable
-    .elementScrolled()
-    .pipe(take(1))
-    .subscribe(() => {
-      requestAnimationFrame(() => {
-        focusRef(ref);
-      });
-    });
+  // status.cdkScrollable
+  //   .elementScrolled()
+  //   .pipe(take(1))
+  //   .subscribe(() => {
+  //     requestAnimationFrame(() => {
+  //       focusRef(ref);
+  //     });
+  //   });
 
   el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }

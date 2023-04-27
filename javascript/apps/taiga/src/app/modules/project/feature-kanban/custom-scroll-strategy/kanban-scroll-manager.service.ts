@@ -75,14 +75,9 @@ export class KanbanScrollManagerService {
         )
         .subscribe(({ status }) => {
           const storyEl = this.getStoryEl(ref);
-          if (status?.kanbanVirtualScroll) {
+          if (status?.virtualScroll) {
             if (storyEl) {
-              if (
-                !isInside(
-                  storyEl,
-                  status.cdkScrollable.elementRef.nativeElement
-                )
-              ) {
+              if (!isInside(storyEl, status.virtualScroll.scrollContainer())) {
                 setTimeout(() => {
                   storyEl.scrollIntoView({
                     block: position,
@@ -141,49 +136,39 @@ export class KanbanScrollManagerService {
               const status = this.kanbanStatuses$.value.find(
                 (it) => story.status.slug === it.status.slug
               );
-
-              if (status) {
-                const workflowPosition = (
-                  this.kanbanWorkflow$.value?.cdkScrollable.elementRef
-                    .nativeElement as HTMLElement
-                ).getBoundingClientRect();
-
+              const workflowPosition =
+                this.kanbanWorkflow$.value?.scrollBar?.nativeElement.getBoundingClientRect();
+              if (status && workflowPosition) {
                 const statusPosition =
                   status.nativeElement.getBoundingClientRect();
-
                 return !(
                   statusPosition.left >= workflowPosition.left &&
                   statusPosition.left <= workflowPosition.right
                 );
               }
-
               return true;
             };
-
-            const scroll = () => {
-              if (runScroll()) {
-                this.kanbanWorkflow$.value?.cdkScrollable.scrollToIndex(
-                  statusIndex
-                );
-              }
-
-              const status = this.kanbanStatuses$.value.find(
-                (it) => it.status.slug === story.status.slug
-              );
-
-              if (status) {
-                if (runScroll()) {
-                  this.kanbanWorkflow$.value?.cdkScrollable.scrollToIndex(
-                    statusIndex
-                  );
-                }
-
-                subscriber.next();
-                subscriber.complete();
-              } else {
-                requestAnimationFrame(() => scroll());
-              }
-            };
+            // const scroll = () => {
+            //   if (runScroll()) {
+            //     this.kanbanWorkflow$.value?.scrollBar?.nativeElement.scrollToIndex(
+            //       statusIndex
+            //     );
+            //   }
+            //   const status = this.kanbanStatuses$.value.find(
+            //     (it) => it.status.slug === story.status.slug
+            //   );
+            //   if (status) {
+            //     if (runScroll()) {
+            //       this.kanbanWorkflow$.value?.cdkScrollable.scrollToIndex(
+            //         statusIndex
+            //       );
+            //     }
+            //     subscriber.next();
+            //     subscriber.complete();
+            //   } else {
+            //     requestAnimationFrame(() => scroll());
+            //   }
+            // };
             requestAnimationFrame(() => scroll());
           })
         )
@@ -197,24 +182,21 @@ export class KanbanScrollManagerService {
     ref: NonNullable<KanbanStory['ref']>
   ): Observable<HTMLElement> {
     return new Observable((subscriber) => {
-      const search = () => {
-        status.cdkScrollable.scrollToIndex(index);
-
-        status
-          .kanbanVirtualScroll!.scrollStrategy.afterViewCheck$.pipe(take(1))
-          .subscribe(() => {
-            const elm = this.getStoryEl(ref);
-
-            if (elm) {
-              subscriber.next(elm);
-              subscriber.complete();
-            } else {
-              search();
-            }
-          });
-      };
-
-      search();
+      // const search = () => {
+      //   status.cdkScrollable.scrollToIndex(index);
+      //   status
+      //     .kanbanVirtualScroll!.scrollStrategy.afterViewCheck$.pipe(take(1))
+      //     .subscribe(() => {
+      //       const elm = this.getStoryEl(ref);
+      //       if (elm) {
+      //         subscriber.next(elm);
+      //         subscriber.complete();
+      //       } else {
+      //         search();
+      //       }
+      //     });
+      // };
+      // search();
     });
   }
 
@@ -271,15 +253,15 @@ export class KanbanScrollManagerService {
       }),
       filter(
         (kanbanStatus): kanbanStatus is KanbanStatusComponent => !!kanbanStatus
-      ),
-      switchMap((kanbanStatus) => {
-        // wait until scroll is filled
-        return this.waitUntil(() => kanbanStatus.kanbanVirtualScroll).pipe(
-          map(() => {
-            return kanbanStatus;
-          })
-        );
-      })
+      )
+      // switchMap((kanbanStatus) => {
+      //   // wait until scroll is filled
+      //   return this.waitUntil(() => kanbanStatus.kanbanVirtualScroll).pipe(
+      //     map(() => {
+      //       return kanbanStatus;
+      //     })
+      //   );
+      // })
     );
   }
 

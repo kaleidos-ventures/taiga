@@ -10,6 +10,7 @@ import { createSelector } from '@ngrx/store';
 import { Status } from '@taiga/data';
 import { kanbanFeature } from '../reducers/kanban.reducer';
 import { findStory } from '../reducers/kanban.reducer.helpers';
+import { PartialStory } from '~/app/modules/project/feature-kanban/kanban.model';
 
 export const {
   selectKanbanState,
@@ -38,9 +39,9 @@ export const selectStatusNewStories = (statusSlug: Status['slug']) => {
   return createSelector(
     selectScrollToStory,
     selectStories,
-    (newStories, stories) => {
+    (newStories, stories): null | PartialStory => {
       const story = stories[statusSlug].find((story) => {
-        if ('tmpId' in story) {
+        if (story.tmpId) {
           return newStories.includes(story.tmpId);
         }
 
@@ -48,7 +49,7 @@ export const selectStatusNewStories = (statusSlug: Status['slug']) => {
       });
 
       if (story && 'tmpId' in story) {
-        return story;
+        return story as PartialStory;
       }
 
       return null;

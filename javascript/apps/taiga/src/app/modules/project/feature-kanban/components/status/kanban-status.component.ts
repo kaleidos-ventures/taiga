@@ -7,7 +7,6 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,7 +26,6 @@ import { RxState } from '@rx-angular/state';
 import { Status, Story, StoryDetail, Workflow } from '@taiga/data';
 import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
 import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
-import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { KanbanState } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
 import {
@@ -52,6 +50,7 @@ import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service
 import { filterNil } from '~/app/shared/utils/operators';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
+import { RxVirtualScrollViewportComponent } from '@rx-angular/template/experimental/virtual-scrolling';
 
 export const KanbanStatusComponentSlideInTime = 300;
 
@@ -96,22 +95,12 @@ export interface KanbanComponentState {
     ]),
   ],
 })
+// StatusScrollDynamicHeight,
 export class KanbanStatusComponent
-  implements
-    KanbanStatusKeyboardNavigation,
-    StatusScrollDynamicHeight,
-    OnChanges,
-    OnInit,
-    OnDestroy
+  implements KanbanStatusKeyboardNavigation, OnChanges, OnInit, OnDestroy
 {
   @ViewChild('createStoryWrapper')
   public createStoryWrapper?: ElementRef;
-
-  @ViewChild(KanbanVirtualScrollDirective)
-  public kanbanVirtualScroll?: KanbanVirtualScrollDirective;
-
-  @ViewChild(CdkVirtualScrollViewport)
-  public viewPort!: CdkVirtualScrollViewport;
 
   @Input()
   public status!: Status;
@@ -141,19 +130,19 @@ export class KanbanStatusComponent
     return 0;
   }
 
-  @ViewChild(CdkVirtualScrollViewport)
-  public set scrollable(cdkScrollable: CdkVirtualScrollViewport) {
-    this.cdkScrollable = cdkScrollable;
+  @ViewChild(RxVirtualScrollViewportComponent)
+  public set scrollable(virtualScroll: RxVirtualScrollViewportComponent) {
+    this.virtualScroll = virtualScroll;
 
-    if (this.cdkScrollable) {
+    if (this.virtualScroll) {
       this.autoScrollService
-        .listen(this.cdkScrollable, 'vertical', 100, 0.7)
+        .listenVirtualScrollElement(this.virtualScroll, 'vertical', 100, 0.7)
         .pipe(untilDestroyed(this))
         .subscribe();
     }
   }
 
-  public cdkScrollable!: CdkVirtualScrollViewport;
+  public virtualScroll?: RxVirtualScrollViewportComponent;
 
   public model$ = this.state.select().pipe(
     map((state) => {
@@ -319,28 +308,11 @@ export class KanbanStatusComponent
   }
 
   private scrollToStory(tmpId: string) {
-    if (!this.kanbanVirtualScroll) {
+    if (!this.virtualScroll) {
       return;
     }
 
-    this.kanbanVirtualScroll.scrollStrategy.scrollTo({ bottom: 0 });
-
-    // #hack
-    // listen for 500ms for changes in the viewport height to scroll bottom
-    // and make the new story visible
-    this.kanbanVirtualScroll.scrollStrategy.updatedItemHeights$
-      .pipe(takeUntil(timer(500)))
-      .subscribe(() => {
-        const el = this.nativeElement.querySelector<HTMLElement>(
-          `tg-kanban-story[data-tmp-id="${tmpId}"]`
-        );
-
-        if (el) {
-          requestAnimationFrame(() => {
-            this.kanbanVirtualScroll?.scrollStrategy.scrollTo({ bottom: 0 });
-            this.store.dispatch(KanbanActions.scrolledToNewStory({ tmpId }));
-          });
-        }
-      });
+    this.virtualScroll.scrollToIndex(this.state.get('stories').length - 1);
+    this.store.dispatch(KanbanActions.scrolledToNewStory({ tmpId }));
   }
 }

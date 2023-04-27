@@ -115,6 +115,29 @@ def create_project_invitations(
 
 
 ##########################################################
+# list project invitations
+##########################################################
+
+
+@sync_to_async
+def list_project_invitations(
+    filters: ProjectInvitationFilters = {},
+    offset: int | None = None,
+    limit: int | None = None,
+    select_related: ProjectInvitationSelectRelated = ["project", "user", "role"],
+    order_by: ProjectInvitationOrderBy = ["full_name", "email"],
+) -> list[ProjectInvitation]:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
+    qs = _apply_order_by_to_queryset(order_by=order_by, qs=qs)
+
+    if limit is not None and offset is not None:
+        limit += offset
+
+    return list(qs[offset:limit])
+
+
+##########################################################
 # get project invitation
 ##########################################################
 
@@ -130,29 +153,6 @@ def get_project_invitation(
         return qs.get()
     except ProjectInvitation.DoesNotExist:
         return None
-
-
-##########################################################
-# get project invitations
-##########################################################
-
-
-@sync_to_async
-def get_project_invitations(
-    filters: ProjectInvitationFilters = {},
-    offset: int | None = None,
-    limit: int | None = None,
-    select_related: ProjectInvitationSelectRelated = ["project", "user", "role"],
-    order_by: ProjectInvitationOrderBy = ["full_name", "email"],
-) -> list[ProjectInvitation]:
-    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
-    qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
-    qs = _apply_order_by_to_queryset(order_by=order_by, qs=qs)
-
-    if limit is not None and offset is not None:
-        limit += offset
-
-    return list(qs[offset:limit])
 
 
 ##########################################################

@@ -179,7 +179,7 @@ async def list_paginated_pending_project_invitations(
     role = await pj_roles_repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id})
 
     if role and role.is_admin:
-        invitations = await invitations_repositories.get_project_invitations(
+        invitations = await invitations_repositories.list_project_invitations(
             filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING},
             offset=offset,
             limit=limit,
@@ -188,7 +188,7 @@ async def list_paginated_pending_project_invitations(
             filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING},
         )
     else:
-        invitations = await invitations_repositories.get_project_invitations(
+        invitations = await invitations_repositories.list_project_invitations(
             filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING, "user": user},
             offset=offset,
             limit=limit,
@@ -253,7 +253,7 @@ async def get_project_invitation_by_id(project_id: UUID, id: UUID) -> ProjectInv
 
 async def update_user_projects_invitations(user: User) -> None:
     await invitations_repositories.update_user_projects_invitations(user=user)
-    invitations = await invitations_repositories.get_project_invitations(
+    invitations = await invitations_repositories.list_project_invitations(
         filters={"user": user, "status": ProjectInvitationStatus.PENDING},
         select_related=["user", "role", "project", "workspace"],
     )

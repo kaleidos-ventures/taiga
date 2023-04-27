@@ -132,7 +132,7 @@ async def test_get_public_project_invitation_error_invitation_not_exists():
 #######################################################
 
 
-async def test_get_project_invitations_ok_admin():
+async def test_list_project_invitations_ok_admin():
     invitation = f.build_project_invitation()
     role_admin = f.build_project_role(is_admin=True)
 
@@ -140,14 +140,14 @@ async def test_get_project_invitations_ok_admin():
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.pj_roles_repositories", autospec=True) as fake_pj_roles_repo,
     ):
-        fake_invitations_repo.get_project_invitations.return_value = [invitation]
+        fake_invitations_repo.list_project_invitations.return_value = [invitation]
         fake_pj_roles_repo.get_project_role.return_value = role_admin
 
         pagination, invitations = await services.list_paginated_pending_project_invitations(
             project=invitation.project, user=invitation.project.created_by, offset=0, limit=10
         )
 
-        fake_invitations_repo.get_project_invitations.assert_awaited_once_with(
+        fake_invitations_repo.list_project_invitations.assert_awaited_once_with(
             filters={
                 "project_id": invitation.project.id,
                 "status": ProjectInvitationStatus.PENDING,
@@ -164,7 +164,7 @@ async def test_get_project_invitations_ok_admin():
         assert invitations == [invitation]
 
 
-async def test_get_project_invitations_ok_not_admin():
+async def test_list_project_invitations_ok_not_admin():
     invitation = f.build_project_invitation()
     not_admin_role = f.build_project_role(is_admin=False)
 
@@ -172,14 +172,14 @@ async def test_get_project_invitations_ok_not_admin():
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.pj_roles_repositories", autospec=True) as fake_pj_roles_repo,
     ):
-        fake_invitations_repo.get_project_invitations.return_value = [invitation]
+        fake_invitations_repo.list_project_invitations.return_value = [invitation]
         fake_pj_roles_repo.get_project_role.return_value = not_admin_role
 
         pagination, invitations = await services.list_paginated_pending_project_invitations(
             project=invitation.project, user=invitation.user, offset=0, limit=10
         )
 
-        fake_invitations_repo.get_project_invitations.assert_awaited_once_with(
+        fake_invitations_repo.list_project_invitations.assert_awaited_once_with(
             filters={
                 "project_id": invitation.project.id,
                 "status": ProjectInvitationStatus.PENDING,
@@ -821,7 +821,7 @@ async def test_update_user_projects_invitations() -> None:
     ):
         await services.update_user_projects_invitations(user=user)
         fake_invitations_repositories.update_user_projects_invitations.assert_awaited_once_with(user=user)
-        fake_invitations_repositories.get_project_invitations.assert_awaited_once_with(
+        fake_invitations_repositories.list_project_invitations.assert_awaited_once_with(
             filters={"user": user, "status": ProjectInvitationStatus.PENDING},
             select_related=["user", "role", "project", "workspace"],
         )

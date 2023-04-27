@@ -41,6 +41,15 @@
   "people": {
     "members_description": "Workspace members can view and manage all projects in this workspace, create new ones and delete them.",
     "non_members_description": "People that are part of the projects but not workspace members.",
-    "non_members_empty": "There are no project members who are not members of this workspace."
+    "non_members_empty": "There are no project members who are not members of this workspace.",
+    "remove": {
+      "question": "Remove {{fullName}} from Workspace?",
+      "description": "The user will no longer be able to access the workspace but will remain being a member of their projects",
+      "keep_member": "No, Cancel",
+      "confirm_remove_member": "Yes, remove",
+      "removed_member": "{{fullName}} removed.",
+      "undo": "Undo",
+      "action_undone": "Action undone"
+    }
   }
 }

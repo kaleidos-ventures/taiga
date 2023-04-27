@@ -41,10 +41,6 @@ tg-ui-dtable-row {
   }
 }
 
-.revoke-countdown-row {
-  --cells-layout: 1fr;
-}
-
 .revoke-countdown-cell {
   display: flex;
   inline-size: 100%;

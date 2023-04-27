@@ -8,17 +8,17 @@
 
 import { createFeature, on } from '@ngrx/store';
 import {
-  WorkspaceMembership,
   Project,
   Workspace,
+  WorkspaceMembership,
   WorkspaceProject,
 } from '@taiga/data';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import {
   workspaceActions,
   workspaceDetailActions,
-  workspaceDetailEventActions,
   workspaceDetailApiActions,
+  workspaceDetailEventActions,
 } from '../actions/workspace-detail.actions';
 
 export interface WorkspaceDetailState {
@@ -230,6 +230,17 @@ export const reducer = createImmerReducer(
       state.totalMembers = totalMembers;
       state.membersOffset = offset;
       state.membersLoading = false;
+
+      return state;
+    }
+  ),
+  on(
+    workspaceDetailApiActions.removeMemberSuccess,
+    (state, { member }): WorkspaceDetailState => {
+      state.members = state.members.filter((currentMember) => {
+        return currentMember.user.username !== member;
+      });
+      state.totalMembers = state.totalMembers - 1;
 
       return state;
     }

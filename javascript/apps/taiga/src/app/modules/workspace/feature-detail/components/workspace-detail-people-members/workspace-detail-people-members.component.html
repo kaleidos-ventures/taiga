@@ -25,20 +25,76 @@ Copyright (c) 2023-present Kaleidos INC
         </tg-ui-dtable-row>
         <ng-container *ngIf="!vm.loading">
           <ng-container
-            *ngFor="let member of vm.members; trackBy: trackByIndex">
-            <tg-ui-dtable-row [@.disabled]="vm.animationDisabled">
-              <tg-ui-dtable-cell class="user">
+            *ngFor="let member of vm.members; trackBy: trackByUsername">
+            <tg-ui-dtable-row
+              [class.highlighted]="vm.highlightedRow === member">
+              <tg-ui-dtable-cell
+                class="user"
+                [@removeAnimationCell]="member.cancelled">
                 <tg-user-card
                   [user]="member.user"
                   [navigateToUser]="true"></tg-user-card>
               </tg-ui-dtable-cell>
-              <tg-ui-dtable-cell>
-                <tg-workspace-detail-people-members-projects
-                  [member]="
-                    member
-                  "></tg-workspace-detail-people-members-projects>
+              <tg-ui-dtable-cell [@removeAnimationCell]="member.cancelled">
+                <tg-workspace-detail-people-members-projects [member]="member">
+                </tg-workspace-detail-people-members-projects>
               </tg-ui-dtable-cell>
-              <tg-ui-dtable-cell class="action-column"> </tg-ui-dtable-cell>
+              <tg-ui-dtable-cell
+                class="action-column"
+                [@removeAnimationCell]="member.cancelled">
+                <tg-workspace-detail-people-members-remove
+                  [class.highlighted]="vm.highlightedRow === member"
+                  *ngIf="vm.currentUser.username !== member.user.username"
+                  [member]="member"
+                  (highlightRemoveMemberRow)="highlightRemoveMemberRow($event)"
+                  (removeMember)="initRemoveMember($event)">
+                </tg-workspace-detail-people-members-remove>
+              </tg-ui-dtable-cell>
+              <div
+                *ngIf="member.cancelled === 'active'"
+                class="remove-countdown"
+                [@removeAnimationUndo]
+                (@removeAnimationUndo.done)="
+                  animationUndoValidateRemoved(member)
+                ">
+                <tg-ui-context-notification
+                  alertLevel="none"
+                  status="info">
+                  <div class="remove-countdown-wrapper">
+                    <span>
+                      {{
+                        t('workspace.people.remove.removed_member', {
+                          fullName: member.user.fullName
+                        })
+                      }}
+                    </span>
+                    <button
+                      class="undo-remove-member"
+                      data-test="undo-remove-member"
+                      tuiLink
+                      type="button"
+                      (click)="cancelRemove(member)"
+                      appearance="tertiary">
+                      {{ t('workspace.people.remove.undo') }}
+                    </button>
+                  </div>
+                </tg-ui-context-notification>
+              </div>
+              <div
+                *ngIf="member.undo"
+                [@removeUndoDone]
+                (@removeUndoDone.done)="clearUndo(member)"
+                class="remove-action-undo-done">
+                <tg-ui-context-notification
+                  alertLevel="none"
+                  status="info">
+                  <div class="remove-countdown-wrapper">
+                    <span>
+                      {{ t('workspace.people.remove.action_undone') }}
+                    </span>
+                  </div>
+                </tg-ui-context-notification>
+              </div>
             </tg-ui-dtable-row>
           </ng-container>
         </ng-container>

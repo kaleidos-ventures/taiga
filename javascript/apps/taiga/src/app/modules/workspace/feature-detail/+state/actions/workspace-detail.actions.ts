@@ -99,6 +99,13 @@ export const workspaceDetailApiActions = createActionGroup({
       totalMembers: number;
       offset: number;
     }>(),
+    'Remove member': props<{
+      id: Workspace['id'];
+      member: WorkspaceMembership['user']['username'];
+    }>(),
+    'Remove member success': props<{
+      member: WorkspaceMembership['user']['username'];
+    }>(),
   },
 });
 

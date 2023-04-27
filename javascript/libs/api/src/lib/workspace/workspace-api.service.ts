@@ -15,8 +15,8 @@ import {
   WorkspaceCreation,
   WorkspaceMembership,
 } from '@taiga/data';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -98,6 +98,15 @@ export class WorkspaceApiService {
           };
         })
       );
+  }
+
+  public removeWorkspaceMember(
+    id: Workspace['id'],
+    member: WorkspaceMembership['user']['username']
+  ) {
+    return this.http.delete<Workspace>(
+      `${this.config.apiUrl}/workspaces/${id}/memberships/${member}`
+    );
   }
 
   public getWorkspaceNonMembers(

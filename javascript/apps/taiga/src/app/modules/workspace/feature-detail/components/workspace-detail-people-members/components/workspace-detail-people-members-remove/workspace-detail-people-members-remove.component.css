@@ -1,0 +1,41 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import "tools/typography.css";
+
+:host(.highlighted) {
+  & .remove-user {
+    --color-secondary: var(--color-secondary90);
+  }
+}
+
+.remove-dialog {
+  inline-size: 416px;
+  padding: var(--spacing-20);
+}
+
+.remove-dialog-title {
+  @mixin font-paragraph;
+
+  color: var(--color-gray100);
+  font-weight: var(--font-weight-medium);
+  margin-block-end: var(--spacing-8);
+}
+
+.remove-dialog-description {
+  @mixin font-paragraph;
+
+  color: var(--color-gray80);
+  margin-block-end: var(--spacing-20);
+}
+
+.remove-dialog-actions {
+  display: flex;
+  gap: var(--spacing-16);
+  justify-content: space-between;
+}

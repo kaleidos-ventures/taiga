@@ -7,3 +7,46 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 @import "shared/users-tabs.css";
+
+.highlighted {
+  background-color: var(--color-primary10);
+}
+
+tg-ui-dtable-row {
+  --cells-layout: 1fr 1fr 140px;
+
+  /* stylelint-disable-next-line selector-max-type */
+  & > tg-ui-dtable-cell {
+    transform: translateY(0%);
+  }
+
+  & .remove-countdown {
+    transform: translateY(-100%);
+  }
+}
+
+.remove-countdown {
+  background: var(--color-white);
+  display: flex;
+  inline-size: 100%;
+  inset-block-start: 100%;
+  inset-inline-end: 0;
+  justify-content: flex-end;
+  position: absolute;
+
+  & button {
+    text-decoration: underline;
+  }
+}
+
+.remove-countdown-wrapper {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-24);
+}
+
+.remove-action-undo-done {
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  position: absolute;
+}

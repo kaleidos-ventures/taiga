@@ -11,4 +11,12 @@ Copyright (c) 2023-present Kaleidos INC
   display: grid;
   grid-gap: var(--row-gap, var(--spacing-16));
   grid-template-columns: var(--cells-layout);
+
+  &.active:not(:first-child) {
+    background: var(--color-primary10);
+
+    &:hover {
+      background: var(--color-primary10);
+    }
+  }
 }

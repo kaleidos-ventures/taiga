@@ -52,6 +52,7 @@ const initialState: MembersState = {
 // Test skipped until we can fix this tests with local and global state
 describe.skip('WorkspaceDetailPeopleMembersComponent', () => {
   let spectator: Spectator<WorkspaceDetailPeopleMembersComponent>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let store: MockStore;
 
   const createComponent = createComponentFactory({

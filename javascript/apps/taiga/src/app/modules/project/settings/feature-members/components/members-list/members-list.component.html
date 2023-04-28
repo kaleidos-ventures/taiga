@@ -25,7 +25,9 @@ Copyright (c) 2023-present Kaleidos INC
       <ng-container *ngIf="!vm.loading">
         <ng-container
           *ngFor="let member of vm.members; trackBy: trackByUsername">
-          <tg-ui-dtable-row [@.disabled]="vm.animationDisabled">
+          <tg-ui-dtable-row
+            [@.disabled]="vm.animationDisabled"
+            [class.active]="activeMemberList.includes(member.user.username)">
             <tg-ui-dtable-cell class="user">
               <tg-user-card
                 [user]="member.user"
@@ -46,7 +48,10 @@ Copyright (c) 2023-present Kaleidos INC
                 [roles]="vm.roles"
                 [project]="vm.project"
                 [user]="vm.user"
-                [member]="member">
+                [member]="member"
+                (dropdownStateChanged)="
+                  addToActiveMemberList($event, member.user.username)
+                ">
               </tg-remove-member>
             </tg-ui-dtable-cell>
           </tg-ui-dtable-row>

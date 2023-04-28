@@ -10,10 +10,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { TuiNotification } from '@taiga-ui/core';
+import { ProjectApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import { InvitationInfo } from '@taiga/data';
-import { of, throwError } from 'rxjs';
-import { catchError, mergeMap } from 'rxjs/operators';
+import { EMPTY, of, throwError } from 'rxjs';
+import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { AppService } from '~/app/services/app.service';
 
@@ -23,6 +24,7 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
   const http = inject(HttpClient);
   const config = inject(ConfigService);
   const appService = inject(AppService);
+  const projectApiService = inject(ProjectApiService);
 
   const token = route.params.token as string;
 
@@ -83,25 +85,44 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
         return of(true);
       }),
       catchError((httpResponse: HttpErrorResponse) => {
-        if (httpResponse.status === 404) {
-          void router.navigate(['/404']);
-        } else if (authService.isLogged()) {
+        const projectId = route.params.id as string;
+
+        // Display toast notification
+        appService.toastNotification({
+          message: 'errors.invalid_token_toast_message',
+          status: TuiNotification.Error,
+          closeOnNavigation: false,
+        });
+
+        // Handle 404 error
+        if (httpResponse.status === 404 && authService.isLogged()) {
+          return (function handle404Error() {
+            return projectApiService.getProject(projectId).pipe(
+              catchError((httpErrorResponse: HttpErrorResponse) => {
+                if (httpErrorResponse.status === 403) {
+                  void router.navigate(['/403']);
+                } else {
+                  void router.navigate(['/404']);
+                }
+                return EMPTY;
+              }),
+              tap((project) => {
+                if (project) {
+                  void router.navigate(['/project', project.id, project.slug]);
+                }
+                return EMPTY;
+              })
+            );
+          })();
+        }
+
+        // Handle other errors when logged in
+        if (authService.isLogged()) {
           void router.navigate(['/']);
         } else {
           void router.navigate(['/login']);
         }
-        let message;
-        if (httpResponse.status === 404) {
-          message = 'errors.generic_deleted_project';
-        } else {
-          message = 'errors.invalid_token_toast_message';
-        }
 
-        appService.toastNotification({
-          message: message,
-          status: TuiNotification.Error,
-          closeOnNavigation: false,
-        });
         return throwError(() => httpResponse);
       })
     );

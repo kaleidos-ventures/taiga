@@ -35,6 +35,14 @@ Copyright (c) 2023-present Kaleidos INC
 
 .row-action {
   padding: var(--spacing-8);
+
+  &.active::ng-deep .t-content {
+    color: var(--color-secondary90);
+
+    &:hover {
+      color: var(--color-secondary90);
+    }
+  }
 }
 
 .header-row-action {
@@ -43,6 +51,8 @@ Copyright (c) 2023-present Kaleidos INC
 
 .action-column,
 .column-actions {
+  align-items: center;
+  block-size: 100%;
   display: flex;
   justify-content: flex-end;
 }

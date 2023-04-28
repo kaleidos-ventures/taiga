@@ -38,6 +38,7 @@ import { filterNil } from '~/app/shared/utils/operators';
 })
 export class MembersListComponent {
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
+  public activeMemberList: string[] = [];
 
   public model$ = this.state.select().pipe(
     map((model) => {
@@ -110,5 +111,16 @@ export class MembersListComponent {
 
   public trackByIndex(index: number) {
     return index;
+  }
+
+  public addToActiveMemberList(add: boolean, username: string) {
+    if (add) {
+      this.activeMemberList.push(username);
+    } else {
+      const index = this.activeMemberList.indexOf(username);
+      if (index !== -1) {
+        this.activeMemberList.splice(index, 1);
+      }
+    }
   }
 }

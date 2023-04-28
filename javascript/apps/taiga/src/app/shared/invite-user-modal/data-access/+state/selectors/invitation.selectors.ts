@@ -10,14 +10,53 @@ import { createSelector } from '@ngrx/store';
 import { Role, User } from '@taiga/data';
 import { invitationFeature } from '../reducers/invitation.reducers';
 
-export const {
-  selectMemberRoles,
-  selectContacts,
-  selectInvitations,
-  selectAcceptedInvite,
-  selectSuggestedUsers,
-  selectSearchFinished,
-} = invitationFeature;
+export const { selectProject, selectWorkspace, selectSearchFinished } =
+  invitationFeature;
+
+export const selectMemberRoles = createSelector(
+  selectProject,
+  (project) => project.memberRoles
+);
+
+export const selectProjectContacts = createSelector(
+  selectProject,
+  (project) => project.contacts
+);
+
+export const selectProjectInvitations = createSelector(
+  selectProject,
+  (project) => project.invitations
+);
+
+export const selectProjectAcceptedInvite = createSelector(
+  selectProject,
+  (project) => project.acceptedInvite
+);
+
+export const selectProjectSuggestedUsers = createSelector(
+  selectProject,
+  (project) => project.suggestedUsers
+);
+
+export const selectWorkspaceContacts = createSelector(
+  selectWorkspace,
+  (workspace) => workspace.contacts
+);
+
+export const selectWorkspaceInvitations = createSelector(
+  selectWorkspace,
+  (workspace) => workspace.invitations
+);
+
+export const selectWorkspaceAcceptedInvite = createSelector(
+  selectWorkspace,
+  (workspace) => workspace.acceptedInvite
+);
+
+export const selectWorkspaceSuggestedUsers = createSelector(
+  selectWorkspace,
+  (workspace) => workspace.suggestedUsers
+);
 
 // roles list should be shown by the order setted from 'order' the property
 export const selectMemberRolesOrdered = createSelector(
@@ -38,22 +77,19 @@ export const selectMemberRolesOrdered = createSelector(
   }
 );
 
-export const selectUsersToInvite = (
-  inviteIdentifiers: string[],
-  hasRole: boolean
-) => {
+export const selectProjectUsersToInvite = (inviteIdentifiers: string[]) => {
   // from the introdued identifiers to invite to the project, we must complete data with the user contacts
   return createSelector(
     selectMemberRolesOrdered,
-    selectContacts,
-    selectInvitations,
-    (roles, contacts, invitations): Partial<User>[] => {
+    selectProjectContacts,
+    selectProjectInvitations,
+    (roles, projectContacts, projectInvitations): Partial<User>[] => {
       const users: Partial<User>[] = [];
       inviteIdentifiers.forEach((identifier) => {
-        const myContact = contacts?.find(
+        const myContact = projectContacts?.find(
           (contact) => contact.username === identifier
         );
-        const hasPendingInvitation = invitations?.find(
+        const hasPendingInvitation = projectInvitations?.find(
           (invitation) => invitation.user?.username === identifier
         );
         let tempUser: Partial<User> = {};
@@ -62,12 +98,34 @@ export const selectUsersToInvite = (
         } else if (identifier.includes('@')) {
           tempUser = { email: identifier };
         }
-        if (hasRole) {
-          const defaultRole = roles ? [roles[1].name] : undefined;
-          const role = hasPendingInvitation?.role?.name
-            ? [hasPendingInvitation.role.name]
-            : defaultRole;
-          tempUser.roles = role;
+
+        const defaultRole = roles ? [roles[1].name] : undefined;
+        const role = hasPendingInvitation?.role?.name
+          ? [hasPendingInvitation.role.name]
+          : defaultRole;
+        tempUser.roles = role;
+
+        Object.keys(tempUser).length && users.push(tempUser);
+      });
+      return users;
+    }
+  );
+};
+
+export const selectWorkspaceUsersToInvite = (inviteIdentifiers: string[]) => {
+  return createSelector(
+    selectWorkspaceContacts,
+    (workspaceContacts): Partial<User>[] => {
+      const users: Partial<User>[] = [];
+      inviteIdentifiers.forEach((identifier) => {
+        const myContact = workspaceContacts?.find(
+          (contact) => contact.username === identifier
+        );
+        let tempUser: Partial<User> = {};
+        if (myContact) {
+          tempUser = { ...myContact };
+        } else if (identifier.includes('@')) {
+          tempUser = { email: identifier };
         }
         Object.keys(tempUser).length && users.push(tempUser);
       });

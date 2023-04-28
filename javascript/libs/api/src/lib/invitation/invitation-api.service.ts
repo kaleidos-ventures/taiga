@@ -37,6 +37,15 @@ export class InvitationApiService {
     );
   }
 
+  public inviteWorkspaceUsers(id: string, invitations: InvitationRequest[]) {
+    return this.http.post<InvitationResponse>(
+      `${this.config.apiUrl}/workspaces/${id}/invitations`,
+      {
+        invitations,
+      }
+    );
+  }
+
   public searchUser(data: SearchUserRequest) {
     return this.http.get<Contact[]>(
       `${this.config.apiUrl}/users/search?text=${data.text}&${

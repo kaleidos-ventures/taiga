@@ -14,6 +14,7 @@ import {
   Workspace,
   WorkspaceCreation,
   WorkspaceMembership,
+  InvitationWorkspaceMember,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -117,6 +118,35 @@ export class WorkspaceApiService {
     return this.http
       .get<WorkspaceMembership[]>(
         `${this.config.apiUrl}/workspaces/${id}/guests`,
+        {
+          observe: 'response',
+          params: {
+            offset,
+            limit,
+          },
+        }
+      )
+      .pipe(
+        map((response) => {
+          return {
+            totalMembers: Number(response.headers.get('pagination-total')),
+            members: response.body ?? [],
+          };
+        })
+      );
+  }
+
+  public getWorkspaceInvitationMembers(
+    id: Workspace['id'],
+    offset = 0,
+    limit = 10
+  ): Observable<{
+    totalMembers: number;
+    members: InvitationWorkspaceMember[];
+  }> {
+    return this.http
+      .get<InvitationWorkspaceMember[]>(
+        `${this.config.apiUrl}/workspaces/${id}/invitations`,
         {
           observe: 'response',
           params: {

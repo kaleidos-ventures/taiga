@@ -63,6 +63,11 @@ Copyright (c) 2023-present Kaleidos INC
           [routerLinkActiveOptions]="{ exact: true }"
           (click)="selectedTab = 2">
           <h3>{{ t('common_members_tabs.pending_tab') }}</h3>
+          <span
+            class="count"
+            *ngIf="vm.totalInvitationMembers"
+            >({{ vm.totalInvitationMembers }})</span
+          >
         </a>
         <a
           id="tab-3"
@@ -97,7 +102,6 @@ Copyright (c) 2023-present Kaleidos INC
 
       <ng-container *ngIf="invitePeople">
         <tg-ui-modal
-          *ngIf="vm.workspace"
           [open]="invitePeople"
           (requestClose)="invitePeopleModal()">
           <tg-invite-user-modal
@@ -105,7 +109,7 @@ Copyright (c) 2023-present Kaleidos INC
             (closeModal)="invitePeopleModal()"
             (inviteSuccess)="onInviteSuccess()"
             [reset]="resetForm"
-            [workspace]="vm.workspace"></tg-invite-user-modal>
+            [isProjectInvitation]="false"></tg-invite-user-modal>
         </tg-ui-modal>
       </ng-container>
     </ng-container>

@@ -33,6 +33,8 @@ import {
   Role,
   User,
   Workspace,
+  Invitation,
+  InvitationWorkspaceMember,
 } from '@taiga/data';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map, share, startWith, switchMap, throttleTime } from 'rxjs/operators';
@@ -40,17 +42,23 @@ import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth
 import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
 import { InvitationService } from '~/app/services/invitation.service';
 import {
-  invitationActions,
   invitationProjectActions,
+  invitationWorkspaceActions,
 } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import {
-  selectContacts,
-  selectInvitations,
   selectMemberRolesOrdered,
   selectSearchFinished,
-  selectSuggestedUsers,
-  selectUsersToInvite,
+  selectProjectInvitations,
+  selectProjectSuggestedUsers,
+  selectWorkspaceInvitations,
+  selectWorkspaceSuggestedUsers,
+  selectProjectUsersToInvite,
+  selectWorkspaceUsersToInvite,
 } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
+import { selectWorkspace } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { RxState } from '@rx-angular/state';
+import { filterNil } from '~/app/shared/utils/operators';
 
 interface InvitationForm {
   fullName: string;
@@ -58,6 +66,15 @@ interface InvitationForm {
   color: number;
   roles: string;
   email?: string;
+}
+
+interface InviteUserState {
+  workspace: Workspace | null;
+  project: Project;
+  suggestedUsers: Contact[];
+  memberRoles: Role[] | null;
+  searchInProgress: boolean;
+  invitations: Invitation[] | InvitationWorkspaceMember[];
 }
 @UntilDestroy()
 @Component({
@@ -83,10 +100,7 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
   private readonly scrollBar?: ElementRef<HTMLElement>;
 
   @Input()
-  public project?: Project;
-
-  @Input()
-  public workspace?: Workspace;
+  public isProjectInvitation!: boolean;
 
   @Input()
   public fromOverview?: boolean;
@@ -111,6 +125,7 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
     return !this.formHasContent();
   }
 
+  public model$ = this.state.select();
   public regexpEmail = /\w+([.\-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+/g;
   public inviteIdentifier = '';
   public inviteIdentifier$ = new BehaviorSubject('');
@@ -135,15 +150,9 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
   public orderedRoles!: Role[] | null;
 
   public validEmails$ = new BehaviorSubject([] as string[]);
-  public memberRoles$ = this.store.select(selectMemberRolesOrdered);
-  public contacts$ = this.store.select(selectContacts);
-  public suggestedUsers$ = this.store.select(selectSuggestedUsers);
-  public invitations$ = this.store.select(selectInvitations);
-  public searchInProgress$ = this.store.select(selectSearchFinished);
   public usersToInvite$!: Observable<Partial<User>[]>;
   public validInviteIdentifier$!: Observable<string[]>;
   public emailsWithoutDuplications$!: Observable<string[]>;
-  public suggestedUsers: Contact[] = [];
   public suggestionSelected = 0;
   public elegibleSuggestions: number[] | undefined = [];
   public search$: Subject<string | null> = new Subject();
@@ -155,11 +164,17 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
     private fb: FormBuilder,
     private store: Store,
     private actions$: Actions,
-    private invitationService: InvitationService
+    private invitationService: InvitationService,
+    private state: RxState<InviteUserState>
   ) {
     this.actions$
       .pipe(
-        ofType(invitationProjectActions.inviteUsersSuccess),
+        ofType(
+          ...[
+            invitationProjectActions.inviteUsersSuccess,
+            invitationWorkspaceActions.inviteUsersSuccess,
+          ]
+        ),
         untilDestroyed(this)
       )
       .subscribe(() => {
@@ -200,7 +215,7 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
   public get suggestionContactsDropdownActivate() {
     return (
       !!(this.inviteIdentifier.length > 1) &&
-      !!this.suggestedUsers.length &&
+      !!this.state.get('suggestedUsers').length &&
       !!this.notInBulkMode
     );
   }
@@ -210,16 +225,48 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
   }
 
   public ngOnInit() {
-    this.usersToInvite$ = this.validEmails$.pipe(
-      switchMap((validEmails) => {
-        return this.store.select(
-          selectUsersToInvite(validEmails, !!this.project)
-        );
-      })
+    if (this.isProjectInvitation) {
+      this.state.connect(
+        'project',
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      );
+      this.state.connect(
+        'memberRoles',
+        this.store.select(selectMemberRolesOrdered)
+      );
+    } else {
+      this.state.connect(
+        'workspace',
+        this.store.select(selectWorkspace).pipe(filterNil())
+      );
+    }
+    this.state.connect(
+      'suggestedUsers',
+      this.isProjectInvitation
+        ? this.store.select(selectProjectSuggestedUsers)
+        : this.store.select(selectWorkspaceSuggestedUsers)
     );
-
-    this.project &&
-      this.store.dispatch(initRolesPermissions({ project: this.project }));
+    this.state.connect(
+      'invitations',
+      this.isProjectInvitation
+        ? this.store.select(selectProjectInvitations)
+        : this.store.select(selectWorkspaceInvitations)
+    );
+    this.state.connect(
+      'searchInProgress',
+      this.store.select(selectSearchFinished)
+    );
+    this.usersToInvite$ = this.isProjectInvitation
+      ? this.validEmails$.pipe(
+          switchMap((validEmails) => {
+            return this.store.select(selectProjectUsersToInvite(validEmails));
+          })
+        )
+      : this.validEmails$.pipe(
+          switchMap((validEmails) => {
+            return this.store.select(selectWorkspaceUsersToInvite(validEmails));
+          })
+        );
 
     // when we add users to invite its necessary to add the result to the form
     this.usersToInvite$
@@ -249,25 +296,28 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
         this.emailInput?.nativeFocusableElement?.focus();
       });
 
-    this.project &&
-      this.memberRoles$.pipe(untilDestroyed(this)).subscribe((memberRoles) => {
+    if (this.isProjectInvitation) {
+      this.state.hold(this.state.select('project'), (project) => {
+        this.store.dispatch(initRolesPermissions({ project }));
+      });
+      this.state.hold(this.state.select('memberRoles'), (memberRoles) => {
         this.orderedRoles = memberRoles;
       });
+    }
 
-    this.suggestedUsers$
-      .pipe(untilDestroyed(this))
-      .subscribe((suggestedUsers) => {
-        this.suggestedUsers = suggestedUsers;
-        this.elegibleSuggestions = [];
-        this.suggestedUsers.forEach((it, i) => {
-          if (!it.userIsMember && !it.userIsAddedToList) {
-            this.elegibleSuggestions?.push(i);
-          }
-        });
-        this.suggestionSelected = this.elegibleSuggestions?.[0] || 0;
+    this.state.hold(this.state.select('suggestedUsers'), (suggestedUsers) => {
+      this.elegibleSuggestions = [];
+      suggestedUsers?.forEach((it, i) => {
+        if (!it.userIsMember && !it.userIsAddedToList) {
+          this.elegibleSuggestions?.push(i);
+        }
       });
+      this.suggestionSelected = this.elegibleSuggestions?.[0] || 0;
+    });
 
-    this.titleName = this.project ? this.project.name : this.workspace!.name;
+    this.titleName = this.isProjectInvitation
+      ? this.state.get('project')!.name
+      : this.state.get('workspace')!.name;
   }
 
   public ngOnChanges(changes: SimpleChanges) {
@@ -359,22 +409,27 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
     } else if (emails.trim().length > 1) {
       this.notInBulkMode = true;
       const searchText = this.inviteIdentifier.replace(/^@/, '');
-      const searchPayload: {
-        text: string;
-        project?: Project['id'];
-        workspace?: Workspace['id'];
-      } = { text: searchText };
-      if (this.project) {
-        searchPayload.project = this.project.id;
-      } else if (this.workspace) {
-        searchPayload.workspace = this.workspace.id;
+      if (this.isProjectInvitation) {
+        this.store.dispatch(
+          invitationProjectActions.searchUsers({
+            searchUser: {
+              text: searchText,
+              project: this.state.get('project')!.id,
+            },
+            peopleAdded: this.getPeopleAdded(),
+          })
+        );
+      } else {
+        this.store.dispatch(
+          invitationWorkspaceActions.searchUsers({
+            searchUser: {
+              text: searchText,
+              workspace: this.state.get('workspace')!.id,
+            },
+            peopleAdded: this.getPeopleAdded(),
+          })
+        );
       }
-      this.store.dispatch(
-        invitationActions.searchUsers({
-          searchUser: searchPayload,
-          peopleAdded: this.getPeopleAdded(),
-        })
-      );
       this.handleAccessibilityAttributes(true);
       this.updateEmailInputIsFocus(true);
     }
@@ -414,7 +469,7 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
       .replace(/[;,\s\n]/g, '');
     this.resetErrors();
     if (this.suggestionContactsDropdownActivate) {
-      const user = this.suggestedUsers[this.suggestionSelected];
+      const user = this.state.get('suggestedUsers')[this.suggestionSelected];
       if (user && !user.userIsMember && !user.userIsAddedToList) {
         this.includeSuggestedContact(this.suggestionSelected);
       }
@@ -445,16 +500,22 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
 
   public includeSuggestedContact(index: number, event?: Event) {
     event?.preventDefault();
-    if (
-      this.suggestedUsers[index] &&
-      !this.suggestedUsers[index].userIsMember
-    ) {
-      this.store.dispatch(
-        invitationProjectActions.addSuggestedContact({
-          contact: this.suggestedUsers[index],
-        })
-      );
-      this.validEmails$.next([this.suggestedUsers[index].username]);
+    const suggestedUsers = [...this.state.get('suggestedUsers')];
+    if (suggestedUsers[index] && !suggestedUsers[index].userIsMember) {
+      if (this.isProjectInvitation) {
+        this.store.dispatch(
+          invitationProjectActions.addSuggestedContact({
+            contact: suggestedUsers[index],
+          })
+        );
+      } else {
+        this.store.dispatch(
+          invitationWorkspaceActions.addSuggestedContact({
+            contact: suggestedUsers[index],
+          })
+        );
+      }
+      this.validEmails$.next([suggestedUsers[index].username]);
     }
   }
 
@@ -512,13 +573,20 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
 
   public generatePayload(): InvitationRequest[] {
     return this.users.map((user) => {
-      const data: InvitationRequest = {
-        email: user.get('email')?.value as string,
-        username: user.get('username')?.value as string,
-      };
-      if (this.project) {
-        data.roleSlug =
-          this.getRoleSlug(user.get('roles')?.value as string)?.slug || '';
+      let data: InvitationRequest = {};
+      if (this.isProjectInvitation) {
+        data = {
+          email: user.get('email')?.value as string,
+          username: user.get('username')?.value as string,
+          roleSlug:
+            this.getRoleSlug(user.get('roles')?.value as string)?.slug || '',
+        };
+      } else {
+        data = {
+          usernameOrEmail:
+            (user.get('username')?.value as string) ||
+            (user.get('email')?.value as string),
+        };
       }
       return data;
     });
@@ -538,15 +606,20 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
   }
 
   public handleDispatch() {
-    if (this.project) {
+    if (this.isProjectInvitation) {
       this.store.dispatch(
         invitationProjectActions.inviteUsers({
-          id: this.project.id,
+          id: this.state.get('project')!.id,
           invitation: this.generatePayload(),
         })
       );
-    } else if (this.workspace) {
-      // dispatch invite users to wks
+    } else {
+      this.store.dispatch(
+        invitationWorkspaceActions.inviteUsers({
+          id: this.state.get('workspace')!.id,
+          invitation: this.generatePayload(),
+        })
+      );
     }
   }
 

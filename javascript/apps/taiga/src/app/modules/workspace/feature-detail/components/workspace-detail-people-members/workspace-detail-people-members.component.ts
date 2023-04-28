@@ -27,7 +27,7 @@ import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth
 import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
   selectAnimationDisabled,
-  selectMembers,
+  selectMembersList,
   selectMembersLoading,
   selectMembersOffset,
   selectTotalMembers,
@@ -194,7 +194,7 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.state.connect('members', this.store.select(selectMembers));
+    this.state.connect('members', this.store.select(selectMembersList));
     this.state.connect('loading', this.store.select(selectMembersLoading));
     this.state.connect('total', this.store.select(selectTotalMembers));
     this.state.connect('offset', this.store.select(selectMembersOffset));

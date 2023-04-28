@@ -7,7 +7,13 @@
  */
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Project, User, Workspace, WorkspaceMembership } from '@taiga/data';
+import {
+  Project,
+  User,
+  Workspace,
+  WorkspaceMembership,
+  InvitationWorkspaceMember,
+} from '@taiga/data';
 
 export const workspaceActions = createActionGroup({
   source: 'Workspace',
@@ -80,6 +86,11 @@ export const workspaceDetailApiActions = createActionGroup({
         totalMembers: number;
         offset: number;
       };
+      invitations: {
+        members: InvitationWorkspaceMember[];
+        totalMembers: number;
+        offset: number;
+      };
     }>(),
     'Get workspace members': props<{
       id: Workspace['id'];
@@ -106,6 +117,15 @@ export const workspaceDetailApiActions = createActionGroup({
     'Remove member success': props<{
       id: Workspace['id'];
       member: WorkspaceMembership['user']['username'];
+    }>(),
+    'Get workspace member invitations': props<{
+      id: Workspace['id'];
+      offset: number;
+    }>(),
+    'Get workspace member invitations success': props<{
+      members: InvitationWorkspaceMember[];
+      totalMembers: number;
+      offset: number;
     }>(),
   },
 });

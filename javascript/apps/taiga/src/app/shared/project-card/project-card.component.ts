@@ -31,7 +31,7 @@ import { Project, Workspace } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { distinctUntilChanged, map, skip } from 'rxjs/operators';
-import { selectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
+import { selectProjectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 import { CommonTemplateModule } from '../common-template.module';
 import { DropdownModule } from '../dropdown/dropdown.module';
 import { DataAccessInviteUserModalModule } from '../invite-user-modal/data-access/+state/invite-user-modal-data-access.module';
@@ -175,7 +175,7 @@ export class ProjectCardComponent implements OnInit {
 
   public animationState = '';
 
-  public invitationStatus$ = this.store.select(selectAcceptedInvite);
+  public invitationStatus$ = this.store.select(selectProjectAcceptedInvite);
   public rejectedByAdmin = false;
   public projectActionsDropdownState = false;
 

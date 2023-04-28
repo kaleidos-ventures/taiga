@@ -17,21 +17,22 @@ import {
   Contact,
   ErrorManagementToastOptions,
   InvitationResponse,
-  SearchUserRequest,
+  InvitationWorkspaceMember,
 } from '@taiga/data';
 import { throwError } from 'rxjs';
 import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AppService } from '~/app/services/app.service';
 import { InvitationService } from '~/app/services/invitation.service';
+import { getSuggestedInvitationsList } from './invitation.effects.helpers';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { ButtonLoadingService } from '~/app/shared/directives/button-loading/button-loading.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import {
   revokeInvitation,
-  invitationActions,
   invitationProjectActions,
+  invitationWorkspaceActions,
 } from '../actions/invitation.action';
 
 @Injectable()
@@ -47,7 +48,7 @@ export class InvitationEffects {
     );
   });
 
-  public sendInvitations$ = createEffect(() => {
+  public sendProjectInvitations$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(invitationProjectActions.inviteUsers),
       pessimisticUpdate({
@@ -91,7 +92,10 @@ export class InvitationEffects {
   public sendInvitationsSuccess$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(invitationProjectActions.inviteUsersSuccess),
+        ofType(
+          invitationProjectActions.inviteUsersSuccess,
+          invitationWorkspaceActions.inviteUsersSuccess
+        ),
         tap((action) => {
           let labelText;
           let messageText;
@@ -173,9 +177,56 @@ export class InvitationEffects {
     );
   });
 
-  public searchUser$ = createEffect(() => {
+  public sendWorkspaceInvitations$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(invitationActions.searchUsers),
+      ofType(invitationWorkspaceActions.inviteUsers),
+      pessimisticUpdate({
+        run: (action) => {
+          this.buttonLoadingService.start();
+          return this.invitationApiService
+            .inviteWorkspaceUsers(action.id, action.invitation)
+            .pipe(
+              switchMap(this.buttonLoadingService.waitLoading()),
+              map((response: InvitationResponse) => {
+                const invitations = response.invitations.map((it) => {
+                  return {
+                    workspace: { id: action.id },
+                    ...it,
+                  } as InvitationWorkspaceMember;
+                });
+                return invitationWorkspaceActions.inviteUsersSuccess({
+                  totalInvitations: action.invitation.length,
+                  newInvitations: invitations,
+                  alreadyMembers: response.alreadyMembers,
+                });
+              })
+            );
+        },
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+          const options: ErrorManagementToastOptions = {
+            type: 'toast',
+            options: {
+              label: 'invitation_error',
+              message: 'failed_send_invite',
+              paramsMessage: { invitations: action.invitation.length },
+              status: TuiNotification.Error,
+              scope: 'invitation_modal',
+            },
+          };
+          this.appService.errorManagement(httpResponse, {
+            400: options,
+            500: options,
+          });
+          return invitationWorkspaceActions.inviteUsersError();
+        },
+      })
+    );
+  });
+
+  public projectSearchUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(invitationProjectActions.searchUsers),
       debounceTime(200),
       concatLatestFrom(() => this.store.select(selectUser).pipe(filterNil())),
       switchMap(([action, userState]) => {
@@ -186,41 +237,67 @@ export class InvitationEffects {
         const peopleAddedUsernameList = action.peopleAdded.map(
           (i) => i.username
         );
-        const payload: SearchUserRequest = {
-          text: UtilsService.normalizeText(action.searchUser.text),
-          offset: 0,
-          // to show 6 results at least and being possible to get the current user in the list we always will ask for 7 + the matched users that are on the list
-          limit: peopleAddedMatch.length + 7,
-        };
-        if (action.searchUser.project) {
-          payload.project = action.searchUser.project;
-        } else {
-          payload.workspace = action.searchUser.workspace;
-        }
-        return this.invitationApiService.searchUser(payload).pipe(
-          map((suggestedUsers: Contact[]) => {
-            let suggestedList = suggestedUsers.filter(
-              (suggestedUser) =>
-                suggestedUser.username !== userState.username &&
-                !peopleAddedUsernameList.includes(suggestedUser.username) &&
-                !suggestedUser.userIsMember
-            );
-            const alreadyMembers = suggestedUsers.filter(
-              (suggestedUser) =>
-                suggestedUser.username !== userState.username &&
-                suggestedUser.userIsMember
-            );
-            suggestedList = [
-              ...alreadyMembers,
-              ...peopleAddedMatch,
-              ...suggestedList,
-            ].slice(0, 6);
-
-            return invitationActions.searchUsersSuccess({
-              suggestedUsers: suggestedList,
-            });
+        return this.invitationApiService
+          .searchUser({
+            text: UtilsService.normalizeText(action.searchUser.text),
+            project: action.searchUser.project,
+            offset: 0,
+            // to show 6 results at least and being possible to get the current user in the list we always will ask for 7 + the matched users that are on the list
+            limit: peopleAddedMatch.length + 7,
           })
+          .pipe(
+            map((suggestedUsers: Contact[]) => {
+              return invitationProjectActions.searchUsersSuccess({
+                suggestedUsers: getSuggestedInvitationsList(
+                  suggestedUsers,
+                  peopleAddedMatch,
+                  peopleAddedUsernameList,
+                  userState
+                ),
+              });
+            })
+          );
+      }),
+      catchError((httpResponse: HttpErrorResponse) => {
+        this.appService.errorManagement(httpResponse);
+        return throwError(() => httpResponse);
+      })
+    );
+  });
+
+  public workspaceSearchUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(invitationWorkspaceActions.searchUsers),
+      debounceTime(200),
+      concatLatestFrom(() => this.store.select(selectUser).pipe(filterNil())),
+      switchMap(([action, userState]) => {
+        const peopleAddedMatch = this.invitationService.matchUsersFromList(
+          action.peopleAdded,
+          action.searchUser.text
         );
+        const peopleAddedUsernameList = action.peopleAdded.map(
+          (i) => i.username
+        );
+        return this.invitationApiService
+          .searchUser({
+            text: UtilsService.normalizeText(action.searchUser.text),
+            workspace: action.searchUser.workspace,
+            offset: 0,
+            // to show 6 results at least and being possible to get the current user in the list we always will ask for 7 + the matched users that are on the list
+            limit: peopleAddedMatch.length + 7,
+          })
+          .pipe(
+            map((suggestedUsers: Contact[]) => {
+              return invitationWorkspaceActions.searchUsersSuccess({
+                suggestedUsers: getSuggestedInvitationsList(
+                  suggestedUsers,
+                  peopleAddedMatch,
+                  peopleAddedUsernameList,
+                  userState
+                ),
+              });
+            })
+          );
       }),
       catchError((httpResponse: HttpErrorResponse) => {
         this.appService.errorManagement(httpResponse);

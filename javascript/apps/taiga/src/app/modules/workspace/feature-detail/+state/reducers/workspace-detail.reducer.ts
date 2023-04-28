@@ -12,6 +12,7 @@ import {
   Workspace,
   WorkspaceMembership,
   WorkspaceProject,
+  InvitationWorkspaceMember,
 } from '@taiga/data';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import {
@@ -28,14 +29,24 @@ export interface WorkspaceDetailState {
   workspaceProjects: Record<Workspace['id'], WorkspaceProject[]>;
   workspaceInvitedProjects: Project[];
   loading: boolean;
-  members: WorkspaceMembership[];
-  membersLoading: boolean;
-  totalMembers: number;
-  membersOffset: number;
-  nonMembers: WorkspaceMembership[];
-  nonMembersLoading: boolean;
-  totalNonMembers: number;
-  nonMembersOffset: number;
+  members: {
+    membersList: WorkspaceMembership[];
+    loading: boolean;
+    total: number;
+    offset: number;
+  };
+  nonMembers: {
+    membersList: WorkspaceMembership[];
+    loading: boolean;
+    total: number;
+    offset: number;
+  };
+  invitations: {
+    membersList: InvitationWorkspaceMember[];
+    loading: boolean;
+    total: number;
+    offset: number;
+  };
   animationDisabled: boolean;
 }
 
@@ -46,14 +57,24 @@ export const initialState: WorkspaceDetailState = {
   loading: false,
   workspaceProjects: {},
   workspaceInvitedProjects: [],
-  members: [],
-  membersLoading: false,
-  totalMembers: 0,
-  membersOffset: 0,
-  nonMembers: [],
-  nonMembersLoading: false,
-  totalNonMembers: 0,
-  nonMembersOffset: 0,
+  members: {
+    membersList: [],
+    loading: false,
+    total: 0,
+    offset: 0,
+  },
+  nonMembers: {
+    membersList: [],
+    loading: false,
+    total: 0,
+    offset: 0,
+  },
+  invitations: {
+    membersList: [],
+    loading: false,
+    total: 0,
+    offset: 0,
+  },
   animationDisabled: true,
 };
 
@@ -203,22 +224,26 @@ export const reducer = createImmerReducer(
     workspaceDetailApiActions.initWorkspacePeople,
     workspaceDetailApiActions.getWorkspaceMembers,
     (state): WorkspaceDetailState => {
-      state.membersLoading = true;
+      state.members.loading = true;
 
       return state;
     }
   ),
   on(
     workspaceDetailApiActions.initWorkspacePeopleSuccess,
-    (state, { members, nonMembers }): WorkspaceDetailState => {
-      state.members = members.members;
-      state.totalMembers = members.totalMembers;
-      state.membersOffset = members.offset;
-      state.nonMembers = nonMembers.members;
-      state.totalNonMembers = nonMembers.totalMembers;
-      state.nonMembersOffset = nonMembers.offset;
-      state.membersLoading = false;
-      state.nonMembersLoading = false;
+    (state, { members, nonMembers, invitations }): WorkspaceDetailState => {
+      state.members.membersList = members.members;
+      state.members.total = members.totalMembers;
+      state.members.offset = members.offset;
+      state.nonMembers.membersList = nonMembers.members;
+      state.nonMembers.total = nonMembers.totalMembers;
+      state.nonMembers.offset = nonMembers.offset;
+      state.invitations.membersList = invitations.members;
+      state.invitations.total = invitations.totalMembers;
+      state.invitations.offset = invitations.offset;
+      state.members.loading = false;
+      state.nonMembers.loading = false;
+      state.invitations.loading = false;
 
       return state;
     }
@@ -226,10 +251,10 @@ export const reducer = createImmerReducer(
   on(
     workspaceDetailApiActions.getWorkspaceMembersSuccess,
     (state, { members, totalMembers, offset }): WorkspaceDetailState => {
-      state.members = members;
-      state.totalMembers = totalMembers;
-      state.membersOffset = offset;
-      state.membersLoading = false;
+      state.members.membersList = members;
+      state.members.total = totalMembers;
+      state.members.offset = offset;
+      state.members.loading = false;
 
       return state;
     }
@@ -237,10 +262,12 @@ export const reducer = createImmerReducer(
   on(
     workspaceDetailApiActions.removeMemberSuccess,
     (state, { member }): WorkspaceDetailState => {
-      state.members = state.members.filter((currentMember) => {
-        return currentMember.user.username !== member;
-      });
-      state.totalMembers = state.totalMembers - 1;
+      state.members.membersList = state.members.membersList.filter(
+        (currentMember) => {
+          return currentMember.user.username !== member;
+        }
+      );
+      state.members.total = state.members.total - 1;
 
       return state;
     }
@@ -249,7 +276,7 @@ export const reducer = createImmerReducer(
     workspaceDetailApiActions.initWorkspacePeople,
     workspaceDetailApiActions.getWorkspaceNonMembers,
     (state): WorkspaceDetailState => {
-      state.nonMembersLoading = true;
+      state.nonMembers.loading = true;
 
       return state;
     }
@@ -257,10 +284,21 @@ export const reducer = createImmerReducer(
   on(
     workspaceDetailApiActions.getWorkspaceNonMembersSuccess,
     (state, { members, totalMembers, offset }): WorkspaceDetailState => {
-      state.nonMembers = members;
-      state.totalNonMembers = totalMembers;
-      state.nonMembersOffset = offset;
-      state.nonMembersLoading = false;
+      state.nonMembers.membersList = members;
+      state.nonMembers.total = totalMembers;
+      state.nonMembers.offset = offset;
+      state.nonMembers.loading = false;
+
+      return state;
+    }
+  ),
+  on(
+    workspaceDetailApiActions.getWorkspaceMemberInvitationsSuccess,
+    (state, { members, totalMembers, offset }): WorkspaceDetailState => {
+      state.invitations.membersList = members;
+      state.invitations.total = totalMembers;
+      state.invitations.offset = offset;
+      state.invitations.loading = false;
 
       return state;
     }
@@ -268,16 +306,16 @@ export const reducer = createImmerReducer(
   on(
     workspaceDetailEventActions.removeMember,
     (state, { username }): WorkspaceDetailState => {
-      const member = state.members.find((member) => {
+      const member = state.members.membersList.find((member) => {
         return member.user.username !== username;
       });
 
       if (member) {
-        state.members = state.members.filter((member) => {
+        state.members.membersList = state.members.membersList.filter((member) => {
           return member.user.username !== username;
         });
 
-        state.totalMembers--;
+        state.members.total--;
       }
 
       return state;

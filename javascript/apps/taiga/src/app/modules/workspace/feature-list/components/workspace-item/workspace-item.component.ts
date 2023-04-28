@@ -53,7 +53,7 @@ import {
 } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import { WsService } from '~/app/services/ws';
 import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
-import { selectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
+import { selectProjectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 
 interface ViewModel {
@@ -192,6 +192,9 @@ export class WorkspaceItemComponent
       invitations: [],
       projectSiblingToAnimate: [],
       slideOutActive: false,
+      loadingWorkspaces: [],
+      acceptedInvites: [],
+      workspaceProjects: []
     });
   }
 
@@ -214,7 +217,7 @@ export class WorkspaceItemComponent
 
     this.state.connect(
       'acceptedInvites',
-      this.store.select(selectAcceptedInvite)
+      this.store.select(selectProjectAcceptedInvite)
     );
     this.state.connect(
       'workspaceProjects',

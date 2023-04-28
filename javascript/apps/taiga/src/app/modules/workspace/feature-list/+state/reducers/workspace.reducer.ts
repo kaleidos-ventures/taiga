@@ -8,7 +8,7 @@
 
 import { createFeature, on } from '@ngrx/store';
 import { Project, Workspace, WorkspaceProject } from '@taiga/data';
-import * as InvitationActions from '~/app/shared/invite-user-modal/data-access/+state//actions/invitation.action';
+import { revokeInvitation } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import * as WorkspaceActions from '../actions/workspace.actions';
 import { workspaceEventActions } from '../actions/workspace.actions';
@@ -231,14 +231,11 @@ export const reducer = createImmerReducer(
       return state;
     }
   ),
-  on(
-    InvitationActions.revokeInvitation,
-    (state, { projectId }): WorkspaceState => {
-      state.rejectedInvites.push(projectId);
+  on(revokeInvitation, (state, { projectId }): WorkspaceState => {
+    state.rejectedInvites.push(projectId);
 
-      return state;
-    }
-  ),
+    return state;
+  }),
   on(
     WorkspaceActions.invitationRevokedEvent,
     (state, { workspace }): WorkspaceState => {

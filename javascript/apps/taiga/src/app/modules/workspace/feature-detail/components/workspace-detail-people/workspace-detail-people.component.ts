@@ -19,6 +19,7 @@ import {
   selectTotalMembers,
   selectTotalNonMembers,
   selectWorkspace,
+  selectTotalInvitations,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -27,6 +28,7 @@ interface WorkspaceDetailState {
   workspace: Workspace | null;
   totalMembers: number;
   totalNonMembers: number;
+  totalInvitationMembers: number;
 }
 @UntilDestroy()
 @Component({
@@ -57,6 +59,10 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
     this.state.connect(
       'totalNonMembers',
       this.store.select(selectTotalNonMembers)
+    );
+    this.state.connect(
+      'totalInvitationMembers',
+      this.store.select(selectTotalInvitations)
     );
 
     this.state.hold(this.state.select('workspace'), (workspace) => {
@@ -110,6 +116,11 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
   }
 
   public onInviteSuccess() {
-    // init members
+    this.store.dispatch(
+      workspaceDetailApiActions.getWorkspaceMemberInvitations({
+        id: this.state.get('workspace')!.id,
+        offset: 0,
+      })
+    );
   }
 }

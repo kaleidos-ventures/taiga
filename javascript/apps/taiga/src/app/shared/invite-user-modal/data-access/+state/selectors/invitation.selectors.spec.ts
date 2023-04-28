@@ -9,7 +9,8 @@
 import { Contact, Permissions, Role } from '@taiga/data';
 import {
   selectMemberRolesOrdered,
-  selectUsersToInvite,
+  selectProjectUsersToInvite,
+  selectWorkspaceUsersToInvite,
 } from './invitation.selectors';
 
 export const rolesOrdered: Role[] = [
@@ -116,7 +117,7 @@ describe('invite selectors', () => {
         fullName: 'user one',
       },
     ];
-    const userToInvite = selectUsersToInvite(userIdentifier, true).projector(
+    const userToInvite = selectProjectUsersToInvite(userIdentifier).projector(
       rolesOrdered,
       contacts,
       []
@@ -142,10 +143,8 @@ describe('invite selectors', () => {
         fullName: 'user one',
       },
     ];
-    const userToInvite = selectUsersToInvite(userIdentifier, false).projector(
-      rolesOrdered,
-      contacts,
-      []
+    const userToInvite = selectWorkspaceUsersToInvite(userIdentifier).projector(
+      contacts
     );
     expect(userToInvite).toEqual([
       {

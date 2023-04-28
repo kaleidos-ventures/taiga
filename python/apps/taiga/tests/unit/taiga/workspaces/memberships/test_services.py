@@ -110,6 +110,9 @@ async def test_delete_workspace_membership():
             "taiga.workspaces.memberships.services.workspace_memberships_repositories", autospec=True
         ) as fake_ws_memberships_repo,
         patch(
+            "taiga.workspaces.memberships.services.workspace_invitations_repositories", autospec=True
+        ) as fake_ws_invitations_repo,
+        patch(
             "taiga.workspaces.memberships.services.workspace_memberships_events", autospec=True
         ) as fake_ws_memberships_events,
     ):
@@ -123,6 +126,9 @@ async def test_delete_workspace_membership():
         )
         fake_ws_memberships_repo.delete_workspace_memberships.assert_awaited_once_with(
             filters={"id": membership.id},
+        )
+        fake_ws_invitations_repo.delete_workspace_invitation.assert_awaited_once_with(
+            filters={"workspace_id": workspace.id, "username_or_email": membership.user.email},
         )
         fake_ws_memberships_events.emit_event_when_workspace_membership_is_deleted.assert_awaited_once_with(
             membership=membership

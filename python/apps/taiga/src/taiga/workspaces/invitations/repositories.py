@@ -157,6 +157,18 @@ def update_user_workspaces_invitations(user: User) -> None:
 
 
 ##########################################################
+# delete workspace invitation
+##########################################################
+
+
+@sync_to_async
+def delete_workspace_invitation(filters: WorkspaceInvitationFilters = {}) -> int:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    count, _ = qs.delete()
+    return count
+
+
+##########################################################
 # misc
 ##########################################################
 

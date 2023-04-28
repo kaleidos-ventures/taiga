@@ -12,6 +12,7 @@ from taiga.base.api import Pagination
 from taiga.projects.memberships import repositories as projects_memberships_repositories
 from taiga.projects.projects import repositories as projects_repositories
 from taiga.users import repositories as users_repositories
+from taiga.workspaces.invitations import repositories as workspace_invitations_repositories
 from taiga.workspaces.memberships import events as workspace_memberships_events
 from taiga.workspaces.memberships import repositories as workspace_memberships_repositories
 from taiga.workspaces.memberships.models import WorkspaceMembership
@@ -120,6 +121,10 @@ async def delete_workspace_membership(
         filters={"id": membership.id},
     )
     if deleted > 0:
+        # Delete workspace invitations
+        await workspace_invitations_repositories.delete_workspace_invitation(
+            filters={"workspace_id": membership.workspace_id, "username_or_email": membership.user.email},
+        )
         await workspace_memberships_events.emit_event_when_workspace_membership_is_deleted(membership=membership)
         return True
 

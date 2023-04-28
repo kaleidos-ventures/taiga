@@ -277,6 +277,24 @@ async def test_update_user_workspaces_invitations():
 
 
 ##########################################################
+# delete_workspace_invitation
+##########################################################
+
+
+async def test_delete_workspace_invitation():
+    workspace = await f.create_workspace()
+    user = await f.create_user()
+    await f.create_workspace_invitation(
+        user=user, email=user.email, workspace=workspace, status=WorkspaceInvitationStatus.PENDING
+    )
+
+    deleted_invitation = await repositories.delete_workspace_invitation(
+        filters={"workspace_id": workspace.id, "username_or_email": user.email},
+    )
+    assert deleted_invitation == 1
+
+
+##########################################################
 # misc - get_total_workspace_invitations
 ##########################################################
 

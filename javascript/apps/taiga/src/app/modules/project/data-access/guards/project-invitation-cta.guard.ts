@@ -114,24 +114,15 @@ export const ProjectInvitationCTAGuard: CanActivateFn = (
           })
         );
       }),
-      catchError((httpResponse: HttpErrorResponse) => {
-        let message;
-        if (httpResponse.status === 404) {
-          message = 'errors.generic_deleted_project';
-        } else {
-          message = 'errors.invalid_token_toast_message';
-        }
-
+      catchError(() => {
         appService.toastNotification({
-          message: message,
+          message: 'errors.invalid_token_toast_message',
           status: TuiNotification.Error,
           autoClose: false,
           closeOnNavigation: false,
         });
 
-        if (httpResponse.status === 404) {
-          return of(router.parseUrl('/404'));
-        } else if (authService.isLogged()) {
+        if (authService.isLogged()) {
           return of(router.parseUrl('/'));
         }
 

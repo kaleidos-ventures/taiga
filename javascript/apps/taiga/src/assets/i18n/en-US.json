@@ -207,7 +207,7 @@
     "remove": "Remove",
     "last_admin_warning_title": "Projects must have at least one admin.",
     "last_admin_warning_description": "Assign another admin first and try again.",
-    "leave_title": "Leave project {project_name}",
+    "leave_title": "Leave project {project_name}?",
     "leave_description": "You will lose the permissions granted as a member of the project and will be removed from all your assignments.",
     "leave_confirm": "Yes, leave",
     "no_cancel": "No, cancel",

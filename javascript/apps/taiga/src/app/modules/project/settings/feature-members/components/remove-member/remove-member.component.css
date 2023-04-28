@@ -9,5 +9,8 @@ Copyright (c) 2023-present Kaleidos INC
 @import "../feature.members.common.css";
 
 :host {
+  align-items: center;
   block-size: var(--spacing-32);
+  display: flex;
+  justify-content: center;
 }

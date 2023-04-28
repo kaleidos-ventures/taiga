@@ -10,8 +10,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnChanges,
+  Output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -31,6 +33,9 @@ export class RemoveMemberComponent implements OnChanges {
   @Input() public user!: User | null;
   @Input() public member!: Membership;
   @Input() public roles!: Role[];
+  @Output() public dropdownStateChanged: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
+
   public hasSingleAdmin!: boolean;
 
   constructor(
@@ -55,16 +60,20 @@ export class RemoveMemberComponent implements OnChanges {
   public openLeaveDropdown() {
     this.setCloseShortcut();
     this.leaveDropdownState = true;
+    this.emitDropdownStateChanged();
   }
 
   public openRemoveDropdown() {
     this.setCloseShortcut();
     this.removeDropdownState = true;
+    this.emitDropdownStateChanged();
   }
 
   public closeDropdown() {
     this.leaveDropdownState = false;
     this.removeDropdownState = false;
+    this.emitDropdownStateChanged();
+
     this.cd.detectChanges();
   }
 
@@ -76,5 +85,11 @@ export class RemoveMemberComponent implements OnChanges {
       .subscribe(() => {
         this.closeDropdown();
       });
+  }
+
+  private emitDropdownStateChanged() {
+    this.dropdownStateChanged.emit(
+      this.removeDropdownState || this.leaveDropdownState
+    );
   }
 }

@@ -11,7 +11,7 @@ import { WorkspaceMembership, Workspace } from '@taiga/data';
 import { RxState } from '@rx-angular/state';
 import {
   selectWorkspace,
-  selectNonMembers,
+  selectNonMembersList,
   selectNonMembersLoading,
   selectTotalNonMembers,
   selectNonMembersOffset,
@@ -60,7 +60,7 @@ export class WorkspaceDetailPeopleNonMembersComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.state.connect('nonMembers', this.store.select(selectNonMembers));
+    this.state.connect('nonMembers', this.store.select(selectNonMembersList));
     this.state.connect('loading', this.store.select(selectNonMembersLoading));
     this.state.connect('total', this.store.select(selectTotalNonMembers));
     this.state.connect('offset', this.store.select(selectNonMembersOffset));

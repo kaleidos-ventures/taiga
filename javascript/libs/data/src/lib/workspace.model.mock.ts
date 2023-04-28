@@ -15,9 +15,10 @@ import {
   randUserName,
   randUuid,
   randWord,
+  randEmail,
 } from '@ngneat/falso';
 import { ProjectMockFactory } from '../lib/project.model.mock';
-import { Workspace, WorkspaceMembership } from './workspace.model';
+import { Workspace, WorkspaceMembership, InvitationWorkspaceMember } from './workspace.model';
 
 export const WorkspaceMockFactory = (): Workspace => {
   const workspace: Workspace = {
@@ -212,5 +213,21 @@ export const WorkspaceMembershipMockFactory = (): WorkspaceMembership => {
     },
     role: randWord(),
     projects: [],
+  };
+};
+
+export const InvitationWorkspaceMemberMockFactory = (): InvitationWorkspaceMember => {
+  return {
+    user: {
+      username: '@' + randUserName(),
+      fullName: randFirstName(),
+      color: rand([1, 2, 3, 4, 5, 7, 8]),
+    },
+    workspace: {
+      id: randUuid(),
+      slug: randSlug(),
+      name: randDepartment(),
+    },
+    email:  randEmail(),
   };
 };

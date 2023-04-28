@@ -18,6 +18,7 @@ import {
   InvitationRequest,
   Project,
   Workspace,
+  InvitationWorkspaceMember,
 } from '@taiga/data';
 
 export const revokeInvitation = createAction(
@@ -25,26 +26,19 @@ export const revokeInvitation = createAction(
   props<{ projectId: Project['id'] }>()
 );
 
-export const invitationActions = createActionGroup({
-  source: 'Invitations',
+export const invitationProjectActions = createActionGroup({
+  source: 'Project invitation',
   events: {
     'Search users': props<{
       searchUser: {
         text: string;
-        project?: Project['id'];
-        workspace?: Workspace['id'];
+        project: Project['id'];
       };
       peopleAdded: Contact[];
     }>(),
     'Search users success': props<{
       suggestedUsers: Contact[];
     }>(),
-  },
-});
-
-export const invitationProjectActions = createActionGroup({
-  source: 'Project invitation',
-  events: {
     'Invite users': props<{
       id: string;
       invitation: InvitationRequest[];
@@ -78,5 +72,29 @@ export const invitationProjectActions = createActionGroup({
 
 export const invitationWorkspaceActions = createActionGroup({
   source: 'Workspace invitation',
-  events: {},
+  events: {
+    'Search users': props<{
+      searchUser: {
+        text: string;
+        workspace: Workspace['id'];
+      };
+      peopleAdded: Contact[];
+    }>(),
+    'Search users success': props<{
+      suggestedUsers: Contact[];
+    }>(),
+    'Invite users': props<{
+      id: string;
+      invitation: InvitationRequest[];
+    }>(),
+    'Invite users success': props<{
+      newInvitations: InvitationWorkspaceMember[];
+      alreadyMembers: number;
+      totalInvitations: number;
+    }>(),
+    'Invite users error': emptyProps(),
+    'Add suggested contact': props<{
+      contact: Contact;
+    }>(),
+  },
 });

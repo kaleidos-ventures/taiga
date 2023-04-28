@@ -6,9 +6,62 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 -->
 
-<ng-container *transloco="let t">
-  <!-- TODO set condition when is empty -->
-  <p class="empty">
-    {{ t('common_members_tabs.no_pending') }}
-  </p>
+<ng-container *ngIf="model$ | async as vm">
+  <ng-container *transloco="let t">
+    <ng-container *ngIf="vm.workspace">
+      <p
+        class="empty"
+        *ngIf="vm.invitationMembers.length === 0">
+        {{ t('common_members_tabs.no_pending') }}
+      </p>
+      <ng-container *ngIf="vm.invitationMembers.length">
+        <tg-ui-dtable>
+          <tg-ui-dtable-row>
+            <tg-ui-dtable-header>{{
+              t('common_members_tabs.column_user')
+            }}</tg-ui-dtable-header>
+          </tg-ui-dtable-row>
+          <ng-container *ngIf="!vm.loading">
+            <ng-container
+              *ngFor="
+                let invitation of vm.invitationMembers;
+                trackBy: trackByIndex
+              ">
+              <tg-ui-dtable-row [@.disabled]="vm.animationDisabled">
+                <tg-ui-dtable-cell class="user">
+                  <tg-user-card
+                    [user]="getUser(invitation)"
+                    [navigateToUser]="true"></tg-user-card>
+                </tg-ui-dtable-cell>
+              </tg-ui-dtable-row>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="vm.loading">
+            <tg-ui-dtable-row
+              *ngFor="
+                let i of [].constructor(MEMBERS_PAGE_SIZE);
+                trackBy: trackByIndex
+              ">
+              <tg-ui-dtable-cell>
+                <tg-ui-user-skeleton></tg-ui-user-skeleton>
+              </tg-ui-dtable-cell>
+              <tg-ui-dtable-cell></tg-ui-dtable-cell>
+              <tg-ui-dtable-cell></tg-ui-dtable-cell>
+            </tg-ui-dtable-row>
+          </ng-container>
+        </tg-ui-dtable>
+
+        <tg-members-pagination
+          *ngIf="vm.total"
+          [total]="vm.total"
+          [pageStart]="vm.pageStart"
+          [pageEnd]="vm.pageEnd"
+          [hasPreviousPage]="vm.hasPreviousPage"
+          [hasNextPage]="vm.hasNextPage"
+          (next)="next()"
+          (previous)="prev()">
+        </tg-members-pagination>
+      </ng-container>
+    </ng-container>
+  </ng-container>
 </ng-container>

@@ -72,7 +72,7 @@ Copyright (c) 2023-present Kaleidos INC
           <tg-invite-user-modal
             *ngIf="vm.invitePeopleModal && project.userIsAdmin"
             (closeModal)="closeModal()"
-            [project]="project"></tg-invite-user-modal>
+            [isProjectInvitation]="true"></tg-invite-user-modal>
         </ng-container>
       </tg-ui-modal>
     </ng-container>

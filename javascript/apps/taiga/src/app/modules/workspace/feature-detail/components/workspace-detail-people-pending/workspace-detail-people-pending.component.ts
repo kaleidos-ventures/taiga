@@ -6,12 +6,103 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { InvitationWorkspaceMember, Workspace, User } from '@taiga/data';
+import { RxState } from '@rx-angular/state';
+import { Store } from '@ngrx/store';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
+import { map } from 'rxjs/operators';
+import { filterNil } from '~/app/shared/utils/operators';
+import {
+  selectWorkspace,
+  selectInvitationsList,
+  selectInvitationsLoading,
+  selectTotalInvitations,
+  selectInvitationsOffset,
+  selectAnimationDisabled,
+} from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
+import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 
 @Component({
   selector: 'tg-workspace-detail-people-pending',
   templateUrl: './workspace-detail-people-pending.component.html',
   styleUrls: ['./workspace-detail-people-pending.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [RxState],
 })
-export class WorkspaceDetailPeoplePendingComponent {}
+export class WorkspaceDetailPeoplePendingComponent implements OnInit {
+  public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
+  public model$ = this.state.select().pipe(
+    map((model) => {
+      const pageStart = model.offset + 1;
+      const pageEnd = pageStart + model.invitationMembers.length - 1;
+
+      return {
+        ...model,
+        pageStart,
+        pageEnd,
+        hasNextPage: pageEnd < model.total,
+        hasPreviousPage: !!model.offset,
+      };
+    })
+  );
+
+  constructor(
+    private state: RxState<{
+      invitationMembers: InvitationWorkspaceMember[];
+      loading: boolean;
+      total: number;
+      offset: number;
+      animationDisabled: boolean;
+      workspace: Workspace | null;
+    }>,
+    private store: Store
+  ) {}
+
+  public ngOnInit(): void {
+    this.state.connect(
+      'invitationMembers',
+      this.store.select(selectInvitationsList)
+    );
+    this.state.connect('loading', this.store.select(selectInvitationsLoading));
+    this.state.connect('total', this.store.select(selectTotalInvitations));
+    this.state.connect('offset', this.store.select(selectInvitationsOffset));
+    this.state.connect(
+      'animationDisabled',
+      this.store.select(selectAnimationDisabled)
+    );
+    this.state.connect(
+      'workspace',
+      this.store.select(selectWorkspace).pipe(filterNil())
+    );
+  }
+
+  public trackByIndex(index: number) {
+    return index;
+  }
+
+  public next() {
+    this.store.dispatch(
+      workspaceDetailApiActions.getWorkspaceMemberInvitations({
+        id: this.state.get('workspace')!.id,
+        offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
+      })
+    );
+  }
+
+  public prev() {
+    this.store.dispatch(
+      workspaceDetailApiActions.getWorkspaceMemberInvitations({
+        id: this.state.get('workspace')!.id,
+        offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
+      })
+    );
+  }
+
+  public getUser(invitation: InvitationWorkspaceMember): Partial<User> {
+    if (invitation.user) {
+      return invitation.user;
+      }
+    return { email: invitation.email };
+  }
+}

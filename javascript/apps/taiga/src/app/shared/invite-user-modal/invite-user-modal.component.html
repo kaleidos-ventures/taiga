@@ -6,305 +6,306 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 -->
 
-<ng-container *transloco="let t">
-  <div
-    class="wrapper"
-    role="dialog"
-    aria-labelledby="invite-modal"
-    aria-modal="true">
-    <h1
-      class="modal-title"
-      id="invite-modal">
-      {{ t('invitation_modal.title', { name: titleName }) }}
-    </h1>
-    <form
-      class="form-container"
-      [formGroup]="inviteUsersForm">
-      <tui-scrollbar class="padding-scroll">
-        <p
-          *ngIf="workspace"
-          class="text first">
-          {{ t('invitation_modal.workspace_instructions') }}
-        </p>
-        <p
-          class="text"
-          [innerHtml]="t('invitation_modal.instructions')"></p>
-        <p
-          class="text"
-          [innerHtml]="t('invitation_modal.alternative')"></p>
-        <div class="add-wrapper">
-          <tui-svg
-            class="add-icon"
-            src="user"
-            aria-hidden="true"></tui-svg>
-          <div
-            class="text-area"
-            #textArea>
-            <tg-ui-textarea>
-              <tui-text-area
-                class="invitation-textarea compressed"
-                #emailInput
-                tuiAutoFocus
-                data-test="input-add-invites"
-                [class.bottom-space]="
-                  (emailsWithoutDuplications$ | async)!.length > 1
-                "
-                [class.invalid]="
-                  inviteIdentifierErrors.required ||
-                  inviteIdentifierErrors.regex ||
-                  inviteIdentifierErrors.peopleNotAdded ||
-                  inviteIdentifierErrors.bulkError
-                "
-                tuiTextfieldSize="s"
-                [(ngModel)]="inviteIdentifier"
-                (ngModelChange)="searchChange($event)"
-                [ngModelOptions]="{ standalone: true }"
-                [expandable]="true"
-                [rows]="12"
-                [tuiDropdown]="dropdownContent"
-                [tuiDropdownManual]="
-                  inviteIdentifier.length > 1 && notInBulkMode
-                "
-                [tuiDropdownLimitWidth]="'fixed'"
-                (focusedChange)="updateEmailInputIsFocus(true)"
-                (tuiActiveZoneChange)="onActiveZone($event)"
-                (click)="$event.stopPropagation()"
-                (keydown.arrowUp)="handleArrow('up')"
-                (keydown.arrowDown)="handleArrow('down')"
-                (keydown.ESC)="removeFocus()"
-                (keydown.enter)="
-                  suggestionContactsDropdownActivate
-                    ? includeSuggestedContact(suggestionSelected, $event)
-                    : null
-                ">
-                {{ t('invitation_modal.placeholder') }}
-              </tui-text-area>
-              <tg-ui-error
-                data-test="error-add-email"
-                inputError
-                [show]="inviteIdentifierErrors.required">
-                {{ t('invitation_modal.error_add_email') }}
-              </tg-ui-error>
-              <tg-ui-error
-                data-test="error-regex"
-                inputError
-                [show]="inviteIdentifierErrors.regex">
-                {{ t('invitation_modal.error_email_regex') }}
-              </tg-ui-error>
-              <tg-ui-error
-                data-test="error-missing-people"
-                inputError
-                [show]="inviteIdentifierErrors.peopleNotAdded">
-                {{ t('invitation_modal.error_missing_people') }}
-              </tg-ui-error>
-              <tg-ui-error
-                inputError
-                [show]="inviteIdentifierErrors.bulkError">
-                {{ t('invitation_modal.error_several_emails') }}
-              </tg-ui-error>
-            </tg-ui-textarea>
-            <ng-container
-              *ngIf="
-                emailsWithoutDuplications$ | async as emailsWithoutDuplications
-              ">
-              <span
-                data-test="email-count"
-                *ngIf="emailsWithoutDuplications.length > 1"
-                class="emails-count"
-                [class.errors]="emailsHaveErrors"
-                >{{
-                  t('invitation_modal.emails_detected', {
-                    emails: emailsWithoutDuplications.length
-                  })
-                }}</span
-              >
-            </ng-container>
-            <ng-template #dropdownContent>
-              <ng-container *ngIf="searchInProgress$ | async">
-                <ng-container
-                  *ngIf="
-                    inviteIdentifier.length > 1 &&
-                    notInBulkMode &&
-                    emailInputIsFocus
+<ng-container *ngIf="model$ | async as vm">
+  <ng-container *transloco="let t">
+    <div
+      class="wrapper"
+      role="dialog"
+      aria-labelledby="invite-modal"
+      aria-modal="true">
+      <h1
+        class="modal-title"
+        id="invite-modal">
+        {{ t('invitation_modal.title', { name: titleName }) }}
+      </h1>
+      <form
+        class="form-container"
+        [formGroup]="inviteUsersForm">
+        <tui-scrollbar class="padding-scroll">
+          <p
+            *ngIf="vm.workspace"
+            class="text first">
+            {{ t('invitation_modal.workspace_instructions') }}
+          </p>
+          <p
+            class="text"
+            [innerHtml]="t('invitation_modal.instructions')"></p>
+          <p
+            class="text"
+            [innerHtml]="t('invitation_modal.alternative')"></p>
+          <div class="add-wrapper">
+            <tui-svg
+              class="add-icon"
+              src="user"
+              aria-hidden="true"></tui-svg>
+            <div
+              class="text-area"
+              #textArea>
+              <tg-ui-textarea>
+                <tui-text-area
+                  class="invitation-textarea compressed"
+                  #emailInput
+                  tuiAutoFocus
+                  data-test="input-add-invites"
+                  [class.bottom-space]="
+                    (emailsWithoutDuplications$ | async)!.length > 1
+                  "
+                  [class.invalid]="
+                    inviteIdentifierErrors.required ||
+                    inviteIdentifierErrors.regex ||
+                    inviteIdentifierErrors.peopleNotAdded ||
+                    inviteIdentifierErrors.bulkError
+                  "
+                  tuiTextfieldSize="s"
+                  [(ngModel)]="inviteIdentifier"
+                  (ngModelChange)="searchChange($event)"
+                  [ngModelOptions]="{ standalone: true }"
+                  [expandable]="true"
+                  [rows]="12"
+                  [tuiDropdown]="dropdownContent"
+                  [tuiDropdownManual]="
+                    inviteIdentifier.length > 1 && notInBulkMode
+                  "
+                  [tuiDropdownLimitWidth]="'fixed'"
+                  (focusedChange)="updateEmailInputIsFocus(true)"
+                  (tuiActiveZoneChange)="onActiveZone($event)"
+                  (click)="$event.stopPropagation()"
+                  (keydown.arrowUp)="handleArrow('up')"
+                  (keydown.arrowDown)="handleArrow('down')"
+                  (keydown.ESC)="removeFocus()"
+                  (keydown.enter)="
+                    suggestionContactsDropdownActivate
+                      ? includeSuggestedContact(suggestionSelected, $event)
+                      : null
                   ">
-                  <tui-data-list
-                    id="suggestions"
-                    role="listbox"
-                    data-test="suggestions-list"
-                    [emptyContent]="t('invitation_modal.no_results')">
-                    <ng-container
-                      *ngIf="suggestedUsers$ | async as suggestedUsers">
-                      <button
-                        *ngFor="
-                          let contact of suggestedUsers;
-                          index as i;
-                          trackBy: trackByIndex
-                        "
-                        tuiOption
-                        role="option"
-                        class="suggested-btn"
-                        data-test="option"
-                        [attr.id]="'suggestion-' + i"
-                        [disabled]="
-                          !!contact.userIsMember || !!contact.userIsAddedToList
-                        "
-                        [class.active-option]="
-                          suggestionSelected === i &&
-                          !contact.userIsMember &&
-                          !contact.userIsAddedToList
-                        "
-                        [attr.aria-disabled]="
-                          suggestionSelected !== i ||
-                          !!contact.userIsMember ||
-                          !!contact.userIsAddedToList
-                        "
-                        [attr.aria-selected]="suggestionSelected === i"
-                        (click)="includeSuggestedContact(i, $event)">
-                        <tg-user-card
-                          [user]="contact"
+                  {{ t('invitation_modal.placeholder') }}
+                </tui-text-area>
+                <tg-ui-error
+                  data-test="error-add-email"
+                  inputError
+                  [show]="inviteIdentifierErrors.required">
+                  {{ t('invitation_modal.error_add_email') }}
+                </tg-ui-error>
+                <tg-ui-error
+                  data-test="error-regex"
+                  inputError
+                  [show]="inviteIdentifierErrors.regex">
+                  {{ t('invitation_modal.error_email_regex') }}
+                </tg-ui-error>
+                <tg-ui-error
+                  data-test="error-missing-people"
+                  inputError
+                  [show]="inviteIdentifierErrors.peopleNotAdded">
+                  {{ t('invitation_modal.error_missing_people') }}
+                </tg-ui-error>
+                <tg-ui-error
+                  inputError
+                  [show]="inviteIdentifierErrors.bulkError">
+                  {{ t('invitation_modal.error_several_emails') }}
+                </tg-ui-error>
+              </tg-ui-textarea>
+              <ng-container
+                *ngIf="
+                  emailsWithoutDuplications$
+                    | async as emailsWithoutDuplications
+                ">
+                <span
+                  data-test="email-count"
+                  *ngIf="emailsWithoutDuplications.length > 1"
+                  class="emails-count"
+                  [class.errors]="emailsHaveErrors"
+                  >{{
+                    t('invitation_modal.emails_detected', {
+                      emails: emailsWithoutDuplications.length
+                    })
+                  }}</span
+                >
+              </ng-container>
+              <ng-template #dropdownContent>
+                <ng-container *ngIf="vm.searchInProgress">
+                  <ng-container
+                    *ngIf="
+                      inviteIdentifier.length > 1 &&
+                      notInBulkMode &&
+                      emailInputIsFocus
+                    ">
+                    <tui-data-list
+                      id="suggestions"
+                      role="listbox"
+                      data-test="suggestions-list"
+                      [emptyContent]="t('invitation_modal.no_results')">
+                      <ng-container *ngIf="vm.suggestedUsers.length">
+                        <button
+                          *ngFor="
+                            let contact of vm.suggestedUsers;
+                            index as i;
+                            trackBy: trackByIndex
+                          "
+                          tuiOption
+                          role="option"
+                          class="suggested-btn"
+                          data-test="option"
+                          [attr.id]="'suggestion-' + i"
                           [disabled]="
                             !!contact.userIsMember ||
                             !!contact.userIsAddedToList
                           "
-                          [active]="suggestionSelected === i"
-                          [textToHighlight]="
-                            parseTextToHighlight
-                          "></tg-user-card>
-                        <tg-ui-badge
-                          *ngIf="contact.userIsMember"
-                          data-test="info-user"
-                          class="disabled-badge"
-                          size="s"
-                          [label]="
-                            t('invitation_modal.already_member') | capitalize
-                          "></tg-ui-badge>
-                        <tg-ui-badge
-                          *ngIf="contact.userIsAddedToList"
-                          data-test="info-user"
-                          class="disabled-badge"
-                          size="s"
-                          [label]="
-                            t('invitation_modal.already_on_list') | capitalize
-                          "></tg-ui-badge>
-                      </button>
-                    </ng-container>
-                  </tui-data-list>
+                          [class.active-option]="
+                            suggestionSelected === i &&
+                            !contact.userIsMember &&
+                            !contact.userIsAddedToList
+                          "
+                          [attr.aria-disabled]="
+                            suggestionSelected !== i ||
+                            !!contact.userIsMember ||
+                            !!contact.userIsAddedToList
+                          "
+                          [attr.aria-selected]="suggestionSelected === i"
+                          (click)="includeSuggestedContact(i, $event)">
+                          <tg-user-card
+                            [user]="contact"
+                            [disabled]="
+                              !!contact.userIsMember ||
+                              !!contact.userIsAddedToList
+                            "
+                            [active]="suggestionSelected === i"
+                            [textToHighlight]="
+                              parseTextToHighlight
+                            "></tg-user-card>
+                          <tg-ui-badge
+                            *ngIf="contact.userIsMember"
+                            data-test="info-user"
+                            class="disabled-badge"
+                            size="s"
+                            [label]="
+                              t('invitation_modal.already_member') | capitalize
+                            "></tg-ui-badge>
+                          <tg-ui-badge
+                            *ngIf="contact.userIsAddedToList"
+                            data-test="info-user"
+                            class="disabled-badge"
+                            size="s"
+                            [label]="
+                              t('invitation_modal.already_on_list') | capitalize
+                            "></tg-ui-badge>
+                        </button>
+                      </ng-container>
+                    </tui-data-list>
+                  </ng-container>
                 </ng-container>
-              </ng-container>
-            </ng-template>
+              </ng-template>
+            </div>
+
+            <button
+              data-test="add-invites"
+              class="add-btn"
+              appearance="primary"
+              tuiButton
+              (click)="addUser()"
+              type="button">
+              {{ t('invitation_modal.add') }}
+            </button>
           </div>
 
-          <button
-            data-test="add-invites"
-            class="add-btn"
-            appearance="primary"
-            tuiButton
-            (click)="addUser()"
-            type="button">
-            {{ t('invitation_modal.add') }}
-          </button>
-        </div>
+          <ng-container *ngIf="users.length === 0">
+            <div
+              class="tip-wrapper"
+              data-test="tip-wrapper">
+              <img
+                class="tip-icon"
+                role="presentation"
+                src="/assets/images/curved-arrow.svg"
+                alt="" />
+              <p class="tip">{{ t('invitation_modal.add_people') }}</p>
+            </div>
+          </ng-container>
 
-        <ng-container *ngIf="users.length === 0">
           <div
-            class="tip-wrapper"
-            data-test="tip-wrapper">
-            <img
-              class="tip-icon"
-              role="presentation"
-              src="/assets/images/curved-arrow.svg"
-              alt="" />
-            <p class="tip">{{ t('invitation_modal.add_people') }}</p>
-          </div>
-        </ng-container>
+            *ngIf="users.length"
+            class="user-list"
+            data-test="user-list">
+            <div
+              class="user"
+              [class.has-role]="vm.project">
+              <span></span>
+              <span class="user-title">{{
+                t('invitation_modal.name_email')
+              }}</span>
+              <span
+                *ngIf="vm.project"
+                class="user-title"
+                >{{ t('invitation_modal.role') }}</span
+              >
+              <span></span>
+            </div>
 
-        <div
-          *ngIf="users.length"
-          class="user-list"
-          data-test="user-list">
-          <div
-            class="user"
-            [class.has-role]="project">
-            <span></span>
-            <span class="user-title">{{
-              t('invitation_modal.name_email')
-            }}</span>
-            <span
-              *ngIf="project"
-              class="user-title"
-              >{{ t('invitation_modal.role') }}</span
-            >
-            <span></span>
-          </div>
-
-          <ng-container
-            *ngFor="let user of users; index as i; trackBy: trackByIndex">
-            <ng-container *ngIf="project">
-              <ng-container *ngIf="memberRoles$ | async as memberRoles">
+            <ng-container
+              *ngFor="let user of users; index as i; trackBy: trackByIndex">
+              <ng-container *ngIf="vm.project && vm.memberRoles">
                 <tg-user-to-invite
                   [user]="user"
                   [userIndex]="i"
-                  [roles]="memberRoles"
+                  [roles]="vm.memberRoles"
+                  (delete)="deleteUser($event)">
+                </tg-user-to-invite>
+              </ng-container>
+              <ng-container *ngIf="vm.workspace">
+                <tg-user-to-invite
+                  [user]="user"
+                  [userIndex]="i"
                   (delete)="deleteUser($event)">
                 </tg-user-to-invite>
               </ng-container>
             </ng-container>
-            <ng-container *ngIf="workspace">
-              <tg-user-to-invite
-                [user]="user"
-                [userIndex]="i"
-                (delete)="deleteUser($event)">
-              </tg-user-to-invite>
-            </ng-container>
-          </ng-container>
-        </div>
-      </tui-scrollbar>
-      <div class="actions-wrapper">
-        <tg-ui-context-notification
-          *ngIf="inviteIdentifierErrors.listEmpty"
-          data-test="error-at-lest-one"
-          alertLevel="polite"
-          class="notification"
-          status="error">
-          {{ t('invitation_modal.error_add_least_one') }}
-        </tg-ui-context-notification>
-        <tg-ui-context-notification
-          *ngIf="inviteIdentifierErrors.moreThanFifty && users.length > 50"
-          class="notification"
-          status="error"
-          data-test="notification-over-fifty"
-          [hasIcon]="true">
-          {{
-            t('invitation_modal.error_more_than_fifty', {
-              invitations: users.length - 50
-            })
-          }}
-        </tg-ui-context-notification>
-        <div class="form-actions">
-          <button
-            tuiLink
-            (click)="close()"
-            appearance="tertiary"
-            data-test="close-modal">
+          </div>
+        </tui-scrollbar>
+        <div class="actions-wrapper">
+          <tg-ui-context-notification
+            *ngIf="inviteIdentifierErrors.listEmpty"
+            data-test="error-at-lest-one"
+            alertLevel="polite"
+            class="notification"
+            status="error">
+            {{ t('invitation_modal.error_add_least_one') }}
+          </tg-ui-context-notification>
+          <tg-ui-context-notification
+            *ngIf="inviteIdentifierErrors.moreThanFifty && users.length > 50"
+            class="notification"
+            status="error"
+            data-test="notification-over-fifty"
+            [hasIcon]="true">
             {{
-              fromOverview || !this.project
-                ? t('invitation_modal.close')
-                : t('invitation_modal.later')
+              t('invitation_modal.error_more_than_fifty', {
+                invitations: users.length - 50
+              })
             }}
-          </button>
-          <button
-            loading
-            [loadingMsg]="t('invitation_modal.send_invites_in_progress')"
-            [loadingSuccess]="t('invitation_modal.send_invites_success')"
-            appearance="primary"
-            data-test="submit-invite-users"
-            tuiButton
-            (click)="sendForm()"
-            type="button">
-            {{ t('invitation_modal.send_invites') }}
-          </button>
+          </tg-ui-context-notification>
+          <div class="form-actions">
+            <button
+              tuiLink
+              (click)="close()"
+              appearance="tertiary"
+              data-test="close-modal">
+              {{
+                fromOverview || !vm.project
+                  ? t('invitation_modal.close')
+                  : t('invitation_modal.later')
+              }}
+            </button>
+            <button
+              loading
+              [loadingMsg]="t('invitation_modal.send_invites_in_progress')"
+              [loadingSuccess]="t('invitation_modal.send_invites_success')"
+              appearance="primary"
+              data-test="submit-invite-users"
+              tuiButton
+              (click)="sendForm()"
+              type="button">
+              {{ t('invitation_modal.send_invites') }}
+            </button>
+          </div>
         </div>
-      </div>
-    </form>
-  </div>
+      </form>
+    </div>
+  </ng-container>
 </ng-container>

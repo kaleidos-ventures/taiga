@@ -47,7 +47,9 @@ describe('WorkspaceItem', () => {
 
   const initialState = {
     invitation: {
-      acceptedInvite: [],
+      project: {
+        acceptedInvite: [],
+      }
     },
     workspace: {
       rejectedInvites: [],

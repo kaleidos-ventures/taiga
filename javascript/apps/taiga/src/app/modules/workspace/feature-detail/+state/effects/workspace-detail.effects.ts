@@ -293,6 +293,11 @@ export class WorkspaceDetailEffects {
             action.id,
             0,
             MEMBERS_PAGE_SIZE
+          ),
+          this.workspaceApiService.getWorkspaceInvitationMembers(
+            action.id,
+            0,
+            MEMBERS_PAGE_SIZE
           )
         ).pipe(
           map((response) => {
@@ -305,6 +310,11 @@ export class WorkspaceDetailEffects {
               nonMembers: {
                 members: response[1].members,
                 totalMembers: response[1].totalMembers,
+                offset: 0,
+              },
+              invitations: {
+                members: response[2].members,
+                totalMembers: response[2].totalMembers,
                 offset: 0,
               },
             });
@@ -407,6 +417,35 @@ export class WorkspaceDetailEffects {
           id: action.id,
           offset: 0,
         });
+      })
+    );
+  });
+
+  public loadWorkspaceMemberInvitations$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceDetailApiActions.getWorkspaceMemberInvitations),
+      exhaustMap((action) => {
+        return this.workspaceApiService
+          .getWorkspaceInvitationMembers(
+            action.id,
+            action.offset,
+            MEMBERS_PAGE_SIZE
+          )
+          .pipe(
+            map((membersResponse) => {
+              return workspaceDetailApiActions.getWorkspaceMemberInvitationsSuccess(
+                {
+                  members: membersResponse.members,
+                  totalMembers: membersResponse.totalMembers,
+                  offset: action.offset,
+                }
+              );
+            }),
+            catchError((httpResponse: HttpErrorResponse) => {
+              this.appService.errorManagement(httpResponse);
+              return EMPTY;
+            })
+          );
       })
     );
   });

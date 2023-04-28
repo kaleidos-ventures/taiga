@@ -35,7 +35,7 @@ import {
 import { acceptInvitationEvent } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { WsService } from '~/app/services/ws';
 import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
-import { selectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
+import { selectProjectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -250,7 +250,7 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
 
     this.state.connect(
       'acceptedInvites',
-      this.store.select(selectAcceptedInvite)
+      this.store.select(selectProjectAcceptedInvite)
     );
     this.state.connect(
       'creatingWorkspaceDetail',

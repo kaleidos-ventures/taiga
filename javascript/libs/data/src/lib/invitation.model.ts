@@ -24,6 +24,7 @@ export interface Contact {
 export interface InvitationRequest {
   email?: string;
   username?: string;
+  usernameOrEmail?: string;
   roleSlug?: string;
 }
 

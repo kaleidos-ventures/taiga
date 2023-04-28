@@ -16,6 +16,7 @@ import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
 import {
   EmptyWorkspaceAdminMockFactory,
   WorkspaceMembershipMockFactory,
+  InvitationWorkspaceMemberMockFactory,
   WorkspaceMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
@@ -108,11 +109,22 @@ describe('WorkspaceEffects', () => {
       totalMembers: 2,
     };
 
+    const invitations = {
+      members: [
+        InvitationWorkspaceMemberMockFactory(),
+        InvitationWorkspaceMemberMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
     workspaceApiService.getWorkspaceMembers.mockReturnValue(
       cold('-b|', { b: membersResponse })
     );
     workspaceApiService.getWorkspaceNonMembers.mockReturnValue(
       cold('-b|', { b: nonMembersResponse })
+    );
+    workspaceApiService.getWorkspaceInvitationMembers.mockReturnValue(
+      cold('-b|', { b: invitations })
     );
 
     actions$ = hot('-a', {
@@ -128,6 +140,11 @@ describe('WorkspaceEffects', () => {
         },
         nonMembers: {
           members: nonMembersResponse.members,
+          totalMembers: 2,
+          offset: 0,
+        },
+        invitations: {
+          members: invitations.members,
           totalMembers: 2,
           offset: 0,
         },

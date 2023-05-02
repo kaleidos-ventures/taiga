@@ -12,6 +12,7 @@ import pytest
 from fastapi import status
 from taiga.projects.invitations.services import _generate_project_invitation_token
 from taiga.users.services import _generate_reset_password_token, _generate_verify_user_token
+from taiga.workspaces.invitations.services import _generate_workspace_invitation_token
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -22,7 +23,7 @@ pytestmark = pytest.mark.django_db
 ##########################################################
 
 
-async def test_create_user_ok(client):
+async def test_create_user_ok_with_token_project(client):
     data = {
         "email": "test.create@email.com",
         "fullName": "Ada Lovelace",
@@ -31,6 +32,22 @@ async def test_create_user_ok(client):
         "acceptTerms": True,
         "projectInvitationToken": "eyJ0eXAiOToken",
         "accept_project_invitation": False,
+        "lang": "es-ES",
+    }
+
+    response = client.post("/users", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_create_user_ok_with_token_workspace(client):
+    data = {
+        "email": "test.create@email.com",
+        "fullName": "Ada Lovelace",
+        "color": 8,
+        "password": "correctP4ssword%",
+        "acceptTerms": True,
+        "workspaceInvitationToken": "eyJ0eXAiOToken",
+        "accept_workspace_invitation": False,
         "lang": "es-ES",
     }
 
@@ -66,21 +83,36 @@ async def test_verify_user_ok(client):
     assert response.json()["projectInvitation"] is None
 
 
-async def test_verify_user_ok_with_invitation(client):
+async def test_verify_user_ok_accepting_pj_invitation(client):
     user = await f.create_user(is_active=False)
     project = await f.create_project()
     role = await f.create_project_role(project=project)
     project_invitation = await f.create_project_invitation(project=project, role=role, email=user.email)
 
     project_invitation_token = await _generate_project_invitation_token(project_invitation)
-    data = {"token": await _generate_verify_user_token(user, project_invitation_token)}
+    data = {"token": await _generate_verify_user_token(user=user, project_invitation_token=project_invitation_token)}
 
     response = client.post("/users/verify", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["projectInvitation"] is not None
 
 
-async def test_verify_user_ok_with_invalid_invitation(client):
+async def test_verify_user_ok_accepting_ws_invitation(client):
+    user = await f.create_user(is_active=False)
+    workspace = await f.create_workspace()
+    workspace_invitation = await f.create_workspace_invitation(workspace=workspace, email=user.email)
+
+    workspace_invitation_token = await _generate_workspace_invitation_token(workspace_invitation)
+    data = {
+        "token": await _generate_verify_user_token(user=user, workspace_invitation_token=workspace_invitation_token)
+    }
+
+    response = client.post("/users/verify", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["workspaceInvitation"] is not None
+
+
+async def test_verify_user_ok_with_invalid_pj_invitation(client):
     user = await f.create_user(is_active=False)
 
     project_invitation_token = "invalid-invitation-token"
@@ -89,6 +121,17 @@ async def test_verify_user_ok_with_invalid_invitation(client):
     response = client.post("/users/verify", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["projectInvitation"] is None
+
+
+async def test_verify_user_ok_with_invalid_ws_invitation(client):
+    user = await f.create_user(is_active=False)
+
+    workspace_invitation_token = "invalid-invitation-token"
+    data = {"token": await _generate_verify_user_token(user, workspace_invitation_token)}
+
+    response = client.post("/users/verify", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["workspaceInvitation"] is None
 
 
 async def test_verify_user_error_invalid_token(client):

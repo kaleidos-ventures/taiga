@@ -12,6 +12,7 @@ from uuid import UUID
 from pydantic import EmailStr, validator
 from taiga.base.serializers import BaseModel
 from taiga.users.serializers.nested import UserNestedSerializer
+from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
 from taiga.workspaces.workspaces.serializers.nested import WorkspaceSmallNestedSerializer
 
 
@@ -35,6 +36,18 @@ class PrivateEmailWorkspaceInvitationSerializer(BaseModel):
 class CreateWorkspaceInvitationsSerializer(BaseModel):
     invitations: list[PrivateEmailWorkspaceInvitationSerializer]
     already_members: int
+
+    class Config:
+        orm_mode = True
+
+
+class PublicWorkspaceInvitationSerializer(BaseModel):
+    status: WorkspaceInvitationStatus
+
+    email: EmailStr
+    existing_user: bool
+    available_logins: list[str]
+    workspace: WorkspaceSmallNestedSerializer
 
     class Config:
         orm_mode = True

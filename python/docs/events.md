@@ -398,6 +398,23 @@ Content for:
   }
   ```
 
+
+#### `workspacememberships.create`
+
+It happens when a workspace invitation is accepted. Because a new workspace membership is created.
+
+Content for:
+- user channel:
+  ```
+  {
+      "workspace": "workspace_id",
+  }
+  ```
+- workspace channel:
+  ```
+  null
+  ```
+
 #### **workspacesmemberships.delete**
 
 It happens when a workspace membership is deleted

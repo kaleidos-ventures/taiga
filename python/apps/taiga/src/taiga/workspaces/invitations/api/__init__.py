@@ -12,22 +12,30 @@ from taiga.base.api import responses
 from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
+from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import IsWorkspaceAdmin
 from taiga.routers import routes
 from taiga.workspaces.invitations import services as workspaces_invitations_services
 from taiga.workspaces.invitations.api.validators import WorkspaceInvitationsValidator
 from taiga.workspaces.invitations.models import WorkspaceInvitation
-from taiga.workspaces.invitations.serializers import CreateWorkspaceInvitationsSerializer, WorkspaceInvitationSerializer
+from taiga.workspaces.invitations.permissions import IsWorkspaceInvitationRecipient
+from taiga.workspaces.invitations.serializers import (
+    CreateWorkspaceInvitationsSerializer,
+    PublicWorkspaceInvitationSerializer,
+    WorkspaceInvitationSerializer,
+)
 from taiga.workspaces.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
+ACCEPT_WORKSPACE_INVITATION_BY_TOKEN = IsWorkspaceInvitationRecipient()
 CREATE_WORKSPACE_INVITATIONS = IsWorkspaceAdmin()
 LIST_WORKSPACE_INVITATIONS = IsWorkspaceAdmin()
 
 
 # HTTP 200 RESPONSES
 CREATE_WORKSPACE_INVITATIONS_200 = responses.http_status_200(model=CreateWorkspaceInvitationsSerializer)
+PUBLIC_WORKSPACE_INVITATION_200 = responses.http_status_200(model=PublicWorkspaceInvitationSerializer)
 
 
 ##########################################################
@@ -87,3 +95,63 @@ async def list_workspace_invitations(
 
     api_pagination.set_pagination(response=response, pagination=pagination)
     return invitations
+
+
+##########################################################
+# get workspace invitation
+##########################################################
+
+
+@routes.unauth_workspaces_invitations.get(
+    "/workspaces/invitations/{token}",
+    name="workspace.invitations.get",
+    summary="Get public information about a workspace invitation",
+    responses=PUBLIC_WORKSPACE_INVITATION_200 | ERROR_400 | ERROR_404 | ERROR_422,
+)
+async def get_public_workspace_invitation(
+    token: str = Query(None, description="the workspace invitation token (str)")
+) -> PublicWorkspaceInvitationSerializer:
+    """
+    Get public information about a workspace invitation
+    """
+    invitation = await workspaces_invitations_services.get_public_workspace_invitation(token=token)
+    if not invitation:
+        raise ex.NotFoundError("Invitation not found")
+
+    return invitation
+
+
+##########################################################
+# accept workspace invitation
+##########################################################
+
+
+@routes.workspaces_invitations.post(
+    "/workspaces/invitations/{token}/accept",
+    name="workspace.invitations.accept",
+    summary="Accept a workspace invitation using a token",
+    response_model=WorkspaceInvitationSerializer,
+    responses=ERROR_400 | ERROR_404 | ERROR_403,
+)
+async def accept_workspace_invitation_by_token(
+    request: AuthRequest, token: str = Query(None, description="the workspace invitation token (str)")
+) -> WorkspaceInvitation:
+    """
+    A user accepts a workspace invitation using an invitation token
+    """
+    invitation = await get_workspace_invitation_by_token_or_404(token=token)
+    await check_permissions(permissions=ACCEPT_WORKSPACE_INVITATION_BY_TOKEN, user=request.user, obj=invitation)
+    return await workspaces_invitations_services.accept_workspace_invitation(invitation=invitation)
+
+
+##########################################################
+# misc
+##########################################################
+
+
+async def get_workspace_invitation_by_token_or_404(token: str) -> WorkspaceInvitation:
+    invitation = await workspaces_invitations_services.get_workspace_invitation(token=token)
+    if not invitation:
+        raise ex.NotFoundError("Invitation does not exist")
+
+    return invitation

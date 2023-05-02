@@ -7,19 +7,25 @@
 
 from typing import Any
 
+from taiga.auth import services as auth_services
 from taiga.base.api.pagination import Pagination
+from taiga.base.utils import emails
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.base.utils.emails import is_email
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
+from taiga.tokens.exceptions import TokenError
 from taiga.users import services as users_services
 from taiga.users.models import User
 from taiga.workspaces.invitations import events as invitations_events
 from taiga.workspaces.invitations import repositories as invitations_repositories
 from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
 from taiga.workspaces.invitations.models import WorkspaceInvitation
-from taiga.workspaces.invitations.serializers import CreateWorkspaceInvitationsSerializer
+from taiga.workspaces.invitations.serializers import (
+    CreateWorkspaceInvitationsSerializer,
+    PublicWorkspaceInvitationSerializer,
+)
 from taiga.workspaces.invitations.serializers import services as serializers_services
 from taiga.workspaces.invitations.services import exceptions as ex
 from taiga.workspaces.invitations.tokens import WorkspaceInvitationToken
@@ -168,6 +174,36 @@ async def list_paginated_pending_workspace_invitations(
 
 
 ##########################################################
+# get workspace invitation
+##########################################################
+
+
+async def get_workspace_invitation(token: str) -> WorkspaceInvitation | None:
+    try:
+        invitation_token = await WorkspaceInvitationToken.create(token=token)
+    except TokenError:
+        raise ex.BadInvitationTokenError("Invalid token")
+
+    return await invitations_repositories.get_workspace_invitation(
+        filters=invitation_token.object_data,
+        select_related=["user", "workspace"],
+    )
+
+
+async def get_public_workspace_invitation(token: str) -> PublicWorkspaceInvitationSerializer | None:
+    if invitation := await get_workspace_invitation(token=token):
+
+        available_logins = (
+            await auth_services.get_available_user_logins(user=invitation.user) if invitation.user else []
+        )
+        return serializers_services.serialize_public_workspace_invitation(
+            invitation=invitation, available_logins=available_logins
+        )
+
+    return None
+
+
+##########################################################
 # update workspace invitations
 ##########################################################
 
@@ -179,6 +215,41 @@ async def update_user_workspaces_invitations(user: User) -> None:
         select_related=["workspace"],
     )
     await invitations_events.emit_event_when_workspace_invitations_are_updated(invitations=invitations)
+
+
+##########################################################
+# accept workspace invitation
+##########################################################
+
+
+async def accept_workspace_invitation(invitation: WorkspaceInvitation) -> WorkspaceInvitation:
+    if invitation.status == WorkspaceInvitationStatus.ACCEPTED:
+        raise ex.InvitationAlreadyAcceptedError("The invitation has already been accepted")
+
+    if invitation.status == WorkspaceInvitationStatus.REVOKED:
+        raise ex.InvitationRevokedError("The invitation is revoked")
+
+    accepted_invitation = await invitations_repositories.update_workspace_invitation(
+        invitation=invitation,
+        values={"status": WorkspaceInvitationStatus.ACCEPTED},
+    )
+
+    await memberships_repositories.create_workspace_membership(workspace=invitation.workspace, user=invitation.user)
+    await invitations_events.emit_event_when_workspace_invitation_is_accepted(invitation=invitation)
+
+    return accepted_invitation
+
+
+async def accept_workspace_invitation_from_token(token: str, user: User) -> WorkspaceInvitation:
+    invitation = await get_workspace_invitation(token=token)
+
+    if not invitation:
+        raise ex.InvitationDoesNotExistError("Invitation does not exist")
+
+    if not is_workspace_invitation_for_this_user(invitation=invitation, user=user):
+        raise ex.InvitationIsNotForThisUserError("Invitation is not for this user")
+
+    return await accept_workspace_invitation(invitation=invitation)
 
 
 ##########################################################
@@ -236,3 +307,10 @@ async def _is_spam(invitation: WorkspaceInvitation) -> bool:
         return False
 
     return True
+
+
+def is_workspace_invitation_for_this_user(invitation: WorkspaceInvitation, user: User) -> bool:
+    """
+    Check if a workspace invitation if for a specific user
+    """
+    return emails.are_the_same(user.email, invitation.email)

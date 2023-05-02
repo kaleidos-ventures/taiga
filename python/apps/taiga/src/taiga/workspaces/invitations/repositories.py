@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -23,6 +23,7 @@ DEFAULT_QUERYSET = WorkspaceInvitation.objects.all()
 
 
 class WorkspaceInvitationFilters(TypedDict, total=False):
+    id: UUID
     username_or_email: str
     workspace_id: UUID
     statuses: list[WorkspaceInvitationStatus]
@@ -144,6 +145,15 @@ def get_workspace_invitation(
 ##########################################################
 # update workspace invitations
 ##########################################################
+
+
+@sync_to_async
+def update_workspace_invitation(invitation: WorkspaceInvitation, values: dict[str, Any]) -> WorkspaceInvitation:
+    for attr, value in values.items():
+        setattr(invitation, attr, value)
+
+    invitation.save()
+    return invitation
 
 
 @sync_to_async

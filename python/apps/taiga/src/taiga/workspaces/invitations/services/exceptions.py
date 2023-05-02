@@ -9,5 +9,25 @@
 from taiga.base.services.exceptions import TaigaServiceException
 
 
+class BadInvitationTokenError(TaigaServiceException):
+    ...
+
+
+class InvitationAlreadyAcceptedError(TaigaServiceException):
+    ...
+
+
+class InvitationDoesNotExistError(TaigaServiceException):
+    ...
+
+
+class InvitationIsNotForThisUserError(TaigaServiceException):
+    ...
+
+
+class InvitationRevokedError(TaigaServiceException):
+    ...
+
+
 class NonExistingUsernameError(TaigaServiceException):
     ...

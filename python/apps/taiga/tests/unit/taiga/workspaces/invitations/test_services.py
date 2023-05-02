@@ -12,7 +12,8 @@ import pytest
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.workspaces.invitations import services
 from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
-from taiga.workspaces.invitations.services.exceptions import NonExistingUsernameError
+from taiga.workspaces.invitations.services import exceptions as ex
+from taiga.workspaces.invitations.tokens import WorkspaceInvitationToken
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -209,7 +210,7 @@ async def test_create_workspace_invitations_invalid_username(tqmanager):
 
     with (
         patch("taiga.workspaces.invitations.services.users_services", autospec=True) as fake_users_services,
-        pytest.raises(NonExistingUsernameError),
+        pytest.raises(ex.NonExistingUsernameError),
     ):
         fake_users_services.list_users_emails_as_dict.return_value = {}
         fake_users_services.list_users_usernames_as_dict.return_value = {}
@@ -253,6 +254,116 @@ async def test_list_workspace_invitations():
 
 
 #######################################################
+# get_workspace_invitation
+#######################################################
+
+
+async def test_get_workspace_invitation_ok():
+    invitation = f.build_workspace_invitation()
+    token = str(await WorkspaceInvitationToken.create_for_object(invitation))
+
+    with (
+        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+    ):
+        fake_invitations_repo.get_workspace_invitation.return_value = invitation
+        inv = await services.get_workspace_invitation(token)
+        fake_invitations_repo.get_workspace_invitation.assert_awaited_once_with(
+            filters={"id": str(invitation.id)},
+            select_related=["user", "workspace"],
+        )
+        assert inv == invitation
+
+
+async def test_get_workspace_invitation_error_invalid_token():
+    with pytest.raises(ex.BadInvitationTokenError):
+        await services.get_workspace_invitation("invalid-token")
+
+
+async def test_get_workspace_invitation_error_not_found():
+    invitation = f.build_workspace_invitation()
+    token = str(await WorkspaceInvitationToken.create_for_object(invitation))
+
+    with (
+        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+    ):
+        fake_invitations_repo.get_workspace_invitation.return_value = None
+        inv = await services.get_workspace_invitation(token)
+        fake_invitations_repo.get_workspace_invitation.assert_awaited_once_with(
+            filters={"id": str(invitation.id)},
+            select_related=["user", "workspace"],
+        )
+        assert inv is None
+
+
+#######################################################
+# get_public_workspace_invitation
+#######################################################
+
+
+async def test_get_public_workspace_invitation_ok():
+    user = f.build_user(is_active=True)
+    invitation = f.build_workspace_invitation(user=user)
+    token = str(await WorkspaceInvitationToken.create_for_object(invitation))
+    available_user_logins = ["gitlab", "password"]
+
+    with (
+        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.workspaces.invitations.services.auth_services", autospec=True) as fake_auth_services,
+    ):
+        fake_invitations_repo.get_workspace_invitation.return_value = invitation
+        fake_auth_services.get_available_user_logins.return_value = available_user_logins
+        pub_invitation = await services.get_public_workspace_invitation(token=token)
+        fake_invitations_repo.get_workspace_invitation.assert_awaited_once_with(
+            filters={"id": str(invitation.id)},
+            select_related=["user", "workspace"],
+        )
+        fake_auth_services.get_available_user_logins.assert_awaited_once_with(user=invitation.user)
+
+        assert pub_invitation.email == invitation.email
+        assert pub_invitation.existing_user is True
+        assert pub_invitation.workspace.name == invitation.workspace.name
+        assert pub_invitation.available_logins == available_user_logins
+
+
+async def test_get_public_workspace_invitation_ok_without_user():
+    invitation = f.build_workspace_invitation(user=None)
+    token = str(await WorkspaceInvitationToken.create_for_object(invitation))
+
+    with (
+        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.workspaces.invitations.services.auth_services", autospec=True) as fake_auth_services,
+    ):
+        fake_invitations_repo.get_workspace_invitation.return_value = invitation
+        pub_invitation = await services.get_public_workspace_invitation(token)
+        fake_invitations_repo.get_workspace_invitation.assert_awaited_once_with(
+            filters={"id": str(invitation.id)},
+            select_related=["user", "workspace"],
+        )
+        fake_auth_services.get_available_user_logins.assert_not_awaited()
+
+        assert pub_invitation.email == invitation.email
+        assert pub_invitation.existing_user is False
+        assert pub_invitation.workspace.name == invitation.workspace.name
+        assert pub_invitation.available_logins == []
+
+
+async def test_get_public_workspace_invitation_error_invitation_not_exists():
+    invitation = f.build_workspace_invitation(user=None)
+    token = str(await WorkspaceInvitationToken.create_for_object(invitation))
+
+    with patch(
+        "taiga.workspaces.invitations.services.invitations_repositories", autospec=True
+    ) as fake_invitations_repo:
+        fake_invitations_repo.get_workspace_invitation.return_value = None
+        pub_invitation = await services.get_public_workspace_invitation(token)
+        fake_invitations_repo.get_workspace_invitation.assert_awaited_once_with(
+            filters={"id": str(invitation.id)},
+            select_related=["user", "workspace"],
+        )
+        assert pub_invitation is None
+
+
+#######################################################
 # update_user_workspaces_invitations
 #######################################################
 
@@ -272,6 +383,175 @@ async def test_update_user_workspaces_invitations() -> None:
             select_related=["workspace"],
         )
         fake_invitations_events.emit_event_when_workspace_invitations_are_updated.assert_awaited_once()
+
+
+#######################################################
+# accept_workspace_invitation
+#######################################################
+
+
+async def tests_accept_workspace_invitation() -> None:
+    user = f.build_user()
+    workspace = f.build_workspace()
+    invitation = f.build_workspace_invitation(workspace=workspace, user=user, email=user.email)
+
+    with (
+        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.workspaces.invitations.services.memberships_repositories", autospec=True) as fake_memberships_repo,
+        patch("taiga.workspaces.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+    ):
+        fake_invitations_repo.update_workspace_invitation.return_value = invitation
+        await services.accept_workspace_invitation(invitation=invitation)
+
+        fake_invitations_repo.update_workspace_invitation.assert_awaited_once_with(
+            invitation=invitation,
+            values={"status": WorkspaceInvitationStatus.ACCEPTED},
+        )
+        fake_memberships_repo.create_workspace_membership.assert_awaited_once_with(workspace=workspace, user=user)
+        fake_invitations_events.emit_event_when_workspace_invitation_is_accepted.assert_awaited_once_with(
+            invitation=invitation
+        )
+
+
+async def tests_accept_workspace_invitation_error_invitation_has_already_been_accepted() -> None:
+    user = f.build_user()
+    workspace = f.build_workspace()
+    invitation = f.build_workspace_invitation(
+        workspace=workspace, user=user, status=WorkspaceInvitationStatus.ACCEPTED, email=user.email
+    )
+
+    with (
+        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.workspaces.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        pytest.raises(ex.InvitationAlreadyAcceptedError),
+    ):
+        await services.accept_workspace_invitation(invitation=invitation)
+
+        fake_invitations_repo.accept_workspace_invitation.assert_not_awaited()
+        fake_invitations_events.emit_event_when_workspace_invitation_is_accepted.assert_not_awaited()
+
+
+async def tests_accept_workspace_invitation_error_invitation_has_been_revoked() -> None:
+    user = f.build_user()
+    workspace = f.build_workspace()
+    invitation = f.build_workspace_invitation(
+        workspace=workspace, user=user, status=WorkspaceInvitationStatus.REVOKED, email=user.email
+    )
+
+    with (
+        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.workspaces.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        pytest.raises(ex.InvitationRevokedError),
+    ):
+        await services.accept_workspace_invitation(invitation=invitation)
+
+        fake_invitations_repo.accept_workspace_invitation.assert_not_awaited()
+        fake_invitations_events.emit_event_when_workspace_invitation_is_accepted.assert_not_awaited()
+
+
+#######################################################
+# accept_workspace_invitation_from_token
+#######################################################
+
+
+async def tests_accept_workspace_invitation_from_token_ok() -> None:
+    user = f.build_user()
+    invitation = f.build_workspace_invitation(user=user, email=user.email)
+    token = str(await WorkspaceInvitationToken.create_for_object(invitation))
+
+    with (
+        patch(
+            "taiga.workspaces.invitations.services.get_workspace_invitation", autospec=True
+        ) as fake_get_workspace_invitation,
+        patch(
+            "taiga.workspaces.invitations.services.accept_workspace_invitation", autospec=True
+        ) as fake_accept_workspace_invitation,
+    ):
+        fake_get_workspace_invitation.return_value = invitation
+
+        await services.accept_workspace_invitation_from_token(token=token, user=user)
+
+        fake_get_workspace_invitation.assert_awaited_once_with(token=token)
+        fake_accept_workspace_invitation.assert_awaited_once_with(invitation=invitation)
+
+
+async def tests_accept_workspace_invitation_from_token_error_no_invitation_found() -> None:
+    user = f.build_user()
+
+    with (
+        patch(
+            "taiga.workspaces.invitations.services.get_workspace_invitation", autospec=True
+        ) as fake_get_workspace_invitation,
+        patch(
+            "taiga.workspaces.invitations.services.accept_workspace_invitation", autospec=True
+        ) as fake_accept_workspace_invitation,
+        pytest.raises(ex.InvitationDoesNotExistError),
+    ):
+        fake_get_workspace_invitation.return_value = None
+
+        await services.accept_workspace_invitation_from_token(token="some_token", user=user)
+
+        fake_get_workspace_invitation.assert_awaited_once_with(token="some_token")
+        fake_accept_workspace_invitation.assert_not_awaited()
+
+
+async def tests_accept_workspace_invitation_from_token_error_invitation_is_for_other_user() -> None:
+    user = f.build_user()
+    other_user = f.build_user()
+    invitation = f.build_workspace_invitation(user=other_user, email=other_user.email)
+    token = str(await WorkspaceInvitationToken.create_for_object(invitation))
+
+    with (
+        patch(
+            "taiga.workspaces.invitations.services.get_workspace_invitation", autospec=True
+        ) as fake_get_workspace_invitation,
+        patch(
+            "taiga.workspaces.invitations.services.accept_workspace_invitation", autospec=True
+        ) as fake_accept_workspace_invitation,
+        pytest.raises(ex.InvitationIsNotForThisUserError),
+    ):
+        fake_get_workspace_invitation.return_value = invitation
+
+        await services.accept_workspace_invitation_from_token(token=token, user=user)
+
+        fake_get_workspace_invitation.assert_awaited_once_with(token=token)
+        fake_accept_workspace_invitation.assert_not_awaited()
+
+
+async def tests_accept_workspace_invitation_from_token_error_already_accepted() -> None:
+    user = f.build_user()
+    invitation = f.build_workspace_invitation(user=user, email=user.email, status=WorkspaceInvitationStatus.ACCEPTED)
+    token = str(await WorkspaceInvitationToken.create_for_object(invitation))
+
+    with (
+        patch(
+            "taiga.workspaces.invitations.services.get_workspace_invitation", autospec=True
+        ) as fake_get_workspace_invitation,
+        pytest.raises(ex.InvitationAlreadyAcceptedError),
+    ):
+        fake_get_workspace_invitation.return_value = invitation
+
+        await services.accept_workspace_invitation_from_token(token=token, user=user)
+
+        fake_get_workspace_invitation.assert_awaited_once_with(token=token)
+
+
+async def tests_accept_workspace_invitation_from_token_error_revoked() -> None:
+    user = f.build_user()
+    invitation = f.build_workspace_invitation(user=user, email=user.email, status=WorkspaceInvitationStatus.REVOKED)
+    token = str(await WorkspaceInvitationToken.create_for_object(invitation))
+
+    with (
+        patch(
+            "taiga.workspaces.invitations.services.get_workspace_invitation", autospec=True
+        ) as fake_get_workspace_invitation,
+        pytest.raises(ex.InvitationRevokedError),
+    ):
+        fake_get_workspace_invitation.return_value = invitation
+
+        await services.accept_workspace_invitation_from_token(token=token, user=user)
+
+        fake_get_workspace_invitation.assert_awaited_once_with(token=token)
 
 
 #######################################################

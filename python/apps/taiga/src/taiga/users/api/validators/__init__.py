@@ -22,7 +22,9 @@ class CreateUserValidator(PasswordMixin, BaseModel):
     color: conint(gt=0, lt=9) | None = None  # type: ignore
     lang: LanguageCode | None
     project_invitation_token: str | None
+    workspace_invitation_token: str | None
     accept_project_invitation: StrictBool = True
+    accept_workspace_invitation: StrictBool = True
 
     @validator("email", "full_name")
     def check_not_empty(cls, v: str) -> str:

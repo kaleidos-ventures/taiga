@@ -9,13 +9,16 @@
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.users.serializers import VerificationInfoSerializer
+from taiga.workspaces.invitations.models import WorkspaceInvitation
 
 
 def serialize_verification_info(
     auth: AccessTokenWithRefreshSerializer,
     project_invitation: ProjectInvitation | None,
+    workspace_invitation: WorkspaceInvitation | None,
 ) -> VerificationInfoSerializer:
     return VerificationInfoSerializer(
         auth=auth,
         project_invitation=project_invitation,
+        workspace_invitation=workspace_invitation,
     )

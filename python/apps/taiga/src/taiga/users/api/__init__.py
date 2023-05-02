@@ -44,7 +44,7 @@ VERIFICATION_INFO_200 = responses.http_status_200(model=VerificationInfoSerializ
 
 
 @routes.unauth_users.post(
-    "",
+    "/users",
     name="users.create",
     summary="Sign up user",
     response_model=UserSerializer,
@@ -62,6 +62,8 @@ async def create_user(form: CreateUserValidator) -> User:
         lang=form.lang,
         project_invitation_token=form.project_invitation_token,
         accept_project_invitation=form.accept_project_invitation,
+        workspace_invitation_token=form.workspace_invitation_token,
+        accept_workspace_invitation=form.accept_workspace_invitation,
     )
 
 
@@ -71,7 +73,7 @@ async def create_user(form: CreateUserValidator) -> User:
 
 
 @routes.unauth_users.post(
-    "/verify",
+    "/users/verify",
     name="users.verify",
     summary="Verify the account of a new signup user",
     responses=VERIFICATION_INFO_200 | ERROR_400 | ERROR_422,
@@ -89,7 +91,7 @@ async def verify_user(form: VerifyTokenValidator) -> VerificationInfoSerializer:
 
 
 @routes.users.get(
-    "/search",
+    "/users/search",
     name="users.search",
     summary="List all users matching a full text search, ordered (when provided) by their closeness"
     " to a project or a workspace.",
@@ -182,7 +184,7 @@ async def update_my_user(request: Request, form: UpdateUserValidator) -> User:
 
 
 @routes.unauth_users.post(
-    "/reset-password",
+    "/users/reset-password",
     name="users.reset-password-request",
     summary="Request a user password reset",
     response_model=bool,
@@ -202,7 +204,7 @@ async def request_reset_password(form: RequestResetPasswordValidator) -> bool:
 
 
 @routes.unauth_users.get(
-    "/reset-password/{token}/verify",
+    "/users/reset-password/{token}/verify",
     name="users.reset-password-verify",
     summary="Verify reset password token",
     response_model=bool,
@@ -216,7 +218,7 @@ async def verify_reset_password_token(token: str) -> bool:
 
 
 @routes.unauth_users.post(
-    "/reset-password/{token}",
+    "/users/reset-password/{token}",
     name="users.reset-password-change",
     summary="Reset user password",
     responses=ACCESS_TOKEN_200 | ERROR_400 | ERROR_422,

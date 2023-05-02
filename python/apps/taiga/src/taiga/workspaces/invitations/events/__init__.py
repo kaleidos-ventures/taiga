@@ -14,6 +14,7 @@ from taiga.workspaces.workspaces.models import Workspace
 
 CREATE_WORKSPACE_INVITATION = "workspaceinvitations.create"
 UPDATE_WORKSPACE_INVITATION = "workspaceinvitations.update"
+ACCEPT_WORKSPACE_INVITATION = "workspacememberships.create"
 
 
 async def emit_event_when_workspace_invitations_are_created(
@@ -48,3 +49,18 @@ async def emit_event_when_workspace_invitation_is_updated(invitation: WorkspaceI
 async def emit_event_when_workspace_invitations_are_updated(invitations: list[WorkspaceInvitation]) -> None:
     for invitation in invitations:
         await emit_event_when_workspace_invitation_is_updated(invitation)
+
+
+async def emit_event_when_workspace_invitation_is_accepted(invitation: WorkspaceInvitation) -> None:
+    await events_manager.publish_on_workspace_channel(
+        workspace=invitation.workspace,
+        type=ACCEPT_WORKSPACE_INVITATION,
+    )
+    if invitation.user:
+        await events_manager.publish_on_user_channel(
+            user=invitation.user,
+            type=ACCEPT_WORKSPACE_INVITATION,
+            content=WorkspaceInvitationContent(
+                workspace=invitation.workspace_id,
+            ),
+        )

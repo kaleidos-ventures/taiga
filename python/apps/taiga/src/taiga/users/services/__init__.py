@@ -15,7 +15,8 @@ from taiga.base.utils.slug import generate_int_suffix, slugify
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
-from taiga.projects.invitations import services as invitations_services
+from taiga.projects.invitations import services as project_invitations_services
+from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.invitations.services import exceptions as invitations_ex
 from taiga.projects.projects.models import Project
 from taiga.tokens import exceptions as tokens_ex
@@ -25,7 +26,8 @@ from taiga.users.serializers import VerificationInfoSerializer
 from taiga.users.serializers import services as serializers_services
 from taiga.users.services import exceptions as ex
 from taiga.users.tokens import ResetPasswordToken, VerifyUserToken
-from taiga.workspaces.invitations import services as workspaces_invitations_services
+from taiga.workspaces.invitations import services as workspace_invitations_services
+from taiga.workspaces.invitations.models import WorkspaceInvitation
 
 #####################################################################
 # create user
@@ -40,6 +42,8 @@ async def create_user(
     color: int | None = None,
     project_invitation_token: str | None = None,
     accept_project_invitation: bool = True,
+    workspace_invitation_token: str | None = None,
+    accept_workspace_invitation: bool = True,
 ) -> User:
     user = await users_repositories.get_user(filters={"username_or_email": email})
 
@@ -64,8 +68,10 @@ async def create_user(
 
     await _send_verify_user_email(
         user=user,
-        accept_project_invitation=accept_project_invitation,
         project_invitation_token=project_invitation_token,
+        accept_project_invitation=accept_project_invitation,
+        workspace_invitation_token=workspace_invitation_token,
+        accept_workspace_invitation=accept_workspace_invitation,
     )
 
     return user
@@ -77,11 +83,19 @@ async def create_user(
 
 
 async def _send_verify_user_email(
-    user: User, accept_project_invitation: bool = True, project_invitation_token: str | None = None
+    user: User,
+    project_invitation_token: str | None = None,
+    accept_project_invitation: bool = True,
+    workspace_invitation_token: str | None = None,
+    accept_workspace_invitation: bool = True,
 ) -> None:
     context = {
         "verification_token": await _generate_verify_user_token(
-            user, project_invitation_token, accept_project_invitation
+            user=user,
+            project_invitation_token=project_invitation_token,
+            accept_project_invitation=accept_project_invitation,
+            workspace_invitation_token=workspace_invitation_token,
+            accept_workspace_invitation=accept_workspace_invitation,
         )
     }
 
@@ -89,14 +103,22 @@ async def _send_verify_user_email(
 
 
 async def _generate_verify_user_token(
-    user: User, project_invitation_token: str | None = None, accept_project_invitation: bool = True
+    user: User,
+    project_invitation_token: str | None = None,
+    accept_project_invitation: bool = True,
+    workspace_invitation_token: str | None = None,
+    accept_workspace_invitation: bool = True,
 ) -> str:
     verify_user_token = await VerifyUserToken.create_for_object(user)
-
     if project_invitation_token:
         verify_user_token["project_invitation_token"] = project_invitation_token
         if accept_project_invitation:
             verify_user_token["accept_project_invitation"] = accept_project_invitation
+
+    elif workspace_invitation_token:
+        verify_user_token["workspace_invitation_token"] = workspace_invitation_token
+        if accept_workspace_invitation:
+            verify_user_token["accept_workspace_invitation"] = accept_workspace_invitation
 
     return str(verify_user_token)
 
@@ -124,35 +146,20 @@ async def verify_user_from_token(token: str) -> VerificationInfoSerializer:
         raise ex.BadVerifyUserTokenError("The user doesn't exist.")
 
     await verify_user(user=user)
-    await invitations_services.update_user_projects_invitations(user=user)
-    await workspaces_invitations_services.update_user_workspaces_invitations(user=user)
+    await project_invitations_services.update_user_projects_invitations(user=user)
+    await workspace_invitations_services.update_user_workspaces_invitations(user=user)
 
-    # Accept project invitation, if it exists and the user comes from the email's CTA. Errors will be ignored
-    project_invitation_token = verify_token.get("project_invitation_token", None)
-    accept_project_invitation = verify_token.get("accept_project_invitation", False)
-
-    if accept_project_invitation and project_invitation_token:
-        try:
-            await invitations_services.accept_project_invitation_from_token(token=project_invitation_token, user=user)
-        except (
-            invitations_ex.BadInvitationTokenError,
-            invitations_ex.InvitationDoesNotExistError,
-            invitations_ex.InvitationIsNotForThisUserError,
-            invitations_ex.InvitationAlreadyAcceptedError,
-            invitations_ex.InvitationRevokedError,
-        ):
-            pass  # TODO: Logging invitation is invalid
-
-    project_invitation = None
-    if project_invitation_token:
-        try:
-            project_invitation = await invitations_services.get_project_invitation(token=project_invitation_token)
-        except (invitations_ex.BadInvitationTokenError, invitations_ex.InvitationDoesNotExistError):
-            pass  # TODO: Logging invitation is invalid
+    # The user may have a pending invitation to join a project or a workspace
+    project_invitation, workspace_invitation = await _accept_invitations_from_token(
+        user=user,
+        verify_token=verify_token,
+    )
 
     # Generate auth credentials and attach invitation
     auth = await auth_services.create_auth_credentials(user=user)
-    return serializers_services.serialize_verification_info(auth=auth, project_invitation=project_invitation)
+    return serializers_services.serialize_verification_info(
+        auth=auth, project_invitation=project_invitation, workspace_invitation=workspace_invitation
+    )
 
 
 #####################################################################
@@ -291,3 +298,81 @@ async def generate_username(email: str) -> str:
 
 async def clean_expired_users() -> None:
     await users_repositories.clean_expired_users()
+
+
+async def _accept_invitations_from_token(
+    user: User, verify_token: VerifyUserToken
+) -> tuple[ProjectInvitation | None, WorkspaceInvitation | None]:
+    project_invitation_token = verify_token.get("project_invitation_token", None)
+    if project_invitation_token:
+        project_invitation = await _accept_project_invitation_from_token(
+            invitation_token=project_invitation_token,
+            accept_invitation=verify_token.get("accept_project_invitation", False),
+            user=user,
+        )
+        return project_invitation, None
+
+    workspace_invitation_token = verify_token.get("workspace_invitation_token", None)
+    if workspace_invitation_token:
+        workspace_invitation = await _accept_workspace_invitation_from_token(
+            invitation_token=workspace_invitation_token,
+            accept_invitation=verify_token.get("accept_workspace_invitation", False),
+            user=user,
+        )
+        return None, workspace_invitation
+
+    return None, None
+
+
+async def _accept_project_invitation_from_token(
+    invitation_token: str, accept_invitation: bool, user: User
+) -> ProjectInvitation | None:
+    # Accept project invitation, if it exists and the user comes from the email's CTA. Errors will be ignored
+    invitation = None
+    if accept_invitation and invitation_token:
+        try:
+            await project_invitations_services.accept_project_invitation_from_token(
+                token=invitation_token,
+                user=user,
+            )
+        except (
+            invitations_ex.BadInvitationTokenError,
+            invitations_ex.InvitationDoesNotExistError,
+            invitations_ex.InvitationIsNotForThisUserError,
+            invitations_ex.InvitationAlreadyAcceptedError,
+            invitations_ex.InvitationRevokedError,
+        ):
+            pass  # TODO: Logging invitation is invalid
+    if invitation_token:
+        try:
+            invitation = await project_invitations_services.get_project_invitation(token=invitation_token)
+        except (invitations_ex.BadInvitationTokenError, invitations_ex.InvitationDoesNotExistError):
+            pass  # TODO: Logging invitation is invalid
+    return invitation
+
+
+async def _accept_workspace_invitation_from_token(
+    invitation_token: str, accept_invitation: bool, user: User
+) -> WorkspaceInvitation | None:
+    # Accept workspace invitation, if it exists and the user comes from the email's CTA. Errors will be ignored
+    invitation = None
+    if accept_invitation and invitation_token:
+        try:
+            await workspace_invitations_services.accept_workspace_invitation_from_token(
+                token=invitation_token,
+                user=user,
+            )
+        except (
+            invitations_ex.BadInvitationTokenError,
+            invitations_ex.InvitationDoesNotExistError,
+            invitations_ex.InvitationIsNotForThisUserError,
+            invitations_ex.InvitationAlreadyAcceptedError,
+            invitations_ex.InvitationRevokedError,
+        ):
+            pass  # TODO: Logging invitation is invalid
+    if invitation_token:
+        try:
+            invitation = await workspace_invitations_services.get_workspace_invitation(token=invitation_token)
+        except (invitations_ex.BadInvitationTokenError, invitations_ex.InvitationDoesNotExistError):
+            pass  # TODO: Logging invitation is invalid
+    return invitation

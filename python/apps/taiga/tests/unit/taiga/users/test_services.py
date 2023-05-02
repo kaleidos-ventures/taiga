@@ -22,7 +22,20 @@ from tests.utils import factories as f
 ##########################################################
 
 
-async def test_create_user_ok(tqmanager):
+@pytest.mark.parametrize(
+    "project_invitation_token, workspace_invitation_token, accept_project_invitation, accept_workspace_invitation",
+    [
+        ("eyJ0Token", True, None, None),
+        (None, None, "eyJ0Token", True),
+    ],
+)
+async def test_create_user_ok_accept_invitation(
+    project_invitation_token,
+    accept_project_invitation,
+    workspace_invitation_token,
+    accept_workspace_invitation,
+    tqmanager,
+):
     email = "email@email.com"
     username = "email"
     full_name = "Full Name"
@@ -30,9 +43,6 @@ async def test_create_user_ok(tqmanager):
     password = "CorrectP4ssword$"
     lang = "es-ES"
     user = f.build_user(id=1, email=email, username=username, full_name=full_name, color=color, lang=lang)
-
-    accept_project_invitation = True
-    project_invitation_token = "eyJ0Token"
 
     with (
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
@@ -49,6 +59,8 @@ async def test_create_user_ok(tqmanager):
             password=password,
             accept_project_invitation=accept_project_invitation,
             project_invitation_token=project_invitation_token,
+            accept_workspace_invitation=accept_workspace_invitation,
+            workspace_invitation_token=workspace_invitation_token,
             lang=lang,
         )
 
@@ -65,7 +77,13 @@ async def test_create_user_ok(tqmanager):
             "context": {"verification_token": "verify_token"},
         }
 
-        fake_user_token.assert_awaited_once_with(user, project_invitation_token, accept_project_invitation)
+        fake_user_token.assert_awaited_once_with(
+            user=user,
+            project_invitation_token=project_invitation_token,
+            accept_project_invitation=accept_project_invitation,
+            workspace_invitation_token=workspace_invitation_token,
+            accept_workspace_invitation=accept_workspace_invitation,
+        )
 
 
 async def test_create_user_default_instance_lang(tqmanager):
@@ -119,7 +137,13 @@ async def test_create_user_default_instance_lang(tqmanager):
             "context": {"verification_token": "verify_token"},
         }
 
-        fake_user_token.assert_awaited_once_with(user, project_invitation_token, accept_project_invitation)
+        fake_user_token.assert_awaited_once_with(
+            user=user,
+            project_invitation_token=project_invitation_token,
+            accept_project_invitation=accept_project_invitation,
+            workspace_invitation_token=None,
+            accept_workspace_invitation=True,
+        )
 
 
 async def test_create_user_unverified(tqmanager):
@@ -185,7 +209,7 @@ async def test_verify_user():
 ##########################################################
 
 
-async def test_verify_user_ok_no_project_invitation_token():
+async def test_verify_user_ok_no_invitation_tokens_to_accept():
     user = f.build_user(is_active=False)
     object_data = {"id": 1}
     auth_credentials = AccessTokenWithRefreshSerializer(token="token", refresh="refresh")
@@ -195,8 +219,8 @@ async def test_verify_user_ok_no_project_invitation_token():
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
-        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitations_services,
-        patch("taiga.users.services.workspaces_invitations_services", autospec=True) as fake_ws_invitations_services,
+        patch("taiga.users.services.project_invitations_services", autospec=True) as fake_pj_invitations_services,
+        patch("taiga.users.services.workspace_invitations_services", autospec=True) as fake_ws_invitations_services,
     ):
         fake_token = FakeVerifyUserToken()
         fake_token.object_data = object_data
@@ -212,35 +236,47 @@ async def test_verify_user_ok_no_project_invitation_token():
 
         fake_token.denylist.assert_awaited_once()
         fake_users_repo.get_user.assert_awaited_once_with(filters=object_data)
-        fake_invitations_services.update_user_projects_invitations.assert_awaited_once_with(user=user)
+
+        fake_pj_invitations_services.update_user_projects_invitations.assert_awaited_once_with(user=user)
         fake_ws_invitations_services.update_user_workspaces_invitations.assert_awaited_once_with(user=user)
-        fake_token.get.assert_called_with("accept_project_invitation", False)
-        fake_invitations_services.accept_project_invitation_from_token.assert_not_awaited()
+
+        fake_token.get.assert_any_call("project_invitation_token", None)
+        fake_token.get.assert_any_call("workspace_invitation_token", None)
+        fake_pj_invitations_services.accept_project_invitation_from_token.assert_not_awaited()
+        fake_ws_invitations_services.accept_workspace_invitation_from_token.assert_not_awaited()
+        fake_pj_invitations_services.get_project_invitation.assert_not_awaited()
+        fake_ws_invitations_services.get_workspace_invitation.assert_not_awaited()
+
         fake_auth_services.create_auth_credentials.assert_awaited_once_with(user=user)
+
         fake_verify_user.assert_awaited_once()
 
 
-async def test_verify_user_ok_with_accepting_project_invitation_token():
+@pytest.mark.parametrize(
+    "accept_project_invitation",
+    [True, False],
+)
+async def test_verify_user_ok_accepting_or_not_a_project_invitation_token(accept_project_invitation):
     user = f.build_user(is_active=False)
     project_invitation = f.build_project_invitation()
     object_data = {"id": 1}
     project_invitation_token = "invitation_token"
-    accept_project_invitation = True
+    # accept_project_invitation = True
     auth_credentials = AccessTokenWithRefreshSerializer(token="token", refresh="refresh")
 
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
-        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitations_services,
-        patch("taiga.users.services.workspaces_invitations_services", autospec=True) as fake_ws_invitations_services,
+        patch("taiga.users.services.project_invitations_services", autospec=True) as fake_pj_invitations_services,
+        patch("taiga.users.services.workspace_invitations_services", autospec=True) as fake_ws_invitations_services,
     ):
         fake_token = FakeVerifyUserToken()
         fake_token.object_data = object_data
         fake_token.get.side_effect = [project_invitation_token, accept_project_invitation]
         fake_auth_services.create_auth_credentials.return_value = auth_credentials
         FakeVerifyUserToken.create.return_value = fake_token
-        fake_invitations_services.get_project_invitation.return_value = project_invitation
+        fake_pj_invitations_services.get_project_invitation.return_value = project_invitation
         fake_users_repo.get_user.return_value = user
 
         info = await services.verify_user_from_token("some_token")
@@ -250,49 +286,70 @@ async def test_verify_user_ok_with_accepting_project_invitation_token():
 
         fake_token.denylist.assert_awaited_once()
         fake_users_repo.get_user.assert_awaited_once_with(filters=object_data)
-        fake_invitations_services.update_user_projects_invitations.assert_awaited_once_with(user=user)
+        fake_pj_invitations_services.update_user_projects_invitations.assert_awaited_once_with(user=user)
         fake_ws_invitations_services.update_user_workspaces_invitations.assert_awaited_once_with(user=user)
-        fake_token.get.assert_called_with("accept_project_invitation", False)
-        fake_invitations_services.accept_project_invitation_from_token.assert_awaited_once_with(
-            token=project_invitation_token, user=user
-        )
+
+        fake_token.get.assert_any_call("project_invitation_token", None)
+        fake_token.get.assert_any_call("accept_project_invitation", False)
+        fake_pj_invitations_services.get_project_invitation.assert_awaited_once_with(token=project_invitation_token)
+        if accept_project_invitation:
+            fake_pj_invitations_services.accept_project_invitation_from_token.assert_awaited_once_with(
+                token=project_invitation_token, user=user
+            )
+        else:
+            fake_pj_invitations_services.accept_project_invitation_from_token.assert_not_awaited()
+
         fake_auth_services.create_auth_credentials.assert_awaited_once_with(user=user)
 
 
-async def test_verify_user_ok_without_accepting_project_invitation_token():
+@pytest.mark.parametrize(
+    "accept_workspace_invitation",
+    [True, False],
+)
+async def test_verify_user_ok_accepting_or_not_a_workspace_invitation_token(accept_workspace_invitation):
     user = f.build_user(is_active=False)
-    project_invitation = f.build_project_invitation()
+    workspace_invitation = f.build_workspace_invitation()
     object_data = {"id": 1}
-    project_invitation_token = "invitation_token"
-    accept_project_invitation = False
+    workspace_invitation_token = "invitation_token"
     auth_credentials = AccessTokenWithRefreshSerializer(token="token", refresh="refresh")
 
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
-        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitations_services,
-        patch("taiga.users.services.workspaces_invitations_services", autospec=True) as fake_ws_invitations_services,
+        patch("taiga.users.services.project_invitations_services", autospec=True) as fake_pj_invitations_services,
+        patch("taiga.users.services.workspace_invitations_services", autospec=True) as fake_ws_invitations_services,
     ):
         fake_token = FakeVerifyUserToken()
         fake_token.object_data = object_data
-        fake_token.get.side_effect = [project_invitation_token, accept_project_invitation]
+        # First call will be `verify_token.get("project_invitation_token", None)` and should return None
+        fake_token.get.side_effect = [None, workspace_invitation_token, accept_workspace_invitation]
         fake_auth_services.create_auth_credentials.return_value = auth_credentials
         FakeVerifyUserToken.create.return_value = fake_token
-        fake_invitations_services.get_project_invitation.return_value = project_invitation
+        fake_ws_invitations_services.get_workspace_invitation.return_value = workspace_invitation
         fake_users_repo.get_user.return_value = user
 
         info = await services.verify_user_from_token("some_token")
 
         assert info.auth == auth_credentials
-        assert info.project_invitation.project.name == project_invitation.project.name
+        assert info.workspace_invitation.workspace.name == workspace_invitation.workspace.name
 
         fake_token.denylist.assert_awaited_once()
         fake_users_repo.get_user.assert_awaited_once_with(filters=object_data)
-        fake_invitations_services.update_user_projects_invitations.assert_awaited_once_with(user=user)
+        fake_pj_invitations_services.update_user_projects_invitations.assert_awaited_once_with(user=user)
         fake_ws_invitations_services.update_user_workspaces_invitations.assert_awaited_once_with(user=user)
-        fake_token.get.assert_called_with("accept_project_invitation", False)
-        not fake_invitations_services.accept_project_invitation_from_token.assert_awaited
+
+        fake_token.get.assert_any_call("project_invitation_token", None)
+        fake_token.get.assert_any_call("workspace_invitation_token", None)
+        fake_token.get.assert_any_call("accept_workspace_invitation", False)
+        fake_ws_invitations_services.get_workspace_invitation.assert_awaited_once_with(token=workspace_invitation_token)
+        if accept_workspace_invitation:
+            fake_ws_invitations_services.accept_workspace_invitation_from_token.assert_awaited_once_with(
+                token=workspace_invitation_token, user=user
+            )
+        else:
+            fake_ws_invitations_services.accept_workspace_invitation_from_token.assert_not_awaited()
+
         fake_auth_services.create_auth_credentials.assert_awaited_once_with(user=user)
 
 
@@ -360,8 +417,8 @@ async def test_verify_user_error_project_invitation_token(exception):
     with (
         patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken,
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
-        patch("taiga.users.services.invitations_services", autospec=True) as fake_invitations_services,
-        patch("taiga.users.services.workspaces_invitations_services", autospec=True),
+        patch("taiga.users.services.project_invitations_services", autospec=True) as fake_invitations_services,
+        patch("taiga.users.services.workspace_invitations_services", autospec=True),
         patch("taiga.users.services.auth_services", autospec=True) as fake_auth_services,
     ):
         fake_token = FakeVerifyUserToken()
@@ -395,7 +452,7 @@ async def test_verify_user_error_project_invitation_token(exception):
         (None, False, []),
     ],
 )
-async def test_generate_verify_ok_with_project_invitation_accepting(
+async def test_generate_verify_ok_accept_project_invitation(
     project_invitation_token, accept_project_invitation, expected_keys
 ):
     user = f.build_user(is_active=False)

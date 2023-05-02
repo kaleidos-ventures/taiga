@@ -245,6 +245,22 @@ async def get_workspace_invitation_by_id_not_found() -> None:
 ##########################################################
 
 
+async def test_update_workspace_invitation():
+    workspace = await f.create_workspace()
+    user = await f.create_user()
+    old_status = WorkspaceInvitationStatus.PENDING
+    new_status = WorkspaceInvitationStatus.ACCEPTED
+
+    invitation = await f.create_workspace_invitation(
+        user=user, email=user.email, workspace=workspace, status=old_status
+    )
+    updated_invitation = await repositories.update_workspace_invitation(
+        invitation=invitation,
+        values={"status": new_status},
+    )
+    assert updated_invitation.status == new_status
+
+
 async def test_bulk_update_workspace_invitations():
     workspace = await f.create_workspace()
     invitation1 = await f.create_workspace_invitation(workspace=workspace, num_emails_sent=1)

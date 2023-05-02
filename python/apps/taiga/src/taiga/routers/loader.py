@@ -39,6 +39,7 @@ def load_routes(api: FastAPI) -> None:
     api.include_router(routes.unauth_users)
     api.include_router(routes.workspaces)
     api.include_router(routes.workspaces_invitations)
+    api.include_router(routes.unauth_workspaces_invitations)
     api.include_router(routes.workspaces_memberships)
     api.include_router(routes.projects)
     api.include_router(routes.projects_invitations)

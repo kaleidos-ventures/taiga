@@ -9,6 +9,7 @@
 import pytest
 from fastapi import status
 from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
+from taiga.workspaces.invitations.tokens import WorkspaceInvitationToken
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -84,7 +85,7 @@ async def test_create_workspace_invitations(client):
 
 
 ##########################################################
-# GET /workspaces/<id>/invitations
+# LIST /workspaces/<id>/invitations
 ##########################################################
 
 
@@ -138,4 +139,58 @@ async def test_list_workspaces_invitations_not_found(client):
     offset = 0
     limit = 1
     response = client.get(f"/workspaces/non-existing-id/invitations?offset={offset}&limit={limit}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+#########################################################################
+# GET /workspaces/invitations/<token>
+#########################################################################
+
+
+async def test_get_workspace_invitation_ok(client):
+    invitation = await f.create_workspace_invitation()
+    token = await WorkspaceInvitationToken.create_for_object(invitation)
+
+    response = client.get(f"/workspaces/invitations/{str(token)}")
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_get_workspace_invitation_invalid_token(client):
+    response = client.get("/workspaces/invitations/invalid-token")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+async def test_get_workspace_invitation_invitation_does_not_exist(client):
+    invitation = f.build_workspace_invitation(id=111)
+    token = await WorkspaceInvitationToken.create_for_object(invitation)
+
+    response = client.get(f"/workspaces/invitations/{str(token)}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+#########################################################################
+# POST /workspaces/invitations/<token>/accept
+#########################################################################
+
+
+async def test_accept_workspace_invitation_ok(client):
+    user = await f.create_user()
+    invitation = await f.create_workspace_invitation(email=user.email)
+    token = await WorkspaceInvitationToken.create_for_object(invitation)
+
+    client.login(user)
+    response = client.post(f"/workspaces/invitations/{str(token)}/accept")
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_accept_workspace_invitation_error_invitation_invalid_token(client):
+    response = client.post("/workspaces/invitations/invalid-token/accept")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+async def test_accept_workspace_invitation_error_invitation_does_not_exist(client):
+    invitation = f.build_workspace_invitation(id=111)
+    token = await WorkspaceInvitationToken.create_for_object(invitation)
+
+    response = client.post(f"/workspaces/invitations/{str(token)}/accept")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

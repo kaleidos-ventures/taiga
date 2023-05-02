@@ -23,8 +23,8 @@ tags_metadata.append(
 )
 
 # /users
-users = AuthAPIRouter(prefix="/users", tags=["users"])
-unauth_users = APIRouter(prefix="/users", tags=["users"])
+users = AuthAPIRouter(tags=["users"])
+unauth_users = APIRouter(tags=["users"])
 tags_metadata.append(
     {
         "name": "users",
@@ -43,6 +43,8 @@ tags_metadata.append(
 
 # /workspaces/{id}/invitations
 workspaces_invitations = AuthAPIRouter(tags=["workspaces invitations"])
+# /workspaces/invitations/{token}
+unauth_workspaces_invitations = APIRouter(tags=["workspaces invitations"])
 tags_metadata.append(
     {
         "name": "workspaces invitations",
@@ -70,6 +72,7 @@ tags_metadata.append(
 
 # /projects/{id}/invitations
 projects_invitations = AuthAPIRouter(tags=["projects invitations"])
+# /projects/invitations/{token}
 unauth_projects_invitations = APIRouter(tags=["projects invitations"])
 tags_metadata.append(
     {

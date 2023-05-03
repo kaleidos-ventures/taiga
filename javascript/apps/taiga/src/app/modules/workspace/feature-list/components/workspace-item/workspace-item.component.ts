@@ -401,6 +401,22 @@ export class WorkspaceItemComponent
           })
         );
       });
+
+    this.wsService
+      .events<{
+        member: Membership;
+      }>({
+        channel: `workspaces.${this.workspace.id}`,
+        type: 'workspacememberships.delete',
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(
+          workspaceEventActions.workspaceMembershipLost({
+            workspaceId: this.workspace.id,
+          })
+        );
+      });
   }
 
   public ngOnDestroy(): void {

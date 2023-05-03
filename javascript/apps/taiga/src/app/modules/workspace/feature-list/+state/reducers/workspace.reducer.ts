@@ -272,6 +272,32 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
+    WorkspaceActions.workspaceMembershipLostSuccess,
+    (state, { workspaceId, updatedWorkspace }): WorkspaceState => {
+      if (updatedWorkspace) {
+        const workspaceIndex = state.workspaces.findIndex((workspaceItem) => {
+          return workspaceItem.id === workspaceId;
+        });
+
+        state.workspaces[workspaceIndex] = updatedWorkspace;
+      }
+
+      return state;
+    }
+  ),
+  on(
+    WorkspaceActions.workspaceMembershipLostError,
+    (state, { workspaceId }): WorkspaceState => {
+      const workspaces = state.workspaces.filter((workspaceItem) => {
+        return workspaceItem.id !== workspaceId;
+      });
+
+      state.workspaces = workspaces;
+
+      return state;
+    }
+  ),
+  on(
     WorkspaceActions.workspaceEventActions.workspaceDeleted,
     (state, { workspaceId }): WorkspaceState => {
       state.workspaces = state.workspaces.filter((it) => {

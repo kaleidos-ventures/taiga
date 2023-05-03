@@ -294,7 +294,7 @@ export class ProjectEffects {
               if (action.isSelf) {
                 this.appService.toastNotification({
                   message: 'common_members_tabs.no_longer_member',
-                  paramsMessage: { project_name: action.projectName },
+                  paramsMessage: { name: action.projectName, type: 'project' },
                   status: TuiNotification.Info,
                   closeOnNavigation: false,
                 });
@@ -310,7 +310,7 @@ export class ProjectEffects {
               if (action.isSelf) {
                 this.appService.toastNotification({
                   message: 'common_members_tabs.no_longer_member',
-                  paramsMessage: { project_name: action.projectName },
+                  paramsMessage: { name: action.projectName, type: 'project' },
                   status: TuiNotification.Info,
                   closeOnNavigation: false,
                 });
@@ -324,6 +324,25 @@ export class ProjectEffects {
     },
     { dispatch: false }
   );
+
+  public userLostWorkspaceMembership$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(projectEventActions.userLostWorkspaceMembership),
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      map(([action, project]) => {
+        this.appService.toastNotification({
+          message: 'common_members_tabs.no_longer_member',
+          paramsMessage: { name: action.workspaceName, type: 'workspace' },
+          status: TuiNotification.Info,
+          closeOnNavigation: false,
+        });
+
+        return ProjectActions.fetchProject({ id: project.id });
+      })
+    );
+  });
 
   constructor(
     private actions$: Actions,

@@ -13,7 +13,7 @@ import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { WorkspaceApiService } from '@taiga/api';
-import { Project, Workspace } from '@taiga/data';
+import { ErrorManagementOptions, Project, Workspace } from '@taiga/data';
 import { timer, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
@@ -217,6 +217,38 @@ export class WorkspaceEffects {
     );
   });
 
+  public workspaceMembershipLost$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceEventActions.workspaceMembershipLost),
+      fetch({
+        id: (action) => {
+          return action.workspaceId;
+        },
+        run: (action) => {
+          return this.workspaceApiService
+            .fetchWorkspace(action.workspaceId)
+            .pipe(
+              map((workspace: Workspace) => {
+                return WorkspaceActions.workspaceMembershipLostSuccess({
+                  updatedWorkspace: workspace,
+                  workspaceId: action.workspaceId,
+                });
+              })
+            );
+        },
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          const status = httpResponse.status as keyof ErrorManagementOptions;
+          if (status === 404) {
+            return WorkspaceActions.workspaceMembershipLostError({
+              workspaceId: action.workspaceId,
+            });
+          }
+          return this.appService.errorManagement(httpResponse);
+        },
+      })
+    );
+  });
+
   public membershipLost$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(workspaceEventActions.projectMembershipLost),
@@ -235,17 +267,17 @@ export class WorkspaceEffects {
                 0 && workspace.userRole === 'guest'
             )
           ) {
-            return zip(
-              this.workspaceApiService.fetchWorkspace(action.workspaceId)
-            ).pipe(
-              map(([workspace]) => {
-                return WorkspaceActions.membershipLostSuccess({
-                  updatedWorkspace: workspace,
-                  workspaceId: action.workspaceId,
-                  projectId: action.projectId,
-                });
-              })
-            );
+            return this.workspaceApiService
+              .fetchWorkspace(action.workspaceId)
+              .pipe(
+                map((workspace) => {
+                  return WorkspaceActions.membershipLostSuccess({
+                    updatedWorkspace: workspace,
+                    workspaceId: action.workspaceId,
+                    projectId: action.projectId,
+                  });
+                })
+              );
           }
           return WorkspaceActions.membershipLostSuccess({
             workspaceId: action.workspaceId,

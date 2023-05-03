@@ -104,6 +104,7 @@ export const workspaceDetailApiActions = createActionGroup({
       member: WorkspaceMembership['user']['username'];
     }>(),
     'Remove member success': props<{
+      id: Workspace['id'];
       member: WorkspaceMembership['user']['username'];
     }>(),
   },

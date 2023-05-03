@@ -214,7 +214,6 @@
     "remove_title": "Remove {user_name} from the project?",
     "remove_description": "The user will lose the permissions granted as a member of the project and will be removed from all their assignmets.",
     "remove_confirm": "Yes, remove",
-
-    "no_longer_member": "You are no longer member of the {project_name} project."
+    "no_longer_member": "You are no longer member of the {name} {type}."
   }
 }

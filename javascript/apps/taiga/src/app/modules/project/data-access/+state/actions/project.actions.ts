@@ -101,5 +101,8 @@ export const projectEventActions = createActionGroup({
       username: User['username'];
       isSelf?: boolean;
     }>(),
+    'User lost workspace membership': props<{
+      workspaceName: string;
+    }>(),
   },
 });

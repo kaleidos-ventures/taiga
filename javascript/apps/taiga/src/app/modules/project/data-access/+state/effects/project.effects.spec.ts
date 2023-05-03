@@ -175,7 +175,7 @@ describe('ProjectEffects', () => {
     effects.userLostProjectMembership$.subscribe(() => {
       expect(appService.toastNotification).toHaveBeenCalledWith({
         message: 'common_members_tabs.no_longer_member',
-        paramsMessage: { project_name: projectName },
+        paramsMessage: { name: projectName, type: 'project' },
         status: TuiNotification.Info,
         closeOnNavigation: false,
       });

@@ -374,6 +374,7 @@ export class WorkspaceDetailEffects {
             .pipe(
               map(() => {
                 return workspaceDetailApiActions.removeMemberSuccess({
+                  id: action.id,
                   member: action.member,
                 });
               })
@@ -391,6 +392,18 @@ export class WorkspaceDetailEffects {
             },
           });
         },
+      })
+    );
+  });
+
+  public removeMemberSuccess$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceDetailApiActions.removeMemberSuccess),
+      map((action) => {
+        return workspaceDetailApiActions.getWorkspaceNonMembers({
+          id: action.id,
+          offset: 0,
+        });
       })
     );
   });

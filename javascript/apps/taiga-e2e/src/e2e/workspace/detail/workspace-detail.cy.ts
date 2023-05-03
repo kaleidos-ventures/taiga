@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { randAnimal, randText } from '@ngneat/falso';
+import { randAnimal, randNumber, randText } from '@ngneat/falso';
 import {
   EmptyWorkspaceAdminMockFactory,
   ProjectMockFactory,
@@ -17,8 +17,11 @@ import { createFullProjectInWSRequest } from '@test/support/helpers/project.help
 import {
   clickDeleteWorkspace,
   displayEditWorkspaceModal,
+  displayWorkspacePeople,
   editWorkspaceModalName,
   editWorkspaceModalSubmit,
+  removeUser,
+  removeUserUndo,
 } from '@test/support/helpers/workspace-detail.helpers';
 import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
@@ -131,7 +134,7 @@ describe('Workspace detail [guest]', () => {
   });
 });
 
-describe('Workspace detail [admin]', () => {
+describe('Workspace detail [member]', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('/');
@@ -163,5 +166,41 @@ describe('Workspace detail [admin]', () => {
 
     clickDeleteWorkspace();
     cy.getBySel('delete-workspace-modal-title').should('be.visible');
+  });
+
+  it('Delete member', () => {
+    const randNum = randNumber({ min: 0, max: 10 });
+    cy.getBySel('workspace-item')
+      .eq(randNum)
+      .within(() => {
+        cy.getBySel('workspace-item-title').click();
+      });
+    displayWorkspacePeople();
+    cy.getBySel('remove-user')
+      .first()
+      .closest('tg-ui-dtable-row')
+      .then((row) => cy.wrap(row).as('row'));
+    removeUser();
+    cy.get('@row').then((row) => {
+      cy.wrap(row).should('not.exist');
+    });
+  });
+
+  it('Delete member - undo', () => {
+    const randNum = randNumber({ min: 0, max: 10 });
+    cy.getBySel('workspace-item')
+      .eq(randNum)
+      .within(() => {
+        cy.getBySel('workspace-item-title').click();
+      });
+    displayWorkspacePeople();
+    cy.getBySel('remove-user')
+      .first()
+      .closest('tg-ui-dtable-row')
+      .then((row) => cy.wrap(row).as('row'));
+    removeUserUndo();
+    cy.get('@row').then((row) => {
+      cy.wrap(row).should('exist');
+    });
   });
 });

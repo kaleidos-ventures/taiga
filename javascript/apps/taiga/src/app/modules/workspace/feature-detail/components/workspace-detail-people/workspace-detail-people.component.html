@@ -9,7 +9,11 @@ Copyright (c) 2023-present Kaleidos INC
   <ng-container *transloco="let t">
     <ng-container *ngIf="vm.workspace">
       <div class="wks-main-content-top">
-        <h2 class="wks-main-content-title">{{ t('commons.people') }}</h2>
+        <h2
+          class="wks-main-content-title"
+          data-test="wks-main-content-title">
+          {{ t('commons.people') }}
+        </h2>
         <button
           *ngIf="vm.workspace.userRole === 'admin'"
           appearance="primary"
@@ -21,6 +25,7 @@ Copyright (c) 2023-present Kaleidos INC
       </div>
       <tui-tabs
         class="wks-people-tabs"
+        data-test="wks-people-tabs"
         role="tablist">
         <a
           id="tab-1"

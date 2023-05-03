@@ -28,3 +28,27 @@ export const clickDeleteWorkspace = () => {
   cy.getBySel('workspace-options').click();
   cy.getBySel('delete-ws-button').click();
 };
+
+export const displayWorkspacePeople = () => {
+  cy.getBySel('wks-detail-people-anchor').click();
+  cy.getBySel('wks-people-tabs').should('be.visible');
+};
+
+export const removeUser = (index = 0) => {
+  cy.getBySel('remove-user').eq(index).click();
+  cy.getBySel('remove-ws-member-dialog').should('be.visible');
+  cy.getBySel('confirm-cancel').click();
+  cy.getBySel('remove-ws-member-countdown').should('be.visible');
+  cy.getBySel('remove-ws-member-countdown', { timeout: 5000 }).should(
+    'not.exist'
+  );
+};
+
+export const removeUserUndo = (index = 0) => {
+  cy.getBySel('remove-user').eq(index).click();
+  cy.getBySel('remove-ws-member-dialog').should('be.visible');
+  cy.getBySel('confirm-cancel').click();
+  cy.getBySel('remove-ws-member-countdown').should('be.visible');
+  cy.getBySel('undo-remove-member').click();
+  cy.getBySel('remove-ws-member-undone').should('be.visible');
+};

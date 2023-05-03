@@ -248,6 +248,19 @@ export class ProjectFeatureKanbanComponent {
         );
       });
 
+    this.wsService
+      .projectEvents<{ membership: Membership; workspace: string }>(
+        'projectmemberships.delete'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          ProjectActions.projectEventActions.removeMember(
+            eventResponse.event.content
+          )
+        );
+      });
+
     merge(
       this.wsService
         .projectEvents<Role>('projectroles.update')

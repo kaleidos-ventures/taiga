@@ -150,6 +150,18 @@ export const reducer = createImmerReducer(
       }
       return state;
     }
+  ),
+  on(
+    projectEventActions.removeMember,
+    (state, { membership }): StoryDetailState => {
+      if (state.story) {
+        state.story.assignees = state.story?.assignees.filter(
+          (storyUser) => storyUser.username !== membership.user.username
+        );
+      }
+
+      return state;
+    }
   )
 );
 

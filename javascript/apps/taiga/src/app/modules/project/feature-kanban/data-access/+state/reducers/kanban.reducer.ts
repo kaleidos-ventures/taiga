@@ -637,6 +637,18 @@ export const reducer = createImmerReducer(
       return state;
     }
   ),
+  on(projectEventActions.removeMember, (state, { membership }): KanbanState => {
+    state = replaceStory(state, (it) => {
+      return {
+        ...it,
+        assignees: it.assignees.filter(
+          (storyUser) => storyUser.username !== membership.user.username
+        ),
+      };
+    });
+
+    return state;
+  }),
   on(KanbanActions.removeMembers, (state, { members }): KanbanState => {
     members.map((member) => {
       state = replaceStory(state, (it) => {

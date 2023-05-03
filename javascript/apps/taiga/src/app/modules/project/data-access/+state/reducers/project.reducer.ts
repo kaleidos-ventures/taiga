@@ -16,6 +16,7 @@ import * as RolesPermissionsActions from '~/app/modules/project/settings/feature
 import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
+import { projectEventActions } from '../actions/project.actions';
 
 export const projectFeatureKey = 'project';
 
@@ -130,6 +131,16 @@ export const reducer = createImmerReducer(
         state.projects[state.currentProjectId].userIsMember = false;
         state.projects[state.currentProjectId].userIsAdmin = false;
       }
+      return state;
+    }
+  ),
+  on(
+    projectEventActions.removeMember,
+    (state, { membership }): ProjectState => {
+      state.members = state.members.filter(
+        (members) => members.user.username !== membership.user.username
+      );
+
       return state;
     }
   )

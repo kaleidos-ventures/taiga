@@ -41,7 +41,7 @@ import { TuiToggleModule } from '@taiga-ui/kit';
 import { ShortcutsService } from '@taiga/core';
 import { Membership, Permissions, Story, User } from '@taiga/data';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { map, Subject } from 'rxjs';
+import { Subject, map } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { initAssignUser } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectMembers } from '~/app/modules/project/data-access/+state/selectors/project.selectors';

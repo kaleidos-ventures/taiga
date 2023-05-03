@@ -38,6 +38,7 @@ import {
   User,
 } from '@taiga/data';
 import { map, merge, pairwise, startWith, take } from 'rxjs';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
@@ -513,6 +514,17 @@ export class StoryDetailComponent {
             }
           }
         }
+      });
+
+    this.wsService
+      .projectEvents<{ membership: Membership; workspace: string }>(
+        'projectmemberships.delete'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          projectEventActions.removeMember(eventResponse.event.content)
+        );
       });
 
     merge(

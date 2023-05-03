@@ -15,7 +15,7 @@ from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.memberships import repositories as pj_memberships_repositories
 from taiga.projects.projects.models import Project
 from taiga.projects.roles import repositories as pj_roles_repositories
-from taiga.users.models import AnyUser
+from taiga.users.models import AnyUser, User
 from taiga.workspaces.memberships import repositories as workspace_memberships_repositories
 from taiga.workspaces.workspaces.models import Workspace
 
@@ -203,4 +203,16 @@ async def get_user_permissions_for_workspace(is_workspace_member: bool) -> list[
 async def is_view_story_permission_deleted(old_permissions: list[str], new_permissions: list[str]) -> bool:
     if "view_story" in old_permissions and "view_story" not in new_permissions:
         return True
+    return False
+
+
+async def is_a_self_request(user: AnyUser, obj: Any) -> bool:
+    if user.is_anonymous:
+        return False
+
+    if isinstance(obj, User):
+        return obj == user
+    elif obj and hasattr(obj, "user"):
+        return obj.user == user
+
     return False

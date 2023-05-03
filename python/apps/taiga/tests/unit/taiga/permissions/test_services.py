@@ -356,3 +356,22 @@ async def test_is_view_story_permission_deleted_true():
     new_permissions = []
 
     assert await services.is_view_story_permission_deleted(old_permissions, new_permissions) is True
+
+
+#####################################################
+# is_a_self_request
+#####################################################
+
+
+async def test_is_a_self_request_false():
+    user = f.build_user()
+    membership = f.build_project_membership()
+
+    assert await services.is_a_self_request(user, membership) is False
+
+
+async def test_is_a_self_request_true():
+    user = f.build_user()
+    membership = f.build_project_membership(user=user)
+
+    assert await services.is_a_self_request(user, membership) is True

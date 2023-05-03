@@ -14,6 +14,7 @@ from taiga.permissions import (
     CanViewProject,
     DenyAll,
     HasPerm,
+    IsASelfRequest,
     IsAuthenticated,
     IsProjectAdmin,
     IsSuperUser,
@@ -119,6 +120,26 @@ async def test_check_permission_can_view_project():
     # user2 isn't pj-member
     with pytest.raises(ex.ForbiddenError):
         await check_permissions(permissions=permissions, user=user2, obj=project)
+
+
+async def test_check_permission_is_a_self_request():
+    user1 = f.build_user()
+    user2 = f.build_user()
+    permissions = IsASelfRequest()
+
+    # user1 and obj are the same user
+    assert await check_permissions(permissions=permissions, user=user1, obj=user1) is None
+
+    # user1 and obj are not the same user
+    with pytest.raises(ex.ForbiddenError):
+        await check_permissions(permissions=permissions, user=user2, obj=user1)
+
+    membership = f.build_project_membership(user=user1)
+    # user1 and obj.user are the same user
+    assert await check_permissions(permissions=permissions, user=user1, obj=membership) is None
+    # user1 and obj.user are not the same user
+    with pytest.raises(ex.ForbiddenError):
+        await check_permissions(permissions=permissions, user=user2, obj=membership)
 
 
 #######################################################

@@ -130,6 +130,7 @@ Copyright (c) 2023-present Kaleidos INC
                 <li class="wks-detail-menu-item">
                   <a
                     class="wks-detail-menu-anchor"
+                    data-test="wks-detail-projects-anchor"
                     [class.active]="menuItemActive === 'projects'"
                     [routerLink]="['./projects']"
                     [state]="{ ignoreScrollToFocus: true }"
@@ -140,6 +141,7 @@ Copyright (c) 2023-present Kaleidos INC
                 <li class="wks-detail-menu-item">
                   <a
                     class="wks-detail-menu-anchor"
+                    data-test="wks-detail-people-anchor"
                     [class.active]="menuItemActive === 'people'"
                     [routerLink]="['./people']"
                     [state]="{ ignoreScrollToFocus: true }"

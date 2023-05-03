@@ -167,7 +167,61 @@ export class WorkspaceComponent implements OnDestroy, OnInit {
       'rejectedInvites',
       this.store.select(selectRejectedInvites)
     );
+  }
 
+  public ngOnInit(): void {
+    this.events();
+  }
+
+  public toggleActivity(showActivity: boolean) {
+    this.state.set({ showActivity });
+  }
+
+  public setCreate(showCreate: boolean) {
+    this.state.set({ showCreate });
+  }
+
+  public trackByWorkspace(index: number, workspace: Workspace) {
+    return workspace.id;
+  }
+
+  public onResized(event: ResizedEvent) {
+    this.setCardAmounts(event.newRect.width);
+  }
+
+  public setCardAmounts(width: number) {
+    const amount = Math.ceil(width / 250);
+    this.amountOfProjectsToShow = amount >= 6 ? 6 : amount;
+  }
+
+  public checkWsVisibility(workspace: Workspace) {
+    const role = workspace.userRole;
+    const latestProjects = workspace.latestProjects;
+    const rejectedInvites = this.state.get('rejectedInvites');
+    const hasInvitedProjects = workspace.invitedProjects.filter((project) => {
+      return !rejectedInvites.includes(project.id);
+    });
+
+    return !(
+      role === 'guest' &&
+      !latestProjects.length &&
+      !hasInvitedProjects.length
+    );
+  }
+
+  public ngOnDestroy() {
+    this.store.dispatch(resetWorkspace());
+  }
+
+  public workspaceItemVisibility(workspace: Workspace) {
+    if (workspace.latestProjects.length || workspace.invitedProjects.length) {
+      return true;
+    } else {
+      return workspace.userRole !== 'guest';
+    }
+  }
+
+  public events() {
     this.wsService
       .userEvents<{ project: string; workspace: string }>(
         'projectmemberships.create'
@@ -219,9 +273,7 @@ export class WorkspaceComponent implements OnDestroy, OnInit {
           workspace: eventResponse.event.content.workspace,
         });
       });
-  }
 
-  public ngOnInit(): void {
     this.wsService
       .userEvents<{
         project: string;
@@ -300,53 +352,5 @@ export class WorkspaceComponent implements OnDestroy, OnInit {
           );
         }
       });
-  }
-
-  public toggleActivity(showActivity: boolean) {
-    this.state.set({ showActivity });
-  }
-
-  public setCreate(showCreate: boolean) {
-    this.state.set({ showCreate });
-  }
-
-  public trackByWorkspace(index: number, workspace: Workspace) {
-    return workspace.id;
-  }
-
-  public onResized(event: ResizedEvent) {
-    this.setCardAmounts(event.newRect.width);
-  }
-
-  public setCardAmounts(width: number) {
-    const amount = Math.ceil(width / 250);
-    this.amountOfProjectsToShow = amount >= 6 ? 6 : amount;
-  }
-
-  public checkWsVisibility(workspace: Workspace) {
-    const role = workspace.userRole;
-    const latestProjects = workspace.latestProjects;
-    const rejectedInvites = this.state.get('rejectedInvites');
-    const hasInvitedProjects = workspace.invitedProjects.filter((project) => {
-      return !rejectedInvites.includes(project.id);
-    });
-
-    return !(
-      role === 'guest' &&
-      !latestProjects.length &&
-      !hasInvitedProjects.length
-    );
-  }
-
-  public ngOnDestroy() {
-    this.store.dispatch(resetWorkspace());
-  }
-
-  public workspaceItemVisibility(workspace: Workspace) {
-    if (workspace.latestProjects.length || workspace.invitedProjects.length) {
-      return true;
-    } else {
-      return workspace.userRole !== 'guest';
-    }
   }
 }

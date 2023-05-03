@@ -6,19 +6,20 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Location } from '@angular/common';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
+import { TuiNotification } from '@taiga-ui/core';
 import { Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -27,6 +28,7 @@ import {
   selectProjects,
   selectWorkspace,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
+import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 interface ViewDetailModel {
@@ -62,7 +64,9 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     private state: RxState<WorkspaceDetailState>,
     private location: Location,
     private liveAnnouncer: LiveAnnouncer,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private appService: AppService,
+    private router: Router
   ) {
     this.state.set({
       editingWorkspace: false,
@@ -100,6 +104,8 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.events();
   }
 
   public ngOnDestroy() {
@@ -114,6 +120,26 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
           .subscribe();
       });
     this.store.dispatch(workspaceActions.resetWorkspace());
+  }
+
+  public events() {
+    this.wsService
+      .userEvents('workspacememberships.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.userLoseMembership();
+      });
+  }
+
+  public userLoseMembership() {
+    this.appService.toastNotification({
+      message: 'people.remove.no_longer_member',
+      paramsMessage: { workspace: this.state.get('workspace')!.name },
+      status: TuiNotification.Warning,
+      scope: 'workspace',
+      closeOnNavigation: false,
+    });
+    void this.router.navigate(['/']);
   }
 
   public displayWorkspaceOptionsModal() {

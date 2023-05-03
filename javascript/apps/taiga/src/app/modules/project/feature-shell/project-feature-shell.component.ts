@@ -23,6 +23,7 @@ import {
   StoryAssignEvent,
   StoryDetail,
   User,
+  WorkspaceMembership,
 } from '@taiga/data';
 import { distinctUntilChanged, filter, merge } from 'rxjs';
 import {
@@ -237,6 +238,22 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
               workspaceId: eventResponse.event.content.workspace,
               name: eventResponse.event.content.name,
               error: true,
+            })
+          );
+        }
+      });
+
+    this.wsService
+      .userEvents<{
+        membership: WorkspaceMembership;
+      }>('workspacememberships.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        if (eventResponse.event.content.membership.workspace) {
+          this.store.dispatch(
+            projectEventActions.userLostWorkspaceMembership({
+              workspaceName:
+                eventResponse.event.content.membership.workspace?.name,
             })
           );
         }

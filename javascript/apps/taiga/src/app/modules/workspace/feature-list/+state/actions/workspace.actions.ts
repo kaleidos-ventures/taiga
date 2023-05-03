@@ -58,6 +58,21 @@ export const membershipLostSuccess = createAction(
   }>()
 );
 
+export const workspaceMembershipLostSuccess = createAction(
+  '[WorkspaceList] Lost workspace membership Success',
+  props<{
+    workspaceId: Workspace['id'];
+    updatedWorkspace?: Workspace;
+  }>()
+);
+
+export const workspaceMembershipLostError = createAction(
+  '[WorkspaceList] Lost workspace membership Error',
+  props<{
+    workspaceId: Workspace['id'];
+  }>()
+);
+
 export const deleteWorkspaceFromUI = createAction(
   '[WorkspaceList] Delete workspace from UI',
   props<{ workspaceId: Workspace['id'] }>()
@@ -150,6 +165,9 @@ export const workspaceEventActions = createActionGroup({
       name: string;
       deleted_by?: User;
       error?: boolean;
+    }>(),
+    'Workspace Membership lost': props<{
+      workspaceId: string;
     }>(),
     'Workspace deleted': props<{
       workspaceId: Workspace['id'];

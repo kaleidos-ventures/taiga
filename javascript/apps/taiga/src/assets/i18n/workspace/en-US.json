@@ -49,7 +49,8 @@
       "confirm_remove_member": "Yes, remove",
       "removed_member": "{{fullName}} removed.",
       "undo": "Undo",
-      "action_undone": "Action undone"
+      "action_undone": "Action undone",
+      "no_longer_member": "You are no longer a member of {{workspace}} workspace"
     }
   }
 }

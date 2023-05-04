@@ -31,8 +31,8 @@ DELETE_STORY_ASSIGNMENT = HasPerm("modify_story")
 ################################################
 
 
-@routes.projects.post(
-    "/{project_id}/stories/{ref}/assignments",
+@routes.stories.post(
+    "/projects/{project_id}/stories/{ref}/assignments",
     name="project.story.assignments.create",
     summary="Create story assignment",
     response_model=StoryAssignmentSerializer,
@@ -60,8 +60,8 @@ async def create_story_assignment(
 ################################################
 
 
-@routes.projects.delete(
-    "/{project_id}/stories/{ref}/assignments/{username}",
+@routes.stories.delete(
+    "/projects/{project_id}/stories/{ref}/assignments/{username}",
     name="project.story.assignments.delete",
     summary="Delete story assignment",
     responses=ERROR_404 | ERROR_403,

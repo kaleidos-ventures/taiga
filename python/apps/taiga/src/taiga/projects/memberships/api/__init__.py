@@ -34,8 +34,8 @@ DELETE_PROJECT_MEMBERSHIP = IsProjectAdmin()
 ##########################################################
 
 
-@routes.projects.get(
-    "/{id}/memberships",
+@routes.projects_memberships.get(
+    "/projects/{id}/memberships",
     name="project.memberships.list",
     summary="List project memberships",
     response_model=list[ProjectMembershipSerializer],
@@ -68,8 +68,8 @@ async def list_project_memberships(
 ##########################################################
 
 
-@routes.projects.patch(
-    "/{id}/memberships/{username}",
+@routes.projects_memberships.patch(
+    "/projects/{id}/memberships/{username}",
     name="project.memberships.update",
     summary="Update project membership",
     response_model=ProjectMembershipSerializer,
@@ -96,8 +96,8 @@ async def update_project_membership(
 ##########################################################
 
 
-@routes.projects.delete(
-    "/{id}/memberships/{username}",
+@routes.projects_memberships.delete(
+    "/projects/{id}/memberships/{username}",
     name="project.memberships.delete",
     summary="Delete project membership",
     responses=ERROR_400 | ERROR_404 | ERROR_403,

@@ -60,12 +60,40 @@ tags_metadata.append(
 )
 
 # /projects
-projects = AuthAPIRouter(prefix="/projects", tags=["projects"])
-unauth_projects = APIRouter(prefix="/projects", tags=["projects"])
+projects = AuthAPIRouter(tags=["projects"])
 tags_metadata.append(
     {
         "name": "projects",
         "description": "Endpoint for projects resources.",
+    }
+)
+
+# /projects/{id}/invitations
+projects_invitations = AuthAPIRouter(tags=["projects invitations"])
+unauth_projects_invitations = APIRouter(tags=["projects invitations"])
+tags_metadata.append(
+    {
+        "name": "projects invitations",
+        "description": "Endpoint for projects invitations resources.",
+    }
+)
+
+
+# /projects/{id}/memberships
+projects_memberships = AuthAPIRouter(tags=["projects memberships"])
+tags_metadata.append(
+    {
+        "name": "projects memberships",
+        "description": "Endpoint for projects memberships resources.",
+    }
+)
+
+# workflows and stories
+stories = AuthAPIRouter(tags=["workflows and stories"])
+tags_metadata.append(
+    {
+        "name": "workflows and stories",
+        "description": "Endpoint for workflows and stories resources.",
     }
 )
 

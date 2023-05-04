@@ -43,8 +43,8 @@ REORDER_STORIES_200 = responses.http_status_200(model=ReorderStoriesSerializer)
 ################################################
 
 
-@routes.projects.post(
-    "/{project_id}/workflows/{workflow_slug}/stories",
+@routes.stories.post(
+    "/projects/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.create",
     summary="Create an story",
     responses=STORY_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -76,8 +76,8 @@ async def create_story(
 ################################################
 
 
-@routes.projects.get(
-    "/{project_id}/workflows/{workflow_slug}/stories",
+@routes.stories.get(
+    "/projects/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.list",
     summary="List stories",
     responses=LIST_STORY_SUMMARY_200 | ERROR_404 | ERROR_403,
@@ -112,8 +112,8 @@ async def list_stories(
 ################################################
 
 
-@routes.projects.get(
-    "/{project_id}/stories/{ref}",
+@routes.stories.get(
+    "/projects/{project_id}/stories/{ref}",
     name="project.stories.get",
     summary="Get story",
     responses=STORY_DETAIL_200 | ERROR_404 | ERROR_403,
@@ -137,8 +137,8 @@ async def get_story(
 ################################################
 
 
-@routes.projects.patch(
-    "/{project_id}/stories/{ref}",
+@routes.stories.patch(
+    "/projects/{project_id}/stories/{ref}",
     name="project.stories.update",
     summary="Update story",
     responses=STORY_DETAIL_200 | ERROR_404 | ERROR_403,
@@ -173,8 +173,8 @@ async def update_story(
 ################################################
 
 
-@routes.projects.post(
-    "/{project_id}/workflows/{workflow_slug}/stories/reorder",
+@routes.stories.post(
+    "/projects/{project_id}/workflows/{workflow_slug}/stories/reorder",
     name="project.stories.reorder",
     summary="Reorder stories",
     responses=REORDER_STORIES_200 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -205,8 +205,8 @@ async def reorder_stories(
 ################################################
 
 
-@routes.projects.delete(
-    "/{project_id}/stories/{ref}",
+@routes.stories.delete(
+    "/projects/{project_id}/stories/{ref}",
     name="project.stories.delete",
     summary="Delete story",
     responses=ERROR_404 | ERROR_403,

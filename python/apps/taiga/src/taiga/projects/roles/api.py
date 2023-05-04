@@ -33,7 +33,7 @@ UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
 
 
 @routes.projects.get(
-    "/{project_id}/roles",
+    "/projects/{project_id}/roles",
     name="project.roles.list",
     summary="Get project roles permissions",
     response_model=list[ProjectRoleSerializer],
@@ -57,7 +57,7 @@ async def list_project_roles(
 
 
 @routes.projects.put(
-    "/{project_id}/roles/{role_slug}/permissions",
+    "/projects/{project_id}/roles/{role_slug}/permissions",
     name="project.roles.permissions.put",
     summary="Edit project roles permissions",
     response_model=ProjectRoleSerializer,

@@ -53,8 +53,8 @@ PUBLIC_PROJECT_INVITATION_200 = responses.http_status_200(model=PublicProjectInv
 ##########################################################
 
 
-@routes.projects.post(
-    "/{id}/invitations",
+@routes.projects_invitations.post(
+    "/projects/{id}/invitations",
     name="project.invitations.create",
     summary="Create project invitations",
     responses=CREATE_PROJECT_INVITATIONS_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -82,8 +82,8 @@ async def create_project_invitations(
 ##########################################################
 
 
-@routes.projects.get(
-    "/{id}/invitations",
+@routes.projects_invitations.get(
+    "/projects/{id}/invitations",
     name="project.invitations.list",
     summary="List project pending invitations",
     response_model=list[ProjectInvitationSerializer],
@@ -116,8 +116,8 @@ async def list_project_invitations(
 ##########################################################
 
 
-@routes.unauth_projects.get(
-    "/invitations/{token}",
+@routes.unauth_projects_invitations.get(
+    "/projects/invitations/{token}",
     name="project.invitations.get",
     summary="Get public information about a project invitation",
     responses=PUBLIC_PROJECT_INVITATION_200 | ERROR_400 | ERROR_404 | ERROR_422,
@@ -140,8 +140,8 @@ async def get_public_project_invitation(
 ##########################################################
 
 
-@routes.projects.patch(
-    "/{project_id}/invitations/{id}",
+@routes.projects_invitations.patch(
+    "/projects/{project_id}/invitations/{id}",
     name="project.invitations.update",
     summary="Update project invitation",
     response_model=ProjectInvitationSerializer,
@@ -167,8 +167,8 @@ async def update_project_invitation(
 ##########################################################
 
 
-@routes.projects.post(
-    "/{id}/invitations/resend",
+@routes.projects_invitations.post(
+    "/projects/{id}/invitations/resend",
     name="project.invitations.resend",
     summary="Resend project invitation",
     response_class=Response,
@@ -195,8 +195,8 @@ async def resend_project_invitation(
 ##########################################################
 
 
-@routes.projects.post(
-    "/{id}/invitations/revoke",
+@routes.projects_invitations.post(
+    "/projects/{id}/invitations/revoke",
     name="project.invitations.revoke",
     summary="Revoke project invitation",
     responses=ERROR_422 | ERROR_400 | ERROR_403,
@@ -223,8 +223,8 @@ async def revoke_project_invitation(
 ##########################################################
 
 
-@routes.projects.post(
-    "/invitations/{token}/accept",
+@routes.projects_invitations.post(
+    "/projects/invitations/{token}/accept",
     name="project.invitations.accept",
     summary="Accept a project invitation using a token",
     response_model=ProjectInvitationSerializer,
@@ -241,8 +241,8 @@ async def accept_project_invitation_by_token(
     return await invitations_services.accept_project_invitation(invitation=invitation)
 
 
-@routes.projects.post(
-    "/{id}/invitations/accept",
+@routes.projects_invitations.post(
+    "/projects/{id}/invitations/accept",
     name="project.my.invitations.accept",
     summary="Accept a project invitation for authenticated users",
     response_model=ProjectInvitationSerializer,

@@ -34,8 +34,8 @@ LIST_WORKFLOW_200 = responses.http_status_200(model=list[WorkflowSerializer])
 ################################################
 
 
-@routes.projects.get(
-    "/{id}/workflows",
+@routes.stories.get(
+    "/projects/{id}/workflows",
     name="project.workflow.list",
     summary="List workflows",
     responses=LIST_WORKFLOW_200 | ERROR_404 | ERROR_403,
@@ -57,8 +57,8 @@ async def list_workflows(
 ################################################
 
 
-@routes.projects.get(
-    "/{id}/workflows/{workflow_slug}",
+@routes.stories.get(
+    "/projects/{id}/workflows/{workflow_slug}",
     name="project.workflow.get",
     summary="Get project workflow",
     responses=WORKFLOW_200 | ERROR_404 | ERROR_403,

@@ -27,8 +27,8 @@ MEDIAFILE_DETAIL_200 = responses.http_status_200(model=MediafileSerializer)
 ################################################
 
 
-@routes.projects.post(
-    "/{project_id}/stories/{ref}/mediafiles",
+@routes.stories.post(
+    "/projects/{project_id}/stories/{ref}/mediafiles",
     name="project.story.mediafiles.create",
     summary="Create mediafiles and attach to an story",
     responses=MEDIAFILE_DETAIL_200 | ERROR_403 | ERROR_422 | ERROR_404,

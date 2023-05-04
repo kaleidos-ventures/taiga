@@ -43,7 +43,7 @@ PROJECT_DETAIL_200 = responses.http_status_200(model=ProjectDetailSerializer)
 
 
 @routes.projects.post(
-    "",
+    "/projects",
     name="projects.create",
     summary="Create project",
     responses=PROJECT_DETAIL_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -114,7 +114,7 @@ async def list_workspace_invited_projects(
 
 
 @routes.projects.get(
-    "/{id}",
+    "/projects/{id}",
     name="project.get",
     summary="Get project",
     responses=PROJECT_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -132,7 +132,7 @@ async def get_project(
 
 
 @routes.projects.get(
-    "/{id}/public-permissions",
+    "/projects/{id}/public-permissions",
     name="project.public-permissions.list",
     summary="List project public permissions",
     response_model=list[str],
@@ -156,7 +156,7 @@ async def list_project_public_permissions(
 
 
 @routes.projects.patch(
-    "/{id}",
+    "/projects/{id}",
     name="project.update",
     summary="Update project",
     responses=PROJECT_DETAIL_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
@@ -177,7 +177,7 @@ async def update_project(
 
 
 @routes.projects.put(
-    "/{id}/public-permissions",
+    "/projects/{id}/public-permissions",
     name="project.public-permissions.put",
     summary="Edit project public permissions",
     response_model=list[str],
@@ -202,7 +202,7 @@ async def update_project_public_permissions(
 
 
 @routes.projects.delete(
-    "/{id}",
+    "/projects/{id}",
     name="projects.delete",
     summary="Delete project",
     responses=ERROR_404 | ERROR_403,

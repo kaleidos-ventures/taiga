@@ -30,7 +30,9 @@ Copyright (c) 2023-present Kaleidos INC
     </div>
   </ng-container>
   <ng-container *ngIf="variant === 'project' && project">
-    <div class="project-item-card">
+    <div
+      class="project-item-card"
+      [class.with-actions]="showActions">
       <div class="project-card-title">
         <tg-ui-avatar
           class="project-card-image"
@@ -42,7 +44,7 @@ Copyright (c) 2023-present Kaleidos INC
         <a
           [routerLink]="['/project', project.id, project.slug]"
           class="project-card-link"
-          [class.is-admin]="workspace.userRole === 'admin' && hasActions"
+          [class.is-admin]="showActions"
           data-test="project-card-name">
           <h3
             [attr.aria-label]="
@@ -54,7 +56,7 @@ Copyright (c) 2023-present Kaleidos INC
           </h3>
         </a>
         <tui-hosted-dropdown
-          *ngIf="workspace.userRole === 'admin' && hasActions"
+          *ngIf="showActions"
           class="card-action"
           [tuiDropdownAlign]="'left'"
           [content]="projectActionsDropdown"

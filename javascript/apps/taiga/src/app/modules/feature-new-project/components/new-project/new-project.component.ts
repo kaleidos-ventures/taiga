@@ -8,13 +8,12 @@
 
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Actions } from '@ngrx/effects';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { ProjectCreation } from '@taiga/data';
 import { Observable } from 'rxjs';
@@ -22,11 +21,12 @@ import { createProject } from '~/app/modules/feature-new-project/+state/actions/
 import { Step } from '~/app/modules/feature-new-project/data/new-project.model';
 import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { selectWorkspaces } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
+import { WsService } from '~/app/services/ws';
 import {
   TemplateProjectForm,
   TemplateStepComponent,
 } from '../template-step/template-step.component';
-
+@UntilDestroy()
 @Component({
   selector: 'tg-new-project',
   templateUrl: './new-project.component.html',
@@ -40,8 +40,7 @@ export class NewProjectComponent implements OnInit {
   constructor(
     private store: Store,
     private route: ActivatedRoute,
-    private actions$: Actions,
-    private cd: ChangeDetectorRef
+    private wsService: WsService
   ) {}
 
   public workspaceList$ = this.store.select(selectWorkspaces);
@@ -58,6 +57,7 @@ export class NewProjectComponent implements OnInit {
   public ngOnInit() {
     this.store.dispatch(fetchWorkspaceList());
     this.setQueryParamId();
+    this.events();
   }
 
   public canDeactivate(): boolean | Observable<boolean> {
@@ -65,6 +65,15 @@ export class NewProjectComponent implements OnInit {
       return this.templateStepComponent.canDeactivate();
     }
     return true;
+  }
+
+  public events() {
+    this.wsService
+      .userEvents('workspacememberships.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.store.dispatch(fetchWorkspaceList());
+      });
   }
 
   public setQueryParamId() {

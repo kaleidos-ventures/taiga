@@ -27,7 +27,8 @@ Copyright (c) 2023-present Kaleidos INC
     <form [formGroup]="createProjectForm">
       <tg-ui-select
         *ngIf="
-          (selectedWorkspaceId && workspaces.length) || !selectedWorkspaceId
+          (selectedWorkspaceId && workspacesMember.length) ||
+          !selectedWorkspaceId
         "
         [label]="t('commons.workspace')"
         type="avatar"
@@ -42,7 +43,7 @@ Copyright (c) 2023-present Kaleidos INC
           <tui-data-list-wrapper
             *tuiDataList
             size="s"
-            [items]="workspaces"
+            [items]="workspacesMember"
             [itemContent]="content">
           </tui-data-list-wrapper>
         </tui-select>

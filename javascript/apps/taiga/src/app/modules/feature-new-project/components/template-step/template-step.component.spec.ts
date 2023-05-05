@@ -8,18 +8,25 @@
 import { FormBuilder } from '@angular/forms';
 import { randUuid } from '@ngneat/falso';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { WorkspaceMockFactory } from '@taiga/data';
+import { WsService, WsServiceMock } from '~/app/services/ws';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { TemplateStepComponent } from './template-step.component';
 
 describe('TemplateStepComponent', () => {
   let spectator: Spectator<TemplateStepComponent>;
+  const initialState = { project: null };
 
   const createComponent = createComponentFactory({
     component: TemplateStepComponent,
     imports: [getTranslocoModule()],
-    providers: [FormBuilder],
+    providers: [
+      FormBuilder,
+      provideMockStore({ initialState }),
+      { provide: WsService, useValue: WsServiceMock },
+    ],
     mocks: [RouteHistoryService],
     declareComponent: false,
   });
@@ -31,6 +38,7 @@ describe('TemplateStepComponent', () => {
       },
       detectChanges: false,
     });
+    spectator.component.events = jest.fn();
   });
 
   it('getCurrentWorkspace', () => {

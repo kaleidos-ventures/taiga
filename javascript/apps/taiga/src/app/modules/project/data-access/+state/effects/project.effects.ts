@@ -335,7 +335,7 @@ export class ProjectEffects {
         this.appService.toastNotification({
           message: 'common_members_tabs.no_longer_member',
           paramsMessage: { name: action.workspaceName, type: 'workspace' },
-          status: TuiNotification.Info,
+          status: TuiNotification.Error,
           closeOnNavigation: false,
         });
 

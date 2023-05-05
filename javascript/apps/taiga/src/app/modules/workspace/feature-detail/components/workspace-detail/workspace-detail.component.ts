@@ -132,14 +132,14 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   }
 
   public userLoseMembership() {
+    void this.router.navigate(['/']);
     this.appService.toastNotification({
       message: 'people.remove.no_longer_member',
       paramsMessage: { workspace: this.state.get('workspace')!.name },
-      status: TuiNotification.Warning,
+      status: TuiNotification.Error,
       scope: 'workspace',
       closeOnNavigation: false,
     });
-    void this.router.navigate(['/']);
   }
 
   public displayWorkspaceOptionsModal() {

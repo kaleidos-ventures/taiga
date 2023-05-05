@@ -141,5 +141,9 @@ export const workspaceDetailEventActions = createActionGroup({
     'Invitation Detail Revoked Event': props<{
       projectId: Project['id'];
     }>(),
+    'Remove member': props<{
+      id: Workspace['id'];
+      username: WorkspaceMembership['user']['username'];
+    }>(),
   },
 });

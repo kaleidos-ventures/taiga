@@ -180,24 +180,6 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
             })
           );
         });
-
-      this.wsService
-        .events<{
-          workspace: string;
-          name: string;
-          deletedBy: { username: string; fullName: string; color: number };
-        }>({
-          channel: `workspaces.${workspace.id}`,
-          type: 'workspaces.delete',
-        })
-        .pipe(untilDestroyed(this))
-        .subscribe((eventResponse) => {
-          this.store.dispatch(
-            workspaceDetailEventActions.workspaceDeleted({
-              name: eventResponse.event.content.name,
-            })
-          );
-        });
     }
   }
 

@@ -14,6 +14,10 @@ Copyright (c) 2023-present Kaleidos INC
   }
 }
 
+.remove-user {
+  text-transform: capitalize;
+}
+
 .remove-dialog {
   inline-size: 416px;
   padding: var(--spacing-20);

@@ -23,10 +23,15 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { ProjectCreation, Workspace } from '@taiga/data';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TuiNotification } from '@taiga-ui/core';
+import { ProjectCreation, Workspace, WorkspaceMembership } from '@taiga/data';
 import { ModalComponent } from '@taiga/ui/modal/components';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
 import { Subject } from 'rxjs';
+import { AppService } from '~/app/services/app.service';
+import { WsService } from '~/app/services/ws';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
 export type TemplateProjectForm = Pick<
@@ -34,6 +39,7 @@ export type TemplateProjectForm = Pick<
   'name' | 'color' | 'description' | 'logo'
 >;
 
+@UntilDestroy()
 @Component({
   selector: 'tg-template-step',
   templateUrl: './template-step.component.html',
@@ -71,6 +77,7 @@ export class TemplateStepComponent implements OnInit {
   public showWarningModal = false;
   public confirmationModal$?: Subject<boolean>;
   public formSubmitted = false;
+  public safeUnload = false;
 
   public get logo() {
     return this.templateProjectForm.get('logo') as FormControl;
@@ -91,7 +98,7 @@ export class TemplateStepComponent implements OnInit {
   }
 
   public canDeactivate() {
-    if (this.formHasContent() && !this.formSubmitted) {
+    if (this.formHasContent() && !this.formSubmitted && !this.safeUnload) {
       this.confirmationModal$ = new Subject();
       this.showWarningModal = true;
       this.cd.detectChanges();
@@ -105,11 +112,15 @@ export class TemplateStepComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private routeHistoryService: RouteHistoryService
+    private routeHistoryService: RouteHistoryService,
+    private wsService: WsService,
+    private router: Router,
+    private appService: AppService
   ) {}
 
   public ngOnInit() {
     this.initForm();
+    this.events();
   }
 
   public initForm() {
@@ -128,6 +139,29 @@ export class TemplateStepComponent implements OnInit {
     this.templateProjectForm
       .get('workspace')
       ?.setValue(this.getCurrentWorkspace());
+  }
+
+  public events() {
+    this.wsService
+      .userEvents<{ membership: WorkspaceMembership }>(
+        'workspacememberships.delete'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        if (this.workspace.id === msg.event.content.membership.workspace.id) {
+          this.safeUnload = true;
+          this.appService.toastNotification({
+            message: 'common_members_tabs.no_longer_member',
+            paramsMessage: {
+              name: msg.event.content.membership.workspace.name,
+              type: 'workspace',
+            },
+            status: TuiNotification.Error,
+            closeOnNavigation: false,
+          });
+          void this.router.navigate(['/']);
+        }
+      });
   }
 
   public getCurrentWorkspace() {

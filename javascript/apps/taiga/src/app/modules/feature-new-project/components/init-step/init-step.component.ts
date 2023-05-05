@@ -22,14 +22,19 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
-import { ProjectCreation, Workspace } from '@taiga/data';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TuiNotification } from '@taiga-ui/core';
+import { ProjectCreation, Workspace, WorkspaceMembership } from '@taiga/data';
 import {
   Step,
   Template,
 } from '~/app/modules/feature-new-project/data/new-project.model';
+import { AppService } from '~/app/services/app.service';
+import { WsService } from '~/app/services/ws';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
-
+@UntilDestroy()
 @Component({
   selector: 'tg-init-step',
   templateUrl: './init-step.component.html',
@@ -72,19 +77,51 @@ export class InitStepComponent implements OnInit, OnChanges {
     return this.createProjectForm.get('workspace') as FormControl;
   }
 
-  public get getPreviousUrl() {
+  public get getPreviousUrl(): string[] {
     return this.previousUrl ? [this.previousUrl] : ['/'];
+  }
+
+  public get workspacesMember(): Workspace[] {
+    return this.workspaces.filter(
+      (workspace) => workspace.userRole === 'admin'
+    );
   }
 
   constructor(
     private fb: FormBuilder,
     private translocoService: TranslocoService,
-    private routeHistoryService: RouteHistoryService
+    private routeHistoryService: RouteHistoryService,
+    private wsService: WsService,
+    private router: Router,
+    private appService: AppService
   ) {}
 
   public ngOnInit() {
     this.initForm();
     this.getLastRoute();
+    this.events();
+  }
+
+  public events() {
+    this.wsService
+      .userEvents<{ membership: WorkspaceMembership }>(
+        'workspacememberships.delete'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        if (this.previousUrl?.startsWith('/workspace')) {
+          void this.router.navigate(['/']);
+        }
+        this.appService.toastNotification({
+          message: 'common_members_tabs.no_longer_member',
+          paramsMessage: {
+            name: msg.event.content.membership.workspace.name,
+            type: 'workspace',
+          },
+          status: TuiNotification.Error,
+          closeOnNavigation: false,
+        });
+      });
   }
 
   public getLastRoute() {
@@ -100,7 +137,7 @@ export class InitStepComponent implements OnInit, OnChanges {
   }
 
   public getCurrentWorkspace() {
-    return this.workspaces.find(
+    return this.workspacesMember.find(
       (workspace) => workspace.id === this.selectedWorkspaceId
     );
   }
@@ -125,7 +162,7 @@ export class InitStepComponent implements OnInit, OnChanges {
     if (this.createProjectForm && changes.workspaces) {
       this.createProjectForm
         .get('workspace')
-        ?.setValue(this.getCurrentWorkspace());
+        ?.setValue(this.getCurrentWorkspace() || this.workspacesMember[0]);
     }
   }
 }

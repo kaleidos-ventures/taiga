@@ -264,6 +264,24 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    workspaceDetailEventActions.removeMember,
+    (state, { username }): WorkspaceDetailState => {
+      const member = state.members.find((member) => {
+        return member.user.username !== username;
+      });
+
+      if (member) {
+        state.members = state.members.filter((member) => {
+          return member.user.username !== username;
+        });
+
+        state.totalMembers--;
+      }
+
+      return state;
+    }
   )
 );
 

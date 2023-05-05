@@ -15,8 +15,10 @@ import {
   randNumber,
   randUuid,
 } from '@ngneat/falso';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { WorkspaceMockFactory } from '@taiga/data';
+import { WsService, WsServiceMock } from '~/app/services/ws';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { InitStepComponent } from './init-step.component';
@@ -25,11 +27,13 @@ const workspaceId = randUuid();
 
 describe('InitStepComponent', () => {
   let spectator: Spectator<InitStepComponent>;
+  const initialState = { project: null };
 
   const createComponent = createComponentFactory({
     component: InitStepComponent,
     imports: [getTranslocoModule()],
     providers: [
+      provideMockStore({ initialState }),
       {
         provide: RouteHistoryService,
         useValue: {
@@ -38,6 +42,7 @@ describe('InitStepComponent', () => {
           },
         },
       },
+      { provide: WsService, useValue: WsServiceMock },
       FormBuilder,
       {
         provide: ActivatedRoute,
@@ -75,6 +80,8 @@ describe('InitStepComponent', () => {
       },
       detectChanges: false,
     });
+
+    spectator.component.events = jest.fn();
   });
 
   it('test that form gets initializated', () => {
@@ -99,6 +106,7 @@ describe('InitStepComponent', () => {
   it('test that a workspace is activated', () => {
     const workspace = WorkspaceMockFactory();
     workspace.id = workspaceId;
+    workspace.userRole = 'admin';
     spectator.component.workspaces = [workspace];
     spectator.component.selectedWorkspaceId = workspace.id;
     spectator.component.initForm();

@@ -398,7 +398,10 @@ export class WorkspaceDetailEffects {
 
   public removeMemberSuccess$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(workspaceDetailApiActions.removeMemberSuccess),
+      ofType(
+        workspaceDetailApiActions.removeMemberSuccess,
+        workspaceDetailEventActions.removeMember
+      ),
       map((action) => {
         return workspaceDetailApiActions.getWorkspaceNonMembers({
           id: action.id,

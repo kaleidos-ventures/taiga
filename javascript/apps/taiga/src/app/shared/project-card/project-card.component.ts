@@ -181,6 +181,10 @@ export class ProjectCardComponent implements OnInit {
 
   public animationAcceptedInvitation: 'done' | null = null;
 
+  public get showActions() {
+    return this.workspace.userRole === 'admin' && this.hasActions;
+  }
+
   public ngOnInit(): void {
     if (
       this.project &&

@@ -24,6 +24,12 @@ Copyright (c) 2023-present Kaleidos INC
   min-block-size: 122px;
   padding: var(--spacing-16);
 
+  &.with-actions {
+    & .project-card-title {
+      padding-inline-end: var(--spacing-12);
+    }
+  }
+
   &.placeholder {
     & tg-project-avatar {
       margin-block-end: var(--spacing-16);

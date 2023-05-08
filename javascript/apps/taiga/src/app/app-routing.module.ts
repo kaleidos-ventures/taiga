@@ -187,6 +187,7 @@ const routes: Routes = [
       initialNavigation: 'enabledBlocking',
       anchorScrolling: 'enabled',
       onSameUrlNavigation: 'reload',
+      bindToComponentInputs: true,
     }),
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }],

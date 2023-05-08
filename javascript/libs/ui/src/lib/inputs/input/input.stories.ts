@@ -130,12 +130,16 @@ class FormsComponent {
   }
 }
 
-export default ConfigureStory({
-  title: 'Inputs',
+const story = ConfigureStory({
   component: InputComponent,
   extraModules: [InputsModule, ReactiveFormsModule],
   declarations: [FormsComponent],
 });
+
+export default {
+  ...story,
+  title: 'Inputs',
+};
 
 const baseArgs = {
   label: 'label',

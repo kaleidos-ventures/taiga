@@ -5,8 +5,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2023-present Kaleidos INC
 */
-@import "tools/typography.css";
-@import "tools/responsive.css";
+@import url("tools/typography.css");
+@import url("tools/responsive.css");
 
 :host {
   align-items: center;
@@ -24,6 +24,7 @@ Copyright (c) 2023-present Kaleidos INC
   max-block-size: 627px;
   max-inline-size: 978px;
   position: relative;
+
   @media (--lt-large) {
     max-inline-size: 850px;
   }
@@ -41,7 +42,8 @@ Copyright (c) 2023-present Kaleidos INC
   inset-inline-end: 0;
   position: absolute;
   z-index: var(--first-layer);
-  @media only screen and (max-width: 1279px) {
+
+  @media only screen and (width <= 1279px) {
     max-inline-size: 575px;
   }
 }

@@ -7,9 +7,9 @@ Copyright (c) 2023-present Kaleidos INC
 */
 /* stylelint-disable selector-max-compound-selectors */
 
-@import "shared/users-tabs.css";
-@import "tools/typography.css";
-@import "../feature.members.common.css";
+@import url("shared/users-tabs.css");
+@import url("tools/typography.css");
+@import url("../feature.members.common.css");
 
 .revoke-invitation-btn {
   block-size: 100%;

@@ -10,11 +10,15 @@ import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { ContextNotificationComponent } from './context-notification.component';
 
-export default ConfigureStory({
-  title: 'ContextNotification',
+const story = ConfigureStory({
   component: ContextNotificationComponent,
   extraModules: [TuiSvgModule],
 });
+
+export default {
+  ...story,
+  title: 'ContextNotification',
+};
 
 const baseArgs = {
   content: 'This a long sentence with customizable html content',

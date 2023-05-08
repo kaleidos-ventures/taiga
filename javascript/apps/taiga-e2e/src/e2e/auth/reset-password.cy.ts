@@ -64,7 +64,8 @@ describe('reset password', () => {
 
       cy.getBySel('invalid-password').should('be.visible');
 
-      cy.getBySel('new-password-confirmation').clear().type(newPassword);
+      cy.getBySel('new-password-confirmation').clear();
+      cy.getBySel('new-password-confirmation').type(newPassword);
 
       cy.getBySel('submit-button').click();
 

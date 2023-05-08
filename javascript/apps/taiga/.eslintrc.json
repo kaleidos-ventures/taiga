@@ -8,12 +8,12 @@
         "project": ["apps/taiga/tsconfig.*?.json"]
       },
       "extends": [
-        "plugin:@nrwl/nx/angular",
+        "plugin:@nx/angular",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
         "ngrx/avoid-mapping-selectors": ["off"],
-        "@nrwl/nx/enforce-module-boundaries": ["off"],
+        "@nx/enforce-module-boundaries": ["off"],
         "@angular-eslint/directive-selector": [
           "error",
           {
@@ -77,7 +77,7 @@
     },
     {
       "files": ["*.html"],
-      "extends": ["plugin:@nrwl/nx/angular-template"],
+      "extends": ["plugin:@nx/angular-template"],
       "rules": {}
     }
   ]

@@ -5,7 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2023-present Kaleidos INC
 */
-@import "tools/typography.css";
+@import url("tools/typography.css");
 
 :root {
   --header-height: 48px;

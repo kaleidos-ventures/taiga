@@ -9,12 +9,17 @@
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { BadgeComponent } from './badge.component';
 import { BadgeModule } from './badge.module';
+import { Meta } from '@storybook/angular';
 
-export default ConfigureStory({
-  title: 'Badge',
+const story = ConfigureStory({
   component: BadgeComponent,
   extraModules: [BadgeModule],
 });
+
+export default {
+  ...story,
+  title: 'Badge',
+} as Meta;
 
 const baseArgs = {
   label: 'label',

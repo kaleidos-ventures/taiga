@@ -219,7 +219,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
   public unassign(member: Membership['user']) {
     if (this.story.ref) {
       this.store.dispatch(
-        KanbanActions.unassignMember({ member, storyRef: this.story.ref })
+        KanbanActions.unAssignMember({ member, storyRef: this.story.ref })
       );
     }
   }

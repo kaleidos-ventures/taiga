@@ -11,7 +11,11 @@ import { Injectable } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
+import {
+  fetch,
+  optimisticUpdate,
+  pessimisticUpdate,
+} from '@ngrx/router-store/data-persistence';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { Story } from '@taiga/data';
@@ -310,7 +314,7 @@ export class KanbanEffects {
 
   public unAssign$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanActions.unassignMember),
+      ofType(KanbanActions.unAssignMember),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
@@ -320,7 +324,7 @@ export class KanbanEffects {
             .unAssignStory(project.id, action.storyRef, action.member.username)
             .pipe(
               map(() => {
-                return KanbanApiActions.unassignMemberSuccess();
+                return KanbanApiActions.unAssignMemberSuccess();
               })
             );
         },

@@ -13,12 +13,16 @@ import { ModalModule } from '@taiga/ui/modal/modal.module';
 import { PROMPT_PROVIDER } from '@taiga/ui/modal/services/modal.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-export default ConfigureStory({
-  title: 'ModalComponent',
+const story = ConfigureStory({
   component: ModalComponent,
   extraModules: [TuiRootModule, BrowserAnimationsModule, ModalModule],
   extraProviders: [PROMPT_PROVIDER],
 });
+
+export default {
+  ...story,
+  title: 'ModalComponent',
+};
 
 export const Primary = ConfigureTemplate({
   template: `

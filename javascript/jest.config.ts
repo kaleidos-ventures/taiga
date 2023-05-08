@@ -1,4 +1,4 @@
-import { getJestProjects } from '@nrwl/jest';
+import { getJestProjects } from '@nx/jest';
 
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public

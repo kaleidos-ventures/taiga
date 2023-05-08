@@ -23,7 +23,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { RxState, selectSlice } from '@rx-angular/state';
+import { RxState } from '@rx-angular/state';
 import { Project, Role } from '@taiga/data';
 import { fromEvent } from 'rxjs';
 import {
@@ -37,6 +37,7 @@ import {
   tap,
   withLatestFrom,
 } from 'rxjs/operators';
+import { selectSlice } from '@rx-angular/state/selections';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { filterFalsy, filterNil } from '~/app/shared/utils/operators';

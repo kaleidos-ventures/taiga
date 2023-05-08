@@ -33,11 +33,15 @@ class ImageUploadStoryComponent {
   public form = new FormGroup({});
 }
 
-export default ConfigureStory({
-  title: 'Image Upload',
+const story = ConfigureStory({
   component: ImageUploadStoryComponent,
   extraModules: [ImageUploadModule, InputsModule],
 });
+
+export default {
+  ...story,
+  title: 'Image Upload',
+};
 
 export const ImageUpload = ConfigureTemplate({
   args: {},

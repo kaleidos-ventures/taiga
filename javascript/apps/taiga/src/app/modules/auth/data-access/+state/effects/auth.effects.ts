@@ -11,7 +11,7 @@ import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { pessimisticUpdate } from '@nrwl/angular';
+import { pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { TuiNotification } from '@taiga-ui/core';
 import {
   AuthApiService,

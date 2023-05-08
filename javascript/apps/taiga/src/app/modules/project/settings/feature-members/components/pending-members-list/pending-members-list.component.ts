@@ -365,7 +365,7 @@ export class PendingMembersListComponent {
   }
 
   public onConfirmCancelInvitation(invitation: Invitation) {
-    this.store.dispatch(membersActions.cancelInvitationUi({ invitation }));
+    this.store.dispatch(membersActions.cancelInvitationUI({ invitation }));
 
     this.revokePendingConfirmTimeouts.set(
       invitation,
@@ -376,7 +376,7 @@ export class PendingMembersListComponent {
   }
 
   public undoRevoke(invitation: Invitation) {
-    this.store.dispatch(membersActions.undoCancelInvitationUi({ invitation }));
+    this.store.dispatch(membersActions.undoCancelInvitationUI({ invitation }));
     this.clearInvitationToCancel(invitation);
   }
 

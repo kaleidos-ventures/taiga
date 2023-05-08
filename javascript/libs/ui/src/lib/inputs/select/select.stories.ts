@@ -91,13 +91,16 @@ class FormsComponent {
   }
 }
 
-export default ConfigureStory({
-  title: 'Selects',
+const story = ConfigureStory({
   component: SelectComponent,
   extraModules: [TuiRootModule, BrowserAnimationsModule, InputsModule],
-
   declarations: [FormsComponent],
 });
+
+export default {
+  ...story,
+  title: 'Selects',
+};
 
 const baseArgs = {
   label: 'label',

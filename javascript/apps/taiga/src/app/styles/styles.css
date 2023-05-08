@@ -15,17 +15,17 @@ shared: Specific styles that are shared by multiple elements across the site. Co
 */
 
 /* ANGULAR CDK */
-@import "@angular/cdk/overlay-prebuilt.css";
+@import url("@angular/cdk/overlay-prebuilt.css");
 
 /* CUSTOM GLOBAL STYLES */
-@import "tokens/swatches.css";
-@import "tokens/typography.css";
-@import "tokens/spacing.css";
-@import "tokens/z-index.css";
-@import "generic.css";
-@import "taiga-ui/taiga-ui.css";
-@import "shared/button.css";
-@import "shared/accesibility.css";
-@import "tools/skeleton.css";
-@import "tools/editor.css";
-@import "tools/editor-results.css";
+@import url("tokens/swatches.css");
+@import url("tokens/typography.css");
+@import url("tokens/spacing.css");
+@import url("tokens/z-index.css");
+@import url("generic.css");
+@import url("taiga-ui/taiga-ui.css");
+@import url("shared/button.css");
+@import url("shared/accesibility.css");
+@import url("tools/skeleton.css");
+@import url("tools/editor.css");
+@import url("tools/editor-results.css");

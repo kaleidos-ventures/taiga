@@ -9,7 +9,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { UsersApiService } from '@taiga/api';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
+import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import {
   userSettingsActions,
   userSettingsApiActions,

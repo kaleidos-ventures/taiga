@@ -10,11 +10,15 @@ import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { TableComponent } from './table.component';
 import { TuiTableModule } from '@taiga-ui/addon-table';
 
-export default ConfigureStory({
-  title: 'Table',
+const story = ConfigureStory({
   component: TableComponent,
   extraModules: [TuiTableModule],
 });
+
+export default {
+  ...story,
+  title: 'Table',
+};
 
 const baseArgs = {
   columns: ['name', 'email', 'status', 'tags', 'actions'],

@@ -7,8 +7,8 @@ Copyright (c) 2023-present Kaleidos INC
 */
 /* stylelint-disable declaration-no-important */
 
-@import "tools/typography.css";
-@import "shared/option-list.css";
+@import url("tools/typography.css");
+@import url("shared/option-list.css");
 
 :host {
   background-color: var(--color-gray10);
@@ -49,7 +49,7 @@ Copyright (c) 2023-present Kaleidos INC
   max-inline-size: 1400px;
   padding-block-start: var(--spacing-16);
 
-  @media only screen and (max-width: 1279px) {
+  @media only screen and (width <= 1279px) {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -71,7 +71,7 @@ Copyright (c) 2023-present Kaleidos INC
     /* fake height */
     min-block-size: 500px;
 
-    @media only screen and (max-width: 1279px) {
+    @media only screen and (width <= 1279px) {
       inline-size: 100%;
     }
   }
@@ -79,7 +79,7 @@ Copyright (c) 2023-present Kaleidos INC
   & > .project-members {
     align-self: flex-start;
 
-    @media only screen and (max-width: 1279px) {
+    @media only screen and (width <= 1279px) {
       inline-size: 100%;
     }
   }

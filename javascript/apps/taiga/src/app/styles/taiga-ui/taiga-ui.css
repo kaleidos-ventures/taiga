@@ -10,17 +10,17 @@ Copyright (c) 2023-present Kaleidos INC
 * TAIGA UI CUSTOM PROPERTIES
 */
 
-@import "./tui-config.css";
-@import "./tui-avatar.css";
-@import "./tui-forms.css";
-@import "./tui-hint.css";
-@import "./tui-data-list.css";
-@import "./tui-toggle.css";
-@import "./tui-notifications.css";
-@import "./tui-dialog.css";
-@import "./tui-scrollbar.css";
-@import "./shame.css";
-@import "./tui-arrow.css";
-@import "./tui-dropdown.css";
-@import "./tui-tabs.css";
-@import "./tui-svg.css";
+@import url("./tui-config.css");
+@import url("./tui-avatar.css");
+@import url("./tui-forms.css");
+@import url("./tui-hint.css");
+@import url("./tui-data-list.css");
+@import url("./tui-toggle.css");
+@import url("./tui-notifications.css");
+@import url("./tui-dialog.css");
+@import url("./tui-scrollbar.css");
+@import url("./shame.css");
+@import url("./tui-arrow.css");
+@import url("./tui-dropdown.css");
+@import url("./tui-tabs.css");
+@import url("./tui-svg.css");

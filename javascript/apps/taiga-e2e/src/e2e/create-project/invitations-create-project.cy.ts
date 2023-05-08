@@ -124,13 +124,13 @@ describe('Invite users to project after creating it', () => {
     inviteUsers();
     cy.getBySel('navigate-overview').click();
     cy.getBySel('member-item').should('exist');
-    cy.getBySel('user-email')
-      .each((element, index) => {
-        expect(element[0]).to.have.text(emailToInvite.split(',')[index].trim());
-      })
-      .then(($list) => {
-        expect($list).to.have.length(2);
-      });
+    cy.getBySel('user-email').each((element, index) => {
+      expect(element[0]).to.have.text(emailToInvite.split(',')[index].trim());
+    });
+
+    cy.getBySel('user-email').then(($list) => {
+      expect($list).to.have.length(2);
+    });
   });
 
   it('Should show results from autocomplete when there is a match', () => {

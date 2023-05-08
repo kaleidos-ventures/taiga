@@ -6,8 +6,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-@import "tools/typography.css";
-@import "taiga-ui/mixins/wrapper.css";
+@import url("tools/typography.css");
+@import url("taiga-ui/mixins/wrapper.css");
 
 /********* BUTTON APPEARANCES ********
 ** WARNING: If you add an appearance list it here and ensure is on the design system with the same name
@@ -404,8 +404,9 @@ Used across all Taiga
 }
 
 [data-appearance="action-button-2"]:is(button, a) {
-  & [tuiWrapper] {
-    padding: var(--spacing-8) !important;
+  & tui-svg {
+    block-size: 1rem;
+    inline-size: 1rem;
   }
 }
 

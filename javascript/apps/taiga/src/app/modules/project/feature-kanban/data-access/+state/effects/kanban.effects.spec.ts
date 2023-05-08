@@ -350,14 +350,14 @@ describe('ProjectEffects', () => {
     store.overrideSelector(selectCurrentProject, project);
 
     actions$ = hot('-a', {
-      a: KanbanActions.unassignMember({
+      a: KanbanActions.unAssignMember({
         storyRef: story.ref,
         member: user,
       }),
     });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.unassignMemberSuccess(),
+      a: KanbanApiActions.unAssignMemberSuccess(),
     });
 
     expect(effects.unAssign$).toBeObservable(expected);

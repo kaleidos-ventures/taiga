@@ -10,7 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
+import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { TuiNotification } from '@taiga-ui/core';
 import { WorkspaceApiService } from '@taiga/api';
 import { ErrorManagementOptions, Project, Workspace } from '@taiga/data';

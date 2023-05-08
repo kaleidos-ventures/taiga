@@ -6,8 +6,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-@import "shared/users-tabs.css";
-@import "../../../styles/workspace-detail.shared";
+@import url("shared/users-tabs.css");
+@import url("../../../styles/workspace-detail.shared");
 
 .wks-people-tabs {
   margin-block-end: var(--spacing-16);

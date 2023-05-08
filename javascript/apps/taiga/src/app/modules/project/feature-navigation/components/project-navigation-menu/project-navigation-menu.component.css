@@ -8,7 +8,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 /* WORKSPACE */
 
-@import "tools/typography.css";
+@import url("tools/typography.css");
 
 :host {
   --menu-size: 200px;

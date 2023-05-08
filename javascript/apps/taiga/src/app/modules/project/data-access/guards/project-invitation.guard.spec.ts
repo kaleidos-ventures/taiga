@@ -10,12 +10,7 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import {
-  AbstractType,
-  EnvironmentInjector,
-  InjectionToken,
-  Type,
-} from '@angular/core';
+import { AbstractType, InjectionToken, Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -66,7 +61,7 @@ describe('Project Invitation Guard', () => {
     const router = inject(Router);
     authService.isLogged.mockReturnValue(true);
 
-    TestBed.inject(EnvironmentInjector).runInContext(() => {
+    TestBed.runInInjectionContext(() => {
       ProjectInvitationGuard({
         params: {
           token,
@@ -104,7 +99,7 @@ describe('Project Invitation Guard', () => {
     const router = inject(Router);
     authService.isLogged.mockReturnValue(false);
 
-    TestBed.inject(EnvironmentInjector).runInContext(() => {
+    TestBed.runInInjectionContext(() => {
       ProjectInvitationGuard({
         params: {
           token,
@@ -147,7 +142,7 @@ describe('Project Invitation Guard', () => {
     project.userPermissions.push('view_task');
     projectApiService.getProject.mockReturnValue(of(project));
 
-    TestBed.inject(EnvironmentInjector).runInContext(() => {
+    TestBed.runInInjectionContext(() => {
       ProjectInvitationGuard({
         params: {
           token,
@@ -184,7 +179,7 @@ describe('Project Invitation Guard', () => {
     const project = ProjectMockFactory();
     projectApiService.getProject.mockReturnValue(of(project));
 
-    TestBed.inject(EnvironmentInjector).runInContext(() => {
+    TestBed.runInInjectionContext(() => {
       ProjectInvitationGuard({
         params: {
           token,

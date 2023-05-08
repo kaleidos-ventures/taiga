@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { fetch, pessimisticUpdate } from '@nrwl/angular';
+import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { catchError, concatMap, EMPTY, map, of, tap } from 'rxjs';
@@ -235,7 +235,7 @@ export class StoryDetailEffects {
 
   public unAssign$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(StoryDetailActions.unassignMember),
+      ofType(StoryDetailActions.unAssignMember),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
@@ -245,7 +245,7 @@ export class StoryDetailEffects {
             .unAssignStory(project.id, action.storyRef, action.member.username)
             .pipe(
               map(() => {
-                return StoryDetailApiActions.unassignMemberSuccess();
+                return StoryDetailApiActions.unAssignMemberSuccess();
               })
             );
         },

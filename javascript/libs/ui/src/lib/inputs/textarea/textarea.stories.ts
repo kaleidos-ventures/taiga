@@ -107,13 +107,17 @@ class FormsComponent implements OnChanges {
   }
 }
 
-export default ConfigureStory({
-  title: 'Textarea',
+const story = ConfigureStory({
   component: TextareaComponent,
   extraModules: [TuiRootModule, BrowserAnimationsModule, InputsModule],
 
   declarations: [FormsComponent],
 });
+
+export default {
+  ...story,
+  title: 'Textarea',
+};
 
 const baseArgs = {
   label: 'label',

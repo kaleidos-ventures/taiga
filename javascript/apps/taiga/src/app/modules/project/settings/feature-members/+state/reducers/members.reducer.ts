@@ -119,7 +119,7 @@ export const reducer = createImmerReducer(
     return state;
   }),
   on(
-    membersActions.cancelInvitationUi,
+    membersActions.cancelInvitationUI,
     (state, { invitation }): MembersState => {
       state.animationDisabled = false;
       state.totalInvitations = state.totalInvitations - 1;
@@ -130,7 +130,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    membersActions.undoCancelInvitationUi,
+    membersActions.undoCancelInvitationUI,
     (state, { invitation }): MembersState => {
       state.totalInvitations = state.totalInvitations + 1;
       state.invitationCancelAnimation = null;

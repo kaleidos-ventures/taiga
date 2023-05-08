@@ -4,9 +4,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-@import "shared/users-tabs.css";
-@import "tools/typography.css";
-@import "../feature.members.common.css";
+@import url("shared/users-tabs.css");
+@import url("tools/typography.css");
+@import url("../feature.members.common.css");
 
 :host {
   align-items: center;

@@ -6,8 +6,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-@import "tools/typography.css";
-@import "../../styles/project.shared.css";
+@import url("tools/typography.css");
+@import url("../../styles/project.shared.css");
 
 .workspace-option {
   align-items: center;

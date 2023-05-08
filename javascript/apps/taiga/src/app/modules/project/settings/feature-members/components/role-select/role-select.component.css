@@ -7,8 +7,8 @@ Copyright (c) 2023-present Kaleidos INC
 */
 /* stylelint-disable selector-max-compound-selectors */
 
-@import "tools/typography.css";
-@import "taiga-ui/mixins/wrapper.css";
+@import url("tools/typography.css");
+@import url("taiga-ui/mixins/wrapper.css");
 
 .select-container {
   max-inline-size: 209px;
@@ -43,6 +43,7 @@ Copyright (c) 2023-present Kaleidos INC
     background-color: var(--color-gray10) !important;
     color: var(--color-gray100) !important;
     padding-block: 0 !important;
+
     /* stylelint-disable-enable declaration-no-important */
     padding-inline: var(--spacing-16) !important;
 

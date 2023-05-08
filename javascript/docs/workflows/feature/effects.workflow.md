@@ -8,7 +8,7 @@ Also take a look of the [NX](https://nx.dev/latest/angular/guides/misc-data-pers
 
 ```ts
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { fetch } from '@nrwl/angular';
+import { fetch } from '@nx/angular';
 
 @Injectable({
   providedIn: 'root',

@@ -1,12 +1,12 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "ngrx", "taiga"],
+  "plugins": ["@nx", "ngrx", "taiga"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
+        "@nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -26,7 +26,7 @@
       "parser": "@angular-eslint/template-parser",
       "plugins": ["@angular-eslint/template"],
       "rules": {
-        "@angular-eslint/template/accessibility-alt-text": ["error"],
+        "@angular-eslint/template/alt-text": ["error"],
         "@angular-eslint/template/use-track-by-function": ["error"],
         "@angular-eslint/template/accessibility-label-for": ["off"],
         "@angular-eslint/template/mouse-events-have-key-events": ["error"]
@@ -37,7 +37,7 @@
       "extends": [
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:@nrwl/nx/typescript",
+        "plugin:@nx/typescript",
         "plugin:ngrx/recommended",
         "prettier"
       ],
@@ -60,7 +60,7 @@
       "extends": [
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:@nrwl/nx/typescript",
+        "plugin:@nx/typescript",
         "plugin:ngrx/recommended"
       ],
       "rules": {
@@ -86,7 +86,7 @@
     },
     {
       "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
+      "extends": ["plugin:@nx/javascript"],
       "rules": {}
     }
   ]

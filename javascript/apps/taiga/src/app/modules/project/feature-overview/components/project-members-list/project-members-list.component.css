@@ -7,7 +7,7 @@ Copyright (c) 2023-present Kaleidos INC
 */
 /* stylelint-disable selector-max-compound-selectors */
 
-@import "tools/typography.css";
+@import url("tools/typography.css");
 
 @keyframes fade-in-down {
   0% {

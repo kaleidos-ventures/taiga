@@ -13,11 +13,15 @@ import {
 } from '@storybook-helper';
 import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 
-export default ConfigureStory({
-  title: 'Buttons',
+const story = ConfigureStory({
   component: EmptyComponent,
   extraModules: [TuiButtonModule, TuiSvgModule, TuiLinkModule],
 });
+
+export default {
+  ...story,
+  title: 'Buttons',
+};
 
 const baseArgs = {
   label: 'Text',

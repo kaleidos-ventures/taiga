@@ -8,7 +8,7 @@ Config the story with the helper function.
 import { ConfigureStory } from '@storybook-helper';
 import { Story } from '@storybook/angular';
 
-export default ConfigureStory({
+const story = ConfigureStory({
   // you can add a folder like `title: 'myfolder/MyComponent'`
   title: 'MyComponent',
   component: MyComponentComponent,
@@ -46,7 +46,7 @@ export const Primary = ConfigureTemplate({
 import { ConfigureStory, ConfigureTemplate } from '@storybook-helper';
 import { Story } from '@storybook/angular';
 
-export default ConfigureStory({
+const story = ConfigureStory({
   title: 'MyComponent',
   component: MyComponentComponent,
   extraModules: [MyComponentModule],

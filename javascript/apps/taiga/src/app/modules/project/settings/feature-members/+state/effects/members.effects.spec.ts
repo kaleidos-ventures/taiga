@@ -272,7 +272,7 @@ describe('MembersEffects', () => {
       const { expectObservable, hot } = helpers;
 
       actions$ = hot('-a', {
-        a: membersActions.undoCancelInvitationUi({ invitation }),
+        a: membersActions.undoCancelInvitationUI({ invitation }),
       });
 
       expectObservable(effects.showUndoConfirmation$).toBe('1001ms a', {
@@ -295,7 +295,7 @@ describe('MembersEffects', () => {
       const { expectObservable, hot } = helpers;
 
       actions$ = hot('-a', {
-        a: membersActions.undoCancelInvitationUi({ invitation }),
+        a: membersActions.undoCancelInvitationUI({ invitation }),
       });
 
       expectObservable(effects.showUndoConfirmation$).toBe('');

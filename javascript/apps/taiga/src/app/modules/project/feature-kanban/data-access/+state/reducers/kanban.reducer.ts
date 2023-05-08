@@ -608,8 +608,8 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    KanbanActions.unassignMember,
-    StoryDetailActions.unassignMember,
+    KanbanActions.unAssignMember,
+    StoryDetailActions.unAssignMember,
     projectEventActions.unassignedMemberEvent,
     (state, { member, storyRef }): KanbanState => {
       state = replaceStory(state, (it) => {

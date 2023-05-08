@@ -6,7 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-@import "tools/typography.css";
+@import url("tools/typography.css");
 
 .leave-project {
   animation: fade-in-down 1s 1 ease-in-out;

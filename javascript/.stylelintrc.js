@@ -8,7 +8,7 @@
 
 module.exports = {
   root: true,
-  extends: ['stylelint-config-standard', 'stylelint-config-prettier'],
+  extends: ['stylelint-config-standard'],
   plugins: ['stylelint-order', 'stylelint-use-logical-spec'],
   rules: {
     'at-rule-no-unknown': [
@@ -27,7 +27,6 @@ module.exports = {
     'font-family-name-quotes': 'always-unless-keyword',
     'function-url-quotes': 'always',
     'selector-attribute-quotes': 'always',
-    'string-quotes': 'double',
     // Disallow vendor prefixes
     'at-rule-no-vendor-prefix': true,
     'media-feature-name-no-vendor-prefix': true,
@@ -59,13 +58,6 @@ module.exports = {
     'font-weight-notation': 'numeric',
     // URLs
     'function-url-no-scheme-relative': true,
-    // Max line length
-    'max-line-length': [
-      120,
-      {
-        ignore: ['comments'],
-      },
-    ],
     'liberty/use-logical-spec': 'always',
     'selector-class-pattern': null,
     'alpha-value-notation': null,

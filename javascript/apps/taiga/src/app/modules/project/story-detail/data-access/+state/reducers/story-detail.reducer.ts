@@ -126,8 +126,8 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    StoryDetailActions.unassignMember,
-    KanbanActions.unassignMember,
+    StoryDetailActions.unAssignMember,
+    KanbanActions.unAssignMember,
     projectEventActions.unassignedMemberEvent,
     (state, { storyRef, member }): StoryDetailState => {
       if (state.story?.ref === storyRef) {

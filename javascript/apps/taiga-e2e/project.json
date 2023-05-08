@@ -5,10 +5,9 @@
   "projectType": "application",
   "targets": {
     "e2e": {
-      "executor": "@nrwl/cypress:cypress",
+      "executor": "@nx/cypress:cypress",
       "options": {
         "cypressConfig": "apps/taiga-e2e/cypress.config.ts",
-        "tsConfig": "apps/taiga-e2e/tsconfig.e2e.json",
         "devServerTarget": "taiga:serve:development",
         "testingType": "e2e"
       },
@@ -19,7 +18,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/taiga-e2e/**/*.{js,ts}"]
       }

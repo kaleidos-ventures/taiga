@@ -6,15 +6,12 @@
   "prefix": "tg",
   "targets": {
     "build": {
-      "executor": "@angular-builders/custom-webpack:browser",
+      "executor": "@nx/angular:webpack-browser",
       "outputs": ["{options.outputPath}"],
       "options": {
         "allowedCommonJsDependencies": ["angular2-text-mask"],
         "customWebpackConfig": {
-          "path": "./extra-webpack.config.ts",
-          "mergeStrategies": {
-            "externals": "replace"
-          }
+          "path": "./extra-webpack.config.ts"
         },
         "outputPath": "dist/taiga/browser",
         "index": "apps/taiga/src/index.html",
@@ -78,7 +75,7 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@angular-builders/custom-webpack:dev-server",
+      "executor": "@nx/angular:webpack-dev-server",
       "configurations": {
         "production": {
           "browserTarget": "taiga:build:production"
@@ -96,7 +93,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/taiga/src/**/*.ts",
@@ -106,7 +103,7 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/taiga"],
       "options": {
         "jestConfig": "apps/taiga/jest.config.ts",

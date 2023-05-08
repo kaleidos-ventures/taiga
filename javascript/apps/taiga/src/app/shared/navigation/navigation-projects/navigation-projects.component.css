@@ -6,8 +6,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-@import "tools/typography.css";
-@import "tools/dropdown.css";
+@import url("tools/typography.css");
+@import url("tools/dropdown.css");
 
 :host {
   display: block;
@@ -99,11 +99,6 @@ li {
   display: inline-block;
   font-weight: var(--font-weight-semibold);
   margin-block-end: 1rem;
-}
-
-.project-action {
-  block-size: var(--spacing-16);
-  inline-size: var(--spacing-16);
 }
 
 .empty-recent {

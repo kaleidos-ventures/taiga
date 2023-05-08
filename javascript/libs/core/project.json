@@ -6,7 +6,7 @@
   "prefix": "tg",
   "targets": {
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/core"],
       "options": {
         "jestConfig": "libs/core/jest.config.ts",
@@ -14,7 +14,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/core/src/**/*.ts", "libs/core/src/**/*.html"]
       }

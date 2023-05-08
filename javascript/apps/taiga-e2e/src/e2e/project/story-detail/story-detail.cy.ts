@@ -89,7 +89,8 @@ describe('StoryDetail', () => {
 
     const newTitle = randText();
 
-    cy.getBySel('edit-title-textarea').find('textarea').clear().type(newTitle);
+    cy.getBySel('edit-title-textarea').find('textarea').clear();
+    cy.getBySel('edit-title-textarea').find('textarea').type(newTitle);
 
     cy.getBySel('edit-title-save').click();
 
@@ -103,7 +104,8 @@ describe('StoryDetail', () => {
 
     const newTitle = randText();
 
-    cy.getBySel('edit-title-textarea').find('textarea').clear().type(newTitle);
+    cy.getBySel('edit-title-textarea').find('textarea').clear();
+    cy.getBySel('edit-title-textarea').find('textarea').type(newTitle);
 
     cy.getBySel('edit-title-cancel').click();
 
@@ -118,7 +120,8 @@ describe('StoryDetail', () => {
     const newTitle = randText();
     const conflictTitle = randText();
 
-    cy.getBySel('edit-title-textarea').find('textarea').clear().type(newTitle);
+    cy.getBySel('edit-title-textarea').find('textarea').clear();
+    cy.getBySel('edit-title-textarea').find('textarea').type(newTitle);
 
     updateStoryRequest(project.id, story.ref, {
       title: conflictTitle,
@@ -142,7 +145,8 @@ describe('StoryDetail', () => {
     const newTitle = randText();
     const conflictTitle = randText();
 
-    cy.getBySel('edit-title-textarea').find('textarea').clear().type(newTitle);
+    cy.getBySel('edit-title-textarea').find('textarea').clear();
+    cy.getBySel('edit-title-textarea').find('textarea').type(newTitle);
 
     updateStoryRequest(project.id, story.ref, {
       title: conflictTitle,

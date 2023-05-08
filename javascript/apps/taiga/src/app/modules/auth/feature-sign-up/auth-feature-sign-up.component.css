@@ -6,9 +6,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
-@import "tools/typography.css";
-@import "tools/responsive.css";
-@import "../styles/auth.styles.css";
+@import url("tools/typography.css");
+@import url("tools/responsive.css");
+@import url("../styles/auth.styles.css");
 
 .signup {
   align-items: center;

@@ -6,13 +6,13 @@
   "prefix": "tg",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/api/src/**/*.ts", "libs/api/src/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/api"],
       "options": {
         "jestConfig": "libs/api/jest.config.ts",

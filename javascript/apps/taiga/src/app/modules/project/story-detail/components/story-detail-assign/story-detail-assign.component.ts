@@ -153,7 +153,7 @@ export class StoryDetailAssignComponent implements OnChanges {
   public unassign(member: Membership['user']) {
     if (this.story.ref) {
       this.store.dispatch(
-        StoryDetailActions.unassignMember({ member, storyRef: this.story.ref })
+        StoryDetailActions.unAssignMember({ member, storyRef: this.story.ref })
       );
     }
   }
@@ -163,7 +163,7 @@ export class StoryDetailAssignComponent implements OnChanges {
     event.stopPropagation();
     if (this.story.ref) {
       this.store.dispatch(
-        StoryDetailActions.unassignMember({ member, storyRef: this.story.ref })
+        StoryDetailActions.unAssignMember({ member, storyRef: this.story.ref })
       );
       if (event.type === 'keydown') {
         const announcement = this.translocoService.translate(

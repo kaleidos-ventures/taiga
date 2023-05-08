@@ -11,7 +11,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { pessimisticUpdate } from '@nrwl/angular';
+import { pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { exhaustMap, filter, map, tap } from 'rxjs/operators';

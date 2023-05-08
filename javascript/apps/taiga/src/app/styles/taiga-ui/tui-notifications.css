@@ -21,7 +21,7 @@ tui-alert-host {
   }
 
   /* stylelint-disable-next-line selector-max-type */
-  & .t-notifications-wrapper tui-alert {
+  & .t-wrapper tui-alert {
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
     inline-size: 410px;
     margin-block-start: var(--spacing-64);
@@ -30,7 +30,7 @@ tui-alert-host {
 
   &.no-menu {
     /* stylelint-disable-next-line selector-max-type */
-    & .t-notifications-wrapper tui-alert {
+    & .t-wrapper tui-alert {
       margin-block-start: var(--spacing-16);
     }
   }
@@ -85,7 +85,7 @@ tui-notification {
     }
   }
 
-  &[data-tui-host-status="info"] {
+  &[data-status="info"] {
     --tui-text-01: var(--color-info80);
     --tui-base-06: var(--tui-text-01);
     --tui-focus: var(--color-secondary);
@@ -111,7 +111,7 @@ tui-notification {
     }
   }
 
-  &[data-tui-host-status="error"] {
+  &[data-status="error"] {
     --tui-text-01: var(--color-red80);
     --tui-base-06: var(--tui-text-01);
     --tui-focus: var(--color-secondary);
@@ -137,7 +137,7 @@ tui-notification {
     }
   }
 
-  &[data-tui-host-status="success"] {
+  &[data-status="success"] {
     --tui-text-01: var(--color-ok80);
     --tui-base-06: var(--tui-text-01);
     --tui-focus: var(--color-secondary);
@@ -163,7 +163,7 @@ tui-notification {
     }
   }
 
-  &[data-tui-host-status="warning"] {
+  &[data-status="warning"] {
     --tui-text-01: var(--color-warning80);
     --tui-base-06: var(--tui-text-01);
     --tui-focus: var(--color-secondary);

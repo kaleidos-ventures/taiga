@@ -76,6 +76,8 @@ export class AuthFeatureVerifyEmailComponent implements OnInit {
           resend: true,
           acceptProjectInvitation: this.formData.acceptProjectInvitation,
           projectInvitationToken: this.formData.projectInvitationToken,
+          acceptWorkspaceInvitation: this.formData.acceptWorkspaceInvitation,
+          workspaceInvitationToken: this.formData.workspaceInvitationToken,
         })
       );
     } else {

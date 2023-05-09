@@ -41,12 +41,17 @@ export const reducer = createImmerReducer(
 
     return state;
   }),
-  on(AuthActions.loginSuccess, (state, { user }): AuthState => {
-    state.user = user!;
-    state.loginError = false;
+  on(
+    AuthActions.loginSuccess,
+    AuthActions.loginProjectInvitationSuccess,
+    AuthActions.loginWorkspaceInvitationSuccess,
+    (state, { user }): AuthState => {
+      state.user = user!;
+      state.loginError = false;
 
-    return state;
-  }),
+      return state;
+    }
+  ),
   on(AuthActions.requestResetPasswordSuccess, (state): AuthState => {
     state.showResetPasswordConfirmation = true;
 

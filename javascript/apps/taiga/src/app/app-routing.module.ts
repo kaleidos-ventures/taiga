@@ -19,6 +19,7 @@ import { AuthFeatureLoginGuard } from './modules/auth/feature-login/auth-feature
 import { AuthGuard } from './modules/auth/guards/auth.guard';
 import { ProjectInvitationCTAGuard } from './modules/project/data-access/guards/project-invitation-cta.guard';
 import { ProjectInvitationGuard } from './modules/project/data-access/guards/project-invitation.guard';
+import { WorkspaceInvitationCTAGuard } from './modules/workspace/feature-detail/guards/workspace-invitation-cta.guard';
 
 /*
 Add to your route if you want to control the if the component is reused in the same url:
@@ -92,6 +93,11 @@ const routes: Routes = [
     path: 'project/:id/preview/:token',
     children: [],
     canActivate: [ProjectInvitationGuard],
+  },
+  {
+    path: 'accept-workspace-invitation/:token',
+    children: [],
+    canActivate: [WorkspaceInvitationCTAGuard],
   },
   {
     path: '',

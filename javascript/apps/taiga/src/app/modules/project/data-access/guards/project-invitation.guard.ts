@@ -12,7 +12,7 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
-import { InvitationInfo } from '@taiga/data';
+import { ProjectInvitationInfo } from '@taiga/data';
 import { EMPTY, of, throwError } from 'rxjs';
 import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
@@ -29,9 +29,11 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
   const token = route.params.token as string;
 
   return http
-    .get<InvitationInfo>(`${config.apiUrl}/projects/invitations/${token}`)
+    .get<ProjectInvitationInfo>(
+      `${config.apiUrl}/projects/invitations/${token}`
+    )
     .pipe(
-      mergeMap((invitation: InvitationInfo) => {
+      mergeMap((invitation: ProjectInvitationInfo) => {
         if (invitation.existingUser) {
           if (authService.isLogged()) {
             void router.navigate(

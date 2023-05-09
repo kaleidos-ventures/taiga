@@ -14,7 +14,7 @@ import {
   randNumber,
   randUserName,
 } from '@ngneat/falso';
-import { Contact, Invitation, InvitationInfo } from './invitation.model';
+import { Contact, Invitation, ProjectInvitationInfo } from './invitation.model';
 import { MembershipMockFactory } from './membership.model.mock';
 import { ProjectMockFactory } from './project.model.mock';
 
@@ -25,7 +25,7 @@ export const InvitationMockFactory = (): Invitation => {
   };
 };
 
-export const InvitationInfoMockFactory = (): InvitationInfo => {
+export const InvitationInfoMockFactory = (): ProjectInvitationInfo => {
   const project = ProjectMockFactory();
   const availableLogins = rand(['password', 'github', 'gitlab', 'google'], {
     length: randNumber({ max: 4 }),

@@ -8,6 +8,7 @@
 
 import { Project } from './project.model';
 import { User } from './user.model';
+import { InvitationInfo } from './invitation.model';
 
 export type WorkspaceProject = Pick<
   Project,
@@ -59,4 +60,8 @@ export interface InvitationWorkspaceMember {
   user: Pick<User, 'username' | 'fullName' | 'color'>;
   workspace: Pick<WorkspaceProject, 'id' | 'name' | 'slug'>;
   email: string;
+}
+
+export interface InvitationWorkspaceInfo extends InvitationInfo {
+  workspace: Pick<WorkspaceProject, 'id' | 'name' | 'slug'>;
 }

@@ -37,6 +37,9 @@ export interface InvitationInfo {
   email: string;
   existingUser: boolean;
   availableLogins: string[];
+}
+
+export interface ProjectInvitationInfo extends InvitationInfo {
   project: {
     id: string;
     name: string;
@@ -45,12 +48,23 @@ export interface InvitationInfo {
   };
 }
 
+export interface WorkspaceInvitationInfo extends InvitationInfo {
+  workspace: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+}
+
 export interface InvitationParams {
   email: string;
-  project: string;
+  project: Project['id'];
+  workspace: Workspace['id'];
   projectInvitationToken: string;
+  workspaceInvitationToken: string;
   slug: string;
   acceptProjectInvitation: boolean;
+  acceptWorkspaceInvitation: boolean;
   nextProjectId?: string;
 }
 

@@ -8,7 +8,12 @@
 
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
+import {
+  AuthApiService,
+  ProjectApiService,
+  UsersApiService,
+  WorkspaceApiService,
+} from '@taiga/api';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
 
@@ -38,8 +43,9 @@ import { ButtonLoadingService } from '~/app/shared/directives/button-loading/but
 import { ButtonLoadingServiceMock } from '~/app/shared/directives/button-loading/button-loading.service.mock';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import {
-  login,
   loginSuccess,
+  loginProjectInvitation,
+  loginProjectInvitationSuccess,
   logout,
   newPassword,
   newPasswordError,
@@ -62,6 +68,7 @@ const signupData = {
   acceptTerms: true,
   resend: false,
   acceptProjectInvitation: true,
+  acceptWorkspaceInvitation: false,
 };
 
 const initialState = {
@@ -89,6 +96,7 @@ describe('AuthEffects', () => {
       AuthService,
       ProjectApiService,
       LanguageService,
+      WorkspaceApiService,
     ],
   });
 
@@ -118,10 +126,10 @@ describe('AuthEffects', () => {
     authApiService.login.mockReturnValue(cold('-b|', { b: auth }));
     usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
 
-    actions$ = hot('-a', { a: login(loginData) });
+    actions$ = hot('-a', { a: loginProjectInvitation(loginData) });
 
     const expected = cold('---a', {
-      a: loginSuccess({
+      a: loginProjectInvitationSuccess({
         user,
         auth,
         projectInvitationToken: token,
@@ -130,8 +138,8 @@ describe('AuthEffects', () => {
       }),
     });
 
-    expect(effects.login$).toBeObservable(expected);
-    expect(effects.login$).toSatisfyOnFlush(() => {
+    expect(effects.loginProjectInvitation$).toBeObservable(expected);
+    expect(effects.loginProjectInvitation$).toSatisfyOnFlush(() => {
       expect(buttonLoadingService.start).toHaveBeenCalled();
     });
   });
@@ -152,7 +160,7 @@ describe('AuthEffects', () => {
     );
 
     actions$ = hot('a', {
-      a: loginSuccess({
+      a: loginProjectInvitationSuccess({
         user,
         auth,
         next: invite.next,
@@ -160,7 +168,7 @@ describe('AuthEffects', () => {
       }),
     });
 
-    expect(effects.loginRedirect$).toSatisfyOnFlush(() => {
+    expect(effects.loginProjectInvitationRedirect$).toSatisfyOnFlush(() => {
       expect(router.navigate).toHaveBeenCalledWith([invite.next], {
         state: { invite: undefined },
       });
@@ -182,13 +190,13 @@ describe('AuthEffects', () => {
     );
 
     actions$ = hot('a', {
-      a: loginSuccess({
+      a: loginProjectInvitationSuccess({
         user,
         auth,
       }),
     });
 
-    expect(effects.loginRedirect$).toSatisfyOnFlush(() => {
+    expect(effects.loginProjectInvitationRedirect$).toSatisfyOnFlush(() => {
       expect(router.navigate).toHaveBeenCalledWith(['/'], {
         state: { invite: undefined },
       });
@@ -248,6 +256,7 @@ describe('AuthEffects', () => {
       acceptTerms: false,
       resend: false,
       acceptProjectInvitation: true,
+      acceptWorkspaceInvitation: false,
     };
 
     const effects = spectator.inject(AuthEffects);
@@ -431,7 +440,7 @@ describe('AuthEffects', () => {
     });
 
     const expected = cold('----a', {
-      a: loginSuccess({
+      a: loginProjectInvitationSuccess({
         user,
         auth,
         acceptProjectInvitation,

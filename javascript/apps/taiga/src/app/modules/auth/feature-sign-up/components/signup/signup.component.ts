@@ -137,6 +137,8 @@ export class SignupComponent implements OnInit {
       fullName: [null, [Validators.required]],
       projectInvitationToken: null,
       acceptProjectInvitation: null,
+      workspaceInvitationToken: null,
+      acceptWorkspaceInvitation: null,
     });
     if (this.data) {
       this.signUpForm.setValue(this.data);
@@ -155,6 +157,8 @@ export class SignupComponent implements OnInit {
           resend: false,
           acceptProjectInvitation: signUpFormData.acceptProjectInvitation,
           projectInvitationToken: signUpFormData.projectInvitationToken,
+          acceptWorkspaceInvitation: signUpFormData.acceptWorkspaceInvitation,
+          workspaceInvitationToken: signUpFormData.workspaceInvitationToken,
         })
       );
     } else {

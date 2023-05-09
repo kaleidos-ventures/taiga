@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { genericResponseError, InvitationInfo } from '@taiga/data';
+import { genericResponseError, ProjectInvitationInfo } from '@taiga/data';
 import { catchError, EMPTY, map, of } from 'rxjs';
 import {
   revokeInvitation,
@@ -32,7 +32,7 @@ export class RevokeInvitationService {
   ) {}
 
   public invitationCtaRevokeError(
-    invitation: InvitationInfo,
+    invitation: ProjectInvitationInfo,
     httpResponse: HttpErrorResponse
   ) {
     return this.projectApiService.getProject(invitation.project.slug).pipe(

@@ -12,7 +12,7 @@ import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
-import { InvitationInfo, Project } from '@taiga/data';
+import { ProjectInvitationInfo, Project } from '@taiga/data';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
@@ -33,9 +33,11 @@ export const ProjectInvitationCTAGuard: CanActivateFn = (
   const token = route.params.token as string;
 
   return http
-    .get<InvitationInfo>(`${config.apiUrl}/projects/invitations/${token}`)
+    .get<ProjectInvitationInfo>(
+      `${config.apiUrl}/projects/invitations/${token}`
+    )
     .pipe(
-      mergeMap((invitation: InvitationInfo) => {
+      mergeMap((invitation: ProjectInvitationInfo) => {
         return projectApiService.getProject(invitation.project.id).pipe(
           catchError(() => {
             return of(null);

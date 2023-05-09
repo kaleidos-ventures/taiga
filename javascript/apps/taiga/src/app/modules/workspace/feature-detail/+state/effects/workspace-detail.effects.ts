@@ -222,7 +222,6 @@ export class WorkspaceDetailEffects {
       return this.actions$.pipe(
         ofType(workspaceDetailEventActions.workspaceDeleted),
         tap((action) => {
-          console.log('kick del detalle al usuario');
           this.appService.toastNotification({
             message: 'delete.deleted_worspace',
             paramsMessage: { name: action.name },

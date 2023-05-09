@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Workspace } from '@taiga/data';
+import { User, Workspace } from '@taiga/data';
 import { request } from './api.helpers';
 
 export const createWorkspace = (name: string) => {
@@ -26,5 +26,31 @@ export const createWorkspaceRequest = (
   return request<Workspace>('POST', '/workspaces', {
     name,
     color: 1,
+  });
+};
+
+export const inviteToWorkspaceRequest = (
+  workspaceId: Workspace['id'],
+  users: string[]
+  // autoAccept: boolean
+) => {
+  return request<{
+    invitations: {
+      id: string;
+      user: Pick<User, 'username' | 'fullName' | 'color'>;
+      email: string | null;
+    }[];
+    alreadyMembers: number;
+  }>('POST', `/workspaces/${workspaceId}/invitations`, {
+    invitations: users.map((user) => ({ usernameOrEmail: user })),
+  }).then((response) => {
+    // TODO: pending to add accept workspace invitation
+    // if (autoAccept) {
+    //   response.body.invitations.forEach((invitation) => {
+    //     request('POST', `/workspaces/${workspaceId}/invitations/${invitation.id}/accept`);
+    //   });
+    // }
+
+    return response;
   });
 };

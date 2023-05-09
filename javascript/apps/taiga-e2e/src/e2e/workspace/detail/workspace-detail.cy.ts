@@ -168,7 +168,8 @@ describe('Workspace detail [member]', () => {
     cy.getBySel('delete-workspace-modal-title').should('be.visible');
   });
 
-  it('Delete member', () => {
+  // TODO: pending to add accept workspace invitation api, use and complete `inviteToWorkspaceRequest` helper
+  it.skip('Delete member', () => {
     const randNum = randNumber({ min: 0, max: 10 });
     cy.getBySel('workspace-item')
       .eq(randNum)
@@ -186,7 +187,7 @@ describe('Workspace detail [member]', () => {
     });
   });
 
-  it('Delete member - undo', () => {
+  it.skip('Delete member - undo', () => {
     const randNum = randNumber({ min: 0, max: 10 });
     cy.getBySel('workspace-item')
       .eq(randNum)

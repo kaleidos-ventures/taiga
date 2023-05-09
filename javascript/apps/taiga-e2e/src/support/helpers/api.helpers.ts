@@ -42,8 +42,7 @@ export function request<T>(
 export function getEmailsPreviews(): Cypress.Chainable<
   Cypress.Response<{
     emails: {
-      preview: string;
-      localPreview: string;
+      previewUrl: string;
     }[];
   }>
 > {

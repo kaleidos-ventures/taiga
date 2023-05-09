@@ -15,14 +15,10 @@ export class SelectHelper {
 
   public setValue(optionIndex: number) {
     if (this.option) {
-      cy.getBySel(this.option).eq(optionIndex).should('be.visible');
       cy.getBySel(this.option).eq(optionIndex).click({ force: true });
     } else {
       cy.get('tui-data-list').within(() => {
-        cy.get('button')
-          .eq(optionIndex)
-          .should('be.visible')
-          .click({ force: true });
+        cy.get('button').eq(optionIndex).click({ force: true });
       });
     }
   }

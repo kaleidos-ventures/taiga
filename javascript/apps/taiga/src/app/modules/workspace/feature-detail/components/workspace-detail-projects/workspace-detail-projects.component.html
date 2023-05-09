@@ -16,6 +16,7 @@ Copyright (c) 2023-present Kaleidos INC
           appearance="primary"
           [routerLink]="['/new-project']"
           [queryParams]="{ workspace: vm.workspace.id }"
+          data-test="create-project"
           tuiButton>
           {{ t('common_project.create_project') }}
         </a>

@@ -39,6 +39,7 @@ import {
 import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+import { ExternalLinkModule } from '~/app/shared/directives/external-link/external-link.module';
 import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
 
 @UntilDestroy()
@@ -55,6 +56,7 @@ import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module
     GetUrlPipeModule,
     ButtonLoadingModule,
     TuiLinkModule,
+    ExternalLinkModule,
   ],
   providers: [
     {

@@ -89,7 +89,7 @@ export const submitVisible = () =>
 export const cancelProject = () => cy.getBySel('cancel-create-project').click();
 export const submitProject = () => cy.getBySel('submit-create-project').click();
 export const createProjectWsDetail = (projectName: string) => {
-  cy.getBySel('create-project-card').should('be.visible').click();
+  cy.getBySel('create-project').should('be.visible').click();
   cy.getBySel('select-workspace').should('be.visible');
   cy.getBySel('templates-wrapper').should('be.visible');
   selectBlankProject();

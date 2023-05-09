@@ -18,8 +18,10 @@ describe('Signup (basic)', () => {
   beforeEach(() => {
     cy.visit('/signup');
     cy.initAxe();
-    cy.tgCheckA11y();
     displaySignUpForm();
+  });
+
+  it('is a11y', () => {
     cy.tgCheckA11y();
   });
 

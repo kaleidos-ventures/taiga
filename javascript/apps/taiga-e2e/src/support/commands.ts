@@ -17,13 +17,7 @@
 // ***********************************************
 
 function initAxeCommand(): void {
-  // https://github.com/component-driven/cypress-axe/issues/84
-  cy.readFile('../../node_modules/axe-core/axe.js').then((source: string) => {
-    return cy.window({ log: false }).then((window) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      window.eval(source);
-    });
-  });
+  cy.injectAxe();
 }
 
 Cypress.Commands.add('initAxe', initAxeCommand);

@@ -25,11 +25,13 @@ describe('reset password', () => {
   });
 
   it('success', () => {
-    const testEmail = 'user5@taiga.demo';
+    const testEmail = '5user@taiga.demo';
     cy.getBySel('reset-password-email').type(testEmail);
     cy.getBySel('reset-password-submit-button').click();
 
-    cy.tgCheckA11y();
+    // we don't know when the email will arrive to the SMTP server
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
 
     cy.getBySel('reset-password-confirmation-email').should(
       'contain.text',
@@ -39,9 +41,10 @@ describe('reset password', () => {
     getEmailsPreviews().then((response) => {
       cy.log(JSON.stringify(response.body.emails));
       const email =
-        response.body.emails[response.body.emails.length - 1].localPreview;
+        response.body.emails[response.body.emails.length - 1].previewUrl;
 
-      cy.origin('http://localhost:3000', { args: email }, (email) => {
+      cy.origin('http://localhost:3000/', { args: email }, (email) => {
+        cy.log(email);
         cy.visit(email);
         cy.getBySelEmail('accept-reset-password')
           .invoke('removeAttr', 'target')

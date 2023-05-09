@@ -32,10 +32,10 @@ export interface StoryDetail extends Story {
   };
   createdBy: createdBy;
   createdAt: string;
-  titleUpdatedAt: string;
-  titleUpdatedBy: Pick<User, 'username' | 'fullName' | 'color'>;
-  descriptionUpdatedAt: string;
-  descriptionUpdatedBy: Pick<User, 'username' | 'fullName' | 'color'>;
+  titleUpdatedAt: string | null;
+  titleUpdatedBy: Pick<User, 'username' | 'fullName' | 'color'> | null;
+  descriptionUpdatedAt: string | null;
+  descriptionUpdatedBy: Pick<User, 'username' | 'fullName' | 'color'> | null;
 }
 
 export interface StoryUpdate {

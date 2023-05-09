@@ -121,7 +121,7 @@ Copyright (c) 2023-present Kaleidos INC
         </form>
 
         <ng-container
-          *ngIf="vm.conflict"
+          *ngIf="vm.conflict && vm.story.descriptionUpdatedBy"
           tgRestoreFocus="edit-description">
           <div class="conflict-wrapper">
             <tg-field-conflict

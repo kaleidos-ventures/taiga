@@ -30,6 +30,8 @@ export interface SignUpInput {
   acceptTerms: boolean;
   acceptProjectInvitation: boolean;
   projectInvitationToken?: string;
+  acceptWorkspaceInvitation: boolean;
+  workspaceInvitationToken?: string;
   lang: Language['code'];
 }
 

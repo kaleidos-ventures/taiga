@@ -27,6 +27,10 @@ export const SocialSignupGuard: CanActivateFn = (
   const projectInvitationToken = urlParams.get('projectInvitationToken') || '';
   const acceptProjectInvitation =
     urlParams.get('acceptProjectInvitation') === 'true' || false;
+  const workspaceInvitationToken =
+    urlParams.get('workspaceInvitationToken') || '';
+  const acceptWorkspaceInvitation =
+    urlParams.get('acceptWorkspaceInvitation') === 'true' || false;
 
   requestAnimationFrame(() => {
     store.dispatch(
@@ -36,6 +40,8 @@ export const SocialSignupGuard: CanActivateFn = (
         social,
         projectInvitationToken,
         acceptProjectInvitation,
+        workspaceInvitationToken,
+        acceptWorkspaceInvitation,
       })
     );
   });

@@ -21,28 +21,70 @@ export const login = createAction(
   props<{
     username: User['username'];
     password: string;
-    projectInvitationToken: string;
-    next: string;
-    acceptProjectInvitation?: boolean;
-    invitationStatus?: string;
-    nextProjectId?: string;
   }>()
 );
-
-export const logout = createAction('[Auth] logout');
 
 export const loginSuccess = createAction(
   '[Auth] login success',
   props<{
     user?: User;
     auth: Auth;
-    projectInvitationToken?: string;
-    next?: string;
-    acceptProjectInvitation?: boolean;
+  }>()
+);
+
+export const loginProjectInvitation = createAction(
+  '[Auth] login project invitation',
+  props<{
+    username: User['username'];
+    password: string;
     invitationStatus?: string;
+    projectInvitationToken: string;
+    acceptProjectInvitation?: boolean;
+    next: string;
     nextProjectId?: string;
   }>()
 );
+
+export const loginProjectInvitationSuccess = createAction(
+  '[Auth] login project invitation success',
+  props<{
+    user?: User;
+    auth: Auth;
+    invitationStatus?: string;
+    projectInvitationToken?: string;
+    acceptProjectInvitation?: boolean;
+    next?: string;
+    nextProjectId?: string;
+  }>()
+);
+
+export const loginWorkspaceInvitation = createAction(
+  '[Auth] login workspace invitation',
+  props<{
+    username: User['username'];
+    password: string;
+    invitationStatus?: string;
+    workspaceInvitationToken?: string;
+    acceptWorkspaceInvitation?: boolean;
+    next: string;
+    nextWorkspaceId?: string;
+  }>()
+);
+
+export const loginWorkspaceInvitationSuccess = createAction(
+  '[Auth] login workspace invitation success',
+  props<{
+    user?: User;
+    auth: Auth;
+    invitationStatus?: string;
+    workspaceInvitationToken?: string;
+    acceptWorkspaceInvitation?: boolean;
+    next?: string;
+    nextWorkspaceId?: string;
+  }>()
+);
+
+export const logout = createAction('[Auth] logout');
 
 export const setLoginError = createAction(
   '[Auth] login error',
@@ -59,6 +101,8 @@ export const signup = createAction(
     resend: boolean;
     acceptProjectInvitation: boolean;
     projectInvitationToken?: string;
+    acceptWorkspaceInvitation: boolean;
+    workspaceInvitationToken?: string;
   }>()
 );
 
@@ -75,6 +119,8 @@ export const socialSignup = createAction(
     redirect?: string;
     projectInvitationToken?: string;
     acceptProjectInvitation?: boolean;
+    workspaceInvitationToken?: string;
+    acceptWorkspaceInvitation?: boolean;
   }>()
 );
 

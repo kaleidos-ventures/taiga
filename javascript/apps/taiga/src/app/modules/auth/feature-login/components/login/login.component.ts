@@ -13,6 +13,8 @@ import { RxState } from '@rx-angular/state';
 import {
   initLoginPage,
   login,
+  loginProjectInvitation,
+  loginWorkspaceInvitation,
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { selectLoginError } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
@@ -37,6 +39,9 @@ export class LoginComponent implements OnInit {
   @Input() public next = '';
   @Input() public invitationStatus = '';
   @Input() public nextProjectId = '';
+  @Input() public workspaceInvitationToken = '';
+  @Input() public acceptWorkspaceInvitation = undefined;
+  @Input() public nextWorkspaceId = '';
 
   public readonly model$ = this.state.select();
 
@@ -67,17 +72,41 @@ export class LoginComponent implements OnInit {
   public onSubmit() {
     const { username, password } = this.loginForm.value as Login;
     if (this.loginForm.valid) {
-      this.store.dispatch(
-        login({
-          username,
-          password,
-          projectInvitationToken: this.projectInvitationToken,
-          next: this.next,
-          acceptProjectInvitation: this.acceptProjectInvitation === 'true',
-          invitationStatus: this.invitationStatus,
-          nextProjectId: this.nextProjectId ? this.nextProjectId : undefined,
-        })
-      );
+      if (this.projectInvitationToken) {
+        this.store.dispatch(
+          loginProjectInvitation({
+            username,
+            password,
+            projectInvitationToken: this.projectInvitationToken,
+            next: this.next,
+            acceptProjectInvitation: this.acceptProjectInvitation === 'true',
+            invitationStatus: this.invitationStatus,
+            nextProjectId: this.nextProjectId ? this.nextProjectId : undefined,
+          })
+        );
+      } else if (this.workspaceInvitationToken) {
+        this.store.dispatch(
+          loginWorkspaceInvitation({
+            username,
+            password,
+            invitationStatus: this.invitationStatus,
+            next: this.next,
+            workspaceInvitationToken: this.workspaceInvitationToken,
+            acceptWorkspaceInvitation:
+              this.acceptWorkspaceInvitation === 'true',
+            nextWorkspaceId: this.nextWorkspaceId
+              ? this.nextWorkspaceId
+              : undefined,
+          })
+        );
+      } else {
+        this.store.dispatch(
+          login({
+            username,
+            password,
+          })
+        );
+      }
     } else {
       this.loginForm.markAllAsTouched();
       this.cd.detectChanges();

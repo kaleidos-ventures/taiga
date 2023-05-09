@@ -13,17 +13,34 @@ import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService, UsersApiService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
-import { Auth, InvitationInfo, User } from '@taiga/data';
+import {
+  Auth,
+  ProjectInvitationInfo,
+  WorkspaceInvitationInfo,
+  User,
+} from '@taiga/data';
 import { throwError } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
-import { loginSuccess } from '../data-access/+state/actions/auth.actions';
+import {
+  loginSuccess,
+  loginProjectInvitationSuccess,
+  loginWorkspaceInvitationSuccess,
+} from '../data-access/+state/actions/auth.actions';
 import { AuthService } from '../services/auth.service';
-type InvitationVerification = Pick<InvitationInfo, 'project' | 'status'>;
+type ProjectInvitationVerification = Pick<
+  ProjectInvitationInfo,
+  'project' | 'status'
+>;
+type WorkspaceInvitationVerification = Pick<
+  WorkspaceInvitationInfo,
+  'workspace' | 'status'
+>;
 type VerificationData = {
   auth: Auth;
-  projectInvitation: InvitationVerification;
+  projectInvitation: ProjectInvitationVerification;
+  workspaceInvitation: WorkspaceInvitationVerification;
 };
 
 export const VerifyEmailGuard: CanActivateFn = (
@@ -43,7 +60,8 @@ export const VerifyEmailGuard: CanActivateFn = (
   return http
     .post<{
       auth: Auth;
-      projectInvitation: InvitationVerification;
+      projectInvitation: ProjectInvitationVerification;
+      workspaceInvitation: WorkspaceInvitationVerification;
     }>(`${config.apiUrl}/users/verify`, {
       token: verifyParam,
     })
@@ -68,15 +86,32 @@ export const VerifyEmailGuard: CanActivateFn = (
           );
       }),
       map(({ user, verification }) => {
-        const id = verification.projectInvitation?.project?.id;
-        const slug = verification.projectInvitation?.project?.slug;
+        const projectId = verification.projectInvitation?.project?.id;
+        const workspaceId = verification.workspaceInvitation?.workspace?.id;
         const data = {
           user,
           auth: verification.auth,
-          next: id ? `/project/${id}/${slug}` : undefined,
         };
-
-        store.dispatch(loginSuccess(data));
+        if (projectId) {
+          const projectSlug = verification.projectInvitation?.project?.slug;
+          store.dispatch(
+            loginProjectInvitationSuccess({
+              next: `/project/${projectId}/${projectSlug}`,
+              ...data,
+            })
+          );
+        } else if (workspaceId) {
+          const workspaceSlug =
+            verification.workspaceInvitation?.workspace?.slug;
+          store.dispatch(
+            loginWorkspaceInvitationSuccess({
+              next: `/workspace/${workspaceId}/${workspaceSlug}`,
+              ...data,
+            })
+          );
+        } else {
+          store.dispatch(loginSuccess(data));
+        }
         return true;
       }),
       catchError((httpResponse: HttpErrorResponse) => {

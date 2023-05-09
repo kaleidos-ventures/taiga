@@ -39,13 +39,18 @@ export class AuthFeatureSignUpComponent implements OnInit {
     password: '',
     acceptProjectInvitation: true,
     projectInvitationToken: '',
+    acceptWorkspaceInvitation: true,
+    workspaceInvitationToken: '',
   };
   public params: InvitationParams = {
     email: '',
     project: '',
+    workspace: '',
     projectInvitationToken: '',
     slug: '',
     acceptProjectInvitation: true,
+    acceptWorkspaceInvitation: true,
+    workspaceInvitationToken: '',
   };
   public readOnlyEmail = false;
 
@@ -66,6 +71,7 @@ export class AuthFeatureSignUpComponent implements OnInit {
       this.params = {
         ...params,
         acceptProjectInvitation: params.acceptProjectInvitation === 'true',
+        acceptWorkspaceInvitation: params.acceptWorkspaceInvitation === 'true',
       } as InvitationParams;
       if (this.params.email) {
         this.readOnlyEmail = true;
@@ -79,6 +85,16 @@ export class AuthFeatureSignUpComponent implements OnInit {
       if ('acceptProjectInvitation' in this.params) {
         this.signUpFormData.acceptProjectInvitation =
           this.params?.acceptProjectInvitation;
+        this.cd.detectChanges();
+      }
+      if (this.params.workspaceInvitationToken) {
+        this.displaySignUpForm(true);
+        this.signUpFormData.workspaceInvitationToken =
+          this.params.workspaceInvitationToken;
+      }
+      if ('acceptWorkspaceInvitation' in this.params) {
+        this.signUpFormData.acceptWorkspaceInvitation =
+          this.params?.acceptWorkspaceInvitation;
         this.cd.detectChanges();
       }
     });
@@ -106,6 +122,8 @@ export class AuthFeatureSignUpComponent implements OnInit {
       password: '',
       acceptProjectInvitation: true,
       projectInvitationToken: '',
+      acceptWorkspaceInvitation: true,
+      workspaceInvitationToken: '',
     };
     this.displayForm = false;
   }

@@ -15,6 +15,7 @@ import {
   WorkspaceCreation,
   WorkspaceMembership,
   InvitationWorkspaceMember,
+  InvitationWorkspaceInfo,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -163,5 +164,12 @@ export class WorkspaceApiService {
           };
         })
       );
+  }
+
+  public acceptInvitationToken(token: string) {
+    return this.http.post<InvitationWorkspaceInfo>(
+      `${this.config.apiUrl}/workspaces/invitations/${token}/accept`,
+      {}
+    );
   }
 }

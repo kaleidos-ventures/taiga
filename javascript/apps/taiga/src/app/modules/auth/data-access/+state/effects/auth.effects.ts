@@ -13,7 +13,12 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
-import { AuthApiService, ProjectApiService, UsersApiService } from '@taiga/api';
+import {
+  AuthApiService,
+  ProjectApiService,
+  UsersApiService,
+  WorkspaceApiService,
+} from '@taiga/api';
 import { Auth, ErrorManagementOptions, SignUpError } from '@taiga/data';
 import { EMPTY, throwError } from 'rxjs';
 import {
@@ -33,12 +38,81 @@ import { ButtonLoadingService } from '~/app/shared/directives/button-loading/but
 import { filterNil } from '~/app/shared/utils/operators';
 import * as AuthActions from '../actions/auth.actions';
 import { selectUser } from '../selectors/auth.selectors';
+import { InvitationWorkspaceInfo } from '@taiga/data';
 
 @Injectable()
 export class AuthEffects {
   public login$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.login),
+      pessimisticUpdate({
+        run: ({ username, password }) => {
+          this.buttonLoadingService.start();
+          return this.authApiService
+            .login({
+              username,
+              password,
+            })
+            .pipe(
+              switchMap(this.buttonLoadingService.waitLoading()),
+              mergeMap((auth: Auth) => {
+                this.authService.setAuth(auth);
+                return this.usersApiService.me().pipe(
+                  map((user) => {
+                    this.authService.setUser(user);
+                    return { user, auth };
+                  })
+                );
+              }),
+              map(({ user, auth }) => {
+                return AuthActions.loginSuccess({
+                  user,
+                  auth,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+
+          this.appService.errorManagement(httpResponse, {
+            500: {
+              type: 'toast',
+              options: {
+                label: 'errors.login',
+                message: 'errors.please_refresh',
+                status: TuiNotification.Error,
+              },
+            },
+          });
+          return AuthActions.setLoginError({ loginError: true });
+        },
+      })
+    );
+  });
+
+  public loginRedirect$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(AuthActions.loginSuccess),
+        switchMap(() => {
+          return this.store.select(selectUser).pipe(
+            filterNil(),
+            take(1),
+            mergeMap(() => {
+              void this.router.navigate(['/']);
+              return EMPTY;
+            })
+          );
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  public loginProjectInvitation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.loginProjectInvitation),
       pessimisticUpdate({
         run: ({
           username,
@@ -67,7 +141,7 @@ export class AuthEffects {
                 );
               }),
               map(({ user, auth }) => {
-                return AuthActions.loginSuccess({
+                return AuthActions.loginProjectInvitationSuccess({
                   user,
                   auth,
                   projectInvitationToken,
@@ -98,10 +172,10 @@ export class AuthEffects {
     );
   });
 
-  public loginRedirect$ = createEffect(
+  public loginProjectInvitationRedirect$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(AuthActions.loginSuccess),
+        ofType(AuthActions.loginProjectInvitationSuccess),
         switchMap(
           ({
             next,
@@ -202,6 +276,152 @@ export class AuthEffects {
     { dispatch: false }
   );
 
+  public loginWorkspaceInvitation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.loginWorkspaceInvitation),
+      pessimisticUpdate({
+        run: ({
+          username,
+          password,
+          invitationStatus,
+          workspaceInvitationToken,
+          acceptWorkspaceInvitation,
+          next,
+          nextWorkspaceId,
+        }) => {
+          this.buttonLoadingService.start();
+          return this.authApiService
+            .login({
+              username,
+              password,
+            })
+            .pipe(
+              switchMap(this.buttonLoadingService.waitLoading()),
+              mergeMap((auth: Auth) => {
+                this.authService.setAuth(auth);
+                return this.usersApiService.me().pipe(
+                  map((user) => {
+                    this.authService.setUser(user);
+                    return { user, auth };
+                  })
+                );
+              }),
+              map(({ user, auth }) => {
+                return AuthActions.loginWorkspaceInvitationSuccess({
+                  user,
+                  auth,
+                  invitationStatus,
+                  workspaceInvitationToken,
+                  acceptWorkspaceInvitation,
+                  next,
+                  nextWorkspaceId,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.buttonLoadingService.error();
+
+          this.appService.errorManagement(httpResponse, {
+            500: {
+              type: 'toast',
+              options: {
+                label: 'errors.login',
+                message: 'errors.please_refresh',
+                status: TuiNotification.Error,
+              },
+            },
+          });
+          return AuthActions.setLoginError({ loginError: true });
+        },
+      })
+    );
+  });
+
+  public loginWorkspaceInvitationRedirect$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(AuthActions.loginWorkspaceInvitationSuccess),
+        switchMap(
+          ({
+            invitationStatus,
+            acceptWorkspaceInvitation,
+            workspaceInvitationToken,
+            next,
+            nextWorkspaceId,
+          }) => {
+            return this.store.select(selectUser).pipe(
+              filterNil(),
+              take(1),
+              mergeMap(() => {
+                if (workspaceInvitationToken && acceptWorkspaceInvitation) {
+                  return this.workspaceApiService
+                    .acceptInvitationToken(workspaceInvitationToken)
+                    .pipe(
+                      map((invitation: InvitationWorkspaceInfo) => {
+                        if (next) {
+                          void this.router.navigate([next], {
+                            state: {
+                              invite: invitationStatus,
+                            },
+                          });
+                        } else if (invitation.workspace) {
+                          void this.router.navigate(
+                            [
+                              `workspace/${invitation.workspace.id}/${invitation.workspace.slug}`,
+                            ],
+                            {
+                              state: {
+                                invite: invitationStatus,
+                              },
+                            }
+                          );
+                        } else {
+                          void this.router.navigate(['/'], {
+                            state: {
+                              invite: invitationStatus,
+                            },
+                          });
+                        }
+                        return EMPTY;
+                      }),
+                      catchError(() => {
+                        void this.router.navigate(['/'], {
+                          state: { invite: invitationStatus },
+                        });
+
+                        return EMPTY;
+                      })
+                    );
+                } else if (
+                  workspaceInvitationToken &&
+                  nextWorkspaceId &&
+                  !acceptWorkspaceInvitation
+                ) {
+                  void this.router.navigate([next], {
+                    state: { invite: invitationStatus },
+                  });
+                  return EMPTY;
+                } else if (!workspaceInvitationToken && next) {
+                  void this.router.navigate([next], {
+                    state: { invite: invitationStatus },
+                  });
+                  return EMPTY;
+                } else {
+                  void this.router.navigate(['/'], {
+                    state: { invite: invitationStatus },
+                  });
+                  return EMPTY;
+                }
+              })
+            );
+          }
+        )
+      );
+    },
+    { dispatch: false }
+  );
+
   public logout$ = createEffect(
     () => {
       return this.actions$.pipe(
@@ -249,6 +469,8 @@ export class AuthEffects {
           resend,
           acceptProjectInvitation,
           projectInvitationToken,
+          acceptWorkspaceInvitation,
+          workspaceInvitationToken,
         }) => {
           this.buttonLoadingService.start();
           return this.languageService.getUserLanguage().pipe(
@@ -261,6 +483,8 @@ export class AuthEffects {
                   acceptTerms,
                   acceptProjectInvitation,
                   projectInvitationToken,
+                  acceptWorkspaceInvitation,
+                  workspaceInvitationToken,
                   lang: lang.code,
                 })
                 .pipe(
@@ -444,6 +668,8 @@ export class AuthEffects {
           social,
           projectInvitationToken,
           acceptProjectInvitation,
+          workspaceInvitationToken,
+          acceptWorkspaceInvitation,
         }) => {
           return this.languageService.getUserLanguage().pipe(
             switchMap((lang) => {
@@ -463,10 +689,25 @@ export class AuthEffects {
                     const loginData = {
                       user,
                       auth,
-                      acceptProjectInvitation,
-                      projectInvitationToken,
                     };
-                    return AuthActions.loginSuccess(loginData);
+                    if (acceptProjectInvitation || acceptProjectInvitation) {
+                      return AuthActions.loginProjectInvitationSuccess({
+                        ...loginData,
+                        acceptProjectInvitation,
+                        projectInvitationToken,
+                      });
+                    } else if (
+                      workspaceInvitationToken ||
+                      acceptWorkspaceInvitation
+                    ) {
+                      return AuthActions.loginWorkspaceInvitationSuccess({
+                        ...loginData,
+                        acceptWorkspaceInvitation,
+                        workspaceInvitationToken,
+                      });
+                    } else {
+                      return AuthActions.loginSuccess(loginData);
+                    }
                   })
                 );
             })
@@ -532,6 +773,7 @@ export class AuthEffects {
     private languageService: LanguageService,
     private usersApiService: UsersApiService,
     private projectApiService: ProjectApiService,
+    private workspaceApiService: WorkspaceApiService,
     private appService: AppService,
     private store: Store,
     private revokeInvitationService: RevokeInvitationService

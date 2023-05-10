@@ -51,7 +51,7 @@ Welcome to our open source software community!
 
 If you'd like to know the news and events about Taiga, go to [Events and Announcements](https://community.taiga.io/c/announcements/5)
 
-If you'd like to help us shape to Taiga, go to [Help us shape Taiga](https://community.taiga.io/c/give-feedback/7)
+If you'd like to help us shape to Taiga, go to [Feature requests](https://community.taiga.io/c/taiga-next/feature-requests/14)
 
 ## Code of Conduct
 

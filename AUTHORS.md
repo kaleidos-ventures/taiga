@@ -3,6 +3,7 @@ Currently, PRIMARY AUTHORS are:
 - Miryam González <miryam.gonzalez@kaleidos.net>
 - Natacha Menjibar <natacha.menjibar@kaleidos.net>
 - Esther Moreno <esther.moreno@kaleidos.net>
+- Guillermo Adán <guillermo.adan@kaleidos.net>
 - Juanfran Alcántara <juanfran.alcantara@kaleidos.net>
 - Ramiro Sánchez <ramiro.sanchez@kaleidos.net>
 - Xavi Julian <xavier.julian@kaleidos.net>

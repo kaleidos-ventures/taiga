@@ -13,9 +13,10 @@ from taiga.base.utils.colors import generate_random_color
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
-from taiga.projects.invitations import services as invitations_services
+from taiga.projects.invitations import services as project_invitations_services
 from taiga.users import repositories as users_repositories
 from taiga.users import services as users_services
+from taiga.workspaces.invitations import services as workspace_invitations_services
 
 
 async def social_login(
@@ -37,7 +38,8 @@ async def social_login(
                 email=email, username=username, full_name=full_name, password=None, lang=lang, color=color
             )
             await users_services.verify_user(user)
-            await invitations_services.update_user_projects_invitations(user=user)
+            await project_invitations_services.update_user_projects_invitations(user=user)
+            await workspace_invitations_services.update_user_workspaces_invitations(user=user)
         elif user and not user.is_active:
             # update existing (but not verified) user with social login data and verify it
             # username and email are the same
@@ -47,7 +49,8 @@ async def social_login(
             user.lang = lang
             user = await users_repositories.update_user(user=user)
             await users_services.verify_user(user)
-            await invitations_services.update_user_projects_invitations(user=user)
+            await project_invitations_services.update_user_projects_invitations(user=user)
+            await workspace_invitations_services.update_user_workspaces_invitations(user=user)
         elif user:
             # the user existed and now is adding a new login method
             # so we send her a warning email

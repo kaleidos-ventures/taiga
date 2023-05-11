@@ -7,7 +7,8 @@
  */
 
 import { User, Workspace } from '@taiga/data';
-import { request } from './api.helpers';
+import { getEmails, request } from './api.helpers';
+import { loginRequest } from './user.helpers';
 
 export const createWorkspace = (name: string) => {
   cy.getBySel('add-workspace-button').should('be.visible');
@@ -31,8 +32,8 @@ export const createWorkspaceRequest = (
 
 export const inviteToWorkspaceRequest = (
   workspaceId: Workspace['id'],
-  users: string[]
-  // autoAccept: boolean
+  user: string,
+  autoAccept = true
 ) => {
   return request<{
     invitations: {
@@ -42,15 +43,40 @@ export const inviteToWorkspaceRequest = (
     }[];
     alreadyMembers: number;
   }>('POST', `/workspaces/${workspaceId}/invitations`, {
-    invitations: users.map((user) => ({ usernameOrEmail: user })),
-  }).then((response) => {
-    // TODO: pending to add accept workspace invitation
-    // if (autoAccept) {
-    //   response.body.invitations.forEach((invitation) => {
-    //     request('POST', `/workspaces/${workspaceId}/invitations/${invitation.id}/accept`);
-    //   });
-    // }
+    invitations: [{ usernameOrEmail: user }],
+  }).then(() => {
+    return getEmails()
+      .then((result) => {
+        const email = result.body.emails.pop();
 
-    return response;
+        if (email) {
+          const regex = new RegExp('/accept-workspace-invitation/(.*?(?="))');
+          const match = regex.exec(email.html);
+
+          if (match) {
+            return match[1];
+          }
+        }
+
+        throw new Error('email token not found');
+      })
+      .then((token) => {
+        if (autoAccept) {
+          loginRequest(user, '123123')
+            .then((auth) => {
+              void request(
+                'POST',
+                `/workspaces/invitations/${token}/accept`,
+                undefined,
+                {
+                  auth: {
+                    bearer: auth.body.token,
+                  },
+                }
+              );
+            })
+            .catch(console.error);
+        }
+      });
   });
 };

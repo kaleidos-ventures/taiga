@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { randAnimal, randNumber, randText } from '@ngneat/falso';
+import { randAnimal, randDepartment, randText } from '@ngneat/falso';
 import {
   EmptyWorkspaceAdminMockFactory,
   ProjectMockFactory,
@@ -23,7 +23,10 @@ import {
   removeUser,
   removeUserUndo,
 } from '@test/support/helpers/workspace-detail.helpers';
-import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
+import {
+  createWorkspaceRequest,
+  inviteToWorkspaceRequest,
+} from '@test/support/helpers/workspace.helpers';
 
 describe('Workspace list', () => {
   const workspace = WorkspaceMockFactory();
@@ -169,39 +172,43 @@ describe('Workspace detail [member]', () => {
   });
 
   // TODO: pending to add accept workspace invitation api, use and complete `inviteToWorkspaceRequest` helper
-  it.skip('Delete member', () => {
-    const randNum = randNumber({ min: 0, max: 10 });
-    cy.getBySel('workspace-item')
-      .eq(randNum)
-      .within(() => {
-        cy.getBySel('workspace-item-title').click();
-      });
-    displayWorkspacePeople();
-    cy.getBySel('remove-user')
-      .first()
-      .closest('tg-ui-dtable-row')
-      .then((row) => cy.wrap(row).as('row'));
-    removeUser();
-    cy.get('@row').then((row) => {
-      cy.wrap(row).should('not.exist');
-    });
+  it('Delete member', () => {
+    createWorkspaceRequest(randDepartment())
+      .then((request) => {
+        cy.visit(`/workspace/${request.body.id}/${request.body.slug}`);
+
+        void inviteToWorkspaceRequest(request.body.id, '2user');
+
+        displayWorkspacePeople();
+
+        cy.getBySel('remove-user')
+          .first()
+          .closest('tg-ui-dtable-row')
+          .then((row) => cy.wrap(row).as('row'));
+
+        removeUser();
+
+        cy.get('@row').should('not.exist');
+      })
+      .catch(console.error);
   });
 
-  it.skip('Delete member - undo', () => {
-    const randNum = randNumber({ min: 0, max: 10 });
-    cy.getBySel('workspace-item')
-      .eq(randNum)
-      .within(() => {
-        cy.getBySel('workspace-item-title').click();
-      });
-    displayWorkspacePeople();
-    cy.getBySel('remove-user')
-      .first()
-      .closest('tg-ui-dtable-row')
-      .then((row) => cy.wrap(row).as('row'));
-    removeUserUndo();
-    cy.get('@row').then((row) => {
-      cy.wrap(row).should('exist');
-    });
+  it('Delete member - undo', () => {
+    createWorkspaceRequest(randDepartment())
+      .then((request) => {
+        cy.visit(`/workspace/${request.body.id}/${request.body.slug}`);
+
+        void inviteToWorkspaceRequest(request.body.id, '2user');
+
+        displayWorkspacePeople();
+
+        cy.getBySel('remove-user')
+          .first()
+          .closest('tg-ui-dtable-row')
+          .then((row) => cy.wrap(row).as('row'));
+        removeUserUndo();
+        cy.get('@row').should('exist');
+      })
+      .catch(console.error);
   });
 });

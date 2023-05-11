@@ -8,9 +8,12 @@
 
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { User, Workspace } from '@taiga/data';
+import { filter } from 'rxjs';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import {
   workspaceDetailApiActions,
   workspaceDetailEventActions,
@@ -98,8 +101,19 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
           channel: `workspaces.${workspace.id}`,
           type: 'workspacememberships.delete',
         })
-        .pipe(untilDestroyed(this))
-        .subscribe((eventResponse) => {
+        .pipe(
+          untilDestroyed(this),
+          concatLatestFrom(() =>
+            this.store.select(selectUser).pipe(filterNil())
+          ),
+          filter(([eventResponse, user]) => {
+            return (
+              eventResponse.event.content.membership.user.username !==
+              user.username
+            );
+          })
+        )
+        .subscribe(([eventResponse]) => {
           this.store.dispatch(
             workspaceDetailEventActions.removeMember({
               id: workspace.id,

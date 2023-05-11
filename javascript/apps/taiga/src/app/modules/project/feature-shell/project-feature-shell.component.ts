@@ -40,6 +40,9 @@ import {
   projectEventActions,
 } from '../data-access/+state/actions/project.actions';
 import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
+import { Router } from '@angular/router';
+import { AppService } from '~/app/services/app.service';
+import { TuiNotification } from '@taiga-ui/core';
 
 @UntilDestroy()
 @Component({
@@ -92,7 +95,9 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       showBannerOnRevoke: boolean;
     }>,
     private userStorageService: UserStorageService,
-    private location: Location
+    private location: Location,
+    private router: Router,
+    private appService: AppService
   ) {
     this.watchProject();
     this.state.connect(
@@ -243,11 +248,20 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
         }
       });
 
-    this.wsService
-      .userEvents<{
-        membership: WorkspaceMembership;
-      }>('workspacememberships.delete')
-      .pipe(untilDestroyed(this))
+    const userLostPermissions = this.wsService.userEvents<{
+      membership: WorkspaceMembership;
+    }>('workspacememberships.delete');
+
+    userLostPermissions
+      .pipe(
+        untilDestroyed(this),
+        filter((eventResponse) => {
+          return (
+            eventResponse.event.content.membership.workspace.id !==
+            this.state.get('project').workspace.id
+          );
+        })
+      )
       .subscribe((eventResponse) => {
         if (eventResponse.event.content.membership.workspace) {
           this.store.dispatch(
@@ -258,6 +272,32 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
           );
         }
       });
+
+    // user lost permissions for the current project
+    userLostPermissions
+      .pipe(
+        untilDestroyed(this),
+        filter((eventResponse) => {
+          return (
+            eventResponse.event.content.membership.workspace.id ===
+            this.state.get('project').workspace.id
+          );
+        })
+      )
+      .subscribe(() => {
+        this.userLoseMembership();
+      });
+  }
+
+  public userLoseMembership() {
+    void this.router.navigate(['/']);
+    this.appService.toastNotification({
+      message: 'people.remove.no_longer_member',
+      paramsMessage: { workspace: this.state.get('project').workspace.name },
+      status: TuiNotification.Error,
+      scope: 'workspace',
+      closeOnNavigation: false,
+    });
   }
 
   public getRejectedOverviewInvites() {

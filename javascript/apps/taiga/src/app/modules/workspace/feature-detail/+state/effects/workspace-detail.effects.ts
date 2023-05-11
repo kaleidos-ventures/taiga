@@ -9,12 +9,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
 import { EMPTY, timer, zip } from 'rxjs';
-import { catchError, exhaustMap, map, tap } from 'rxjs/operators';
+import { catchError, exhaustMap, filter, map, tap } from 'rxjs/operators';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 import { AppService } from '~/app/services/app.service';
 import {
@@ -23,6 +23,11 @@ import {
   workspaceDetailApiActions,
   workspaceDetailEventActions,
 } from '../actions/workspace-detail.actions';
+import {
+  selectMembersList,
+  selectMembersOffset,
+} from '../selectors/workspace-detail.selectors';
+import { Store } from '@ngrx/store';
 
 @Injectable()
 export class WorkspaceDetailEffects {
@@ -421,6 +426,26 @@ export class WorkspaceDetailEffects {
     );
   });
 
+  public removeMemberSuccessChangeIfPageIsEmpty$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(
+        workspaceDetailApiActions.removeMemberSuccess,
+        workspaceDetailEventActions.removeMember
+      ),
+      concatLatestFrom(() => [
+        this.store.select(selectMembersList),
+        this.store.select(selectMembersOffset),
+      ]),
+      filter(([, members]) => !members.length),
+      map(([action, , offset]) => {
+        return workspaceDetailApiActions.getWorkspaceMembers({
+          id: action.id,
+          offset: offset - MEMBERS_PAGE_SIZE,
+        });
+      })
+    );
+  });
+
   public loadWorkspaceMemberInvitations$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(workspaceDetailApiActions.getWorkspaceMemberInvitations),
@@ -451,6 +476,7 @@ export class WorkspaceDetailEffects {
   });
 
   constructor(
+    private store: Store,
     private actions$: Actions,
     private workspaceApiService: WorkspaceApiService,
     private projectApiService: ProjectApiService,

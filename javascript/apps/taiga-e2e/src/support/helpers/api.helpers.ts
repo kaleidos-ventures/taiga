@@ -13,7 +13,7 @@ import config from '~/assets/config.json';
 export function request<T>(
   method: string,
   path: string,
-  body: Cypress.RequestBody | undefined,
+  body?: Cypress.RequestBody,
   options: Partial<Cypress.RequestOptions> = {}
 ): Promise<Cypress.Response<T>> {
   return new Cypress.Promise((resolve) => {
@@ -47,4 +47,21 @@ export function getEmailsPreviews(): Cypress.Chainable<
   }>
 > {
   return cy.request('http://localhost:3000/emails-previews');
+}
+
+export function getEmails(): Cypress.Chainable<
+  Cypress.Response<{
+    emails: {
+      previewUrl: string;
+      text: string;
+      html: string;
+      to: string;
+    }[];
+  }>
+> {
+  // we don't know when the email will arrive to the SMTP server
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(1000);
+
+  return cy.request('http://localhost:3000/emails');
 }

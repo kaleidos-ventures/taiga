@@ -11,7 +11,7 @@ import { randUuid } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
 import {
   EmptyWorkspaceAdminMockFactory,
@@ -27,6 +27,11 @@ import {
   workspaceDetailApiActions,
 } from '../actions/workspace-detail.actions';
 import { WorkspaceDetailEffects } from './workspace-detail.effects';
+import {
+  selectMembersList,
+  selectMembersOffset,
+} from '../selectors/workspace-detail.selectors';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 
 describe('WorkspaceEffects', () => {
   let actions$: Observable<Action>;
@@ -152,5 +157,36 @@ describe('WorkspaceEffects', () => {
     });
 
     expect(effects.initWorkspacePeople$).toBeObservable(expected);
+  });
+
+  it('shoud go to the previous page if no members are left', () => {
+    const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const workspace = WorkspaceMockFactory();
+    const member = WorkspaceMembershipMockFactory();
+    const offset = 40;
+
+    actions$ = hot('-a', {
+      a: workspaceDetailApiActions.removeMemberSuccess({
+        id: workspace.id,
+        member: member.user.username,
+      }),
+    });
+
+    const store = spectator.inject(MockStore);
+    store.overrideSelector(selectMembersList, []);
+    store.overrideSelector(selectMembersOffset, offset);
+    store.refreshState();
+
+    const expected = cold('-a', {
+      a: workspaceDetailApiActions.getWorkspaceMembers({
+        id: workspace.id,
+        offset: offset - MEMBERS_PAGE_SIZE,
+      }),
+    });
+
+    expect(effects.removeMemberSuccessChangeIfPageIsEmpty$).toBeObservable(
+      expected
+    );
   });
 });

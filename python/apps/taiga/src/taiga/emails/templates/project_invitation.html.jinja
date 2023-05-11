@@ -453,7 +453,7 @@ Copyright (c) 2023-present Kaleidos INC
                             <tbody>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;padding-bottom:24px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">{% if receiver_name -%} {% trans name=receive_name %}emails.project_invitation.hi_name{% endtrans %} {% else %} {% trans %}emails.project_invitation.hi_there{% endtrans %} {% endif -%}</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:21px;font-weight:500;line-height:24px;text-align:left;color:#262C39;">{% if receiver_name -%} {% trans name=receiver_name %}emails.project_invitation.hi_name{% endtrans %} {% else %} {% trans %}emails.project_invitation.hi_there{% endtrans %} {% endif -%}</div>
                                 </td>
                               </tr>
                               <tr>
@@ -528,7 +528,7 @@ Copyright (c) 2023-present Kaleidos INC
                             <tbody>
                               <tr>
                                 <td align="left" class="dm-text" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">{% trans %}emails.project_invitation.taiga_description{% endtrans %}</div>
+                                  <div style="font-family:Ubuntu, Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:21px;text-align:left;color:#505C74;">{% if not receiver_name -%} {% trans %}emails.project_invitation.taiga_description{% endtrans %} {% endif -%}</div>
                                 </td>
                               </tr>
                               <tr>

@@ -28,13 +28,13 @@ Copyright (c) 2023-present Kaleidos INC
             {% endif -%}
           </mj-text>
           <mj-text css-class="dm-text"
-            mj-class="font-heading2 color-gray100 padding-top-32">
+            mj-class="font-heading2 color-gray100">
             {% trans name=sender_name %}emails.workspace_invitation.sender{% endtrans %}
           </mj-text>
         </mj-column>
       </mj-section>
       <mj-section text-align="left"
-        mj-class="padding-bottom-32">
+        mj-class="padding-bottom-24">
         <mj-column>
           <mj-text>
             <table>
@@ -60,14 +60,14 @@ Copyright (c) 2023-present Kaleidos INC
       </mj-section>
       <mj-section>
         <mj-column>
-          {% if not receiver_name -%}
             <mj-text css-class="dm-text"
               mj-class="font-body color-gray80">
-              {% trans %}emails.workspace_invitation.taiga_description{% endtrans %}
+                {% if not receiver_name -%}
+                {% trans %}emails.workspace_invitation.taiga_description{% endtrans %}
+                {% endif -%}
             </mj-text>
-          {% endif -%}
           <mj-button css-class="btn-primary"
-            mj-class="btn-primary"
+            mj-class="btn-primary padding-top-24"
             href="{{ invitation_url }}">
             {% trans %}emails.workspace_invitation.accept{% endtrans %}
           </mj-button>

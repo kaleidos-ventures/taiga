@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-25 19:38+0200\n"
+"POT-Creation-Date: 2023-05-11 08:57+0200\n"
 "PO-Revision-Date: 2022-08-24 17:03+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en_US\n"
@@ -41,40 +41,41 @@ msgstr[1] "%s minutes"
 msgid "emails.project_invitation.title"
 msgstr "Taiga invitation"
 
-#: taiga/emails/templates/project_invitation.html.jinja:458
+#: taiga/emails/templates/project_invitation.html.jinja:456
 #: taiga/emails/templates/project_invitation.txt.jinja:15
 msgid "emails.project_invitation.hi_name"
 msgstr "Hi %(name)s,"
 
-#: taiga/emails/templates/project_invitation.html.jinja:458
+#: taiga/emails/templates/project_invitation.html.jinja:456
 #: taiga/emails/templates/project_invitation.txt.jinja:17
 msgid "emails.project_invitation.hi_there"
 msgstr "Hi there,"
 
-#: taiga/emails/templates/project_invitation.html.jinja:463
+#: taiga/emails/templates/project_invitation.html.jinja:461
 #: taiga/emails/templates/project_invitation.txt.jinja:20
 msgid "emails.project_invitation.sender"
 msgstr "<strong>%(name)s</strong> sent you an invitation to join:"
 
-#: taiga/emails/templates/project_invitation.html.jinja:533
+#: taiga/emails/templates/project_invitation.html.jinja:531
 #: taiga/emails/templates/project_invitation.txt.jinja:26
 msgid "emails.project_invitation.taiga_description"
 msgstr ""
 "Taiga is an Open Source Agile Project Management Tool. There is no cost "
 "for you to be a Taiga user."
 
-#: taiga/emails/templates/project_invitation.html.jinja:542
+#: taiga/emails/templates/project_invitation.html.jinja:540
 msgid "emails.project_invitation.accept"
 msgstr "Accept your invitation"
 
-#: taiga/emails/templates/project_invitation.html.jinja:551
+#: taiga/emails/templates/project_invitation.html.jinja:549
 msgid "emails.project_invitation.button_not_working"
 msgstr "Button not working? Copy and paste this URL into your web browser:"
 
-#: taiga/emails/templates/project_invitation.html.jinja:615
-#: taiga/emails/templates/reset_password.html.jinja:619
-#: taiga/emails/templates/sign_up.html.jinja:560
-#: taiga/emails/templates/social_login_warning.html.jinja:519
+#: taiga/emails/templates/project_invitation.html.jinja:613
+#: taiga/emails/templates/reset_password.html.jinja:617
+#: taiga/emails/templates/sign_up.html.jinja:558
+#: taiga/emails/templates/social_login_warning.html.jinja:518
+#: taiga/emails/templates/workspace_invitation.html.jinja:615
 msgid "emails.footer.help_support"
 msgstr ""
 "Need help? <a css-class='secondary-link' href='mailto:%(email)s' >Contact"
@@ -88,7 +89,7 @@ msgstr "[Taiga] Invitation to join to the project '%(name)s'"
 #: taiga/emails/templates/reset_password.txt.jinja:21
 #: taiga/emails/templates/sign_up.txt.jinja:26
 #: taiga/emails/templates/social_login_warning.txt.jinja:23
-#: taiga/emails/templates/workspace_invitation.txt.jinja:28
+#: taiga/emails/templates/workspace_invitation.txt.jinja:27
 msgid "emails.commons.support_txt"
 msgstr "Need help? Contact us at %(support_email)s"
 
@@ -96,35 +97,35 @@ msgstr "Need help? Contact us at %(support_email)s"
 msgid "emails.reset_password.title"
 msgstr "Reset your Taiga password"
 
-#: taiga/emails/templates/reset_password.html.jinja:457
+#: taiga/emails/templates/reset_password.html.jinja:455
 #: taiga/emails/templates/reset_password.txt.jinja:11
 msgid "emails.reset_password.reset_your"
 msgstr "Reset your password"
 
-#: taiga/emails/templates/reset_password.html.jinja:481
+#: taiga/emails/templates/reset_password.html.jinja:479
 msgid "emails.reset_password.click_button"
 msgstr ""
 "We've received a request to reset your password. Click the button below "
 "to choose a new one:"
 
-#: taiga/emails/templates/reset_password.html.jinja:490
+#: taiga/emails/templates/reset_password.html.jinja:488
 msgid "emails.reset_password.reset"
 msgstr "Reset password"
 
-#: taiga/emails/templates/reset_password.html.jinja:499
+#: taiga/emails/templates/reset_password.html.jinja:497
 msgid "emails.reset_password.button_not_working"
 msgstr "Button not working? Copy and paste this URL into your web browser:"
 
-#: taiga/emails/templates/reset_password.html.jinja:559
+#: taiga/emails/templates/reset_password.html.jinja:557
 #: taiga/emails/templates/reset_password.txt.jinja:19
-#: taiga/emails/templates/sign_up.html.jinja:495
+#: taiga/emails/templates/sign_up.html.jinja:493
 #: taiga/emails/templates/sign_up.txt.jinja:20
-#: taiga/emails/templates/social_login_warning.html.jinja:490
+#: taiga/emails/templates/social_login_warning.html.jinja:489
 #: taiga/emails/templates/social_login_warning.txt.jinja:21
 msgid "emails.commons.team"
 msgstr "Taiga Team"
 
-#: taiga/emails/templates/reset_password.html.jinja:587
+#: taiga/emails/templates/reset_password.html.jinja:585
 #: taiga/emails/templates/reset_password.txt.jinja:17
 msgid "emails.ignore_email.ignore"
 msgstr ""
@@ -142,31 +143,31 @@ msgstr ""
 msgid "emails.sign_up.title"
 msgstr "Taiga sign up"
 
-#: taiga/emails/templates/sign_up.html.jinja:457
-#: taiga/emails/templates/sign_up.html.jinja:471
+#: taiga/emails/templates/sign_up.html.jinja:455
+#: taiga/emails/templates/sign_up.html.jinja:469
 #: taiga/emails/templates/sign_up.txt.jinja:13
 msgid "emails.sign_up.verify"
 msgstr "Verify your email"
 
-#: taiga/emails/templates/sign_up.html.jinja:462
+#: taiga/emails/templates/sign_up.html.jinja:460
 msgid "emails.sign_up.click_button"
 msgstr "To start using Taiga just click on the button below"
 
-#: taiga/emails/templates/sign_up.html.jinja:480
+#: taiga/emails/templates/sign_up.html.jinja:478
 msgid "emails.sign_up.button_not_working"
 msgstr "Button not working? Copy and paste this URL into your web browser:"
 
-#: taiga/emails/templates/sign_up.html.jinja:490
+#: taiga/emails/templates/sign_up.html.jinja:488
 #: taiga/emails/templates/sign_up.txt.jinja:18
 msgid "emails.sign_up.welcome"
 msgstr "Welcome,"
 
-#: taiga/emails/templates/sign_up.html.jinja:523
+#: taiga/emails/templates/sign_up.html.jinja:521
 #: taiga/emails/templates/sign_up.txt.jinja:22
 msgid "emails.expiration_date.expiration"
 msgstr "This link will expire in %(expiration)s."
 
-#: taiga/emails/templates/sign_up.html.jinja:528
+#: taiga/emails/templates/sign_up.html.jinja:526
 #: taiga/emails/templates/sign_up.txt.jinja:24
 msgid "emails.expiration_date.ignore"
 msgstr ""
@@ -185,32 +186,32 @@ msgstr "Copy and paste this URL into your web browser:"
 msgid "emails.social_login_warning.title"
 msgstr "New log in to your Taiga account"
 
-#: taiga/emails/templates/social_login_warning.html.jinja:456
+#: taiga/emails/templates/social_login_warning.html.jinja:455
 #: taiga/emails/templates/social_login_warning.txt.jinja:9
 msgid "emails.social_warning_login.hi"
 msgstr "Hi %(name)s,"
 
-#: taiga/emails/templates/social_login_warning.html.jinja:461
+#: taiga/emails/templates/social_login_warning.html.jinja:460
 #: taiga/emails/templates/social_login_warning.txt.jinja:11
 msgid "emails.social_login_warning.method"
 msgstr "We noticed a log in to your Taiga account in a different way (%(method)s):"
 
-#: taiga/emails/templates/social_login_warning.html.jinja:468
+#: taiga/emails/templates/social_login_warning.html.jinja:467
 #: taiga/emails/templates/social_login_warning.txt.jinja:13
 msgid "emails.social_login_warning.time"
 msgstr "Time:"
 
-#: taiga/emails/templates/social_login_warning.html.jinja:475
+#: taiga/emails/templates/social_login_warning.html.jinja:474
 #: taiga/emails/templates/social_login_warning.txt.jinja:15
 msgid "emails.social_login_warning.not_you"
 msgstr "If it wasn't you, please let us know here: %(support_email)s"
 
-#: taiga/emails/templates/social_login_warning.html.jinja:480
+#: taiga/emails/templates/social_login_warning.html.jinja:479
 #: taiga/emails/templates/social_login_warning.txt.jinja:17
 msgid "emails.social_login_warning.ignore"
 msgstr "If this was you, you can safely ignore this email."
 
-#: taiga/emails/templates/social_login_warning.html.jinja:485
+#: taiga/emails/templates/social_login_warning.html.jinja:484
 #: taiga/emails/templates/social_login_warning.txt.jinja:19
 msgid "emails.social_login_warning.cheers"
 msgstr "Cheers!"
@@ -220,28 +221,40 @@ msgid "emails.social_login_warning.subject"
 msgstr "New log in to your Taiga account"
 
 #: taiga/emails/templates/workspace_invitation.html.jinja:13
-#: taiga/emails/templates/workspace_invitation.txt.jinja:11
+#: taiga/emails/templates/workspace_invitation.txt.jinja:10
 msgid "emails.workspace_invitation.title"
 msgstr "Taiga invitation"
 
-#: taiga/emails/templates/workspace_invitation.subject.jinja:9
-msgid "emails.workspace_invitation.subject"
-msgstr "[Taiga] Invitation to join to the workspace '%(name)s'"
-
-#: taiga/emails/templates/workspace_invitation.txt.jinja:14
+#: taiga/emails/templates/workspace_invitation.html.jinja:454
+#: taiga/emails/templates/workspace_invitation.txt.jinja:13
 msgid "emails.workspace_invitation.hi_name"
 msgstr "Hi %(name)s,"
 
-#: taiga/emails/templates/workspace_invitation.txt.jinja:16
+#: taiga/emails/templates/workspace_invitation.html.jinja:454
+#: taiga/emails/templates/workspace_invitation.txt.jinja:15
 msgid "emails.workspace_invitation.hi_there"
 msgstr "Hi there,"
 
-#: taiga/emails/templates/workspace_invitation.txt.jinja:19
+#: taiga/emails/templates/workspace_invitation.html.jinja:459
+#: taiga/emails/templates/workspace_invitation.txt.jinja:18
 msgid "emails.workspace_invitation.sender"
 msgstr "<strong>%(name)s</strong> sent you an invitation to join:"
 
-#: taiga/emails/templates/workspace_invitation.txt.jinja:24
+#: taiga/emails/templates/workspace_invitation.html.jinja:526
+#: taiga/emails/templates/workspace_invitation.txt.jinja:23
 msgid "emails.workspace_invitation.taiga_description"
 msgstr ""
 "Taiga is an Open Source Agile Project Management Tool. There is no cost "
 "for you to be a Taiga user."
+
+#: taiga/emails/templates/workspace_invitation.html.jinja:535
+msgid "emails.workspace_invitation.accept"
+msgstr "Accept your invitation"
+
+#: taiga/emails/templates/workspace_invitation.html.jinja:544
+msgid "emails.workspace_invitation.button_not_working"
+msgstr "Button not working? Copy and paste this URL into your web browser:"
+
+#: taiga/emails/templates/workspace_invitation.subject.jinja:9
+msgid "emails.workspace_invitation.subject"
+msgstr "[Taiga] Invitation to join to the workspace '%(name)s'"

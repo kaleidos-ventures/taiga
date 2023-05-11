@@ -25,7 +25,7 @@ Copyright (c) 2023-present Kaleidos INC
           <mj-text css-class="dm-text"
             mj-class="font-heading1 color-gray100">
             {% if receiver_name -%}
-            {% trans name=receive_name %}emails.project_invitation.hi_name{% endtrans %}
+            {% trans name=receiver_name %}emails.project_invitation.hi_name{% endtrans %}
             {% else %}
             {% trans %}emails.project_invitation.hi_there{% endtrans %}
             {% endif -%}
@@ -78,12 +78,12 @@ Copyright (c) 2023-present Kaleidos INC
       </mj-section>
       <mj-section>
         <mj-column>
-          {% if not receiver_name -%}
           <mj-text css-class="dm-text"
             mj-class="font-body color-gray80">
+            {% if not receiver_name -%}
             {% trans %}emails.project_invitation.taiga_description{% endtrans %}
+            {% endif -%}
           </mj-text>
-          {% endif -%}
           <mj-button css-class="btn-primary"
             mj-class="btn-primary padding-top-24"
             href="{{ invitation_url }}">

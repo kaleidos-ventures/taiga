@@ -14,7 +14,7 @@ import { fetch, optimisticUpdate, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService, WorkspaceApiService } from '@taiga/api';
 import { EMPTY, timer, zip } from 'rxjs';
-import { catchError, exhaustMap, filter, map, tap } from 'rxjs/operators';
+import { catchError, exhaustMap, map, tap } from 'rxjs/operators';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 import { AppService } from '~/app/services/app.service';
 import {
@@ -426,7 +426,7 @@ export class WorkspaceDetailEffects {
     );
   });
 
-  public removeMemberSuccessChangeIfPageIsEmpty$ = createEffect(() => {
+  public removeMemberSuccessChangeReloadPage$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(
         workspaceDetailApiActions.removeMemberSuccess,
@@ -436,11 +436,20 @@ export class WorkspaceDetailEffects {
         this.store.select(selectMembersList),
         this.store.select(selectMembersOffset),
       ]),
-      filter(([, members]) => !members.length),
-      map(([action, , offset]) => {
+      map(([action, members, offset]) => {
+        if (members.length) {
+          return workspaceDetailApiActions.getWorkspaceMembers({
+            id: action.id,
+            offset,
+            showLoading: false,
+          });
+        }
+
+        // if page is empty, go back one page
         return workspaceDetailApiActions.getWorkspaceMembers({
           id: action.id,
           offset: offset - MEMBERS_PAGE_SIZE,
+          showLoading: false,
         });
       })
     );

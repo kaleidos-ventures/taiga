@@ -95,6 +95,7 @@ export const workspaceDetailApiActions = createActionGroup({
     'Get workspace members': props<{
       id: Workspace['id'];
       offset: number;
+      showLoading: boolean;
     }>(),
     'Get workspace members success': props<{
       members: WorkspaceMembership[];

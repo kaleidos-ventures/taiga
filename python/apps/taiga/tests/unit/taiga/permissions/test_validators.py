@@ -24,7 +24,7 @@ class PermissionsValidator(BaseModel):
     [
         ([], []),
         (["comment_story", "view_story"], ["comment_story", "view_story"]),
-        (["view_story", "view_story"], ["view_story", "view_story"]),
+        (["view_story", "modify_story"], ["view_story", "modify_story"]),
     ],
 )
 def test_permissions_are_valid_and_compatible(permissions: list[str], result: list[str]):

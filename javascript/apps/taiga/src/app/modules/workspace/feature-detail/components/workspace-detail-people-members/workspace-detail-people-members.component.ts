@@ -225,6 +225,7 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
       workspaceDetailApiActions.getWorkspaceMembers({
         id: this.state.get('workspace')!.id,
         offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
+        showLoading: true,
       })
     );
   }
@@ -234,6 +235,7 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
       workspaceDetailApiActions.getWorkspaceMembers({
         id: this.state.get('workspace')!.id,
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
+        showLoading: true,
       })
     );
   }

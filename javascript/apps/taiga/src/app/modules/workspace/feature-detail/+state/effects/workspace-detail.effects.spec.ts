@@ -182,10 +182,11 @@ describe('WorkspaceEffects', () => {
       a: workspaceDetailApiActions.getWorkspaceMembers({
         id: workspace.id,
         offset: offset - MEMBERS_PAGE_SIZE,
+        showLoading: false,
       }),
     });
 
-    expect(effects.removeMemberSuccessChangeIfPageIsEmpty$).toBeObservable(
+    expect(effects.removeMemberSuccessChangeReloadPage$).toBeObservable(
       expected
     );
   });

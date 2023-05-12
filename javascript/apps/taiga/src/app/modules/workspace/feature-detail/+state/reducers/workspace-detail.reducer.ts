@@ -222,9 +222,18 @@ export const reducer = createImmerReducer(
   ),
   on(
     workspaceDetailApiActions.initWorkspacePeople,
-    workspaceDetailApiActions.getWorkspaceMembers,
     (state): WorkspaceDetailState => {
       state.members.loading = true;
+
+      return state;
+    }
+  ),
+  on(
+    workspaceDetailApiActions.getWorkspaceMembers,
+    (state, { showLoading }): WorkspaceDetailState => {
+      if (showLoading) {
+        state.members.loading = true;
+      }
 
       return state;
     }

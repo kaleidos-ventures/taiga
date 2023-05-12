@@ -40,4 +40,8 @@ def _permissions_are_compatible(permissions: list[str]) -> bool:
     if "view_story" not in permissions and set.intersection(set(permissions), choices.EditStoryPermissions):
         return False
 
+    # a user cannot have "comment_story" permissions if she has no "view_story" permission
+    if "comment_story" in permissions and "view_story" not in permissions:
+        return False
+
     return True

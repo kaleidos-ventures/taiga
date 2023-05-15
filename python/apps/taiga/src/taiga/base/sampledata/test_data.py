@@ -75,7 +75,7 @@ async def load_test_data() -> None:
         await factories.create_project_invitations(project=project, users=users)
 
         # STORIES
-        await factories.create_stories(project_id=project.id)
+        await factories.create_stories(project_id=project.id, with_comments=True)
 
     # CUSTOM PROJECTS
     print("  - Creating scenarios to check permissions")

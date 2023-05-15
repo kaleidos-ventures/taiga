@@ -80,7 +80,7 @@ async def _create_scenario_freelance_working_for_herself() -> None:
         await _create_accepted_project_invitations(project=project)
 
         # STORIES
-        await factories.create_stories(project_id=project.id)
+        await factories.create_stories(project_id=project.id, with_comments=True)
 
 
 async def _create_scenario_freelance_working_for_others() -> None:
@@ -160,7 +160,7 @@ async def _create_scenario_freelance_working_for_others() -> None:
         await _create_accepted_project_invitations(project=project)
 
         # STORIES
-        await factories.create_stories(project_id=project.id)
+        await factories.create_stories(project_id=project.id, with_comments=True)
 
 
 async def _create_scenario_user_in_society_working_for_others() -> None:
@@ -186,7 +186,7 @@ async def _create_scenario_user_in_society_working_for_others() -> None:
 
     for project in projects:
         # STORIES
-        await factories.create_stories(project_id=project.id)
+        await factories.create_stories(project_id=project.id, with_comments=True)
 
 
 async def _create_scenario_manager_in_society_working_for_others() -> None:
@@ -262,7 +262,7 @@ async def _create_scenario_manager_in_society_working_for_others() -> None:
             await factories.create_project_invitations(project=project, users=usersdx)
 
         # STORIES
-        await factories.create_stories(project_id=project.id)
+        await factories.create_stories(project_id=project.id, with_comments=True)
 
 
 async def _create_scenario_manager_in_society_with_big_client() -> None:
@@ -362,7 +362,7 @@ async def _create_scenario_manager_in_society_with_big_client() -> None:
             await _create_accepted_project_invitations(project=project)
 
         # STORIES
-        await factories.create_stories(project_id=project.id)
+        await factories.create_stories(project_id=project.id, with_comments=True)
 
 
 async def _create_scenario_manager_in_society_with_own_product() -> None:
@@ -424,7 +424,7 @@ async def _create_scenario_manager_in_society_with_own_product() -> None:
             await factories.create_project_invitations(project=project, users=usersfx)
 
         # STORIES
-        await factories.create_stories(project_id=project.id)
+        await factories.create_stories(project_id=project.id, with_comments=True)
 
 
 async def _create_scenario_manager_in_big_society_with_own_product() -> None:
@@ -492,7 +492,7 @@ async def _create_scenario_manager_in_big_society_with_own_product() -> None:
         await factories.create_project_invitations(project=project, users=usersgx)
 
         # STORIES
-        await factories.create_stories(project_id=project.id)
+        await factories.create_stories(project_id=project.id, with_comments=True)
 
 
 async def _create_workspace_memberships(workspace: Workspace, users: list[User]) -> None:

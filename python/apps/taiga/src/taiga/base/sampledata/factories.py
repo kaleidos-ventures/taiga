@@ -7,7 +7,7 @@
 
 
 import random
-from datetime import timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from pathlib import Path
 from typing import Final
@@ -17,6 +17,8 @@ from asgiref.sync import sync_to_async
 from faker import Faker
 from fastapi import UploadFile
 from taiga.base.sampledata import constants
+from taiga.comments.mixins import CommentsMixin
+from taiga.comments.models import Comment
 from taiga.projects.invitations import repositories as pj_invitations_repositories
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.invitations.models import ProjectInvitation
@@ -202,7 +204,10 @@ async def create_project_invitations(project: Project, users: list[User]) -> Non
 
 
 async def create_stories(
-    project_id: UUID, min_stories: int = constants.NUM_STORIES_PER_WORKFLOW[0], max_stories: int | None = None
+    project_id: UUID,
+    min_stories: int = constants.NUM_STORIES_PER_WORKFLOW[0],
+    max_stories: int | None = None,
+    with_comments: bool = False,
 ) -> None:
     project = await get_project_with_related_info(project_id)
     num_stories_to_create = fake.random_int(
@@ -227,7 +232,7 @@ async def create_stories(
             )
     await Story.objects.abulk_create(stories)
 
-    # Create story assignments
+    # Create story assignments and comments
     story_assignments = []
     async for story in Story.objects.select_related().filter(project=project):
 
@@ -246,6 +251,14 @@ async def create_stories(
                         created_at=fake.date_time_between(start_date=story.created_at, tzinfo=timezone.utc),
                     )
                 )
+
+        # Create story comments
+        if with_comments:
+            await create_story_comments(
+                story=story,
+                status_slug=story.status.slug.lower(),
+                pj_members=members,
+            )
 
     await StoryAssignment.objects.abulk_create(story_assignments)
 
@@ -276,5 +289,48 @@ async def _create_story(
     )
     if save:
         sync_to_async(story.save)()
-
     return story
+
+
+#################################
+# COMMENTS
+#################################
+
+
+async def create_story_comments(
+    story: Story, status_slug: str, pj_members: list[User], text: str | None = None
+) -> None:
+    story_comments = []
+    prob_comments = constants.PROB_STORY_COMMENTS.get(status_slug, constants.PROB_STORY_COMMENTS_DEFAULT)
+    if fake.random_number(digits=2) < prob_comments:
+        max_comments = constants.PROB_STORY_COMMENTS.get(status_slug, constants.PROB_STORY_COMMENTS_DEFAULT)
+        for _ in range(fake.random_int(min=1, max=max_comments)):
+            story_comments.append(
+                await _create_comment_object(
+                    text=text if text else f"<p>{fake.paragraph(nb_sentences=2)}</p>",
+                    created_by=fake.random_element(elements=pj_members),
+                    object=story,
+                )
+            )
+    await Comment.objects.abulk_create(story_comments)
+
+
+@sync_to_async
+def _create_comment_object(
+    text: str,
+    created_by: User,
+    object: CommentsMixin,
+    created_at: datetime | None = None,
+) -> Comment:
+    return Comment(
+        text=text,
+        content_object=object,
+        created_by=created_by,
+        created_at=created_at
+        if created_at
+        else fake.date_time_between(
+            start_date=object.created_at,  # type: ignore[attr-defined]
+            tzinfo=timezone.utc,
+            end_date=object.created_at + timedelta(days=constants.MAX_DAYS_LAST_COMMENT),  # type: ignore[attr-defined]
+        ),
+    )

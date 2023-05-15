@@ -30,3 +30,20 @@ PROB_STORY_ASSIGNMENTS = {  # 0-99 prob of a story to be assigned by its workflo
     "done": 95,
 }
 PROB_STORY_ASSIGNMENTS_DEFAULT = 25
+
+# Story Comments
+MAX_DAYS_LAST_COMMENT = 12  # referred to the creation date of the story they comment
+PROB_STORY_COMMENTS = {  # 0-99 prob of a story to be commented by its workflow status
+    "new": 10,
+    "ready": 20,
+    "in-progress": 40,
+    "done": 80,
+}
+PROB_STORY_COMMENTS_DEFAULT = 25
+MAX_STORY_COMMENTS = {  # Max number of comments (in the positive case of having comments)
+    "new": 2,
+    "ready": 5,
+    "in-progress": 10,
+    "done": 15,
+}
+MAX_STORY_COMMENTS_DEFAULT = 5

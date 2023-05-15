@@ -9,15 +9,14 @@ from typing import Any
 
 from taiga.base.db import admin
 from taiga.base.db.admin.http import HttpRequest
-from taiga.mediafiles.models import Mediafile
+from taiga.comments.models import Comment
 
 
-class MediafileInline(admin.GenericTabularInline):
-    model = Mediafile
+class CommentInline(admin.GenericTabularInline):
+    model = Comment
     ct_field = "object_content_type"
     ct_fk_field = "object_id"
-    fields = ("name", "file", "content_type", "size")
-    readonly_fields = ("name", "file", "content_type", "size")
+    fields = ("text",)
     show_change_link = True
 
     def has_change_permission(self, request: HttpRequest, obj: Any = None) -> bool:
@@ -27,16 +26,19 @@ class MediafileInline(admin.GenericTabularInline):
         return False
 
 
-@admin.register(Mediafile)
-class StoryAdmin(admin.ModelAdmin[Mediafile]):
-    list_filter = ("project", "object_content_type")
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin[Comment]):
+    list_filter = ("object_content_type", "object_id")
     list_display = (
-        "name",
-        "project",
+        "text",
+        "created_by",
+        "object_id",
         "content_object",
-        "object_content_type",
     )
+    list_display_links = ("text",)
     search_fields = (
-        "name",
-        "content_type",
+        "id",
+        "text",
+        "object_id",
     )
+    ordering = ("-created_at", "-modified_at")

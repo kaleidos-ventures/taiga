@@ -90,7 +90,7 @@ async def test_create_workspace_invitations_with_pending_invitations_time_spam(t
         patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.workspaces.invitations.services.users_services", autospec=True) as fake_users_services,
         patch("taiga.workspaces.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
-        override_settings({"WORKSPACE_INVITATION_RESEND_TIME": 10}),
+        override_settings({"INVITATION_RESEND_TIME": 10}),
     ):
         fake_invitations_repo.get_workspace_invitation.return_value = invitation
         fake_users_services.list_users_emails_as_dict.return_value = {}

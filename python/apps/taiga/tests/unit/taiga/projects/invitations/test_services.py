@@ -367,7 +367,7 @@ async def test_create_project_invitations_with_pending_invitations_time_spam(tqm
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.users_services", autospec=True) as fake_users_services,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
-        override_settings({"PROJECT_INVITATION_RESEND_TIME": 10}),
+        override_settings({"INVITATION_RESEND_TIME": 10}),
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
@@ -440,7 +440,7 @@ async def test_create_project_invitations_with_revoked_invitations_time_spam(tqm
         patch("taiga.projects.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
         patch("taiga.projects.invitations.services.users_services", autospec=True) as fake_users_services,
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
-        override_settings({"PROJECT_INVITATION_RESEND_TIME": 10}),
+        override_settings({"INVITATION_RESEND_TIME": 10}),
     ):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role2.slug: role2}
         fake_invitations_repo.get_project_invitation.return_value = invitation
@@ -987,7 +987,7 @@ async def test_resend_project_invitation_resent_after_create(override_settings) 
         patch(
             "taiga.projects.invitations.services.send_project_invitation_email", autospec=True
         ) as fake_send_project_invitation_email,
-        override_settings({"PROJECT_INVITATION_RESEND_TIME": 10}),
+        override_settings({"INVITATION_RESEND_TIME": 10}),
     ):
         await services.resend_project_invitation(invitation=invitation, resent_by=project.created_by)
         fake_invitations_repo.update_project_invitation.assert_not_awaited()

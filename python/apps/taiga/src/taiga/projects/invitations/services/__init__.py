@@ -12,6 +12,7 @@ from taiga.auth import services as auth_services
 from taiga.base.api.pagination import Pagination
 from taiga.base.utils import emails
 from taiga.base.utils.datetime import aware_utcnow
+from taiga.commons.invitations import is_spam
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
@@ -121,7 +122,7 @@ async def create_project_invitations(
         if invitation:
             invitation.role = project_roles_dict[role_slug]
             invitation.status = ProjectInvitationStatus.PENDING
-            if not await _is_spam(invitation):
+            if not is_spam(invitation):
                 invitation.num_emails_sent += 1
                 invitation.resent_at = aware_utcnow()
                 invitation.resent_by = invited_by
@@ -338,7 +339,7 @@ async def resend_project_invitation(invitation: ProjectInvitation, resent_by: Us
     if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation has already been revoked")
 
-    if not await _is_spam(invitation):
+    if not is_spam(invitation):
         num_emails_sent = invitation.num_emails_sent + 1
         resent_invitation = await invitations_repositories.update_project_invitation(
             invitation=invitation,
@@ -405,22 +406,6 @@ async def send_project_invitation_email(invitation: ProjectInvitation, is_resend
 
 async def _generate_project_invitation_token(invitation: ProjectInvitation) -> str:
     return str(await ProjectInvitationToken.create_for_object(invitation))
-
-
-async def _get_time_since_last_send(invitation: ProjectInvitation) -> int:
-    last_send_at = invitation.resent_at if invitation.resent_at else invitation.created_at
-    return int((aware_utcnow() - last_send_at).total_seconds() / 60)  # in minutes
-
-
-async def _is_spam(invitation: ProjectInvitation) -> bool:
-    time_since_last_send = await _get_time_since_last_send(invitation)
-    if (
-        invitation.num_emails_sent < settings.PROJECT_INVITATION_RESEND_LIMIT
-        and time_since_last_send >= settings.PROJECT_INVITATION_RESEND_TIME
-    ):
-        return False
-
-    return True
 
 
 def is_project_invitation_for_this_user(invitation: ProjectInvitation, user: User) -> bool:

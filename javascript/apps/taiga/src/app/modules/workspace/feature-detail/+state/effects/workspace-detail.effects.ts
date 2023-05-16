@@ -26,8 +26,10 @@ import {
 import {
   selectMembersList,
   selectMembersOffset,
+  selectInvitationsOffset,
 } from '../selectors/workspace-detail.selectors';
 import { Store } from '@ngrx/store';
+import { filterNil } from '~/app/shared/utils/operators';
 
 @Injectable()
 export class WorkspaceDetailEffects {
@@ -456,7 +458,10 @@ export class WorkspaceDetailEffects {
 
   public loadWorkspaceMemberInvitations$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(workspaceDetailApiActions.getWorkspaceMemberInvitations),
+      ofType(
+        workspaceDetailApiActions.getWorkspaceMemberInvitations,
+        workspaceDetailEventActions.updateInvitationsList
+      ),
       exhaustMap((action) => {
         return this.workspaceApiService
           .getWorkspaceInvitationMembers(
@@ -479,6 +484,49 @@ export class WorkspaceDetailEffects {
               return EMPTY;
             })
           );
+      })
+    );
+  });
+
+  public updateWorkspaceMembersInvitations$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceDetailEventActions.updateMembersList),
+      concatLatestFrom(() => [
+        this.store.select(selectInvitationsOffset).pipe(filterNil()),
+        this.store.select(selectMembersOffset).pipe(filterNil()),
+      ]),
+      exhaustMap(([action, invitationsOffset, membersOffset]) => {
+        return zip(
+          this.workspaceApiService.getWorkspaceMembers(
+            action.id,
+            membersOffset,
+            MEMBERS_PAGE_SIZE
+          ),
+          this.workspaceApiService.getWorkspaceInvitationMembers(
+            action.id,
+            invitationsOffset,
+            MEMBERS_PAGE_SIZE
+          )
+        ).pipe(
+          map((response) => {
+            return workspaceDetailEventActions.updateMembersListSuccess({
+              members: {
+                members: response[0].members,
+                totalMembers: response[0].totalMembers,
+                offset: membersOffset,
+              },
+              invitations: {
+                members: response[1].members,
+                totalMembers: response[1].totalMembers,
+                offset: invitationsOffset,
+              },
+            });
+          }),
+          catchError((httpResponse: HttpErrorResponse) => {
+            this.appService.errorManagement(httpResponse);
+            return EMPTY;
+          })
+        );
       })
     );
   });

@@ -23,6 +23,7 @@ import {
   selectTotalNonMembers,
   selectWorkspace,
   selectTotalInvitations,
+  selectInvitationsOffset,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -32,6 +33,7 @@ interface WorkspaceDetailState {
   totalMembers: number;
   totalNonMembers: number;
   totalInvitationMembers: number;
+  invitationsOffset: number;
 }
 @UntilDestroy()
 @Component({
@@ -66,6 +68,10 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
     this.state.connect(
       'totalInvitationMembers',
       this.store.select(selectTotalInvitations)
+    );
+    this.state.connect(
+      'invitationsOffset',
+      this.store.select(selectInvitationsOffset)
     );
 
     this.state.hold(this.state.select('workspace'), (workspace) => {
@@ -118,6 +124,35 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
             workspaceDetailEventActions.removeMember({
               id: workspace.id,
               username: eventResponse.event.content.membership.user.username,
+            })
+          );
+        });
+
+      this.wsService
+        .events<{ workspace: string }>({
+          channel: `workspaces.${workspace.id}`,
+          type: 'workspacememberships.create',
+        })
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          this.store.dispatch(
+            workspaceDetailEventActions.updateMembersList({
+              id: workspace.id,
+            })
+          );
+        });
+
+      this.wsService
+        .events<{ workspace: string }>({
+          channel: `workspaces.${workspace.id}`,
+          type: 'workspaceinvitations.create',
+        })
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          this.store.dispatch(
+            workspaceDetailEventActions.updateInvitationsList({
+              id: workspace.id,
+              offset: this.state.get('invitationsOffset'),
             })
           );
         });

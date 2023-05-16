@@ -166,5 +166,24 @@ export const workspaceDetailEventActions = createActionGroup({
       id: Workspace['id'];
       username: WorkspaceMembership['user']['username'];
     }>(),
+    'Update members list': props<{
+      id: Workspace['id'];
+    }>(),
+    'Update members list success': props<{
+      members: {
+        members: WorkspaceMembership[];
+        totalMembers: number;
+        offset: number;
+      };
+      invitations: {
+        members: InvitationWorkspaceMember[];
+        totalMembers: number;
+        offset: number;
+      };
+    }>(),
+    'Update invitations list': props<{
+      id: Workspace['id'];
+      offset: number;
+    }>(),
   },
 });

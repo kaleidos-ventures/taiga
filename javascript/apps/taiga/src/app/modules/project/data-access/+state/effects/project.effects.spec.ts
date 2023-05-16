@@ -28,9 +28,12 @@ import {
   permissionsUpdate,
   permissionsUpdateSuccess,
   projectEventActions,
+  leaveProject,
+  leaveProjectSuccess,
 } from '../actions/project.actions';
 import { selectCurrentProject } from '../selectors/project.selectors';
 import { ProjectEffects } from './project.effects';
+import { HttpErrorResponse } from '@angular/common/http';
 
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
@@ -184,6 +187,105 @@ describe('ProjectEffects', () => {
         projectId,
         projectSlug,
       ]);
+    });
+  });
+
+  describe('leaveProject$', () => {
+    it('leave project and user has view permissions', () => {
+      const project = ProjectMockFactory();
+      const projectApiService = spectator.inject(ProjectApiService);
+      const action = leaveProject(project);
+      const effects = spectator.inject(ProjectEffects);
+      const outcome = leaveProjectSuccess({
+        id: project.id,
+        name: project.name,
+        refreshProject: project,
+      });
+
+      actions$ = hot('-a', { a: action });
+      const response = cold('-a|', { a: project });
+      const expected = cold('--b', { b: outcome });
+
+      projectApiService.deleteProjectMembership.mockReturnValue(of(undefined));
+      projectApiService.getProject.mockReturnValue(response);
+
+      expect(effects.leaveProject$).toBeObservable(expected);
+    });
+
+    it('leave project and user has not view permissions', () => {
+      const projectApiService = spectator.inject(ProjectApiService);
+      const project = ProjectMockFactory();
+      const action = leaveProject(project);
+      const effects = spectator.inject(ProjectEffects);
+      const outcome = leaveProjectSuccess({
+        id: project.id,
+        name: project.name,
+        refreshProject: null,
+      });
+      const error = new HttpErrorResponse({});
+
+      actions$ = hot('-a', { a: action });
+      const fail = cold('-#|', {}, error);
+      const expected = cold('--b', { b: outcome });
+
+      projectApiService.deleteProjectMembership.mockReturnValue(of(undefined));
+      projectApiService.getProject.mockReturnValue(fail);
+
+      expect(effects.leaveProject$).toBeObservable(expected);
+    });
+  });
+
+  describe('leaveProjectSuccess$', () => {
+    it('show message & refresh project if the user has access', () => {
+      const project = ProjectMockFactory();
+      const action = leaveProjectSuccess({
+        id: project.id,
+        name: project.name,
+        refreshProject: project,
+      });
+      const outcome = fetchProjectSuccess({ project });
+      const effects = spectator.inject(ProjectEffects);
+      const appService = spectator.inject(AppService);
+
+      actions$ = hot('-a', { a: action });
+      const expected = hot('-b', { b: outcome });
+
+      expect(effects.leaveProjectSucces$).toSatisfyOnFlush(() => {
+        expect(effects.leaveProjectSucces$).toBeObservable(expected);
+
+        expect(appService.toastNotification).toHaveBeenCalledWith({
+          message: 'project.leave_project.no_longer_member',
+          paramsMessage: { project: action.name },
+          status: TuiNotification.Info,
+          closeOnNavigation: false,
+        });
+      });
+    });
+
+    it('show message & redirect if the user has not access', () => {
+      const project = ProjectMockFactory();
+      const action = leaveProjectSuccess({
+        id: project.id,
+        name: project.name,
+        refreshProject: null,
+      });
+
+      actions$ = hot('-a', { a: action });
+      const expected = hot('-(b|)', { b: [] });
+      const effects = spectator.inject(ProjectEffects);
+      const appService = spectator.inject(AppService);
+      const router = spectator.inject(Router);
+
+      expect(effects.leaveProjectSucces$).toSatisfyOnFlush(() => {
+        expect(effects.leaveProjectSucces$).toBeObservable(expected);
+        expect(appService.toastNotification).toHaveBeenCalledWith({
+          message: 'project.leave_project.no_longer_member',
+          paramsMessage: { project: action.name },
+          status: TuiNotification.Info,
+          closeOnNavigation: false,
+        });
+        expect(router.navigate).toHaveBeenCalledWith(['/']);
+      });
     });
   });
 });

@@ -122,7 +122,7 @@ Used across all Taiga
 [data-appearance="tertiary"]:is(button, a) {
   @mixin button-dropdown-expanded {
     background: var(--color-gray30);
-    color: var(--color-secondary);
+    color: var(--color-secondary90);
   }
 
   & [tuiWrapper] {
@@ -144,10 +144,6 @@ Used across all Taiga
         border-width: 1px;
       }
     }
-  }
-
-  & tui-svg {
-    color: var(--color-secondary);
   }
 
   & .notification-counter {

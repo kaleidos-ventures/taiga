@@ -29,6 +29,7 @@ Copyright (c) 2023-present Kaleidos INC
     <tg-project-members-list
       *ngIf="members.length"
       [user]="user"
+      [leaveProject]="false"
       [paginate]="true"
       [members]="members"
       (nextPage)="nextPage.next($event)"></tg-project-members-list>

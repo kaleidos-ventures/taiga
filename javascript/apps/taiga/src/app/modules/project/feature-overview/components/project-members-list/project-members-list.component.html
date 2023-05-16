@@ -63,7 +63,10 @@ Copyright (c) 2023-present Kaleidos INC
     <div
       (click)="$event.preventDefault()"
       class="member-link"
-      [class.pending-member]="isPending(member)">
+      [class.pending-member]="isPending(member)"
+      [class.leave-project-open]="
+        leaveProjectDropdown && getUser(member).username === user?.username
+      ">
       <tg-user-card
         [user]="getUser(member)"
         [isSelf]="getUser(member).username === user?.username"
@@ -77,19 +80,20 @@ Copyright (c) 2023-present Kaleidos INC
             size="s"
             color="primary"></tg-ui-badge>
           <div class="block-end">
-            <button
-              *ngIf="
-                member?.user?.username === user?.username &&
-                leaveProject &&
-                !isPending(member)
-              "
-              [attr.aria-label]="t('project_overview.members.leave')"
-              icon="remove-user"
-              appearance="tertiary"
-              class="leave-button"
-              tuiIconButton
-              [tuiHint]="t('project_overview.members.leave')"
-              type="button"></button>
+            <ng-container *ngIf="project$ | async as project">
+              <tg-leave-project-dropdown
+                *ngIf="
+                  member?.user?.username === user?.username &&
+                  leaveProject &&
+                  !isPending(member)
+                "
+                [singleMember]="members.length === 1"
+                [project]="project"
+                (openDialog)="leaveProjectDropdown = $event"
+                (leaveProject)="
+                  confirmLeaveProject()
+                "></tg-leave-project-dropdown>
+            </ng-container>
 
             <tg-ui-badge
               *ngIf="isPending(member)"

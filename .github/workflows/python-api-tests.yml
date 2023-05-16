@@ -79,7 +79,7 @@ jobs:
       working-directory: ./python/apps/taiga
       run: |
         set -o pipefail
-        python -m pytest -s --fast_only --cov --cov-report=term-missing:skip-covered --junitxml=pytest.xml | tee pytest-coverage.txt
+        python -m pytest -s --cov --cov-report=term-missing:skip-covered --junitxml=pytest.xml | tee pytest-coverage.txt
         set +o pipefail
 
     - name: Pytest coverage comment

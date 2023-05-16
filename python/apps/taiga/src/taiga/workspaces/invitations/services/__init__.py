@@ -12,6 +12,7 @@ from taiga.base.api.pagination import Pagination
 from taiga.base.utils import emails
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.base.utils.emails import is_email
+from taiga.commons.invitations import is_spam
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
@@ -107,7 +108,7 @@ async def create_workspace_invitations(
         if invitation:
             # if the user has an invitation, the system uses it
             invitation.status = WorkspaceInvitationStatus.PENDING
-            if not await _is_spam(invitation):
+            if not is_spam(invitation):
                 invitation.num_emails_sent += 1
                 invitation.resent_at = aware_utcnow()
                 invitation.resent_by = invited_by
@@ -291,22 +292,6 @@ async def send_workspace_invitation_email(
 
 async def _generate_workspace_invitation_token(invitation: WorkspaceInvitation) -> str:
     return str(await WorkspaceInvitationToken.create_for_object(invitation))
-
-
-async def _get_time_since_last_send(invitation: WorkspaceInvitation) -> int:
-    last_send_at = invitation.resent_at if invitation.resent_at else invitation.created_at
-    return int((aware_utcnow() - last_send_at).total_seconds() / 60)  # in minutes
-
-
-async def _is_spam(invitation: WorkspaceInvitation) -> bool:
-    time_since_last_send = await _get_time_since_last_send(invitation)
-    if (
-        invitation.num_emails_sent < settings.WORKSPACE_INVITATION_RESEND_LIMIT
-        and time_since_last_send >= settings.WORKSPACE_INVITATION_RESEND_TIME
-    ):
-        return False
-
-    return True
 
 
 def is_workspace_invitation_for_this_user(invitation: WorkspaceInvitation, user: User) -> bool:

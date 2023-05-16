@@ -42,6 +42,10 @@ import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
+import { LeaveProjectDropdownComponent } from '~/app/modules/project/components/leave-project-dropdown/leave-project-dropdown.component';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { filterNil } from '~/app/shared/utils/operators';
+import { leaveProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 
 @Component({
   selector: 'tg-project-members-list',
@@ -61,6 +65,7 @@ import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
     ScrollingModule,
     BadgeModule,
     CapitalizePipeModule,
+    LeaveProjectDropdownComponent,
   ],
   providers: [
     {
@@ -151,6 +156,8 @@ export class ProjectMembersListComponent {
 
   public loading$ = this.store.select(selectLoadingMoreMembers);
   public canPaginate$ = this.store.select(selectCanPaginate);
+  public project$ = this.store.select(selectCurrentProject).pipe(filterNil());
+  public leaveProjectDropdown = false;
 
   public trackById(_index: number, member: Membership | Invitation) {
     const user = this.getUser(member);
@@ -246,6 +253,17 @@ export class ProjectMembersListComponent {
       !!newInvitationToMember ||
       !!newInvitationToNonMember
     );
+  }
+
+  public confirmLeaveProject() {
+    this.project$.pipe(take(1)).subscribe((project) => {
+      this.store.dispatch(
+        leaveProject({
+          id: project.id,
+          name: project.name,
+        })
+      );
+    });
   }
 
   constructor(private cd: ChangeDetectorRef, private store: Store) {}

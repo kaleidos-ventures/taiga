@@ -11,11 +11,18 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { fetch } from '@nrwl/angular';
+import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { EMPTY } from 'rxjs';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, of } from 'rxjs';
+import {
+  catchError,
+  exhaustMap,
+  filter,
+  map,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
@@ -29,6 +36,7 @@ import {
   selectCurrentProject,
   selectMembers,
 } from '../selectors/project.selectors';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 @Injectable()
 export class ProjectEffects {
   public loadProject$ = createEffect(() => {
@@ -340,6 +348,71 @@ export class ProjectEffects {
         });
 
         return ProjectActions.fetchProject({ id: project.id });
+      })
+    );
+  });
+
+  public leaveProject$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.leaveProject),
+      concatLatestFrom(() => this.store.select(selectUser).pipe(filterNil())),
+      pessimisticUpdate({
+        run: (action, user) => {
+          return this.projectApiService
+            .deleteProjectMembership(action.id, user.username)
+            .pipe(
+              exhaustMap(() => {
+                return this.projectApiService.getProject(action.id).pipe(
+                  map((project) => {
+                    return ProjectActions.leaveProjectSuccess({
+                      id: action.id,
+                      name: action.name,
+                      refreshProject: project,
+                    });
+                  }),
+                  catchError(() => {
+                    return of(
+                      ProjectActions.leaveProjectSuccess({
+                        id: action.id,
+                        name: action.name,
+                        refreshProject: null,
+                      })
+                    );
+                  })
+                );
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.errorManagement(httpResponse);
+        },
+      })
+    );
+  });
+
+  public leaveProjectSucces$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.leaveProjectSuccess),
+      tap((action) => {
+        this.appService.toastNotification({
+          message: 'project.leave_project.no_longer_member',
+          paramsMessage: { project: action.name },
+          status: TuiNotification.Info,
+          closeOnNavigation: false,
+        });
+
+        if (!action.refreshProject) {
+          void this.router.navigate(['/']);
+        }
+      }),
+      map((action) => {
+        return action.refreshProject;
+      }),
+      filterNil(),
+      map((project) => {
+        return ProjectActions.fetchProjectSuccess({
+          project,
+        });
       })
     );
   });

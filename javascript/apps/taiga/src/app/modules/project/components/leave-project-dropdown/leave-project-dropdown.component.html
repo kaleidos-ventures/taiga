@@ -1,0 +1,81 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <tui-hosted-dropdown
+    [tuiDropdownAlign]="'right'"
+    [content]="confirmLeaveProjectDialog"
+    [(open)]="dropdownState">
+    <button
+      tgRestoreFocusTarget="leave-project"
+      type="button"
+      tuiIconButton
+      appearance="tertiary"
+      aria-haspopup="true"
+      [attr.aria-expanded]="dropdownState"
+      class="leave-project"
+      icon="leave"
+      data-test="leave-project"
+      [attr.aria-label]="t('project.leave_project.leave')"
+      [tuiHint]="t('project.leave_project.leave')"></button>
+  </tui-hosted-dropdown>
+
+  <ng-template #confirmLeaveProjectDialog>
+    <div
+      tgRestoreFocus="leave-project"
+      role="dialog"
+      aria-labelledby="leave-project-title"
+      aria-modal="true"
+      class="leave-project-dialog"
+      [class.single-member]="singleMember"
+      data-test="leave-projectws-member-dialog"
+      cdkTrapFocus>
+      <ng-container *ngIf="singleMember">
+        <p class="leave-project-dialog-title">
+          {{ t('project.leave_project.warning_title') }}
+        </p>
+        <p class="leave-project-dialog-description">
+          {{ t('project.leave_project.warning_descipription') }}
+        </p>
+      </ng-container>
+      <ng-container *ngIf="!singleMember">
+        <h2
+          id="leave-project-title"
+          class="leave-project-dialog-title">
+          {{
+            t('project.leave_project.leave_title', {
+              project: project.name
+            })
+          }}
+        </h2>
+        <p class="leave-project-dialog-description">
+          {{ t('project.leave_project.leave_description') }}
+        </p>
+        <div class="leave-project-dialog-actions">
+          <button
+            tgAutoFocus
+            type="button"
+            tuiLink
+            appearance="tertiary"
+            (click)="keep()">
+            {{ t('project.leave_project.no') }}
+          </button>
+          <button
+            type="button"
+            data-test="confirm-cancel"
+            tuiButton
+            icon="leave"
+            appearance="secondary"
+            (click)="confirm()">
+            {{ t('project.leave_project.yes') }}
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </ng-template>
+</ng-container>

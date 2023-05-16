@@ -19,10 +19,6 @@ Copyright (c) 2023-present Kaleidos INC
   }
 }
 
-.leave-button {
-  animation: fade-in-down 1s 1 ease-in-out;
-}
-
 :host::ng-deep {
   &.pending-state {
     background-color: var(--color-gray10);
@@ -41,7 +37,7 @@ Copyright (c) 2023-present Kaleidos INC
       opacity: 0;
     }
 
-    & .leave-button {
+    & tg-leave-project-dropdown {
       opacity: 0;
     }
   }
@@ -68,7 +64,7 @@ Copyright (c) 2023-present Kaleidos INC
       background: var(--color-gray10);
     }
 
-    & .leave-button {
+    & tg-leave-project-dropdown {
       opacity: 1;
     }
 
@@ -109,7 +105,8 @@ Copyright (c) 2023-present Kaleidos INC
     z-index: var(--first-layer);
   }
 
-  &:not(.pending-member):hover {
+  &:not(.pending-member):hover,
+  &.leave-project-open {
     background-color: var(--color-gray10);
 
     & tg-user-card {

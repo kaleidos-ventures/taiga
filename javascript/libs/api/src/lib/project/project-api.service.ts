@@ -469,4 +469,13 @@ export class ProjectApiService {
       formData
     );
   }
+
+  public deleteProjectMembership(
+    id: Project['id'],
+    username: User['username']
+  ) {
+    return this.http.delete<void>(
+      `${this.config.apiUrl}/projects/${id}/memberships/${username}`
+    );
+  }
 }

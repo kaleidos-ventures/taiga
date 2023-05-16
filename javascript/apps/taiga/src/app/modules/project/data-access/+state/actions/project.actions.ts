@@ -69,6 +69,23 @@ export const deleteProject = createAction(
   }>()
 );
 
+export const leaveProject = createAction(
+  '[Project] leave project',
+  props<{
+    id: Project['id'];
+    name: Project['name'];
+  }>()
+);
+
+export const leaveProjectSuccess = createAction(
+  '[Project] leave project success',
+  props<{
+    id: Project['id'];
+    name: Project['name'];
+    refreshProject: Project | null;
+  }>()
+);
+
 export const deleteProjectSuccess = createAction(
   '[Project][api] delete project successs',
   props<{

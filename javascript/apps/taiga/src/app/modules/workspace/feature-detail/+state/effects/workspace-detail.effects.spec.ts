@@ -25,11 +25,13 @@ import { AppService } from '~/app/services/app.service';
 import {
   workspaceActions,
   workspaceDetailApiActions,
+  workspaceDetailEventActions,
 } from '../actions/workspace-detail.actions';
 import { WorkspaceDetailEffects } from './workspace-detail.effects';
 import {
   selectMembersList,
   selectMembersOffset,
+  selectInvitationsOffset,
 } from '../selectors/workspace-detail.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 
@@ -189,5 +191,163 @@ describe('WorkspaceEffects', () => {
     expect(effects.removeMemberSuccessChangeReloadPage$).toBeObservable(
       expected
     );
+  });
+
+  it('load workspace members', () => {
+    const id = randUuid();
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const membersResponse = {
+      members: [
+        WorkspaceMembershipMockFactory(),
+        WorkspaceMembershipMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    workspaceApiService.getWorkspaceMembers.mockReturnValue(
+      cold('-b|', { b: membersResponse })
+    );
+
+    actions$ = hot('-a', {
+      a: workspaceDetailApiActions.getWorkspaceMembers({
+        id,
+        offset: 0,
+        showLoading: true,
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: workspaceDetailApiActions.getWorkspaceMembersSuccess({
+        members: membersResponse.members,
+        totalMembers: 2,
+        offset: 0,
+      }),
+    });
+
+    expect(effects.loadWorkspaceMembers$).toBeObservable(expected);
+  });
+
+  it('load workspace non members', () => {
+    const id = randUuid();
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const nonMembersResponse = {
+      members: [
+        WorkspaceMembershipMockFactory(),
+        WorkspaceMembershipMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    workspaceApiService.getWorkspaceNonMembers.mockReturnValue(
+      cold('-b|', { b: nonMembersResponse })
+    );
+
+    actions$ = hot('-a', {
+      a: workspaceDetailApiActions.getWorkspaceNonMembers({ id, offset: 0 }),
+    });
+
+    const expected = cold('--a', {
+      a: workspaceDetailApiActions.getWorkspaceNonMembersSuccess({
+        members: nonMembersResponse.members,
+        totalMembers: 2,
+        offset: 0,
+      }),
+    });
+
+    expect(effects.loadWorkspaceNonMembers$).toBeObservable(expected);
+  });
+
+  it('load workspace invitations', () => {
+    const id = randUuid();
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const invitationsResponse = {
+      members: [
+        InvitationWorkspaceMemberMockFactory(),
+        InvitationWorkspaceMemberMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    workspaceApiService.getWorkspaceInvitationMembers.mockReturnValue(
+      cold('-b|', { b: invitationsResponse })
+    );
+
+    actions$ = hot('-a', {
+      a: workspaceDetailApiActions.getWorkspaceMemberInvitations({
+        id,
+        offset: 0,
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: workspaceDetailApiActions.getWorkspaceMemberInvitationsSuccess({
+        members: invitationsResponse.members,
+        totalMembers: 2,
+        offset: 0,
+      }),
+    });
+
+    expect(effects.loadWorkspaceMemberInvitations$).toBeObservable(expected);
+  });
+
+  it('update workspace members and invitations', () => {
+    const id = randUuid();
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const membersResponse = {
+      members: [
+        WorkspaceMembershipMockFactory(),
+        WorkspaceMembershipMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    const invitations = {
+      members: [
+        InvitationWorkspaceMemberMockFactory(),
+        InvitationWorkspaceMemberMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    workspaceApiService.getWorkspaceMembers.mockReturnValue(
+      cold('-b|', { b: membersResponse })
+    );
+    workspaceApiService.getWorkspaceInvitationMembers.mockReturnValue(
+      cold('-b|', { b: invitations })
+    );
+
+    actions$ = hot('-a', {
+      a: workspaceDetailEventActions.updateMembersList({ id }),
+    });
+
+    const store = spectator.inject(MockStore);
+    store.overrideSelector(selectInvitationsOffset, 0);
+    store.overrideSelector(selectMembersOffset, 0);
+    store.refreshState();
+
+    const expected = cold('--a', {
+      a: workspaceDetailEventActions.updateMembersListSuccess({
+        members: {
+          members: membersResponse.members,
+          totalMembers: 2,
+          offset: 0,
+        },
+        invitations: {
+          members: invitations.members,
+          totalMembers: 2,
+          offset: 0,
+        },
+      }),
+    });
+
+    expect(effects.updateWorkspaceMembersInvitations$).toBeObservable(expected);
   });
 });

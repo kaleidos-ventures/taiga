@@ -35,6 +35,7 @@ import { AppService } from '~/app/services/app.service';
 import {
   revokeInvitation,
   invitationProjectActions,
+  invitationWorkspaceActions,
 } from '../actions/invitation.action';
 import { InvitationEffects } from './invitation.effects';
 
@@ -57,7 +58,7 @@ describe('InvitationEffects', () => {
     store = spectator.inject(MockStore);
   });
 
-  it('send invitations', () => {
+  it('send project invitations', () => {
     store.overrideSelector(selectInvitations, []);
     const invitationApiService = spectator.inject(InvitationApiService);
     const effects = spectator.inject(InvitationEffects);
@@ -97,7 +98,7 @@ describe('InvitationEffects', () => {
     expect(effects.sendProjectInvitations$).toBeObservable(expected);
   });
 
-  it('Accept invitation id', () => {
+  it('Accept project invitation id', () => {
     const user = UserMockFactory();
     const slug = randSlug();
     const id = randUuid();
@@ -137,7 +138,7 @@ describe('InvitationEffects', () => {
     expect(effects.acceptInvitationId$).toBeObservable(expected);
   });
 
-  it('Accept invitation id error', () => {
+  it('Accept project invitation id error', () => {
     const id = randUuid();
     const effects = spectator.inject(InvitationEffects);
     const appService = spectator.inject(AppService);
@@ -172,7 +173,7 @@ describe('InvitationEffects', () => {
     });
   });
 
-  it('Accept invitation revoke error', () => {
+  it('Accept project invitation revoke error', () => {
     const id = randUuid();
     const effects = spectator.inject(InvitationEffects);
     const appService = spectator.inject(AppService);
@@ -376,6 +377,136 @@ describe('InvitationEffects', () => {
 
       expectObservable(effects.projectSearchUser$).toBe('202ms a', {
         a: invitationProjectActions.searchUsersSuccess({ suggestedUsers }),
+      });
+    });
+  });
+
+  it('send workspace invitations', () => {
+    store.overrideSelector(selectInvitations, []);
+    const invitationApiService = spectator.inject(InvitationApiService);
+    const effects = spectator.inject(InvitationEffects);
+    const workspace = {
+      id: randUuid(),
+    };
+    const user = UserMockFactory();
+    const invitationMockPayload = [{ usernameOrEmail: 'hola@hola.es' }];
+    const invitationApiMockResponse: InvitationResponse = {
+      invitations: [
+        {
+          user: {
+            username: user.username,
+            fullName: user.fullName,
+            color: user.color,
+          },
+          email: 'hola@hola.es',
+        },
+      ],
+      alreadyMembers: 1,
+    };
+
+    const invitationMockResponse = [
+      {
+        user: {
+          username: user.username,
+          fullName: user.fullName,
+          color: user.color,
+        },
+        workspace,
+        email: 'hola@hola.es',
+      },
+    ];
+
+    invitationApiService.inviteWorkspaceUsers.mockReturnValue(
+      cold('-b|', { b: invitationApiMockResponse })
+    );
+
+    actions$ = hot('-a', {
+      a: invitationWorkspaceActions.inviteUsers({
+        id: workspace.id,
+        invitation: invitationMockPayload,
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: invitationWorkspaceActions.inviteUsersSuccess({
+        newInvitations: invitationMockResponse,
+        alreadyMembers: 1,
+        totalInvitations: 1,
+      }),
+    });
+
+    expect(effects.sendWorkspaceInvitations$).toBeObservable(expected);
+  });
+
+  it('Search workspace user: no results', () => {
+    const user = UserMockFactory();
+    store.overrideSelector(selectUser, user);
+    const effects = spectator.inject(InvitationEffects);
+    const invitationApiService = spectator.inject(InvitationApiService);
+    const searchText: string = randWord();
+    const suggestedUsers: Contact[] = [];
+
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    testScheduler.run((helpers) => {
+      const { expectObservable, cold, hot } = helpers;
+
+      invitationApiService.searchUser.mockReturnValue(
+        cold('-b|', { b: suggestedUsers })
+      );
+
+      actions$ = hot('-a', {
+        a: invitationWorkspaceActions.searchUsers({
+          searchUser: { text: searchText, workspace: randUuid() },
+          peopleAdded: [],
+        }),
+      });
+
+      expectObservable(effects.workspaceSearchUser$).toBe('202ms a', {
+        a: invitationWorkspaceActions.searchUsersSuccess({ suggestedUsers }),
+      });
+    });
+  });
+
+  it('Search workspace user: results', () => {
+    const user = UserMockFactory();
+    store.overrideSelector(selectUser, user);
+    const effects = spectator.inject(InvitationEffects);
+    const invitationApiService = spectator.inject(InvitationApiService);
+    const searchText: string = randWord();
+    const suggestedUsers: Contact[] = [
+      {
+        username: `${searchText} ${randWord()}`,
+        fullName: randWord(),
+        email: randEmail(),
+      },
+    ];
+
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    testScheduler.run((helpers) => {
+      const { expectObservable, cold, hot } = helpers;
+
+      invitationApiService.searchUser.mockReturnValue(
+        cold('-b|', { b: suggestedUsers })
+      );
+
+      actions$ = hot('-a', {
+        a: invitationWorkspaceActions.searchUsers({
+          searchUser: {
+            text: searchText,
+            workspace: randUuid(),
+          },
+          peopleAdded: [],
+        }),
+      });
+
+      expectObservable(effects.workspaceSearchUser$).toBe('202ms a', {
+        a: invitationWorkspaceActions.searchUsersSuccess({ suggestedUsers }),
       });
     });
   });

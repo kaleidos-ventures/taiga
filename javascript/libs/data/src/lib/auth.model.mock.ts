@@ -8,6 +8,8 @@
 
 import { randUrl, randUuid } from '@ngneat/falso';
 import { Auth, Login } from './auth.model';
+import { User } from './user.model';
+import { UserMockFactory } from '@taiga/data';
 
 export const AuthMockFactory = (): Auth => {
   return {
@@ -21,6 +23,22 @@ export const InviteMockFactory = (): Login => {
     refresh: randUuid(),
     token: randUuid(),
     projectInvitationToken: randUuid(),
+    next: randUrl(),
+  };
+};
+
+export const WorkspaceInviteMockFactory = (): {
+  auth: Auth;
+  user: User;
+  workspaceInvitationToken?: string;
+  acceptWorkspaceInvitation?: boolean;
+  next: string;
+} => {
+  return {
+    auth: AuthMockFactory(),
+    user: UserMockFactory(),
+    workspaceInvitationToken: randUuid(),
+    acceptWorkspaceInvitation: true,
     next: randUrl(),
   };
 };

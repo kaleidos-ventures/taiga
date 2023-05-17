@@ -36,6 +36,7 @@ import {
   AuthMockFactory,
   InviteMockFactory,
   UserMockFactory,
+  WorkspaceInviteMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
@@ -56,6 +57,8 @@ import {
   signUpError,
   signUpSuccess,
   socialSignup,
+  loginWorkspaceInvitation,
+  loginWorkspaceInvitationSuccess,
 } from '../actions/auth.actions';
 import { selectUser } from '../selectors/auth.selectors';
 import { AuthEffects } from './auth.effects';
@@ -144,7 +147,7 @@ describe('AuthEffects', () => {
     });
   });
 
-  it('login redirect - next', () => {
+  it('login accept project invitation redirect - next', () => {
     const router = spectator.inject(Router);
     const effects = spectator.inject(AuthEffects);
 
@@ -175,7 +178,7 @@ describe('AuthEffects', () => {
     });
   });
 
-  it('login redirect - NO next', () => {
+  it('login accept project invitation redirect - NO next', () => {
     const router = spectator.inject(Router);
     const effects = spectator.inject(AuthEffects);
 
@@ -198,6 +201,71 @@ describe('AuthEffects', () => {
 
     expect(effects.loginProjectInvitationRedirect$).toSatisfyOnFlush(() => {
       expect(router.navigate).toHaveBeenCalledWith(['/'], {
+        state: { invite: undefined },
+      });
+    });
+  });
+
+  it('login workspace invitation', () => {
+    const auth = AuthMockFactory();
+    const user = UserMockFactory();
+    const invite = WorkspaceInviteMockFactory();
+    const loginData = {
+      username: randUserName(),
+      password: randPassword(),
+      workspaceInvitationToken: invite.workspaceInvitationToken,
+      next: invite.next,
+      acceptWorkspaceInvitation: invite.acceptWorkspaceInvitation,
+    };
+    const authApiService = spectator.inject(AuthApiService);
+    const usersApiService = spectator.inject(UsersApiService);
+    const effects = spectator.inject(AuthEffects);
+
+    authApiService.login.mockReturnValue(cold('-b|', { b: auth }));
+    usersApiService.me.mockReturnValue(cold('-b|', { b: user }));
+
+    actions$ = hot('-a', { a: loginWorkspaceInvitation(loginData) });
+
+    const expected = cold('---a', {
+      a: loginWorkspaceInvitationSuccess({
+        user,
+        auth,
+        acceptWorkspaceInvitation: invite.acceptWorkspaceInvitation,
+        workspaceInvitationToken: invite.workspaceInvitationToken,
+        next: invite.next,
+      }),
+    });
+
+    expect(effects.loginWorkspaceInvitation$).toBeObservable(expected);
+  });
+
+  it('login accept workspace invitation redirect - next', () => {
+    const router = spectator.inject(Router);
+    const effects = spectator.inject(AuthEffects);
+
+    const auth = AuthMockFactory();
+    const user = UserMockFactory();
+    const invite = WorkspaceInviteMockFactory();
+
+    store.overrideSelector(selectUser, user);
+
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    workspaceApiService.acceptInvitationToken.mockReturnValue(
+      cold('-a|', { a: [] })
+    );
+
+    actions$ = hot('a', {
+      a: loginWorkspaceInvitationSuccess({
+        user,
+        auth,
+        workspaceInvitationToken: invite.workspaceInvitationToken,
+        acceptWorkspaceInvitation: invite.acceptWorkspaceInvitation,
+        next: invite.next,
+      }),
+    });
+
+    expect(effects.loginWorkspaceInvitationRedirect$).toSatisfyOnFlush(() => {
+      expect(router.navigate).toHaveBeenCalledWith([invite.next], {
         state: { invite: undefined },
       });
     });

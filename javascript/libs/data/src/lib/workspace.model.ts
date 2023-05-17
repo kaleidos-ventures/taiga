@@ -58,7 +58,11 @@ export interface WorkspaceMembership {
 
 export interface InvitationWorkspaceMember {
   user: Pick<User, 'username' | 'fullName' | 'color'>;
-  workspace: Pick<WorkspaceProject, 'id' | 'name' | 'slug'>;
+  workspace: {
+    id: string;
+    name?: string;
+    slug?: string;
+  };
   email: string;
 }
 

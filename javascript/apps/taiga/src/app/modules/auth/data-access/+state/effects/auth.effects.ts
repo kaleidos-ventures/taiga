@@ -690,7 +690,7 @@ export class AuthEffects {
                       user,
                       auth,
                     };
-                    if (acceptProjectInvitation || acceptProjectInvitation) {
+                    if (projectInvitationToken || acceptProjectInvitation) {
                       return AuthActions.loginProjectInvitationSuccess({
                         ...loginData,
                         acceptProjectInvitation,

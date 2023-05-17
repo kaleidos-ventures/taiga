@@ -14,7 +14,7 @@ from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import IsWorkspaceAdmin
+from taiga.permissions import IsWorkspaceMember
 from taiga.routers import routes
 from taiga.workspaces.invitations import services as workspaces_invitations_services
 from taiga.workspaces.invitations.api.validators import WorkspaceInvitationsValidator
@@ -29,8 +29,8 @@ from taiga.workspaces.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
 ACCEPT_WORKSPACE_INVITATION_BY_TOKEN = IsWorkspaceInvitationRecipient()
-CREATE_WORKSPACE_INVITATIONS = IsWorkspaceAdmin()
-LIST_WORKSPACE_INVITATIONS = IsWorkspaceAdmin()
+CREATE_WORKSPACE_INVITATIONS = IsWorkspaceMember()
+LIST_WORKSPACE_INVITATIONS = IsWorkspaceMember()
 
 
 # HTTP 200 RESPONSES

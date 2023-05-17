@@ -18,7 +18,7 @@ from taiga.permissions import (
     IsAuthenticated,
     IsProjectAdmin,
     IsSuperUser,
-    IsWorkspaceAdmin,
+    IsWorkspaceMember,
 )
 from tests.utils import factories as f
 
@@ -100,7 +100,7 @@ async def test_check_permission_is_workspace_admin():
     user1 = await f.create_user()
     user2 = await f.create_user()
     workspace = await f.create_workspace(name="workspace1", created_by=user1)
-    permissions = IsWorkspaceAdmin()
+    permissions = IsWorkspaceMember()
 
     # user1 is ws-admin
     assert await check_permissions(permissions=permissions, user=user1, obj=workspace) is None

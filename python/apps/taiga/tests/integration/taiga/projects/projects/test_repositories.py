@@ -83,7 +83,7 @@ async def test_list_workspace_invited_projects_for_user():
     user8 = await f.create_user()
     user9 = await f.create_user()
 
-    # workspace, user8(ws-admin), user9(ws-member)
+    # workspace, user8(ws-member), user9(ws-member)
     workspace = await f.create_workspace(created_by=user8)
     await f.create_workspace_membership(user=user9, workspace=workspace)
     # user8 is a pj-admin of several projects
@@ -143,7 +143,7 @@ async def test_list_projects_2():
     user6 = await f.create_user()
     user7 = await f.create_user()
 
-    # workspace, user6(ws-admin), user7(ws-member, has_projects: true)
+    # workspace, user6(ws-member), user7(ws-member, has_projects: true)
     workspace = await f.create_workspace(created_by=user6)
     await f.create_workspace_membership(user=user7, workspace=workspace)
     # user7 is not a pj-member and ws-members are not allowed
@@ -159,7 +159,7 @@ async def test_list_workspace_projects_for_user_3():
     user6 = await f.create_user()
     user7 = await f.create_user()
 
-    # workspace, user6(ws-admin), user7(ws-member, has_projects: false)
+    # workspace, user6(ws-member), user7(ws-member, has_projects: false)
     workspace = await f.create_workspace(created_by=user6)
     await f.create_workspace_membership(user=user7, workspace=workspace)
 
@@ -173,7 +173,7 @@ async def test_list_workspace_projects_for_user_4():
     user6 = await f.create_user()
     user7 = await f.create_user()
 
-    # workspace, user6(ws-admin), user7(no ws-member, ws-members have permissions)
+    # workspace, user6(ws-member), user7(no ws-member, ws-members have permissions)
     workspace = await f.create_workspace(created_by=user6)
     # user7 is not a pj-member or ws-member but ws-members are allowed
     await f.create_project(workspace=workspace, created_by=user6)
@@ -266,7 +266,7 @@ async def test_delete_projects():
 ##########################################################
 
 
-async def test_get_total_projects_in_ws_for_admin() -> None:
+async def test_get_total_projects_in_ws_for_member() -> None:
     user1 = await f.create_user()
     other_user = await f.create_user()
     ws = await f.create_workspace(created_by=user1)
@@ -277,32 +277,16 @@ async def test_get_total_projects_in_ws_for_admin() -> None:
     assert res == 2
 
 
-async def test_get_total_projects_in_ws_for_member() -> None:
-    admin = await f.create_user()
-    user1 = await f.create_user()
-
-    ws = await f.create_workspace(created_by=admin)
-    await f.create_workspace_membership(user=user1, workspace=ws)
-
-    # user1 is not a pj-member
-    pj1 = await f.create_project(workspace=ws, created_by=admin)
-    await _save_project(project=pj1)
-
-    res = await repositories.get_total_projects(filters={"project_member_id": user1.id, "workspace_id": ws.id})
-    # Not ws-admin users should see just the projects in which she's a pj-member
-    assert res == 0
-
-
 async def test_get_total_projects_in_ws_for_guest() -> None:
-    admin = await f.create_user()
+    member = await f.create_user()
     user1 = await f.create_user()
-    ws = await f.create_workspace(created_by=admin)
+    ws = await f.create_workspace(created_by=member)
 
-    pj1 = await f.create_project(workspace=ws, created_by=admin)
+    pj1 = await f.create_project(workspace=ws, created_by=member)
     pj_general_role = await _get_pj_member_role(project=pj1)
     await f.create_project_membership(user=user1, project=pj1, role=pj_general_role)
 
-    pj2 = await f.create_project(workspace=ws, created_by=admin)
+    pj2 = await f.create_project(workspace=ws, created_by=member)
     pj_general_role = await _get_pj_member_role(project=pj2)
     await f.create_project_membership(user=user1, project=pj2, role=pj_general_role)
 

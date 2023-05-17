@@ -10,7 +10,7 @@ from uuid import uuid1
 
 import pytest
 from taiga.workspaces.memberships import services
-from taiga.workspaces.memberships.services import WS_ROLE_NAME_ADMIN, WS_ROLE_NAME_GUEST, WS_ROLE_NAME_NONE
+from taiga.workspaces.memberships.services import WS_ROLE_NAME_GUEST, WS_ROLE_NAME_MEMBER, WS_ROLE_NAME_NONE
 from taiga.workspaces.memberships.services import exceptions as ex
 from tests.utils import factories as f
 
@@ -179,7 +179,7 @@ async def test_get_workspace_role_admin():
         fake_ws_memberships_repo.get_workspace_membership.assert_awaited_once_with(
             filters={"workspace_id": workspace_id, "user_id": user_id}
         )
-        assert ret is WS_ROLE_NAME_ADMIN
+        assert ret is WS_ROLE_NAME_MEMBER
 
 
 async def test_get_workspace_role_name_guest():

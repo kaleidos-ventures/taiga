@@ -413,3 +413,13 @@ def is_project_invitation_for_this_user(invitation: ProjectInvitation, user: Use
     Check if a project invitation if for an specific user
     """
     return emails.are_the_same(user.email, invitation.email)
+
+
+async def has_pending_project_invitation(user: AnyUser, project: Project) -> bool:
+    if user.is_anonymous:
+        return False
+
+    invitation = await invitations_repositories.get_project_invitation(
+        filters={"user": user, "project": project, "status": ProjectInvitationStatus.PENDING}
+    )
+    return invitation is not None

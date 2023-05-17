@@ -18,24 +18,12 @@ pytestmark = pytest.mark.django_db(transaction=True)
 ##########################################################
 
 
-async def test_create_project_being_workspace_admin(client):
+async def test_create_project_being_workspace_member(client):
     workspace = await f.create_workspace()
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
     files = {"logo": ("logo.png", f.build_image_file("logo"), "image/png")}
 
     client.login(workspace.created_by)
-    response = client.post("/projects", data=data, files=files)
-    assert response.status_code == status.HTTP_200_OK, response.text
-
-
-async def test_create_project_being_workspace_member(client):
-    workspace = await f.create_workspace()
-    user2 = await f.create_user()
-    await f.create_workspace_membership(user=user2, workspace=workspace)
-    data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
-    files = {"logo": ("logo.png", f.build_image_file("logo"), "image/png")}
-
-    client.login(user2)
     response = client.post("/projects", data=data, files=files)
     assert response.status_code == status.HTTP_200_OK, response.text
 

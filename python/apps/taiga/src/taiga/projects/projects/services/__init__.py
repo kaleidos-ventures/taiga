@@ -16,6 +16,7 @@ from taiga.base.utils.images import get_thumbnail_url
 from taiga.conf import settings
 from taiga.events.actions import event_handlers as actions_events
 from taiga.permissions import services as permissions_services
+from taiga.projects.invitations import services as pj_invitations_services
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.memberships import repositories as pj_memberships_repositories
 from taiga.projects.projects import events as projects_events
@@ -133,15 +134,15 @@ async def get_project_detail(project: Project, user: AnyUser) -> ProjectDetailSe
         project_role_permissions,
     ) = await permissions_services.get_user_project_role_info(user=user, project=project)
 
-    is_workspace_member = await permissions_services.user_is_workspace_member(user=user, workspace=project.workspace)
+    is_workspace_member = await permissions_services.is_workspace_member(user=user, obj=project.workspace)
 
     user_id = None if user.is_anonymous else user.id
     workspace = await workspaces_services.get_workspace_nested(id=project.workspace_id, user_id=user_id)
 
     user_permissions = await permissions_services.get_user_permissions_for_project(
         is_project_admin=is_project_admin,
-        is_workspace_admin=is_workspace_member,
         is_project_member=is_project_member,
+        is_workspace_member=is_workspace_member,
         is_authenticated=user.is_authenticated,
         project_role_permissions=project_role_permissions,
         project=project,
@@ -150,8 +151,7 @@ async def get_project_detail(project: Project, user: AnyUser) -> ProjectDetailSe
     user_has_pending_invitation = (
         False
         if user.is_anonymous
-        # TODO: `has_pending_project_invitation` belongs to project, no to permissions
-        else await (permissions_services.has_pending_project_invitation(user=user, project=project))
+        else await (pj_invitations_services.has_pending_project_invitation(user=user, project=project))
     )
 
     return serializers_services.serialize_project_detail(

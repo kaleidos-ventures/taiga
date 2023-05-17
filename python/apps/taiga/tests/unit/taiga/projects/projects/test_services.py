@@ -161,11 +161,14 @@ async def test_get_project_detail():
     with (
         patch("taiga.projects.projects.services.permissions_services", autospec=True) as fake_permissions_services,
         patch("taiga.projects.projects.services.workspaces_services", autospec=True) as fake_workspaces_services,
+        patch(
+            "taiga.projects.projects.services.pj_invitations_services", autospec=True
+        ) as fake_pj_invitations_services,
     ):
         fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_permissions_for_project.return_value = []
-        fake_permissions_services.user_is_workspace_member.return_value = True
-        fake_permissions_services.has_pending_project_invitation.return_value = True
+        fake_permissions_services.is_workspace_member.return_value = True
+        fake_pj_invitations_services.has_pending_project_invitation.return_value = True
         fake_workspaces_services.get_workspace_nested.return_value = WorkspaceNestedSerializer(
             id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin"
         )
@@ -176,13 +179,13 @@ async def test_get_project_detail():
         )
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once_with(
             is_project_admin=True,
-            is_workspace_admin=True,
+            is_workspace_member=True,
             is_project_member=True,
             is_authenticated=True,
             project_role_permissions=[],
             project=project,
         )
-        fake_permissions_services.has_pending_project_invitation.assert_awaited_once_with(
+        fake_pj_invitations_services.has_pending_project_invitation.assert_awaited_once_with(
             user=workspace.created_by, project=project
         )
         fake_workspaces_services.get_workspace_nested.assert_awaited_once_with(
@@ -199,11 +202,14 @@ async def test_get_project_detail_anonymous():
     with (
         patch("taiga.projects.projects.services.permissions_services", autospec=True) as fake_permissions_services,
         patch("taiga.projects.projects.services.workspaces_services", autospec=True) as fake_workspaces_services,
+        patch(
+            "taiga.projects.projects.services.pj_invitations_services", autospec=True
+        ) as fake_pj_invitations_services,
     ):
         fake_permissions_services.get_user_project_role_info.return_value = (True, True, [])
         fake_permissions_services.get_user_permissions_for_project.return_value = []
-        fake_permissions_services.user_is_workspace_member.return_value = True
-        fake_permissions_services.has_pending_project_invitation.return_value = False
+        fake_permissions_services.is_workspace_member.return_value = True
+        fake_pj_invitations_services.has_pending_project_invitation.return_value = False
         fake_workspaces_services.get_workspace_nested.return_value = WorkspaceNestedSerializer(
             id=uuid.uuid1(), name="ws 1", slug="ws-1", user_role="admin"
         )
@@ -212,13 +218,13 @@ async def test_get_project_detail_anonymous():
         fake_permissions_services.get_user_project_role_info.assert_awaited_once_with(project=project, user=user)
         fake_permissions_services.get_user_permissions_for_project.assert_awaited_once_with(
             is_project_admin=True,
-            is_workspace_admin=True,
+            is_workspace_member=True,
             is_project_member=True,
             is_authenticated=False,
             project_role_permissions=[],
             project=project,
         )
-        fake_permissions_services.has_pending_project_invitation.assert_not_awaited()
+        fake_pj_invitations_services.has_pending_project_invitation.assert_not_awaited()
         fake_workspaces_services.get_workspace_nested.assert_awaited_once_with(id=workspace.id, user_id=user.id)
 
 

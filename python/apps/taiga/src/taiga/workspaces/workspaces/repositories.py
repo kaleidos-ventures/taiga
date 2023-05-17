@@ -97,7 +97,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             )
             .annotate(total_projects=Value(total_projects, output_field=IntegerField()))
             .annotate(has_projects=Value(has_projects, output_field=BooleanField()))
-            .annotate(user_role=Value("admin", output_field=CharField()))
+            .annotate(user_role=Value("member", output_field=CharField()))
         )
         member_ws = chain(member_ws, qs)
 
@@ -219,7 +219,7 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             )
             .annotate(total_projects=Coalesce(total_projects, 0))
             .annotate(has_projects=has_projects)
-            .annotate(user_role=Value("admin", output_field=CharField()))
+            .annotate(user_role=Value("member", output_field=CharField()))
             .get()
         )
     except Workspace.DoesNotExist:

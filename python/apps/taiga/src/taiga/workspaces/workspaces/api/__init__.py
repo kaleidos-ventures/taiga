@@ -12,7 +12,7 @@ from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import HasPerm, IsAuthenticated, IsWorkspaceAdmin
+from taiga.permissions import HasPerm, IsAuthenticated, IsWorkspaceMember
 from taiga.routers import routes
 from taiga.workspaces.workspaces import services as workspaces_services
 from taiga.workspaces.workspaces.api.validators import UpdateWorkspaceValidator, WorkspaceValidator
@@ -23,8 +23,8 @@ from taiga.workspaces.workspaces.serializers import WorkspaceDetailSerializer, W
 LIST_MY_WORKSPACES = IsAuthenticated()
 GET_MY_WORKSPACE = IsAuthenticated()
 GET_WORKSPACE = HasPerm("view_workspace")
-DELETE_WORKSPACE = IsWorkspaceAdmin()
-UPDATE_WORKSPACE = IsWorkspaceAdmin()
+DELETE_WORKSPACE = IsWorkspaceMember()
+UPDATE_WORKSPACE = IsWorkspaceMember()
 
 # HTTP 200 RESPONSES
 WORKSPACE_200 = responses.http_status_200(model=WorkspaceSerializer)

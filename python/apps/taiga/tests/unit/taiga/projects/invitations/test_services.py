@@ -1147,3 +1147,25 @@ async def test_update_project_invitation_role_ok():
         fake_invitations_events.emit_event_when_project_invitation_is_updated.assert_awaited_once_with(
             invitation=updated_invitation
         )
+
+
+#######################################################
+# misc has_pending_project_invitation
+#######################################################
+
+
+async def test_has_pending_project_invitation() -> None:
+    user = f.build_user()
+    project = f.build_project()
+
+    with (
+        patch("taiga.projects.invitations.services.invitations_repositories", autospec=True)
+    ) as fake_pj_invitations_repo:
+        invitation = f.build_project_invitation(email=user.email, user=user, project=project)
+        fake_pj_invitations_repo.get_project_invitation.return_value = invitation
+        res = await services.has_pending_project_invitation(project=project, user=user)
+        assert res is True
+
+        fake_pj_invitations_repo.get_project_invitation.return_value = None
+        res = await services.has_pending_project_invitation(project=project, user=user)
+        assert res is False

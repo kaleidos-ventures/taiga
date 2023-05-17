@@ -21,7 +21,7 @@ from taiga.workspaces.memberships.serializers import services as serializer_serv
 from taiga.workspaces.memberships.services import exceptions as ex
 from taiga.workspaces.workspaces.models import Workspace
 
-WS_ROLE_NAME_ADMIN: Final = "admin"
+WS_ROLE_NAME_MEMBER: Final = "member"
 WS_ROLE_NAME_GUEST: Final = "guest"
 WS_ROLE_NAME_NONE: Final = "none"
 
@@ -147,7 +147,7 @@ async def get_workspace_role_name(
         filters={"workspace_id": workspace_id, "user_id": user_id},
     )
     if ws_membership:
-        return WS_ROLE_NAME_ADMIN
+        return WS_ROLE_NAME_MEMBER
 
     else:
         pj_membership = await projects_memberships_repositories.exist_project_membership(

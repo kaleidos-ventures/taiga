@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from taiga.base.db.users import AnonymousUser
@@ -46,42 +46,42 @@ async def test_is_project_admin_being_project_member():
 
 
 #####################################################
-# is_workspace_admin
+# is_workspace_member
 #####################################################
 
 
-async def test_is_workspace_admin_being_an_anonymous_user():
+async def test_is_workspace_member_being_an_anonymous_user():
     user = AnonymousUser()
     workspace = await f.create_workspace()
 
-    assert await services.is_workspace_admin(user=user, obj=workspace) is False
+    assert await services.is_workspace_member(user=user, obj=workspace) is False
 
 
-async def test_is_workspace_admin_being_a_superuser():
+async def test_is_workspace_member_being_a_superuser():
     user = await f.create_user(is_superuser=True)
     workspace = await f.create_workspace()
 
-    assert await services.is_workspace_admin(user=user, obj=workspace) is True
+    assert await services.is_workspace_member(user=user, obj=workspace) is True
 
 
-async def test_is_workspace_admin_without_workspace():
+async def test_is_workspace_member_without_workspace():
     user = await f.create_user()
-    assert await services.is_workspace_admin(user=user, obj=None) is False
+    assert await services.is_workspace_member(user=user, obj=None) is False
 
 
-async def test_is_workspace_admin_being_workspace_member():
+async def test_is_workspace_member():
     user = await f.create_user()
     workspace = await f.create_workspace()
     await f.create_workspace_membership(user=user, workspace=workspace)
 
-    assert await services.is_workspace_admin(user=user, obj=workspace) is True
+    assert await services.is_workspace_member(user=user, obj=workspace) is True
 
 
-async def test_is_workspace_admin_not_being_a_workspace_member():
+async def test_is_workspace_member_not_being_a_workspace_member():
     user = await f.create_user()
     workspace = await f.create_workspace()
 
-    assert await services.is_workspace_admin(user=user, obj=workspace) is False
+    assert await services.is_workspace_member(user=user, obj=workspace) is False
 
 
 #####################################################
@@ -231,11 +231,13 @@ async def test_user_can_view_project_having_a_pending_invitation():
     await f.create_project_invitation(user=user, project=project, role=general_member_role)
 
     with (
-        patch("taiga.permissions.services.has_pending_project_invitation", return_value=True),
+        patch("taiga.permissions.services.pj_invitations_services") as fake_pj_invitations_services,
         patch("taiga.permissions.services.get_user_permissions"),
     ):
+        fake_has_project_invitation = AsyncMock(return_value=True)
+        fake_pj_invitations_services.has_pending_project_invitation.side_effect = fake_has_project_invitation
         assert await services.user_can_view_project(user=user, obj=project) is True
-        services.has_pending_project_invitation.assert_awaited_once_with(user=user, project=project)
+        fake_has_project_invitation.assert_awaited_once_with(user=user, project=project)
         services.get_user_permissions.assert_not_awaited()
 
 
@@ -281,26 +283,6 @@ async def get_user_workspace_role_info():
     with patch("taiga.permissions.services.ws_roles_repositories", autospec=True) as fake_repository:
         await get_user_workspace_role_info(user=workspace.created_by, workspace=workspace)
         fake_repository.get_workspace_role_for_user.assert_awaited_once()
-
-
-#######################################################
-# has_pending_project_invitation
-#######################################################
-
-
-async def test_has_pending_project_invitation() -> None:
-    user = f.build_user()
-    project = f.build_project()
-
-    with (patch("taiga.permissions.services.pj_invitations_repositories", autospec=True)) as fake_pj_invitations_repo:
-        invitation = f.build_project_invitation(email=user.email, user=user, project=project)
-        fake_pj_invitations_repo.get_project_invitation.return_value = invitation
-        res = await services.has_pending_project_invitation(project=project, user=user)
-        assert res is True
-
-        fake_pj_invitations_repo.get_project_invitation.return_value = None
-        res = await services.has_pending_project_invitation(project=project, user=user)
-        assert res is False
 
 
 #####################################################

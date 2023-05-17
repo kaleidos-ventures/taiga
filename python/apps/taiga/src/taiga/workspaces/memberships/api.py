@@ -15,7 +15,7 @@ from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import IsWorkspaceAdmin
+from taiga.permissions import IsWorkspaceMember
 from taiga.routers import routes
 from taiga.workspaces.memberships import services as memberships_services
 from taiga.workspaces.memberships.models import WorkspaceMembership
@@ -23,9 +23,9 @@ from taiga.workspaces.memberships.serializers import WorkspaceGuestDetailSeriali
 from taiga.workspaces.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
-LIST_WORKSPACE_MEMBERSHIPS = IsWorkspaceAdmin()
-LIST_WORKSPACE_GUESTS = IsWorkspaceAdmin()
-DELETE_WORKSPACE_MEMBERSHIP = IsWorkspaceAdmin()
+LIST_WORKSPACE_MEMBERSHIPS = IsWorkspaceMember()
+LIST_WORKSPACE_GUESTS = IsWorkspaceMember()
+DELETE_WORKSPACE_MEMBERSHIP = IsWorkspaceMember()
 
 # HTTP 200 RESPONSES
 LIST_WS_MEMBERSHIP_DETAIL_200 = responses.http_status_200(model=list[WorkspaceMembershipDetailSerializer])

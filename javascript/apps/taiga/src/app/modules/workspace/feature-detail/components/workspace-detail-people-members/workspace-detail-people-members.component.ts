@@ -24,7 +24,10 @@ import { RxState } from '@rx-angular/state';
 import { User, Workspace, WorkspaceMembership } from '@taiga/data';
 import { map } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
+import {
+  workspaceDetailApiActions,
+  workspaceActions,
+} from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
   selectAnimationDisabled,
   selectMembersList,
@@ -35,7 +38,6 @@ import {
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 import { filterNil } from '~/app/shared/utils/operators';
-
 @Component({
   selector: 'tg-workspace-detail-people-members',
   templateUrl: './workspace-detail-people-members.component.html',
@@ -321,5 +323,28 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
   ) {
     const members = this.state.get('members');
     return members.find((member) => member.user.username === username);
+  }
+
+  public toggleLeaveWorkspace(status: boolean, member: WorkspaceMembership) {
+    if (status) {
+      this.state.set({ highlightedRow: member });
+    } else {
+      this.state.set({ highlightedRow: null });
+    }
+  }
+
+  public confirmLeaveWorkspace() {
+    const workspace = this.state.get('workspace');
+    const currentUser = this.state.get('currentUser');
+
+    if (workspace && currentUser) {
+      this.store.dispatch(
+        workspaceActions.leaveWorkspace({
+          id: workspace.id,
+          name: workspace.name,
+          username: currentUser.username,
+        })
+      );
+    }
   }
 }

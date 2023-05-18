@@ -18,6 +18,7 @@ import {
   WorkspaceMembershipMockFactory,
   InvitationWorkspaceMemberMockFactory,
   WorkspaceMockFactory,
+  UserMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
@@ -34,6 +35,7 @@ import {
   selectInvitationsOffset,
 } from '../selectors/workspace-detail.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
+import { TuiNotification } from '@taiga-ui/core';
 
 describe('WorkspaceEffects', () => {
   let actions$: Observable<Action>;
@@ -349,5 +351,59 @@ describe('WorkspaceEffects', () => {
     });
 
     expect(effects.updateWorkspaceMembersInvitations$).toBeObservable(expected);
+  });
+
+  it('should leave workspace successfully', () => {
+    const user = UserMockFactory();
+    const workspace = WorkspaceMockFactory();
+
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    const action = workspaceActions.leaveWorkspace({
+      id: workspace.id,
+      username: user.username,
+      name: workspace.name,
+    });
+    const effects = spectator.inject(WorkspaceDetailEffects);
+    const outcome = workspaceActions.leaveWorkspaceSuccess({
+      id: workspace.id,
+      username: user.username,
+      name: workspace.name,
+    });
+
+    actions$ = hot('-a', { a: action });
+    const response = cold('-a|', { a: {} });
+    const expected = cold('--b', { b: outcome });
+
+    workspaceApiService.removeWorkspaceMember.mockReturnValue(response);
+
+    expect(effects.leaveWorkspace$).toBeObservable(expected);
+  });
+
+  it('should show message & redirect on leave workspace', () => {
+    const user = UserMockFactory();
+    const workspace = WorkspaceMockFactory();
+
+    const action = workspaceActions.leaveWorkspaceSuccess({
+      id: workspace.id,
+      username: user.username,
+      name: workspace.name,
+    });
+    const effects = spectator.inject(WorkspaceDetailEffects);
+    const appService = spectator.inject(AppService);
+    const router = spectator.inject(Router);
+
+    actions$ = hot('-a', { a: action });
+
+    expect(effects.leaveWorkspaceSucces$).toSatisfyOnFlush(() => {
+      expect(appService.toastNotification).toHaveBeenCalledWith({
+        message: 'workspace.people.remove.no_longer_member',
+        paramsMessage: { workspace: action.name },
+        status: TuiNotification.Info,
+        closeOnNavigation: false,
+        autoClose: true,
+      });
+
+      expect(router.navigate).toHaveBeenCalledWith(['/']);
+    });
   });
 });

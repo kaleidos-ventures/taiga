@@ -50,7 +50,16 @@
       "removed_member": "{{fullName}} removed.",
       "undo": "Undo",
       "action_undone": "Action undone",
-      "no_longer_member": "You are no longer a member of {{workspace}} workspace"
+      "no_longer_member": "You are no longer a member of {{workspace}} workspace."
     }
+  },
+  "leave": {
+    "action": "Leave workspace",
+    "title": "Leave {{ workspace }}?",
+    "description": "You will lose the permissions granted as a member of the workspace and even lose access to some projects.\nThis action doesn’t affect your role in the projects you are member of.",
+    "no": "No, cancel",
+    "confirm": "Yes, leave workspace",
+    "warning_title": "Workspaces must have at least a member.",
+    "warning_descipription": "Add another member and try again."
   }
 }

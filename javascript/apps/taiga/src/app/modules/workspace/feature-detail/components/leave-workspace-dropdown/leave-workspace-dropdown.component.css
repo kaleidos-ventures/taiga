@@ -1,0 +1,45 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import "tools/typography.css";
+
+.leave-workspace {
+  animation: fade-in-down 1s 1 ease-in-out;
+}
+
+.leave-workspace-dialog {
+  inline-size: 406px;
+  padding: var(--spacing-20);
+
+  &.single-member {
+    inline-size: 210px;
+    padding: var(--spacing-8);
+  }
+}
+
+.leave-workspace-dialog-title {
+  @mixin font-paragraph;
+
+  color: var(--color-gray100);
+  font-weight: var(--font-weight-medium);
+  margin-block-end: var(--spacing-8);
+}
+
+.leave-workspace-dialog-description {
+  @mixin font-paragraph;
+
+  color: var(--color-gray80);
+  margin-block-end: 0;
+}
+
+.leave-workspace-dialog-actions {
+  display: flex;
+  gap: var(--spacing-16);
+  justify-content: space-between;
+  margin-block-start: var(--spacing-20);
+}

@@ -60,6 +60,16 @@ export const workspaceActions = createActionGroup({
       projectName: Project['name'];
       projectId: Project['id'];
     }>(),
+    'leave workspace': props<{
+      id: Workspace['id'];
+      name: Workspace['name'];
+      username: User['username'];
+    }>(),
+    'leave workspace success': props<{
+      id: Workspace['id'];
+      name: Workspace['name'];
+      username: User['username'];
+    }>(),
   },
 });
 

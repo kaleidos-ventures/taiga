@@ -1,0 +1,81 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <tui-hosted-dropdown
+    [tuiDropdownAlign]="'right'"
+    [content]="confirmLeaveProjectDialog"
+    [(open)]="dropdownState">
+    <button
+      tgRestoreFocusTarget="leave-workspace"
+      type="button"
+      tuiLink
+      appearance="tertiary"
+      aria-haspopup="true"
+      [attr.aria-expanded]="dropdownState"
+      class="leave-workspace"
+      data-test="leave-workspace"
+      [attr.aria-label]="t('workspace.leave.action')">
+      {{ t('workspace.leave.action') }}
+    </button>
+  </tui-hosted-dropdown>
+
+  <ng-template #confirmLeaveProjectDialog>
+    <div
+      tgRestoreFocus="leave-workspace"
+      role="dialog"
+      aria-labelledby="leave-workspace-title"
+      aria-modal="true"
+      class="leave-workspace-dialog"
+      [class.single-member]="singleMember"
+      data-test="leave-workspacews-member-dialog"
+      cdkTrapFocus>
+      <ng-container *ngIf="singleMember">
+        <p class="leave-workspace-dialog-title">
+          {{ t('workspace.leave.warning_title') }}
+        </p>
+        <p class="leave-workspace-dialog-description">
+          {{ t('workspace.leave.warning_descipription') }}
+        </p>
+      </ng-container>
+      <ng-container *ngIf="!singleMember">
+        <h2
+          id="leave-workspace-title"
+          class="leave-workspace-dialog-title">
+          {{
+            t('workspace.leave.title', {
+              workspace: workspace.name
+            })
+          }}
+        </h2>
+        <p class="leave-workspace-dialog-description">
+          {{ t('workspace.leave.description') }}
+        </p>
+        <div class="leave-workspace-dialog-actions">
+          <button
+            tgAutoFocus
+            type="button"
+            tuiLink
+            appearance="tertiary"
+            (click)="keep()">
+            {{ t('workspace.leave.no') }}
+          </button>
+          <button
+            type="button"
+            data-test="confirm-cancel"
+            tuiButton
+            icon="leave"
+            appearance="secondary"
+            (click)="confirm()">
+            {{ t('workspace.leave.confirm') }}
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </ng-template>
+</ng-container>

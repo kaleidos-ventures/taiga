@@ -53,6 +53,7 @@ import { WorkspaceDetailProjectsComponent } from './components/workspace-detail-
 import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-skeleton/workspace-detail-skeleton.component';
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
+import { LeaveWorkspaceDropdownComponent } from './components/leave-workspace-dropdown/leave-workspace-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
     TuiScrollbarModule,
     InviteUserModalModule,
     ContextNotificationModule,
+    LeaveWorkspaceDropdownComponent,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

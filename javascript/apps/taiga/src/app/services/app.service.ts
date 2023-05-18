@@ -52,6 +52,19 @@ export class AppService {
     });
   }
 
+  public toastGenericError(httpResponse: HttpErrorResponse) {
+    this.errorManagement(httpResponse, {
+      any: {
+        type: 'toast',
+        options: {
+          label: 'errors.generic_toast_label',
+          message: 'errors.generic_toast_message',
+          status: TuiNotification.Error,
+        },
+      },
+    });
+  }
+
   public errorManagement(
     error: HttpErrorResponse,
     errorOptions?: ErrorManagementOptions

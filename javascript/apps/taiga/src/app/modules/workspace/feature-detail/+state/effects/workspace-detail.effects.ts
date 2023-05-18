@@ -531,6 +531,46 @@ export class WorkspaceDetailEffects {
     );
   });
 
+  public leaveWorkspace$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceActions.leaveWorkspace),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.workspaceApiService
+            .removeWorkspaceMember(action.id, action.username)
+            .pipe(
+              map(() => {
+                return workspaceActions.leaveWorkspaceSuccess(action);
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastGenericError(httpResponse);
+        },
+      })
+    );
+  });
+
+  public leaveWorkspaceSucces$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(workspaceActions.leaveWorkspaceSuccess),
+        tap((action) => {
+          this.appService.toastNotification({
+            message: 'workspace.people.remove.no_longer_member',
+            paramsMessage: { workspace: action.name },
+            status: TuiNotification.Info,
+            closeOnNavigation: false,
+            autoClose: true,
+          });
+
+          void this.router.navigate(['/']);
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(
     private store: Store,
     private actions$: Actions,

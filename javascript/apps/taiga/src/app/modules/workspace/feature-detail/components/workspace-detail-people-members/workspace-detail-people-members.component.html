@@ -51,6 +51,15 @@ Copyright (c) 2023-present Kaleidos INC
                   (highlightRemoveMemberRow)="highlightRemoveMemberRow($event)"
                   (removeMember)="initRemoveMember($event)">
                 </tg-workspace-detail-people-members-remove>
+
+                <tg-leave-workspace-dropdown
+                  *ngIf="vm.currentUser.username === member.user.username"
+                  [workspace]="vm.workspace"
+                  [singleMember]="vm.members.length === 1"
+                  (openDialog)="toggleLeaveWorkspace($event, member)"
+                  (leaveWorkspace)="
+                    confirmLeaveWorkspace()
+                  "></tg-leave-workspace-dropdown>
               </tg-ui-dtable-cell>
               <div
                 *ngIf="member.cancelled === 'active'"

@@ -36,7 +36,7 @@ Copyright (c) 2023-present Kaleidos INC
       <mj-section text-align="left"
         mj-class="padding-bottom-24">
         <mj-column>
-          <mj-text>
+          <mj-text mj-class="padding-8">
             <table>
               <tr>
                 <td style="vertical-align:top; width: 24px; height: 24px;">
@@ -50,7 +50,7 @@ Copyright (c) 2023-present Kaleidos INC
                 </td>
                 <td style="padding-left: 12px; vertical-align:top">
                   <p class="dm-text" mj-class="color-gray80"
-                    style="margin: 6px 0 0 0; font-family: Ubuntu, Arial, Helvetica, sans-serif;">
+                    style="margin: 3px 0 0 0; font-family: Ubuntu, Arial, Helvetica, sans-serif;">
                     {{ workspace_name }}</p>
                 </td>
               </tr>
@@ -67,7 +67,7 @@ Copyright (c) 2023-present Kaleidos INC
                 {% endif -%}
             </mj-text>
           <mj-button css-class="btn-primary"
-            mj-class="btn-primary padding-top-24"
+            mj-class="btn-primary"
             href="{{ invitation_url }}">
             {% trans %}emails.workspace_invitation.accept{% endtrans %}
           </mj-button>

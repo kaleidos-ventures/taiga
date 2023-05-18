@@ -57,6 +57,7 @@ Copyright (c) 2023-present Kaleidos INC
 
   <!-- spacing -->
   <mj-class name="padding-paragraph" padding-bottom="16px" />
+  <mj-class name="padding-8" padding="8px" />
   <mj-class name="padding-top-24" padding-top="24px" />
   <mj-class name="padding-top-32" padding-top="32px" />
   <mj-class name="padding-bottom-24" padding-bottom="24px" />

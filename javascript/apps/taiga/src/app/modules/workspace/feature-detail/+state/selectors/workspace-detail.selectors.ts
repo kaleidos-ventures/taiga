@@ -15,7 +15,6 @@ export const {
   selectProjects,
   selectWorkspaceInvitedProjects,
   selectCreatingWorkspaceDetail,
-  selectAnimationDisabled,
   selectMembers,
   selectNonMembers,
   selectInvitations,

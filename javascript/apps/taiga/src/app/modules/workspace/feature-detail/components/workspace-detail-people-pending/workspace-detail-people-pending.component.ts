@@ -6,7 +6,12 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  AfterContentInit,
+} from '@angular/core';
 import { InvitationWorkspaceMember, Workspace, User } from '@taiga/data';
 import { RxState } from '@rx-angular/state';
 import { Store } from '@ngrx/store';
@@ -19,9 +24,9 @@ import {
   selectInvitationsLoading,
   selectTotalInvitations,
   selectInvitationsOffset,
-  selectAnimationDisabled,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
+import { slideInOut } from '~/app/shared/utils/animations';
 
 @Component({
   selector: 'tg-workspace-detail-people-pending',
@@ -29,8 +34,11 @@ import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detai
   styleUrls: ['./workspace-detail-people-pending.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  animations: [slideInOut],
 })
-export class WorkspaceDetailPeoplePendingComponent implements OnInit {
+export class WorkspaceDetailPeoplePendingComponent
+  implements OnInit, AfterContentInit
+{
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public model$ = this.state.select().pipe(
     map((model) => {
@@ -46,6 +54,7 @@ export class WorkspaceDetailPeoplePendingComponent implements OnInit {
       };
     })
   );
+  public animationDisabled = true;
 
   constructor(
     private state: RxState<{
@@ -53,7 +62,6 @@ export class WorkspaceDetailPeoplePendingComponent implements OnInit {
       loading: boolean;
       total: number;
       offset: number;
-      animationDisabled: boolean;
       workspace: Workspace | null;
     }>,
     private store: Store
@@ -68,17 +76,26 @@ export class WorkspaceDetailPeoplePendingComponent implements OnInit {
     this.state.connect('total', this.store.select(selectTotalInvitations));
     this.state.connect('offset', this.store.select(selectInvitationsOffset));
     this.state.connect(
-      'animationDisabled',
-      this.store.select(selectAnimationDisabled)
-    );
-    this.state.connect(
       'workspace',
       this.store.select(selectWorkspace).pipe(filterNil())
     );
   }
 
+  public ngAfterContentInit() {
+    setTimeout(() => {
+      this.animationDisabled = false;
+    }, 1000);
+  }
+
   public trackByIndex(index: number) {
     return index;
+  }
+
+  public trackByUserOrEmail(
+    index: number,
+    invitation: InvitationWorkspaceMember
+  ) {
+    return invitation.user?.username || invitation.email;
   }
 
   public next() {

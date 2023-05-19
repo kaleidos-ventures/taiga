@@ -35,7 +35,7 @@ Copyright (c) 2023-present Kaleidos INC
           <ng-container *ngIf="!vm.loading">
             <ng-container
               *ngFor="let nonMember of vm.nonMembers; trackBy: trackByIndex">
-              <tg-ui-dtable-row [@.disabled]="vm.animationDisabled">
+              <tg-ui-dtable-row>
                 <tg-ui-dtable-cell class="user">
                   <tg-user-card
                     [user]="nonMember.user"

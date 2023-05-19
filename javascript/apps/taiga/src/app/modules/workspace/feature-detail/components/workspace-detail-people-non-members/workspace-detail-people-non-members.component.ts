@@ -15,7 +15,6 @@ import {
   selectNonMembersLoading,
   selectTotalNonMembers,
   selectNonMembersOffset,
-  selectAnimationDisabled,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { Store } from '@ngrx/store';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -53,7 +52,6 @@ export class WorkspaceDetailPeopleNonMembersComponent implements OnInit {
       loading: boolean;
       total: number;
       offset: number;
-      animationDisabled: boolean;
       workspace: Workspace | null;
     }>,
     private store: Store
@@ -64,10 +62,6 @@ export class WorkspaceDetailPeopleNonMembersComponent implements OnInit {
     this.state.connect('loading', this.store.select(selectNonMembersLoading));
     this.state.connect('total', this.store.select(selectTotalNonMembers));
     this.state.connect('offset', this.store.select(selectNonMembersOffset));
-    this.state.connect(
-      'animationDisabled',
-      this.store.select(selectAnimationDisabled)
-    );
     this.state.connect(
       'workspace',
       this.store.select(selectWorkspace).pipe(filterNil())

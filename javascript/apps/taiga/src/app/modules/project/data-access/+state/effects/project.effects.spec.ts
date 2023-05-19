@@ -258,6 +258,7 @@ describe('ProjectEffects', () => {
           paramsMessage: { project: action.name },
           status: TuiNotification.Info,
           closeOnNavigation: false,
+          autoClose: true,
         });
       });
     });
@@ -283,6 +284,7 @@ describe('ProjectEffects', () => {
           paramsMessage: { project: action.name },
           status: TuiNotification.Info,
           closeOnNavigation: false,
+          autoClose: true,
         });
         expect(router.navigate).toHaveBeenCalledWith(['/']);
       });

@@ -143,6 +143,20 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    projectEventActions.updateMember,
+    (state, { membership }): ProjectState => {
+      state.members = state.members.map((member) => {
+        if (member.user.username === membership.user.username) {
+          return membership;
+        }
+
+        return member;
+      });
+
+      return state;
+    }
   )
 );
 

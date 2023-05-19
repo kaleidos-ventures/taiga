@@ -122,5 +122,6 @@ export const projectEventActions = createActionGroup({
       workspaceName: string;
     }>(),
     'Remove Member': props<{ membership: Membership; workspace: string }>(),
+    'Update Member': props<{ membership: Membership }>(),
   },
 });

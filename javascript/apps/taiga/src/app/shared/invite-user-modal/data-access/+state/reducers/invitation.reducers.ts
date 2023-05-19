@@ -80,7 +80,7 @@ export const reducer = createImmerReducer(
             currentInvitations.includes(newInvitation.user?.username)
           )
         ) {
-          state.project.invitations.push(...action.newInvitations);
+          state.project.invitations.push(newInvitation);
         }
       });
 
@@ -117,15 +117,9 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    ProjectOverviewActions.fetchMembersSuccess,
-    (state, { members, invitations }): InvitationState => {
-      if (members) {
-        state.project.members = members;
-      }
-
-      if (invitations) {
-        state.project.invitations = invitations;
-      }
+    ProjectOverviewActions.fetchInvitationsSuccess,
+    (state, { invitations }): InvitationState => {
+      state.project.invitations = invitations;
 
       return state;
     }

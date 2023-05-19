@@ -25,9 +25,11 @@ Copyright (c) 2023-present Kaleidos INC
             <ng-container
               *ngFor="
                 let invitation of vm.invitationMembers;
-                trackBy: trackByIndex
+                trackBy: trackByUserOrEmail
               ">
-              <tg-ui-dtable-row [@.disabled]="vm.animationDisabled">
+              <tg-ui-dtable-row
+                [@.disabled]="animationDisabled"
+                [@slideInOut]>
                 <tg-ui-dtable-cell class="user">
                   <tg-user-card
                     [user]="getUser(invitation)"

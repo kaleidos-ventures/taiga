@@ -18,6 +18,7 @@ import {
   Component,
   HostListener,
   OnInit,
+  AfterContentInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -29,7 +30,6 @@ import {
   workspaceActions,
 } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
-  selectAnimationDisabled,
   selectMembersList,
   selectMembersLoading,
   selectMembersOffset,
@@ -38,6 +38,8 @@ import {
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 import { filterNil } from '~/app/shared/utils/operators';
+import { slideInOut } from '~/app/shared/utils/animations';
+
 @Component({
   selector: 'tg-workspace-detail-people-members',
   templateUrl: './workspace-detail-people-members.component.html',
@@ -45,6 +47,7 @@ import { filterNil } from '~/app/shared/utils/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
   animations: [
+    slideInOut,
     trigger('removeAnimationCell', [
       state(
         'inactive',
@@ -128,7 +131,9 @@ import { filterNil } from '~/app/shared/utils/operators';
     ]),
   ],
 })
-export class WorkspaceDetailPeopleMembersComponent implements OnInit {
+export class WorkspaceDetailPeopleMembersComponent
+  implements OnInit, AfterContentInit
+{
   @HostListener('window:beforeunload')
   public removePendingMembers() {
     if (this.removeMemberConfirmTimeouts.size) {
@@ -171,6 +176,7 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
       };
     })
   );
+  public animationDisabled = true;
 
   private removeMemberConfirmTimeouts = new Map<
     WorkspaceMembership['user']['username'],
@@ -183,7 +189,6 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
       loading: boolean;
       total: number;
       offset: number;
-      animationDisabled: boolean;
       workspace: Workspace | null;
       currentUser: User;
       highlightedRow: WorkspaceMembership | null;
@@ -201,10 +206,6 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
     this.state.connect('total', this.store.select(selectTotalMembers));
     this.state.connect('offset', this.store.select(selectMembersOffset));
     this.state.connect(
-      'animationDisabled',
-      this.store.select(selectAnimationDisabled)
-    );
-    this.state.connect(
       'workspace',
       this.store.select(selectWorkspace).pipe(filterNil())
     );
@@ -212,6 +213,12 @@ export class WorkspaceDetailPeopleMembersComponent implements OnInit {
       'currentUser',
       this.store.select(selectUser).pipe(filterNil())
     );
+  }
+
+  public ngAfterContentInit() {
+    setTimeout(() => {
+      this.animationDisabled = false;
+    }, 1000);
   }
 
   public trackByIndex(index: number) {

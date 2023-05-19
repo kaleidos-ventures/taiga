@@ -214,6 +214,33 @@ export class ProjectApiService {
       );
   }
 
+  public getAllInvitations(projectId: Project['id']): Observable<Invitation[]> {
+    return new Observable((subscriber) => {
+      const limit = 100;
+      const invitations: Invitation[] = [];
+      let offset = 0;
+
+      const nextPage = () => {
+        this.getInvitations(projectId, offset, limit).subscribe((response) => {
+          offset += response.invitations.length;
+
+          const complete = response.invitations.length < limit;
+
+          invitations.push(...response.invitations);
+
+          if (complete) {
+            subscriber.next(invitations);
+            subscriber.complete();
+          } else {
+            nextPage();
+          }
+        });
+      };
+
+      nextPage();
+    });
+  }
+
   public acceptInvitationToken(token: string) {
     return this.http.post<Invitation>(
       `${this.config.apiUrl}/projects/invitations/${token}/accept`,

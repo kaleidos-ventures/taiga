@@ -7,19 +7,14 @@
  */
 
 import { createAction, props } from '@ngrx/store';
-import { EditProject, Invitation, Membership, Project } from '@taiga/data';
+import { EditProject, Invitation, Project } from '@taiga/data';
 
 export const initProjectOverview = createAction('[Project overview] init');
 export const initMembers = createAction('[Project overview] init members');
-export const fetchMembersSuccess = createAction(
-  '[Project overview][api] fetch members success',
+export const fetchInvitationsSuccess = createAction(
+  '[Project overview][api] fetch invitations success',
   props<{
-    members?: Membership[];
-    totalMemberships?: number;
-    totalInvitations?: number;
-    invitations?: Invitation[];
-    showAllMembers?: boolean;
-    updateMembersList?: boolean;
+    invitations: Invitation[];
   }>()
 );
 export const setNotificationClosed = createAction(
@@ -27,14 +22,10 @@ export const setNotificationClosed = createAction(
   props<{ notificationClosed: boolean }>()
 );
 
-export const nextMembersPage = createAction(
-  '[Project overview] next members page'
-);
-
 export const resetOverview = createAction('[Project overview] reset overview');
 
-export const updateMembersList = createAction(
-  '[Project overview][ws] update member list'
+export const updateInvitationsList = createAction(
+  '[Project overview][ws] update invitation list'
 );
 export const updateShowAllMembers = createAction(
   '[Project overview][api] show all member updated',
@@ -45,10 +36,6 @@ export const updateShowAllMembers = createAction(
 
 export const updateMemberModalList = createAction(
   '[Project overview][api] update member list modal'
-);
-
-export const updateMembersInfo = createAction(
-  '[Project overview][ws] update members info'
 );
 
 export const editProject = createAction(

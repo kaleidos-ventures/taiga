@@ -110,35 +110,34 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       this.store.select(selectShowBannerOnRevoke).pipe(filterNil())
     );
 
-    this.state.hold(
-      this.state
-        .select('project')
-        .pipe(distinctUntilChanged((prev, curr) => prev.id === curr.id)),
-      (project) => {
-        const url = window.location.href;
-        const newUrl = `project/${project.id}/${project.slug}`;
+    const project$ = this.state
+      .select('project')
+      .pipe(distinctUntilChanged((prev, curr) => prev.id === curr.id));
 
-        if (
-          !url.includes('/kanban') &&
-          !url.includes('/stories') &&
-          !url.includes('/settings') &&
-          !url.endsWith(newUrl) // location go when the url doesn't match
-        ) {
-          this.location.go(newUrl);
-        }
-        this.subscribedProject = project.id;
-        this.unsubscribeFromProjectEvents();
-        this.wsService
-          .command('subscribe_to_project_events', { project: project.id })
-          .subscribe();
+    this.state.hold(project$, (project) => {
+      const url = window.location.href;
+      const newUrl = `project/${project.id}/${project.slug}`;
 
-        this.store.dispatch(
-          setNotificationClosed({
-            notificationClosed: !this.showPendingInvitationNotification,
-          })
-        );
+      if (
+        !url.includes('/kanban') &&
+        !url.includes('/stories') &&
+        !url.includes('/settings') &&
+        !url.endsWith(newUrl) // location go when the url doesn't match
+      ) {
+        this.location.go(newUrl);
       }
-    );
+      this.subscribedProject = project.id;
+      this.unsubscribeFromProjectEvents();
+      this.wsService
+        .command('subscribe_to_project_events', { project: project.id })
+        .subscribe();
+
+      this.store.dispatch(
+        setNotificationClosed({
+          notificationClosed: !this.showPendingInvitationNotification,
+        })
+      );
+    });
   }
 
   public get showPendingInvitationNotification() {
@@ -190,6 +189,26 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.store.dispatch(newProjectMembers());
+      });
+
+    this.wsService
+      .projectEvents<{ membership: Membership; workspace: string }>(
+        'projectmemberships.delete'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          projectEventActions.removeMember(eventResponse.event.content)
+        );
+      });
+
+    this.wsService
+      .projectEvents<{ membership: Membership }>('projectmemberships.update')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          projectEventActions.updateMember(eventResponse.event.content)
+        );
       });
 
     this.wsService

@@ -17,7 +17,9 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
@@ -34,10 +36,6 @@ import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
 import { of } from 'rxjs';
 import { delay, take, tap } from 'rxjs/operators';
-import {
-  selectCanPaginate,
-  selectLoadingMoreMembers,
-} from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
@@ -118,7 +116,7 @@ import { leaveProject } from '~/app/modules/project/data-access/+state/actions/p
     ]),
   ],
 })
-export class ProjectMembersListComponent {
+export class ProjectMembersListComponent implements OnChanges {
   @Input()
   public members: (Membership | Invitation)[] = [];
 
@@ -154,10 +152,9 @@ export class ProjectMembersListComponent {
   public animationFirstState = false;
   public animationPendingState = false;
 
-  public loading$ = this.store.select(selectLoadingMoreMembers);
-  public canPaginate$ = this.store.select(selectCanPaginate);
   public project$ = this.store.select(selectCurrentProject).pipe(filterNil());
   public leaveProjectDropdown = false;
+  public totalAdmins = 0;
 
   public trackById(_index: number, member: Membership | Invitation) {
     const user = this.getUser(member);
@@ -197,20 +194,6 @@ export class ProjectMembersListComponent {
   public acceptInvitationId() {
     this.hasAcceptedInvitation.next();
     this.showAcceptInvitationButton = false;
-  }
-
-  public onScroll() {
-    this.canPaginate$.pipe(take(1)).subscribe((canPaginate) => {
-      if (this.virtualScroll && canPaginate) {
-        const renderedRange = this.virtualScroll.getRenderedRange();
-        const end = renderedRange.end;
-        const total = this.members.length;
-
-        if (end === total) {
-          this.nextPage.next(end);
-        }
-      }
-    });
   }
 
   public animateUser() {
@@ -264,6 +247,18 @@ export class ProjectMembersListComponent {
         })
       );
     });
+  }
+
+  public calculateTotalAdmins() {
+    this.totalAdmins = this.members.filter(
+      (member) => member.role?.isAdmin
+    ).length;
+  }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes.members) {
+      this.calculateTotalAdmins();
+    }
   }
 
   constructor(private cd: ChangeDetectorRef, private store: Store) {}

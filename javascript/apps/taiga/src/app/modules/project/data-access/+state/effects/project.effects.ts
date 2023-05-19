@@ -23,7 +23,6 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
@@ -104,7 +103,7 @@ export class ProjectEffects {
     return this.actions$.pipe(
       ofType(ProjectActions.revokedInvitation),
       map(() => {
-        return ProjectOverviewActions.updateMembersList();
+        return ProjectOverviewActions.updateInvitationsList();
       })
     );
   });
@@ -194,7 +193,10 @@ export class ProjectEffects {
 
   public fetchProjectMembers$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanActions.initKanban, ProjectActions.fetchProjectMembers),
+      ofType(
+        ProjectActions.fetchProjectSuccess,
+        ProjectActions.fetchProjectMembers
+      ),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
         this.store.select(selectMembers),
@@ -218,26 +220,8 @@ export class ProjectEffects {
   public newMembersEvent = createEffect(() => {
     return this.actions$.pipe(
       ofType(ProjectActions.newProjectMembers),
-      concatLatestFrom(() => [
-        this.store.select(selectCurrentProject).pipe(filterNil()),
-        this.store.select(selectMembers),
-      ]),
-      filter(([, , members]) => {
-        // do not fill if fetchProjectUsersSuccess hasn't been called
-        return !!members.length;
-      }),
-      fetch({
-        run: (_, project) => {
-          return this.projectApiService.getAllMembers(project.id).pipe(
-            map((members) => {
-              return ProjectActions.fetchProjectMembersSuccess({
-                members,
-              });
-            })
-          );
-        },
-        onError: (_, httpResponse: HttpErrorResponse) =>
-          this.appService.errorManagement(httpResponse),
+      map(() => {
+        return ProjectActions.fetchProjectMembers();
       })
     );
   });
@@ -399,6 +383,7 @@ export class ProjectEffects {
           paramsMessage: { project: action.name },
           status: TuiNotification.Info,
           closeOnNavigation: false,
+          autoClose: true,
         });
 
         if (!action.refreshProject) {

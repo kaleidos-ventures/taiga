@@ -59,7 +59,4 @@ export class ProjectMembersModalComponent {
 
   @Output()
   public closeModal = new EventEmitter();
-
-  @Output()
-  public nextPage = new EventEmitter<number>();
 }

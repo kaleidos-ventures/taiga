@@ -16,27 +16,25 @@ import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { Invitation, Membership, Project, User } from '@taiga/data';
 import { ModalModule } from '@taiga/ui/modal';
 import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
-import { Subject } from 'rxjs';
+import { Subject, merge } from 'rxjs';
 import { delay, distinctUntilChanged, map, take } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import {
+  selectCurrentProject,
+  selectMembers,
+} from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import {
   initMembers,
-  nextMembersPage,
-  updateMembersList,
+  updateInvitationsList,
   updateShowAllMembers,
 } from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
 import {
-  selectHasMoreMembers,
   selectInvitations,
   selectInvitationsToAnimate,
-  selectMembers,
   selectMembersToAnimate,
   selectNotificationClosed,
   selectShowAllMembers,
-  selectTotalInvitations,
-  selectTotalMemberships,
 } from '~/app/modules/project/feature-overview/data-access/+state/selectors/project-overview.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
@@ -82,9 +80,6 @@ export class ProjectMembersComponent {
 
   public readonly model$ = this.state.select().pipe(
     map((state) => {
-      if (state.hasMoreMembers) {
-        state.invitations = [];
-      }
       const membersAndInvitations = [
         ...state.members,
         ...state.invitations.filter(
@@ -128,7 +123,6 @@ export class ProjectMembersComponent {
       user: User | null;
       totalMemberships: number;
       totalInvitations: number;
-      hasMoreMembers: boolean;
       showAllMembers: boolean;
       invitationsToAnimate: string[];
       membersToAnimate: string[];
@@ -142,11 +136,6 @@ export class ProjectMembersComponent {
       () => {
         this.store.dispatch(initMembers());
       }
-    );
-
-    this.state.connect(
-      'hasMoreMembers',
-      this.store.select(selectHasMoreMembers)
     );
 
     this.state.connect(
@@ -166,11 +155,13 @@ export class ProjectMembersComponent {
 
     this.state.connect(
       'totalMemberships',
-      this.store.select(selectTotalMemberships)
+      this.store.select(selectMembers).pipe(map((members) => members.length))
     );
     this.state.connect(
       'totalInvitations',
-      this.store.select(selectTotalInvitations)
+      this.store
+        .select(selectInvitations)
+        .pipe(map((invitations) => invitations.length))
     );
     this.state.connect('members', this.store.select(selectMembers));
     this.state.connect('invitations', this.store.select(selectInvitations));
@@ -194,7 +185,7 @@ export class ProjectMembersComponent {
       this.projectMembersList.animateUser();
     });
 
-    const updateList = this.actions$.pipe(ofType(updateMembersList));
+    const updateList = this.actions$.pipe(ofType(updateInvitationsList));
 
     this.state.hold(updateList, () => {
       this.projectMembersList.animateUser();
@@ -207,54 +198,19 @@ export class ProjectMembersComponent {
         this.projectMembersList.animateUser();
       });
 
-    this.wsService
-      .events<{ project: string }>({
+    merge(
+      this.wsService.events<{ project: string }>({
         channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.create',
-      })
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.store.dispatch(ProjectOverviewActions.updateMembersList());
-      });
-
-    this.wsService
-      .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').id}`,
-        type: 'projectmemberships.create',
-      })
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.store.dispatch(ProjectOverviewActions.updateMembersList());
-      });
-
-    this.wsService
-      .events<{ project: string }>({
-        channel: `projects.${this.state.get('project').id}`,
-        type: 'projectmemberships.delete',
-      })
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.store.dispatch(ProjectOverviewActions.updateMembersList());
-      });
-
-    this.wsService
-      .events<{ project: string }>({
+      }),
+      this.wsService.events<{ project: string }>({
         channel: `projects.${this.state.get('project').id}`,
         type: 'projectinvitations.update',
       })
+    )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.store.dispatch(ProjectOverviewActions.updateMembersList());
-      });
-
-    this.wsService
-      .events<{ membership: Membership }>({
-        channel: `projects.${this.state.get('project').id}`,
-        type: 'projectmemberships.update',
-      })
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.store.dispatch(ProjectOverviewActions.updateMembersInfo());
+        this.store.dispatch(ProjectOverviewActions.updateInvitationsList());
       });
   }
 
@@ -304,13 +260,5 @@ export class ProjectMembersComponent {
         id: this.state.get('project').id,
       })
     );
-  }
-
-  public nextPage() {
-    this.store.dispatch(nextMembersPage());
-  }
-
-  public onInviteSuccess() {
-    this.store.dispatch(ProjectOverviewActions.initMembers());
   }
 }

@@ -27,6 +27,9 @@ Copyright (c) 2023-present Kaleidos INC
           <ng-container
             *ngFor="let member of vm.members; trackBy: trackByUsername">
             <tg-ui-dtable-row
+              [class.leave-highlighted]="
+                vm.leaveHighlightedRow?.user?.username === member.user.username
+              "
               [class.highlighted]="
                 vm.highlightedRow?.user?.username === member.user.username
               "

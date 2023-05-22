@@ -192,6 +192,7 @@ export class WorkspaceDetailPeopleMembersComponent
       workspace: Workspace | null;
       currentUser: User;
       highlightedRow: WorkspaceMembership | null;
+      leaveHighlightedRow: WorkspaceMembership | null;
       removingMembers: WorkspaceMembership['user']['username'][];
       undoMemberRemove: WorkspaceMembership['user']['username'][];
     }>,
@@ -334,9 +335,9 @@ export class WorkspaceDetailPeopleMembersComponent
 
   public toggleLeaveWorkspace(status: boolean, member: WorkspaceMembership) {
     if (status) {
-      this.state.set({ highlightedRow: member });
+      this.state.set({ leaveHighlightedRow: member });
     } else {
-      this.state.set({ highlightedRow: null });
+      this.state.set({ leaveHighlightedRow: null });
     }
   }
 

@@ -43,6 +43,7 @@ import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest
 import { NavigationModule } from './shared/navigation/navigation.module';
 import { TranslocoRootModule } from './transloco/transloco-root.module';
 import { LanguageService } from './services/language/language.service';
+import { A11yModule } from '@angular/cdk/a11y';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -101,6 +102,7 @@ export function prefersReducedMotion(): boolean {
     TuiRootModule,
     TuiNotificationModule,
     TranslocoRootModule,
+    A11yModule,
   ],
   bootstrap: [AppComponent],
   providers: [

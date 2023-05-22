@@ -14,7 +14,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 .leave-project-dialog {
   inline-size: 406px;
-  padding: var(--spacing-20);
+  padding: var(--spacing-16);
 
   &.single-member {
     inline-size: 210px;

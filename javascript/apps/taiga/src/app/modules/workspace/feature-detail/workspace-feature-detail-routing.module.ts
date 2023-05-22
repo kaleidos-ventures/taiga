@@ -21,11 +21,16 @@ const routes: Routes = [
     component: WorkspaceDetailComponent,
     children: [
       {
-        path: 'projects',
+        path: ':slug',
+        redirectTo: ':slug/projects',
+        pathMatch: 'full',
+      },
+      {
+        path: ':slug/projects',
         component: WorkspaceDetailProjectsComponent,
       },
       {
-        path: 'people',
+        path: ':slug/people',
         component: WorkspaceDetailPeopleComponent,
         children: [
           {

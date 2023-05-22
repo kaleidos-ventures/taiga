@@ -22,7 +22,7 @@ import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
 import { Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { distinctUntilChanged, map, take } from 'rxjs/operators';
 import { workspaceActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import {
   selectProjects,
@@ -69,6 +69,7 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     private router: Router
   ) {
     this.state.set({
+      projects: [],
       editingWorkspace: false,
     });
   }
@@ -76,13 +77,18 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.model$ = this.state.select();
 
-    this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
-      const id = params.get('id');
-
-      if (id) {
+    this.route.paramMap
+      .pipe(
+        untilDestroyed(this),
+        map((params) => {
+          return params.get('id');
+        }),
+        filterNil(),
+        distinctUntilChanged()
+      )
+      .subscribe((id) => {
         this.store.dispatch(workspaceActions.fetchWorkspace({ id }));
-      }
-    });
+      });
 
     this.state.connect(
       'workspace',
@@ -97,10 +103,20 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     this.state.hold(this.state.select('workspace'), (workspace) => {
       if (workspace) {
         const url = window.location.href;
+
         if (url.includes('/projects')) {
           this.menuItemActive = 'projects';
         } else if (url.includes('/people')) {
           this.menuItemActive = 'people';
+        }
+
+        if (!url.includes(workspace.id + '/' + workspace.slug + '/')) {
+          void this.router.navigate(
+            [
+              `workspace/${workspace.id}/${workspace.slug}/${this.menuItemActive}`,
+            ],
+            { replaceUrl: true }
+          );
         }
       }
     });

@@ -39,6 +39,7 @@ import { selectProjectAcceptedInvite } from '~/app/shared/invite-user-modal/data
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
+
 interface ViewDetailModel {
   projects: WorkspaceProject[];
   workspace: Workspace | null;
@@ -148,6 +149,9 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
       rejectedInvites: [],
       projectSiblingToAnimate: [],
       invitations: [],
+      projects: [],
+      newInvitations: [],
+      acceptedInvites: [],
     });
   }
 
@@ -239,14 +243,6 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
         };
       })
     );
-
-    this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
-      const id = params.get('id');
-
-      if (id) {
-        this.store.dispatch(workspaceActions.fetchWorkspace({ id }));
-      }
-    });
 
     this.state.connect(
       'acceptedInvites',

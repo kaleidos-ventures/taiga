@@ -110,14 +110,6 @@ const routes: Routes = [
 
   // WORKSPACE
   {
-    path: 'workspace/:id/:slug',
-    loadChildren: () =>
-      import(
-        './modules/workspace/feature-detail/workspace-feature-detail.module'
-      ).then((m) => m.WorkspaceFeatureDetailModule),
-    canActivate: [AuthGuard],
-  },
-  {
     path: 'workspace/:id',
     loadChildren: () =>
       import(

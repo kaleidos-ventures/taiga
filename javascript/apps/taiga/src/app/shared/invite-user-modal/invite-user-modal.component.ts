@@ -276,20 +276,22 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
       )
       .subscribe(([userToInvite, currentUser]) => {
         userToInvite.forEach((user) => {
-          const userAlreadyExist = this.users?.find((it: FormGroup) => {
-            return (it.value as Partial<User>).email
-              ? (it.value as Partial<User>).email === user.email
-              : (it.value as Partial<User>).username === user.username;
-          });
-          const isCurrentUser = currentUser?.email
-            ? currentUser?.email === user.email
-            : currentUser?.username === user.username;
-          if (!userAlreadyExist && !isCurrentUser) {
-            this.users.splice(
-              this.positionInArray(user),
-              0,
-              this.fb.group(user)
-            );
+          if (user.email || user.username) {
+            const userAlreadyExist = this.users?.find((it: FormGroup) => {
+              return (it.value as Partial<User>).email
+                ? (it.value as Partial<User>).email === user.email
+                : (it.value as Partial<User>).username === user.username;
+            });
+            const isCurrentUser = currentUser?.email
+              ? currentUser?.email === user.email
+              : currentUser?.username === user.username;
+            if (!userAlreadyExist && !isCurrentUser) {
+              this.users.splice(
+                this.positionInArray(user),
+                0,
+                this.fb.group(user)
+              );
+            }
           }
         });
         this.resetField();

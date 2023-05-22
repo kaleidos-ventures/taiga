@@ -8,8 +8,15 @@ Copyright (c) 2023-present Kaleidos INC
 
 @import "shared/users-tabs.css";
 
-.highlighted {
+.highlighted,
+.leave-highlighted {
   background-color: var(--color-primary10);
+}
+
+.leave-highlighted {
+  & tg-leave-workspace-dropdown {
+    --action-button-color: var(--color-secondary90);
+  }
 }
 
 tg-ui-dtable-row {
@@ -49,4 +56,14 @@ tg-ui-dtable-row {
   inset-block-start: 0;
   inset-inline-end: 0;
   position: absolute;
+}
+
+.column-actions {
+  justify-content: flex-end;
+  padding-inline-end: var(--spacing-12);
+}
+
+.action-column {
+  padding-inline-end: var(--spacing-12);
+  text-align: end;
 }

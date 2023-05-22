@@ -59,7 +59,7 @@
     "description": "You will lose the permissions granted as a member of the workspace and even lose access to some projects.\nThis action doesn’t affect your role in the projects you are member of.",
     "no": "No, cancel",
     "confirm": "Yes, leave workspace",
-    "warning_title": "Workspaces must have at least a member.",
+    "warning_title": "Workspaces must have at least one member.",
     "warning_descipription": "Add another member and try again."
   }
 }

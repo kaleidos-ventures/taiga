@@ -427,7 +427,6 @@ Used across all Taiga
 
     @mixin wrapper-content {
       background: none !important;
-      outline: solid 1px var(--color-secondary);
     }
   }
 
@@ -436,9 +435,6 @@ Used across all Taiga
     padding-inline: var(--spacing-8);
 
     &._focus-visible {
-      border-radius: 4px;
-      outline: solid 1px var(--color-secondary);
-
       @mixin wrapper-content {
         outline: none;
       }
@@ -482,6 +478,22 @@ Used across all Taiga
     & tui-svg {
       color: var(--color-secondary90);
       transition: fill 0.1s ease-in-out;
+    }
+  }
+}
+
+/* _focus-visible show up with javascript focus but it may be a mouse user, with user-keyboard class we force only keyboard users */
+.user-keyboard [tuiLink]:is(button, a) {
+  &._focus-visible {
+    @mixin wrapper-content {
+      outline: solid 1px var(--color-secondary);
+    }
+  }
+
+  &[icon] {
+    &._focus-visible {
+      border-radius: 4px;
+      outline: solid 1px var(--color-secondary);
     }
   }
 }

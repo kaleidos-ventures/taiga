@@ -23,6 +23,7 @@ import { LocalStorageService } from './shared/local-storage/local-storage.servic
 import { RouteHistoryService } from './shared/route-history/route-history.service';
 import { filterNil } from './shared/utils/operators';
 import { NavigationService } from './shared/navigation/navigation.service';
+import { InputModalityDetector } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'tg-root',
@@ -42,8 +43,10 @@ export class AppComponent {
     private store: Store,
     private routeHistoryService: RouteHistoryService,
     private translocoService: TranslocoService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private inputModalityDetector: InputModalityDetector
   ) {
+    this.userModality();
     this.language();
 
     this.header$ = this.router.events.pipe(
@@ -94,6 +97,18 @@ export class AppComponent {
           );
         });
       });
+  }
+
+  public userModality() {
+    this.inputModalityDetector.modalityChanged.subscribe((modality) => {
+      if (modality === 'keyboard') {
+        document.body.classList.remove('user-mouse');
+        document.body.classList.add('user-keyboard');
+      } else {
+        document.body.classList.remove('user-keyboard');
+        document.body.classList.add('user-mouse');
+      }
+    });
   }
 
   public language() {

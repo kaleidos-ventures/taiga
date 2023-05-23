@@ -16,6 +16,8 @@ import { SocialLoginButtonComponent } from './social-login-button.component';
 
 const projectInvitationToken = randUuid();
 const acceptProjectInvitation = randBoolean().toString();
+const workspaceInvitationToken = '';
+const acceptWorkspaceInvitation = '';
 
 describe('SocialLoginButtonComponent', () => {
   let spectator: Spectator<SocialLoginButtonComponent>;
@@ -44,6 +46,12 @@ describe('SocialLoginButtonComponent', () => {
                   }
                   if (param === 'acceptProjectInvitation') {
                     return acceptProjectInvitation;
+                  }
+                  if (param === 'workspaceInvitationToken') {
+                    return workspaceInvitationToken;
+                  }
+                  if (param === 'acceptWorkspaceInvitation') {
+                    return acceptWorkspaceInvitation;
                   }
                   return null;
                 },
@@ -81,7 +89,7 @@ describe('SocialLoginButtonComponent', () => {
     // @ts-ignore: force this private property value for testing.
     router.url = randURL;
 
-    const params = `social=${social}&redirect=${randURL}&projectInvitationToken=${projectInvitationToken}&acceptProjectInvitation=${acceptProjectInvitation}`;
+    const params = `social=${social}&redirect=${randURL}&projectInvitationToken=${projectInvitationToken}&acceptProjectInvitation=${acceptProjectInvitation}&workspaceInvitationToken=${workspaceInvitationToken}&acceptWorkspaceInvitation=${acceptWorkspaceInvitation}`;
     const encodedParams = encodeURIComponent(params);
 
     expect(spectator.component.socialURL).toBe(
@@ -106,7 +114,7 @@ describe('SocialLoginButtonComponent', () => {
     // @ts-ignore: force this private property value for testing.
     router.url = randURL;
 
-    const params = `social=${social}&redirect=${randURL}&projectInvitationToken=${projectInvitationToken}&acceptProjectInvitation=${acceptProjectInvitation}`;
+    const params = `social=${social}&redirect=${randURL}&projectInvitationToken=${projectInvitationToken}&acceptProjectInvitation=${acceptProjectInvitation}&workspaceInvitationToken=${workspaceInvitationToken}&acceptWorkspaceInvitation=${acceptWorkspaceInvitation}`;
     const encodedParams = encodeURIComponent(params);
 
     expect(spectator.component.socialURL).toBe(

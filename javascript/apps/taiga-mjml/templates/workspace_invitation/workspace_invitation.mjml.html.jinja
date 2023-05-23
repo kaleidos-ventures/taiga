@@ -9,6 +9,7 @@ Copyright (c) 2023-present Kaleidos INC
   <mj-head>
       <mj-title>{% trans %}emails.workspace_invitation.title{% endtrans %}</mj-title>
     <mj-include path="../../components/head.mjml" />
+    <mj-include path="../../styles/workspace_avatar.mjml" />
   </mj-head>
   <mj-body css-class="body">
     <mj-raw>
@@ -61,7 +62,7 @@ Copyright (c) 2023-present Kaleidos INC
       <mj-section>
         <mj-column>
             <mj-text css-class="dm-text"
-              mj-class="font-body color-gray80">
+              mj-class="font-body color-gray80 padding-bottom-24">
                 {% if not receiver_name -%}
                 {% trans %}emails.workspace_invitation.taiga_description{% endtrans %}
                 {% endif -%}

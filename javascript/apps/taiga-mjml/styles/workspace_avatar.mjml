@@ -1,0 +1,35 @@
+<mj-style>
+  .color-1 {
+    background: rgba(255, 129, 157, 1);
+    color: rgba(87, 16, 38, 1);
+  }
+
+  .color-2 {
+    background: rgba(124, 169, 245, 1);
+    color: rgba(19, 44, 79, 1);
+  }
+  .color-3 {
+    background: rgba(130, 185, 126, 1);
+    color: rgba(31, 48, 30, 1);
+  }
+  .color-4 {
+    background: rgba(143, 181, 72, 1);
+    color: rgba(36, 48, 13, 1);
+  }
+  .color-5 {
+    background: rgba(203, 163, 41, 1);
+    color: rgba(53, 43, 13, 1);
+  }
+  .color-6 {
+    background: rgba(251, 139, 76, 1);
+    color: rgba(71, 34, 14, 1);
+  }
+  .color-7 {
+    background: rgba(216, 140, 234, 1);
+    color: rgba(66, 28, 74, 1);
+  }
+  .color-8 {
+    background: rgba(0, 181, 238, 1);
+    color: rgba(0, 48, 66, 1);
+  }
+</mj-style>

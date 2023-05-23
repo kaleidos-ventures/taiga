@@ -212,3 +212,42 @@ describe('Workspace detail [member]', () => {
       .catch(console.error);
   });
 });
+
+describe('leave workspace', () => {
+  const workspace = WorkspaceMockFactory();
+
+  beforeEach(() => {
+    cy.login();
+
+    createWorkspaceRequest(workspace.name)
+      .then((request) => {
+        workspace.id = request.body.id;
+        workspace.slug = request.body.slug;
+      })
+      .catch(console.error);
+  });
+
+  it('can not leave workspace if there is only one user', () => {
+    cy.visit(`/workspace/${workspace.id}/${workspace.slug}/people`);
+
+    cy.getBySel('leave-workspace').click();
+
+    cy.getBySel('confirm-cancel').should('not.exist');
+  });
+
+  it('regular user leave workspace', () => {
+    void inviteToWorkspaceRequest(workspace.id, '2user');
+
+    cy.login('2user', '123123');
+
+    cy.visit(`/workspace/${workspace.id}/${workspace.slug}/people`);
+
+    cy.getBySel('leave-workspace').click();
+
+    cy.getBySel('confirm-cancel').click();
+
+    cy.url().should('eq', Cypress.config().baseUrl);
+
+    cy.get('tui-notification').should('be.visible');
+  });
+});

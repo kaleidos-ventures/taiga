@@ -7,8 +7,9 @@
  */
 
 import { randText } from '@ngneat/falso';
-import { Project, Status, Story, Workspace } from '@taiga/data';
-import { request } from './api.helpers';
+import { Project, Status, Story, User, Workspace } from '@taiga/data';
+import { getEmails, request } from './api.helpers';
+import { loginRequest } from './user.helpers';
 
 // NAVIGATION
 
@@ -127,5 +128,59 @@ export const updateStoryRequest = (
       version: response.body.version,
       ...storyUpdate,
     });
+  });
+};
+
+export const inviteToProjectRequest = (
+  projectId: Project['id'],
+  userProject: {
+    username: string;
+    roleSlug: string;
+  },
+  autoAccept = true
+) => {
+  return request<{
+    invitations: {
+      id: string;
+      user: Pick<User, 'username' | 'fullName' | 'color'>;
+      email: string | null;
+    }[];
+    alreadyMembers: number;
+  }>('POST', `/projects/${projectId}/invitations`, {
+    invitations: [userProject],
+  }).then(() => {
+    return getEmails()
+      .then((result) => {
+        const email = result.body.emails.pop();
+
+        if (email) {
+          const regex = new RegExp('/accept-project-invitation/(.*?(?="))');
+          const match = regex.exec(email.html);
+
+          if (match) {
+            return match[1];
+          }
+        }
+
+        throw new Error('email token not found');
+      })
+      .then((token) => {
+        if (autoAccept) {
+          loginRequest(userProject.username, '123123')
+            .then((auth) => {
+              void request(
+                'POST',
+                `/projects/invitations/${token}/accept`,
+                undefined,
+                {
+                  auth: {
+                    bearer: auth.body.token,
+                  },
+                }
+              );
+            })
+            .catch(console.error);
+        }
+      });
   });
 };

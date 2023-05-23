@@ -256,6 +256,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
         create: [false],
         modify: [false],
         delete: [false],
+        comment: [false],
       });
 
       roleGroup.addControl(entity, fb);

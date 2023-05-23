@@ -252,6 +252,12 @@ Copyright (c) 2023-present Kaleidos INC
                     (editChange)="
                       fieldEdit($event)
                     "></tg-story-detail-description>
+                  <!-- TODO remove when comments are implemented -->
+                  <div
+                    class="placeholder"
+                    *hasPermission="['comment']; entity: 'story'">
+                    Comments should be here
+                  </div>
                 </div>
               </tui-scrollbar>
             </div>

@@ -94,6 +94,20 @@ Copyright (c) 2023-present Kaleidos INC
         </tg-role-customize>
       </div>
     </div>
+    <div
+      class="permision-row-comment"
+      [class.permision-row-comment-disabled]="!showComment()">
+      <label class="permission-row-switch-title">
+        <span class="label-text">{{
+          t('project_settings.roles_permissions.can_comment')
+        }}</span>
+        <tui-toggle
+          class="permission-can-comment-switch"
+          data-test="permission-can-comment-switch"
+          formControlName="comment">
+        </tui-toggle>
+      </label>
+    </div>
   </div>
   <ng-template #tooltip>
     <p>{{ t('project_settings.customize') }}</p>

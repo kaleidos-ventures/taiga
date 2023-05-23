@@ -132,7 +132,12 @@ Copyright (c) 2023-present Kaleidos INC
                     class="wks-detail-menu-anchor"
                     data-test="wks-detail-projects-anchor"
                     [class.active]="menuItemActive === 'projects'"
-                    [routerLink]="['./projects']"
+                    [routerLink]="[
+                      '/workspace',
+                      vm.workspace.id,
+                      vm.workspace.slug,
+                      'projects'
+                    ]"
                     [state]="{ ignoreScrollToFocus: true }"
                     (click)="menuItemActive = 'projects'">
                     {{ t('commons.projects') }}
@@ -143,7 +148,12 @@ Copyright (c) 2023-present Kaleidos INC
                     class="wks-detail-menu-anchor"
                     data-test="wks-detail-people-anchor"
                     [class.active]="menuItemActive === 'people'"
-                    [routerLink]="['./people']"
+                    [routerLink]="[
+                      '/workspace',
+                      vm.workspace.id,
+                      vm.workspace.slug,
+                      'people'
+                    ]"
                     [state]="{ ignoreScrollToFocus: true }"
                     (click)="menuItemActive = 'people'">
                     {{ t('commons.people') }}

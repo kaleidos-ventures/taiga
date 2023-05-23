@@ -21,6 +21,8 @@ interface SocialParams {
   redirect: string;
   projectInvitationToken: string;
   acceptProjectInvitation: string;
+  workspaceInvitationToken: string;
+  acceptWorkspaceInvitation: string;
 }
 
 @Component({
@@ -78,15 +80,24 @@ export class SocialLoginButtonComponent {
       this.route.snapshot.queryParamMap.get('projectInvitationToken') || '';
     const acceptProjectInvitation =
       this.route.snapshot.queryParamMap.get('acceptProjectInvitation') || '';
+    const workspaceInvitationToken =
+      this.route.snapshot.queryParamMap.get('workspaceInvitationToken') || '';
+    const acceptWorkspaceInvitation =
+      this.route.snapshot.queryParamMap.get('acceptWorkspaceInvitation') || '';
     const params: SocialParams = {
       social: this.social,
       redirect: this.router.url ? this.router.url.match(/^[^?]*/g)!.join() : '',
       projectInvitationToken: '',
       acceptProjectInvitation: '',
+      workspaceInvitationToken: '',
+      acceptWorkspaceInvitation: '',
     };
     if (projectInvitationToken) {
       params.projectInvitationToken = projectInvitationToken;
       params.acceptProjectInvitation = acceptProjectInvitation;
+    } else if (workspaceInvitationToken) {
+      params.workspaceInvitationToken = workspaceInvitationToken;
+      params.acceptWorkspaceInvitation = acceptWorkspaceInvitation;
     }
     const qs = Object.keys(params)
       .map((key) => {

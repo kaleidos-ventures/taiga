@@ -188,6 +188,7 @@ export class WorkspaceItemComponent
     private wsService: WsService
   ) {
     this.state.set({
+      projects: [],
       rejectedInvites: [],
       invitations: [],
       projectSiblingToAnimate: [],
@@ -518,17 +519,27 @@ export class WorkspaceItemComponent
         })
       );
     } else {
-      if (this.workspace.userRole === 'admin') {
-        this.newProjectsToAnimate.push(projectId);
+      const projectInWorkspace = [
+        ...this.state.get('projects'),
+        ...this.state.get('workspaceProjects'),
+      ].find((project) => {
+        return project.id === projectId;
+      });
+
+      if (!projectInWorkspace) {
+        if (this.workspace.userRole === 'admin') {
+          this.newProjectsToAnimate.push(projectId);
+        }
+
+        this.store.dispatch(
+          invitationCreateEvent({
+            projectId,
+            workspaceId,
+            role: this.workspace.userRole,
+            rejectedInvites: this.state.get('rejectedInvites'),
+          })
+        );
       }
-      this.store.dispatch(
-        invitationCreateEvent({
-          projectId,
-          workspaceId,
-          role: this.workspace.userRole,
-          rejectedInvites: this.state.get('rejectedInvites'),
-        })
-      );
     }
   }
 

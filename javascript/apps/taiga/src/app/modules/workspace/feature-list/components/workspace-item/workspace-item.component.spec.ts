@@ -304,6 +304,30 @@ describe('WorkspaceItem', () => {
       });
     });
 
+    it('Workspace admin recived invitation to workspace project', (done) => {
+      const currentWorkspace = spectator.component.workspace.id;
+
+      const dispatchSpy = jest.spyOn(store, 'dispatch');
+      spectator.component.wsEvent(
+        'projectinvitations.create',
+        workspaceItemAdmin.id,
+        currentWorkspace
+      );
+      spectator.detectChanges();
+      const action = invitationCreateEvent({
+        projectId: spectator.component.workspace.latestProjects[0].id,
+        workspaceId: currentWorkspace,
+        role: 'guest',
+        rejectedInvites: [],
+      });
+
+      spectator.component.wsEvents.subscribe(() => {
+        expect(dispatchSpy).not.toBeCalledWith(action);
+        expect(spectator.component.newProjectsToAnimate.length).toEqual(0);
+        done();
+      });
+    });
+
     it('Membership created via event', (done) => {
       const memberToCreate =
         spectator.component.workspace.invitedProjects[0].id;

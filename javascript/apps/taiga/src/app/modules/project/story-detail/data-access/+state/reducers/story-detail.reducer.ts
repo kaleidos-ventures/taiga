@@ -162,6 +162,16 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    StoryDetailApiActions.deleteStorySuccess,
+    (state, { ref }): StoryDetailState => {
+      if (state.story?.ref === ref) {
+        state.story = null;
+      }
+
+      return state;
+    }
   )
 );
 

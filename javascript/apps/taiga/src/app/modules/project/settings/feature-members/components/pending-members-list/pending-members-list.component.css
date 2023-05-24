@@ -86,7 +86,9 @@ tg-ui-dtable-row {
 }
 
 .invitation-actions {
+  align-items: baseline;
   justify-content: end;
+  padding-block: var(--spacing-8);
 }
 
 .undo-invitation {

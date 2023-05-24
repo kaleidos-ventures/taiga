@@ -239,6 +239,12 @@ Copyright (c) 2023-present Kaleidos INC
                       </span>
                     </div>
                   </div>
+                  <tg-story-detail-status
+                    *ngIf="vm.selectedStoryView === 'side-view'"
+                    [form]="form"></tg-story-detail-status>
+                  <tg-story-detail-assign
+                    *ngIf="vm.story && vm.selectedStoryView === 'side-view'"
+                    [story]="vm.story"></tg-story-detail-assign>
                   <tg-story-detail-description
                     [form]="form"
                     [story]="vm.story"
@@ -256,9 +262,10 @@ Copyright (c) 2023-present Kaleidos INC
                   [style.min-height.px]="columnHeight">
                   <ng-container *ngIf="sidebarOpen">
                     <tg-story-detail-status
+                      *ngIf="vm.selectedStoryView !== 'side-view'"
                       [form]="form"></tg-story-detail-status>
                     <tg-story-detail-assign
-                      *ngIf="vm.story"
+                      *ngIf="vm.story && vm.selectedStoryView !== 'side-view'"
                       [story]="vm.story"></tg-story-detail-assign>
                   </ng-container>
 

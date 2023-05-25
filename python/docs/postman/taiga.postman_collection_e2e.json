@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4be31002-31ca-4ca6-b563-17ac2f4a115b",
+		"_postman_id": "20f89f45-68f5-44df-b881-a094b50aca32",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "3299216"
@@ -3070,6 +3070,76 @@
 								"{{pj-id}}",
 								"stories",
 								"{{story_ref}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{p}.stories.{ref}.comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    // TODO: Add checks here when the POST endpoint exists",
+									"    var jsonRes = pm.response.json();",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/comments?order=-createdAt&limit=100&offset=0",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"stories",
+								"{{story_ref}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "order",
+									"value": "-createdAt"
+								},
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
 							]
 						}
 					},

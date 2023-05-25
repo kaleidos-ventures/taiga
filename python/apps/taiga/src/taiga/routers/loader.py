@@ -20,6 +20,7 @@ from taiga.projects.roles import api as projects_roles_api  # noqa
 from taiga.routers import routes
 from taiga.routers.routes import tags_metadata
 from taiga.stories.assignments import api as stories_assignments_api  # noqa
+from taiga.stories.comments import api as stories_comments_api  # noqa
 from taiga.stories.mediafiles import api as stories_mediafiles_api  # noqa
 from taiga.stories.stories import api as stories_api  # noqa
 from taiga.system import api as system_api  # noqa
@@ -46,5 +47,6 @@ def load_routes(api: FastAPI) -> None:
     api.include_router(routes.unauth_projects_invitations)
     api.include_router(routes.projects_memberships)
     api.include_router(routes.stories)
+    api.include_router(routes.comments)
     api.include_router(routes.my)
     api.include_router(routes.system)

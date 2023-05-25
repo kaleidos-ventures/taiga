@@ -14,10 +14,10 @@ from typing import Final
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
+from django.db.models import Model
 from faker import Faker
 from fastapi import UploadFile
 from taiga.base.sampledata import constants
-from taiga.comments.mixins import CommentsMixin
 from taiga.comments.models import Comment
 from taiga.projects.invitations import repositories as pj_invitations_repositories
 from taiga.projects.invitations.choices import ProjectInvitationStatus
@@ -319,7 +319,7 @@ async def create_story_comments(
 def _create_comment_object(
     text: str,
     created_by: User,
-    object: CommentsMixin,
+    object: Model,
     created_at: datetime | None = None,
 ) -> Comment:
     return Comment(

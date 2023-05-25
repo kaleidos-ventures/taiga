@@ -100,6 +100,17 @@ tags_metadata.append(
     }
 )
 
+
+# /comments
+comments = AuthAPIRouter(tags=["comments"])
+tags_metadata.append(
+    {
+        "name": "comments",
+        "description": "Endpoint for comments.",
+    }
+)
+
+
 # /my
 my = AuthAPIRouter(tags=["my"])
 tags_metadata.append({"name": "my", "description": "Endpoints for logged-in user's resources."})

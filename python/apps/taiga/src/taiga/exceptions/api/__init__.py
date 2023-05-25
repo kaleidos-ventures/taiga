@@ -75,3 +75,13 @@ class ForbiddenError(HTTPException):
 class NotFoundError(HTTPException):
     def __init__(self, msg: str = codes.EX_NOT_FOUND.msg):
         super().__init__(status_code=status.HTTP_404_NOT_FOUND, code=codes.EX_NOT_FOUND.code, msg=msg)
+
+
+##############################
+# HTTP 422: VALIDATION ERROR
+##############################
+
+
+class ValidationError(HTTPException):
+    def __init__(self, msg: str = codes.EX_VALIDATION_ERROR.msg):
+        super().__init__(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, code=codes.EX_VALIDATION_ERROR.code, msg=msg)

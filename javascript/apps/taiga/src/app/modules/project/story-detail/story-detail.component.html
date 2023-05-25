@@ -255,8 +255,13 @@ Copyright (c) 2023-present Kaleidos INC
                   <!-- TODO remove when comments are implemented -->
                   <div
                     class="placeholder"
-                    *hasPermission="['comment']; entity: 'story'">
-                    Comments should be here
+                    *ngIf="vm.canComment">
+                    User has input for comments
+                  </div>
+                  <div
+                    class="placeholder"
+                    *ngIf="!vm.canComment">
+                    User doesn't have input for comments
                   </div>
                 </div>
               </tui-scrollbar>

@@ -63,6 +63,7 @@ export interface StoryDetailState {
   loadingStatuses: boolean;
   canEdit: boolean;
   canDelete: boolean;
+  canComment: boolean;
   fieldFocus: boolean;
   fieldEdit: boolean;
   showDiscardChangesModal: boolean;
@@ -208,6 +209,10 @@ export class StoryDetailComponent {
     this.state.connect(
       'canDelete',
       this.permissionService.hasPermissions$('story', ['delete'])
+    );
+    this.state.connect(
+      'canComment',
+      this.permissionService.hasPermissions$('story', ['comment'])
     );
 
     this.state

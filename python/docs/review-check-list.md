@@ -9,6 +9,7 @@ Check list for reviewing pull requests:
 - emails
 - admin
 - tests
+    - unittest don't hit the database
 - fixtures
 - e2e
 - postman

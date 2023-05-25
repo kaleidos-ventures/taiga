@@ -18,5 +18,15 @@
     "assign-aria": "{{ name }} {{ username }}. Enter to assign.",
     "assigned-aria": "{{ name }} assigned.",
     "disabled-user-aria": "{{ name }} {{ username }}. This user does not have access to stories."
+  },
+  "leave_project": {
+    "leave": "Leave this project",
+    "leave_title": "Leave {{ project}}?",
+    "leave_description": "You will lose the permissions granted as a member of the project and will be removed from all your assignments.",
+    "no": "No, cancel",
+    "yes": "Yes, leave",
+    "warning_title": "Projects must have at least one admin.",
+    "warning_descipription": "Assign another admin first and try again.",
+    "no_longer_member": "You are no longer member of the {{ project }} project."
   }
 }

@@ -1,5 +1,6 @@
 {
   "commons": {
+    "home": "Home",
     "organizations": "Organizations",
     "project": "Project",
     "projects": "Projects",
@@ -9,6 +10,7 @@
     "team": "Team",
     "cancel": "Cancel",
     "members": "Members",
+    "people": "People",
     "upgrade": "Upgrade",
     "owner": "Owner",
     "workspace": "Workspace",
@@ -31,6 +33,7 @@
     "save_changes": "Save changes",
     "modify": "modify",
     "delete": "delete",
+    "remove": "remove",
     "save": "Save",
     "next_page": "Next page"
   },
@@ -83,6 +86,7 @@
   "common_project": {
     "create_first_project": "Create your first project",
     "create_new_project": "Add a project",
+    "create_project": "Create project",
     "project_actions": "Project actions",
     "card": {
       "accept_invite": "Accept invitation",
@@ -169,7 +173,7 @@
     }
   },
   "field_conflict": {
-    "title": "Watch out! There is a new version of the title.",
+    "title": "Watch out! There is a new version of the {{ fieldName }}.",
     "description": "While you were editing the {{fieldName}}, <strong>{{user}}</strong> saved a new version. Check it out and then you can edit it if you want.",
     "copy": "Copy to clipboard",
     "copied": "Copied to clipboard!",
@@ -178,7 +182,38 @@
     "copy_title": "Do you want to copy your changes?",
     "copy_descripcion": "So you can use them later.",
     "fields": {
-      "title": "title"
+      "title": "title",
+      "description": "description"
     }
+  },
+  "pagination": {
+    "next_page": "Next page",
+    "previous_page": "Previous page",
+    "page_info": "<span class='page-range'>{pageStart} - {pageEnd}</span> of {total}"
+  },
+  "common_members_tabs": {
+    "resend": "Resend",
+    "members_tab": "Members",
+    "pending_tab": "Pending",
+    "non_members_tab": "Non-members",
+    "column_user": "User",
+    "column_projects": {
+      "projects_number": "{projectsNum, plural, =0 {0 projects} one {1 project} other {# projects}}",
+      "projects_list_title": "Projects in this workspace"
+    },
+    "column_actions": "Actions",
+    "no_pending": "There are no pending invitations to accept.",
+    "leave": "Leave project",
+    "remove": "Remove",
+    "last_admin_warning_title": "Projects must have at least one admin.",
+    "last_admin_warning_description": "Assign another admin first and try again.",
+    "leave_title": "Leave project {project_name}?",
+    "leave_description": "You will lose the permissions granted as a member of the project and will be removed from all your assignments.",
+    "leave_confirm": "Yes, leave",
+    "no_cancel": "No, cancel",
+    "remove_title": "Remove {user_name} from the project?",
+    "remove_description": "The user will lose the permissions granted as a member of the project and will be removed from all their assignmets.",
+    "remove_confirm": "Yes, remove",
+    "no_longer_member": "You are no longer member of the {name} {type}."
   }
 }

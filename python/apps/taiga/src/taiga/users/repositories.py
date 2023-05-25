@@ -88,6 +88,11 @@ def _apply_filters_to_queryset(
         workspace = filter_data.pop("guests_in_workspace")
         # exclude workspace members
         qs = qs.exclude(workspaces=workspace)
+        # exclude workspace invitees
+        ws_invitees = Q(
+            workspace_invitations__workspace=workspace, workspace_invitations__status=WorkspaceInvitationStatus.PENDING
+        )
+        qs = qs.exclude(ws_invitees)
         # filter members of any project in the workspace
         qs = qs.filter(projects__workspace=workspace).distinct()
 

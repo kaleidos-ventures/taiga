@@ -137,15 +137,19 @@ async def test_list_guests_in_ws_for_project():
 
 
 async def test_list_guests_in_workspace():
-    member = await f.create_user()
     workspace = await f.create_workspace()
+    pj_member = await f.create_user()
     project = await f.create_project(created_by=workspace.created_by, workspace=workspace)
     general_role = await f.create_project_role(project=project, is_admin=False)
-    await f.create_project_membership(user=member, project=project, role=general_role)
-    users = await users_repositories.list_users(filters={"guests_in_workspace": workspace})
+    await f.create_project_membership(user=pj_member, project=project, role=general_role)
+    ws_invitee = await f.create_user()
+    await f.create_workspace_invitation(user=ws_invitee, workspace=workspace)
 
-    assert len(users) == 1
-    assert member in users
+    guests = await users_repositories.list_users(filters={"guests_in_workspace": workspace})
+
+    assert len(guests) == 1
+    assert pj_member in guests
+    assert ws_invitee not in guests
 
 
 class ListUserByText(IsolatedAsyncioTestCase):

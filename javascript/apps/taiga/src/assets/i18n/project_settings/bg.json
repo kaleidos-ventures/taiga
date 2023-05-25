@@ -10,6 +10,7 @@
   "external_members": "The external users have more permissions than project members.",
   "see_more": "See more",
   "roles_permissions": {
+    "page_title": "{{projectName}} - {{project_settings.roles_and_permissions}}",
     "project_administrators": "Administrators",
     "number_admins": "{admins, plural, one {1 admin} other {# admins}}",
     "number_members": "{members, plural, one {1 member} other {# members}}",
@@ -44,17 +45,10 @@
     "close": "Close"
   },
   "members": {
+    "page_title": "{{projectName}} - {{project_settings.members.title}}",
     "title": "Project members",
     "invite": "Invite people",
-    "no_pending": "There are no pending invitations to accept.",
-    "members_tab": "Members",
-    "pending_tab": "Pending",
-    "next_page": "Next page",
-    "previous_page": "Previous page",
-    "page_info": "<span class='page-range'>{pageStart} - {pageEnd}</span> of {total}",
-    "column_user": "User",
     "column_role": "Role",
-    "column_actions": "Actions",
     "resend": "Resend",
     "cancel_invitation": "Cancel",
     "revoke": {

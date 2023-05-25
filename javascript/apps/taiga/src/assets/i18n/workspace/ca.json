@@ -5,7 +5,7 @@
   "placeholder_button": "Create workspace",
   "add_workspace": "Add workspace",
   "show_activity": "Show activity",
-  "project": "Project",
+  "create_project": "Create project",
   "create_workspace": "Create workspace",
   "back_to_projects": "Back to projects",
   "workspace_name": "Workspace Name",
@@ -19,6 +19,7 @@
   "workspace_options": "Workspace options",
   "edit_workspace_name": "Edit workspace name",
   "workspace_actions": "Workspace actions",
+  "invite_workspace": "Invite to workspace",
   "edit": {
     "title": "Workspace details",
     "name": "Workspace name",
@@ -36,5 +37,29 @@
   },
   "a11y": {
     "workspace_title": "{{ workspace }}. Workspace. Role: {{ role }}"
+  },
+  "people": {
+    "members_description": "Workspace members can view and manage all projects in this workspace, create new ones and delete them.",
+    "non_members_description": "People that are part of the projects but not workspace members.",
+    "non_members_empty": "There are no project members who are not members of this workspace.",
+    "remove": {
+      "question": "Remove {{fullName}} from Workspace?",
+      "description": "The user will no longer be able to access the workspace but will remain being a member of their projects.",
+      "keep_member": "No, Cancel",
+      "confirm_remove_member": "Yes, remove",
+      "removed_member": "{{fullName}} removed.",
+      "undo": "Undo",
+      "action_undone": "Action undone",
+      "no_longer_member": "You are no longer a member of {{workspace}} workspace."
+    }
+  },
+  "leave": {
+    "action": "Leave workspace",
+    "title": "Leave {{ workspace }}?",
+    "description": "You will lose the permissions granted as a member of the workspace and even lose access to some projects.\nThis action doesn’t affect your role in the projects you are member of.",
+    "no": "No, cancel",
+    "confirm": "Yes, leave workspace",
+    "warning_title": "Workspaces must have at least one member.",
+    "warning_descipription": "Add another member and try again."
   }
 }

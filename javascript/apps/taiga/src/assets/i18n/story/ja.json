@@ -22,6 +22,8 @@
   "expand_sidebar": "Expand sidebar",
   "status": "Status",
   "edit_title": "Edit title",
+  "empty_description": "Add a description to your story",
+  "edit_description": "Edit description",
   "delete": {
     "delete_story": "Delete Story",
     "confirm": "Are you sure you want to delete this story?",

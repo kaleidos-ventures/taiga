@@ -1,5 +1,6 @@
 {
   "sections": {
+    "page_title": "{{ user_settings.sections.user_settings }} - {{pageName}}",
     "user_settings": "User settings",
     "edit_profile": "Edit profile",
     "account": "Account",

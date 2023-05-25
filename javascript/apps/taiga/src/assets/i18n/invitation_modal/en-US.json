@@ -24,7 +24,7 @@
   "error_several_emails": "There are one or more invalid email addresses.",
   "error_more_than_fifty": "You can only invite 50 people at once. Remove { invitations, plural, one {1 user} other {# users} } and try again.",
   "invitation_ok": "All good!",
-  "invitation_success": "Your { invitations, plural, one { invitation is on its} other { # invitations are on their} } way",
+  "invitation_success": "Your { invitations, plural, one { invitation was} other { # invitations were} } successfully sent!",
   "only_member_success": "This person is already a member and won't receive a new invitation",
   "only_members_success": "{ members, plural, one { 1 person is already a member and won't receive a new invitation} other { # people are already members and won't receive a new invitations} }",
   "invitation_error": "An error ocurred!",

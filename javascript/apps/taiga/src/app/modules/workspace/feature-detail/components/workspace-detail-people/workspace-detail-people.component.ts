@@ -8,7 +8,7 @@
 
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { concatLatestFrom } from '@ngrx/effects';
+import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { User, Workspace } from '@taiga/data';
@@ -27,6 +27,7 @@ import {
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
+import { invitationWorkspaceActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 
 interface WorkspaceDetailState {
   workspace: Workspace | null;
@@ -52,8 +53,23 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
   constructor(
     private state: RxState<WorkspaceDetailState>,
     private store: Store,
-    private wsService: WsService
-  ) {}
+    private wsService: WsService,
+    private actions$: Actions
+  ) {
+    this.actions$
+      .pipe(
+        ofType(invitationWorkspaceActions.inviteUsersSuccess),
+        untilDestroyed(this)
+      )
+      .subscribe(() => {
+        this.store.dispatch(
+          workspaceDetailApiActions.getWorkspaceMemberInvitations({
+            id: this.state.get('workspace')!.id,
+            offset: 0,
+          })
+        );
+      });
+  }
 
   public ngOnInit(): void {
     this.state.connect(
@@ -149,10 +165,24 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
         })
         .pipe(untilDestroyed(this))
         .subscribe(() => {
+          console.log('update invitations list porque se mandó invitación');
           this.store.dispatch(
             workspaceDetailEventActions.updateInvitationsList({
               id: workspace.id,
-              offset: this.state.get('invitationsOffset'),
+            })
+          );
+        });
+
+      this.wsService
+        .events<{ workspace: string }>({
+          channel: `workspaces.${workspace.id}`,
+          type: 'projectmemberships.create',
+        })
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          this.store.dispatch(
+            workspaceDetailEventActions.updateNonMembersList({
+              id: workspace.id,
             })
           );
         });
@@ -162,14 +192,5 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
   public invitePeopleModal() {
     this.resetForm = this.invitePeople;
     this.invitePeople = !this.invitePeople;
-  }
-
-  public onInviteSuccess() {
-    this.store.dispatch(
-      workspaceDetailApiActions.getWorkspaceMemberInvitations({
-        id: this.state.get('workspace')!.id,
-        offset: 0,
-      })
-    );
   }
 }

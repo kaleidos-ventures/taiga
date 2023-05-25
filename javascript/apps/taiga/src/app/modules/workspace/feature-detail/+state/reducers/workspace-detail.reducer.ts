@@ -21,6 +21,7 @@ import {
   workspaceDetailApiActions,
   workspaceDetailEventActions,
 } from '../actions/workspace-detail.actions';
+import { invitationWorkspaceActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 
 export interface WorkspaceDetailState {
   workspace: Workspace | null;
@@ -338,6 +339,40 @@ export const reducer = createImmerReducer(
       state.invitations.membersList = invitations.members;
       state.invitations.total = invitations.totalMembers;
       state.invitations.offset = invitations.offset;
+
+      return state;
+    }
+  ),
+  on(
+    workspaceDetailEventActions.updateInvitationsListSuccess,
+    (state, { nonMembers, invitations }): WorkspaceDetailState => {
+      state.nonMembers.membersList = nonMembers.members;
+      state.nonMembers.total = nonMembers.totalMembers;
+      state.nonMembers.offset = nonMembers.offset;
+      state.invitations.membersList = invitations.members;
+      state.invitations.total = invitations.totalMembers;
+      state.invitations.offset = invitations.offset;
+
+      return state;
+    }
+  ),
+  on(
+    invitationWorkspaceActions.inviteUsersSuccess,
+    (state, action): WorkspaceDetailState => {
+      const currentNonMembers = state.nonMembers.membersList.map(
+        (it) => it.user.username
+      );
+      action.newInvitations.forEach((newInvitation) => {
+        if (
+          currentNonMembers.includes(newInvitation.user?.username) ||
+          currentNonMembers.includes(newInvitation.email)
+        ) {
+          state.nonMembers.membersList = state.nonMembers.membersList.filter(
+            (it) => it.user.username !== newInvitation.user.username
+          );
+          state.nonMembers.total--;
+        }
+      });
 
       return state;
     }

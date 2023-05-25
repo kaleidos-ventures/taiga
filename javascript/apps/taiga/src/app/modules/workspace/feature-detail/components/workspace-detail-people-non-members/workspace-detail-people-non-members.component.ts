@@ -6,7 +6,12 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  AfterContentInit,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { WorkspaceMembership, Workspace } from '@taiga/data';
 import { RxState } from '@rx-angular/state';
 import {
@@ -21,6 +26,8 @@ import { filterNil } from '~/app/shared/utils/operators';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 import { map } from 'rxjs/operators';
 import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
+import { invitationWorkspaceActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
+import { slideInOut } from '~/app/shared/utils/animations';
 
 @Component({
   selector: 'tg-workspace-detail-people-non-members',
@@ -28,8 +35,11 @@ import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detai
   styleUrls: ['./workspace-detail-people-non-members.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  animations: [slideInOut],
 })
-export class WorkspaceDetailPeopleNonMembersComponent implements OnInit {
+export class WorkspaceDetailPeopleNonMembersComponent
+  implements OnInit, AfterContentInit
+{
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public model$ = this.state.select().pipe(
     map((model) => {
@@ -45,6 +55,7 @@ export class WorkspaceDetailPeopleNonMembersComponent implements OnInit {
       };
     })
   );
+  public animationDisabled = true;
 
   constructor(
     private state: RxState<{
@@ -68,8 +79,23 @@ export class WorkspaceDetailPeopleNonMembersComponent implements OnInit {
     );
   }
 
+  public ngAfterContentInit() {
+    setTimeout(() => {
+      this.animationDisabled = false;
+    }, 1000);
+  }
+
   public trackByIndex(index: number) {
     return index;
+  }
+
+  public inviteToWorkspace(email: string) {
+    this.store.dispatch(
+      invitationWorkspaceActions.inviteUsers({
+        id: this.state.get('workspace')!.id,
+        invitation: [{ usernameOrEmail: email }],
+      })
+    );
   }
 
   public next() {

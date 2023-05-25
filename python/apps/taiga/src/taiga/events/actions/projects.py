@@ -57,7 +57,7 @@ class SubscribeToProjectEventsAction(Action, type="subscribe_to_project_events")
                 await subscriber.subscribe(channel=channel)
                 await subscriber.put(ActionResponse(action=self, content=content))
             else:
-                # Not enought permissions
+                # Not enough permissions
                 await subscriber.put(ActionResponse(action=self, status="error", content={"detail": "not-allowed"}))
         else:
             # Project does not exist

@@ -110,8 +110,8 @@ class Subscriber:
                         action = parse_action_from_obj(event.content)
                     except ValidationError as e:
                         logger.error(
-                            f"Recived invalid action: '{event}'.",
-                            extra={"action": "subscriver.sending_handler", "event": event, "error": e.errors()},
+                            f"Received invalid action: '{event}'.",
+                            extra={"action": "subscriber.sending_handler", "event": event, "error": e.errors()},
                         )
                     else:
                         await action.run(subscriber=self)

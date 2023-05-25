@@ -57,7 +57,7 @@ class SubscribeToWorkspaceEventsAction(Action, type="subscribe_to_workspace_even
                 await subscriber.subscribe(channel=channel)
                 await subscriber.put(ActionResponse(action=self, content=content))
             else:
-                # Not enought permissions
+                # Not enough permissions
                 await subscriber.put(ActionResponse(action=self, status="error", content={"detail": "not-allowed"}))
         else:
             # Workspace does not exist

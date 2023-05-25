@@ -8,7 +8,7 @@
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin, DescriptionUpdatedMetaInfoMixin, TitleUpdatedMetaInfoMixin
 from taiga.base.occ.models import VersionedMixin
-from taiga.comments.mixins import CommentsMixin
+from taiga.comments.mixins import RelatedCommentsMixin
 from taiga.mediafiles.mixins import RelatedMediafilesMixin
 from taiga.projects.references.mixins import ProjectReferenceMixin
 
@@ -21,7 +21,7 @@ class Story(
     TitleUpdatedMetaInfoMixin,
     DescriptionUpdatedMetaInfoMixin,
     RelatedMediafilesMixin,
-    CommentsMixin,
+    RelatedCommentsMixin,
 ):
     title = models.CharField(max_length=500, null=False, blank=False, verbose_name="title")
     description = models.TextField(null=True, blank=True, verbose_name="description")

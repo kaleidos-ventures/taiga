@@ -35,7 +35,9 @@ Copyright (c) 2023-present Kaleidos INC
           <ng-container *ngIf="!vm.loading">
             <ng-container
               *ngFor="let nonMember of vm.nonMembers; trackBy: trackByIndex">
-              <tg-ui-dtable-row>
+              <tg-ui-dtable-row
+                [@.disabled]="animationDisabled"
+                [@slideInOut]>
                 <tg-ui-dtable-cell class="user">
                   <tg-user-card
                     [user]="nonMember.user"
@@ -47,7 +49,15 @@ Copyright (c) 2023-present Kaleidos INC
                       nonMember
                     "></tg-workspace-detail-people-members-projects>
                 </tg-ui-dtable-cell>
-                <tg-ui-dtable-cell class="action-column"> </tg-ui-dtable-cell>
+                <tg-ui-dtable-cell class="action-column">
+                  <button
+                    tuiLink
+                    class="invite-workspace"
+                    (click)="inviteToWorkspace(nonMember.user.username)"
+                    data-test="invite-workspace">
+                    {{ t('workspace.invite_workspace') }}
+                  </button>
+                </tg-ui-dtable-cell>
               </tg-ui-dtable-row>
             </ng-container>
           </ng-container>

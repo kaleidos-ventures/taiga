@@ -165,7 +165,6 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
         })
         .pipe(untilDestroyed(this))
         .subscribe(() => {
-          console.log('update invitations list porque se mandó invitación');
           this.store.dispatch(
             workspaceDetailEventActions.updateInvitationsList({
               id: workspace.id,

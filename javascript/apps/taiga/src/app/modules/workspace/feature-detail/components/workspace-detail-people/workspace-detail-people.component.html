@@ -19,6 +19,7 @@ Copyright (c) 2023-present Kaleidos INC
           appearance="primary"
           tuiButton
           type="button"
+          data-test="open-invite-modal"
           (click)="invitePeopleModal()">
           {{ t('workspace.invite_workspace') }}
         </button>
@@ -64,6 +65,7 @@ Copyright (c) 2023-present Kaleidos INC
           (click)="selectedTab = 2">
           <h3>{{ t('common_members_tabs.pending_tab') }}</h3>
           <span
+            data-test="pending-count"
             class="count"
             *ngIf="vm.totalInvitationMembers"
             >({{ vm.totalInvitationMembers }})</span
@@ -85,6 +87,7 @@ Copyright (c) 2023-present Kaleidos INC
           (click)="selectedTab = 3">
           <h3>{{ t('common_members_tabs.non_members_tab') }}</h3>
           <span
+            data-test="non-members-count"
             class="count"
             *ngIf="vm.totalNonMembers"
             >({{ vm.totalNonMembers }})</span

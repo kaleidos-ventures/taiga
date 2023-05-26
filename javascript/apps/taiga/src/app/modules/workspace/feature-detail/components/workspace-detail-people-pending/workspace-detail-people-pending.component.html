@@ -10,6 +10,7 @@ Copyright (c) 2023-present Kaleidos INC
   <ng-container *transloco="let t">
     <ng-container *ngIf="vm.workspace">
       <p
+        data-test="empty-members"
         class="empty"
         *ngIf="vm.invitationMembers.length === 0">
         {{ t('common_members_tabs.no_pending') }}

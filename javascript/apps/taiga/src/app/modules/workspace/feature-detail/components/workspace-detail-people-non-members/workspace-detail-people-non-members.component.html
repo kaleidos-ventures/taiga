@@ -13,6 +13,7 @@ Copyright (c) 2023-present Kaleidos INC
         {{ t('workspace.people.non_members_description') }}
       </p>
       <p
+        data-test="empty-non-members"
         class="empty"
         *ngIf="vm.nonMembers.length === 0">
         {{ t('workspace.people.non_members_empty') }}

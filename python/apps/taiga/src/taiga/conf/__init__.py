@@ -123,6 +123,7 @@ class Settings(BaseSettings):
 
     class Config:
         env_prefix = "TAIGA_"
+        env_nested_delimiter = "__"
         case_sensitive = True
         env_file = os.getenv("TAIGA_ENV_FILE", ".env")
         env_file_encoding = os.getenv("TAIGA_ENV_FILE_ENCODING", "utf-8")

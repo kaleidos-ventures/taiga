@@ -266,6 +266,7 @@ export class ProjectEffects {
             message: 'errors.deleted_project',
             paramsMessage: { name: action.name },
             status: action.error ? TuiNotification.Error : TuiNotification.Info,
+            autoClose: !action.error,
           });
         })
       );
@@ -289,6 +290,7 @@ export class ProjectEffects {
                   paramsMessage: { name: action.projectName, type: 'project' },
                   status: TuiNotification.Info,
                   closeOnNavigation: false,
+                  autoClose: true,
                 });
                 return this.router.navigate([
                   'project',
@@ -305,6 +307,7 @@ export class ProjectEffects {
                   paramsMessage: { name: action.projectName, type: 'project' },
                   status: TuiNotification.Info,
                   closeOnNavigation: false,
+                  autoClose: true,
                 });
                 return this.router.navigate(['/']);
               }

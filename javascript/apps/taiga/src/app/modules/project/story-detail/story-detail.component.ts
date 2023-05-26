@@ -490,7 +490,6 @@ export class StoryDetailComponent {
           },
           status: TuiNotification.Error,
           scope: 'story',
-          autoClose: true,
           closeOnNavigation: false,
         });
         if (this.state.get('selectedStoryView') == 'full-view') {

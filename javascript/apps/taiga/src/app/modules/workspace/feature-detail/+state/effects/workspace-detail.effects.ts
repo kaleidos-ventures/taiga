@@ -234,7 +234,6 @@ export class WorkspaceDetailEffects {
             paramsMessage: { name: action.name },
             status: TuiNotification.Error,
             scope: 'workspace',
-            autoClose: true,
             closeOnNavigation: false,
           });
           void this.router.navigate(['/']);

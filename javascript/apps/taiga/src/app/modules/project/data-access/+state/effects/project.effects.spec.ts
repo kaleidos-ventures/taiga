@@ -181,6 +181,7 @@ describe('ProjectEffects', () => {
         paramsMessage: { name: projectName, type: 'project' },
         status: TuiNotification.Info,
         closeOnNavigation: false,
+        autoClose: true,
       });
       expect(router.navigate).toHaveBeenCalledWith([
         'project',

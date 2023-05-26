@@ -52,7 +52,6 @@ export class PermissionUpdateNotificationService {
       message: translation,
       status: TuiNotification.Warning,
       scope: 'kanban',
-      autoClose: true,
     });
   }
 }

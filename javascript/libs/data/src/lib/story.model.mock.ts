@@ -7,6 +7,7 @@
  */
 
 import {
+  rand,
   randFullName,
   randNumber,
   randParagraph,
@@ -73,6 +74,7 @@ export const StoryDetailMockFactory = (
     createdBy: {
       username: randUser().username,
       fullName: randFullName(),
+      color: rand([1, 2, 3, 4, 5, 7, 8]),
     },
     createdAt: randPastDate().toString(),
     assignees: [],

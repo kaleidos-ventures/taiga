@@ -49,6 +49,7 @@ export interface StoryUpdate {
 export interface createdBy {
   username: string;
   fullName: string;
+  color: number;
 }
 
 export type StoryView = 'modal-view' | 'full-view' | 'side-view';

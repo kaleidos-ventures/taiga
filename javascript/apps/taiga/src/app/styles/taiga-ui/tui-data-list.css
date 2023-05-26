@@ -29,14 +29,15 @@ tui-data-list {
     --tui-text-01: var(--color-gray90);
 
     border: solid 1px var(--color-white) !important;
-    font-weight: var(--font-weight-medium) !important;
     inline-size: 100%;
-    min-block-size: var(--spacing-24);
+    margin: 0 !important;
+    min-block-size: var(--spacing-24) !important;
     padding: var(--spacing-8) !important;
     transition: none !important;
 
     &:hover,
-    &.active-option {
+    &.active-option,
+    &.selected {
       --tui-text-01: var(--color-secondary80);
 
       background: var(--color-gray20) !important;

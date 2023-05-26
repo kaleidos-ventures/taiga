@@ -13,7 +13,10 @@ import {
   WorkspaceAdminMockFactory,
   WorkspaceMockFactory,
 } from '@taiga/data';
-import { createFullProjectInWSRequest } from '@test/support/helpers/project.helpers';
+import {
+  createFullProjectInWSRequest,
+  inviteToProjectRequest,
+} from '@test/support/helpers/project.helpers';
 import {
   clickDeleteWorkspace,
   displayEditWorkspaceModal,
@@ -23,6 +26,12 @@ import {
   removeUser,
   removeUserUndo,
 } from '@test/support/helpers/workspace-detail.helpers';
+import {
+  addEmailToInvite,
+  inviteUsers,
+  openInvitationModal,
+  typeEmailToInvite,
+} from '@test/support/helpers/invitation.helpers';
 import {
   createWorkspaceRequest,
   inviteToWorkspaceRequest,
@@ -249,5 +258,70 @@ describe('leave workspace', () => {
     cy.url().should('eq', Cypress.config().baseUrl);
 
     cy.get('tui-notification').should('be.visible');
+  });
+});
+
+describe('invite to workspace', () => {
+  const workspace = WorkspaceMockFactory();
+
+  beforeEach(() => {
+    cy.login();
+    createWorkspaceRequest(workspace.name)
+      .then((request) => {
+        workspace.id = request.body.id;
+        workspace.slug = request.body.slug;
+        const project = ProjectMockFactory();
+        createFullProjectInWSRequest(request.body.id, project.name)
+          .then((projectResponse) => {
+            void inviteToProjectRequest(
+              projectResponse.body.id,
+              {
+                username: '3user',
+                roleSlug: 'general',
+              },
+              true
+            );
+          })
+          .catch(console.error);
+      })
+      .catch(console.error);
+  });
+
+  it('invite guest to workspace', () => {
+    cy.login('1user', '123123');
+    cy.visit(`/workspace/${workspace.id}/${workspace.slug}/people`);
+
+    cy.getBySel('pending-count').should('not.exist');
+    cy.getBySel('non-members-count').should('exist');
+    cy.getBySel('non-members-tab').click();
+    cy.getBySel('user-fullname')
+      .invoke('text')
+      .should('to.have.string', 'Heather Snow');
+    cy.getBySel('invite-workspace').click();
+    cy.get('tui-notification').should('be.visible');
+    cy.getBySel('empty-non-members').should('exist');
+
+    cy.getBySel('pendings-tab').click();
+    cy.getBySel('pending-count').should('exist');
+    cy.getBySel('non-members-count').should('not.exist');
+    cy.getBySel('user-fullname')
+      .invoke('text')
+      .should('to.have.string', 'Heather Snow');
+  });
+
+  it('invite user to workspace', () => {
+    cy.login('1user', '123123');
+    cy.visit(`/workspace/${workspace.id}/${workspace.slug}/people`);
+
+    cy.getBySel('pending-count').should('not.exist');
+    cy.getBySel('pendings-tab').click();
+    cy.getBySel('empty-members').should('exist');
+    openInvitationModal();
+    typeEmailToInvite('2user@taiga.demo');
+    addEmailToInvite();
+    inviteUsers();
+    cy.get('tui-notification').should('be.visible');
+    cy.getBySel('empty-members').should('not.exist');
+    cy.getBySel('pending-count').should('exist');
   });
 });

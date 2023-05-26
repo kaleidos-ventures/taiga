@@ -33,6 +33,7 @@ import {
   selectMembersList,
   selectMembersOffset,
   selectInvitationsOffset,
+  selectNonMembersOffset,
 } from '../selectors/workspace-detail.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 import { TuiNotification } from '@taiga-ui/core';
@@ -351,6 +352,99 @@ describe('WorkspaceEffects', () => {
     });
 
     expect(effects.updateWorkspaceMembersInvitations$).toBeObservable(expected);
+  });
+
+  it('update workspace non members and invitations', () => {
+    const id = randUuid();
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const nonMembersResponse = {
+      members: [
+        WorkspaceMembershipMockFactory(),
+        WorkspaceMembershipMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    const invitations = {
+      members: [
+        InvitationWorkspaceMemberMockFactory(),
+        InvitationWorkspaceMemberMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    workspaceApiService.getWorkspaceNonMembers.mockReturnValue(
+      cold('-b|', { b: nonMembersResponse })
+    );
+    workspaceApiService.getWorkspaceInvitationMembers.mockReturnValue(
+      cold('-b|', { b: invitations })
+    );
+
+    actions$ = hot('-a', {
+      a: workspaceDetailEventActions.updateInvitationsList({ id }),
+    });
+
+    const store = spectator.inject(MockStore);
+    store.overrideSelector(selectInvitationsOffset, 0);
+    store.overrideSelector(selectNonMembersOffset, 0);
+    store.refreshState();
+
+    const expected = cold('--a', {
+      a: workspaceDetailEventActions.updateInvitationsListSuccess({
+        nonMembers: {
+          members: nonMembersResponse.members,
+          totalMembers: 2,
+          offset: 0,
+        },
+        invitations: {
+          members: invitations.members,
+          totalMembers: 2,
+          offset: 0,
+        },
+      }),
+    });
+
+    expect(effects.updateWorkspaceInvitationsAndNonMembers$).toBeObservable(
+      expected
+    );
+  });
+
+  it('update workspace non members', () => {
+    const id = randUuid();
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const nonMembersResponse = {
+      members: [
+        WorkspaceMembershipMockFactory(),
+        WorkspaceMembershipMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    workspaceApiService.getWorkspaceNonMembers.mockReturnValue(
+      cold('-b|', { b: nonMembersResponse })
+    );
+
+    actions$ = hot('-a', {
+      a: workspaceDetailEventActions.updateNonMembersList({ id }),
+    });
+
+    const store = spectator.inject(MockStore);
+    store.overrideSelector(selectNonMembersOffset, 0);
+    store.refreshState();
+
+    const expected = cold('--a', {
+      a: workspaceDetailApiActions.getWorkspaceNonMembersSuccess({
+        members: nonMembersResponse.members,
+        totalMembers: 2,
+        offset: 0,
+      }),
+    });
+
+    expect(effects.updateNonMembers$).toBeObservable(expected);
   });
 
   it('should leave workspace successfully', () => {

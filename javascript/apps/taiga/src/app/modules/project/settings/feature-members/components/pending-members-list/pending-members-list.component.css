@@ -86,7 +86,7 @@ tg-ui-dtable-row {
 }
 
 .invitation-actions {
-  align-items: baseline;
+  align-items: center;
   justify-content: end;
   padding-block: var(--spacing-8);
 }

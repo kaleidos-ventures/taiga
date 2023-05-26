@@ -34,6 +34,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .row-action {
+  block-size: var(--spacing-32);
   padding: var(--spacing-8);
 
   &.active::ng-deep .t-content {

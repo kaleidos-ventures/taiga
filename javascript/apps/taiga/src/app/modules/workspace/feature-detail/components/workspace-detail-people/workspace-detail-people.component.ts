@@ -152,7 +152,7 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
         .pipe(untilDestroyed(this))
         .subscribe(() => {
           this.store.dispatch(
-            workspaceDetailEventActions.updateMembersList({
+            workspaceDetailEventActions.updateMembersInvitationsList({
               id: workspace.id,
             })
           );
@@ -162,6 +162,20 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
         .events<{ workspace: string }>({
           channel: `workspaces.${workspace.id}`,
           type: 'workspaceinvitations.create',
+        })
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          this.store.dispatch(
+            workspaceDetailEventActions.updateNonMembersInvitationsList({
+              id: workspace.id,
+            })
+          );
+        });
+
+      this.wsService
+        .events<{ workspace: string }>({
+          channel: `workspaces.${workspace.id}`,
+          type: 'workspaceinvitations.update',
         })
         .pipe(untilDestroyed(this))
         .subscribe(() => {

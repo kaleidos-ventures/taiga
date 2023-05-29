@@ -5,115 +5,113 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2023-present Kaleidos INC
 -->
-<ng-container *ngIf="model$ | async as vm">
-  <ng-container *transloco="let t">
-    <ng-container *ngIf="vm.workspace">
-      <div class="wks-main-content-top">
-        <h2
-          class="wks-main-content-title"
-          data-test="wks-main-content-title">
-          {{ t('commons.people') }}
-        </h2>
-        <button
-          *ngIf="vm.workspace.userRole === 'admin'"
-          appearance="primary"
-          tuiButton
-          type="button"
-          data-test="open-invite-modal"
-          (click)="invitePeopleModal()">
-          {{ t('workspace.invite_workspace') }}
-        </button>
-      </div>
-      <tui-tabs
-        class="wks-people-tabs"
-        data-test="wks-people-tabs"
-        role="tablist">
-        <a
-          id="tab-1"
-          role="tab"
-          aria-controls="tabpanel-1"
-          tabindex="-1"
-          [attr.aria-selected]="selectedTab === 1"
-          class="tab-link"
-          tuiTab
-          data-test="members-tab"
-          [routerLink]="['./']"
-          [state]="{ ignoreNextMainFocus: true }"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          (click)="selectedTab = 1">
-          <h3>{{ t('common_members_tabs.members_tab') }}</h3>
-          <span
-            class="count"
-            *ngIf="vm.totalMembers"
-            >({{ vm.totalMembers }})</span
-          >
-        </a>
-        <a
-          id="tab-2"
-          role="tab"
-          aria-controls="tabpanel-2"
-          tabindex="-1"
-          [attr.aria-selected]="selectedTab === 2"
-          class="tab-link"
-          tuiTab
-          data-test="pendings-tab"
-          [routerLink]="['./pending']"
-          [state]="{ ignoreNextMainFocus: true }"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          (click)="selectedTab = 2">
-          <h3>{{ t('common_members_tabs.pending_tab') }}</h3>
-          <span
-            data-test="pending-count"
-            class="count"
-            *ngIf="vm.totalInvitationMembers"
-            >({{ vm.totalInvitationMembers }})</span
-          >
-        </a>
-        <a
-          id="tab-3"
-          role="tab"
-          aria-controls="tabpanel-3"
-          tabindex="-1"
-          [attr.aria-selected]="selectedTab === 3"
-          class="tab-link"
-          tuiTab
-          data-test="non-members-tab"
-          [routerLink]="['./non-members']"
-          [state]="{ ignoreNextMainFocus: true }"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          (click)="selectedTab = 3">
-          <h3>{{ t('common_members_tabs.non_members_tab') }}</h3>
-          <span
-            data-test="non-members-count"
-            class="count"
-            *ngIf="vm.totalNonMembers"
-            >({{ vm.totalNonMembers }})</span
-          >
-        </a>
-      </tui-tabs>
-      <div
-        #tabContent
-        [attr.id]="'tabpanel-' + selectedTab"
-        [attr.aria-labelledby]="'tab-' + selectedTab"
-        class="content"
-        role="tabpanel">
-        <router-outlet></router-outlet>
-      </div>
+<ng-container *transloco="let t">
+  <ng-container *ngIf="workspace()">
+    <div class="wks-main-content-top">
+      <h2
+        class="wks-main-content-title"
+        data-test="wks-main-content-title">
+        {{ t('commons.people') }}
+      </h2>
+      <button
+        *ngIf="workspace()!.userRole === 'admin'"
+        appearance="primary"
+        tuiButton
+        type="button"
+        data-test="open-invite-modal"
+        (click)="invitePeopleModal()">
+        {{ t('workspace.invite_workspace') }}
+      </button>
+    </div>
+    <tui-tabs
+      class="wks-people-tabs"
+      data-test="wks-people-tabs"
+      role="tablist">
+      <a
+        id="tab-1"
+        role="tab"
+        aria-controls="tabpanel-1"
+        tabindex="-1"
+        [attr.aria-selected]="selectedTab === 1"
+        class="tab-link"
+        tuiTab
+        data-test="members-tab"
+        [routerLink]="['./']"
+        [state]="{ ignoreNextMainFocus: true }"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="selectedTab = 1">
+        <h3>{{ t('common_members_tabs.members_tab') }}</h3>
+        <span
+          class="count"
+          *ngIf="totalMembers()"
+          >({{ totalMembers() }})</span
+        >
+      </a>
+      <a
+        id="tab-2"
+        role="tab"
+        aria-controls="tabpanel-2"
+        tabindex="-1"
+        [attr.aria-selected]="selectedTab === 2"
+        class="tab-link"
+        tuiTab
+        data-test="pendings-tab"
+        [routerLink]="['./pending']"
+        [state]="{ ignoreNextMainFocus: true }"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="selectedTab = 2">
+        <h3>{{ t('common_members_tabs.pending_tab') }}</h3>
+        <span
+          data-test="pending-count"
+          class="count"
+          *ngIf="totalInvitationMembers()"
+          >({{ totalInvitationMembers() }})</span
+        >
+      </a>
+      <a
+        id="tab-3"
+        role="tab"
+        aria-controls="tabpanel-3"
+        tabindex="-1"
+        [attr.aria-selected]="selectedTab === 3"
+        class="tab-link"
+        tuiTab
+        data-test="non-members-tab"
+        [routerLink]="['./non-members']"
+        [state]="{ ignoreNextMainFocus: true }"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="selectedTab = 3">
+        <h3>{{ t('common_members_tabs.non_members_tab') }}</h3>
+        <span
+          data-test="non-members-count"
+          class="count"
+          *ngIf="totalNonMembers()"
+          >({{ totalNonMembers() }})</span
+        >
+      </a>
+    </tui-tabs>
+    <div
+      #tabContent
+      [attr.id]="'tabpanel-' + selectedTab"
+      [attr.aria-labelledby]="'tab-' + selectedTab"
+      class="content"
+      role="tabpanel">
+      <router-outlet></router-outlet>
+    </div>
 
-      <ng-container *ngIf="invitePeople">
-        <tg-ui-modal
-          [open]="invitePeople"
-          (requestClose)="invitePeopleModal()">
-          <tg-invite-user-modal
-            *ngIf="invitePeople"
-            (closeModal)="invitePeopleModal()"
-            [reset]="resetForm"
-            [isProjectInvitation]="false"></tg-invite-user-modal>
-        </tg-ui-modal>
-      </ng-container>
+    <ng-container *ngIf="invitePeople">
+      <tg-ui-modal
+        [open]="invitePeople"
+        (requestClose)="invitePeopleModal()">
+        <tg-invite-user-modal
+          *ngIf="invitePeople"
+          (closeModal)="invitePeopleModal()"
+          [reset]="resetForm"
+          [isProjectInvitation]="false"></tg-invite-user-modal>
+      </tg-ui-modal>
     </ng-container>
   </ng-container>
 </ng-container>

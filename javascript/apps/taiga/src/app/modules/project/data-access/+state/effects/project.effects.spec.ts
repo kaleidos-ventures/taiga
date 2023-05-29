@@ -170,11 +170,10 @@ describe('ProjectEffects', () => {
       }),
     });
 
-    const expectedNavigation = cold('-b', { b: undefined });
+    const expected = cold('--a', {
+      a: fetchProjectSuccess({ project: projectMock }),
+    });
 
-    expect(effects.userLostProjectMembership$).toBeObservable(
-      expectedNavigation
-    );
     effects.userLostProjectMembership$.subscribe(() => {
       expect(appService.toastNotification).toHaveBeenCalledWith({
         message: 'common_members_tabs.no_longer_member',
@@ -188,6 +187,8 @@ describe('ProjectEffects', () => {
         projectId,
         projectSlug,
       ]);
+
+      expect(effects.userLostProjectMembership$).toBeObservable(expected);
     });
   });
 

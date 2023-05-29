@@ -18,4 +18,8 @@ tui-toggle {
     --tui-secondary-text: var(--color-gray40);
     --tui-secondary-hover: var(--color-gray40);
   }
+
+  & [tuiWrapper]._focused._focused::after {
+    color: var(--color-secondary100);
+  }
 }

@@ -176,10 +176,10 @@ export const workspaceDetailEventActions = createActionGroup({
       id: Workspace['id'];
       username: WorkspaceMembership['user']['username'];
     }>(),
-    'Update members list': props<{
+    'Update members invitations list': props<{
       id: Workspace['id'];
     }>(),
-    'Update members list success': props<{
+    'Update members invitations list success': props<{
       members: {
         members: WorkspaceMembership[];
         totalMembers: number;
@@ -191,10 +191,10 @@ export const workspaceDetailEventActions = createActionGroup({
         offset: number;
       };
     }>(),
-    'Update invitations list': props<{
+    'Update non members invitations list': props<{
       id: Workspace['id'];
     }>(),
-    'Update invitations list success': props<{
+    'Update non members invitations list success': props<{
       nonMembers: {
         members: WorkspaceMembership[];
         totalMembers: number;
@@ -208,6 +208,14 @@ export const workspaceDetailEventActions = createActionGroup({
     }>(),
     'Update non members list': props<{
       id: Workspace['id'];
+    }>(),
+    'Update invitations list': props<{
+      id: Workspace['id'];
+    }>(),
+    'Update invitations list success': props<{
+      members: InvitationWorkspaceMember[];
+      totalMembers: number;
+      offset: number;
     }>(),
   },
 });

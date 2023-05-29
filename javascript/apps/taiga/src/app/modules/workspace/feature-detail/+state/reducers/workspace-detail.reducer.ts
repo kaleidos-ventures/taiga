@@ -302,6 +302,7 @@ export const reducer = createImmerReducer(
   ),
   on(
     workspaceDetailApiActions.getWorkspaceMemberInvitationsSuccess,
+    workspaceDetailEventActions.updateInvitationsListSuccess,
     (state, { members, totalMembers, offset }): WorkspaceDetailState => {
       state.invitations.membersList = members;
       state.invitations.total = totalMembers;
@@ -331,7 +332,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    workspaceDetailEventActions.updateMembersListSuccess,
+    workspaceDetailEventActions.updateMembersInvitationsListSuccess,
     (state, { members, invitations }): WorkspaceDetailState => {
       state.members.membersList = members.members;
       state.members.total = members.totalMembers;
@@ -344,7 +345,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    workspaceDetailEventActions.updateInvitationsListSuccess,
+    workspaceDetailEventActions.updateNonMembersInvitationsListSuccess,
     (state, { nonMembers, invitations }): WorkspaceDetailState => {
       state.nonMembers.membersList = nonMembers.members;
       state.nonMembers.total = nonMembers.totalMembers;

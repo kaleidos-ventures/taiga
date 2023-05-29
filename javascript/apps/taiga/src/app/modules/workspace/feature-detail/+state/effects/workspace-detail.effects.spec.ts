@@ -328,7 +328,7 @@ describe('WorkspaceEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: workspaceDetailEventActions.updateMembersList({ id }),
+      a: workspaceDetailEventActions.updateMembersInvitationsList({ id }),
     });
 
     const store = spectator.inject(MockStore);
@@ -337,7 +337,7 @@ describe('WorkspaceEffects', () => {
     store.refreshState();
 
     const expected = cold('--a', {
-      a: workspaceDetailEventActions.updateMembersListSuccess({
+      a: workspaceDetailEventActions.updateMembersInvitationsListSuccess({
         members: {
           members: membersResponse.members,
           totalMembers: 2,
@@ -383,7 +383,7 @@ describe('WorkspaceEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: workspaceDetailEventActions.updateInvitationsList({ id }),
+      a: workspaceDetailEventActions.updateNonMembersInvitationsList({ id }),
     });
 
     const store = spectator.inject(MockStore);
@@ -392,7 +392,7 @@ describe('WorkspaceEffects', () => {
     store.refreshState();
 
     const expected = cold('--a', {
-      a: workspaceDetailEventActions.updateInvitationsListSuccess({
+      a: workspaceDetailEventActions.updateNonMembersInvitationsListSuccess({
         nonMembers: {
           members: nonMembersResponse.members,
           totalMembers: 2,
@@ -445,6 +445,42 @@ describe('WorkspaceEffects', () => {
     });
 
     expect(effects.updateNonMembers$).toBeObservable(expected);
+  });
+
+  it('update workspace invitations', () => {
+    const id = randUuid();
+    const workspaceApiService = spectator.inject(WorkspaceApiService);
+    const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const invitationsResponse = {
+      members: [
+        InvitationWorkspaceMemberMockFactory(),
+        InvitationWorkspaceMemberMockFactory(),
+      ],
+      totalMembers: 2,
+    };
+
+    workspaceApiService.getWorkspaceInvitationMembers.mockReturnValue(
+      cold('-b|', { b: invitationsResponse })
+    );
+
+    actions$ = hot('-a', {
+      a: workspaceDetailEventActions.updateInvitationsList({ id }),
+    });
+
+    const store = spectator.inject(MockStore);
+    store.overrideSelector(selectNonMembersOffset, 0);
+    store.refreshState();
+
+    const expected = cold('--a', {
+      a: workspaceDetailEventActions.updateInvitationsListSuccess({
+        members: invitationsResponse.members,
+        totalMembers: 2,
+        offset: 0,
+      }),
+    });
+
+    expect(effects.updateInvitationsMembersList$).toBeObservable(expected);
   });
 
   it('should leave workspace successfully', () => {

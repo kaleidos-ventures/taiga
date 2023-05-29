@@ -36,6 +36,7 @@ import {
   selectMembers,
 } from '../selectors/project.selectors';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { selectUrl } from '~/app/router-selectors';
 @Injectable()
 export class ProjectEffects {
   public loadProject$ = createEffect(() => {
@@ -274,51 +275,52 @@ export class ProjectEffects {
     { dispatch: false }
   );
 
-  public userLostProjectMembership$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(projectEventActions.userLostProjectMembership),
-        concatLatestFrom(() =>
-          this.store.select(selectCurrentProject).pipe(filterNil())
-        ),
-        switchMap(([action, project]) =>
-          this.projectApiService.getProject(project.id).pipe(
-            map((project) => {
-              if (action.isSelf) {
-                this.appService.toastNotification({
-                  message: 'common_members_tabs.no_longer_member',
-                  paramsMessage: { name: action.projectName, type: 'project' },
-                  status: TuiNotification.Info,
-                  closeOnNavigation: false,
-                  autoClose: true,
-                });
-                return this.router.navigate([
+  public userLostProjectMembership$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(projectEventActions.userLostProjectMembership),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+        this.store.select(selectUrl),
+      ]),
+      switchMap(([action, project, url]) =>
+        this.projectApiService.getProject(project.id).pipe(
+          map((project) => {
+            if (action.isSelf) {
+              this.appService.toastNotification({
+                message: 'common_members_tabs.no_longer_member',
+                paramsMessage: { name: action.projectName, type: 'project' },
+                status: TuiNotification.Info,
+                closeOnNavigation: false,
+                autoClose: true,
+              });
+
+              if (!url.includes('/kanban') && !url.includes('/stories/')) {
+                void this.router.navigate([
                   'project',
                   project.id,
                   project.slug,
                 ]);
               }
-              return EMPTY;
-            }),
-            catchError(() => {
-              if (action.isSelf) {
-                this.appService.toastNotification({
-                  message: 'common_members_tabs.no_longer_member',
-                  paramsMessage: { name: action.projectName, type: 'project' },
-                  status: TuiNotification.Info,
-                  closeOnNavigation: false,
-                  autoClose: true,
-                });
-                return this.router.navigate(['/']);
-              }
-              return EMPTY;
-            })
-          )
+            }
+            return ProjectActions.fetchProjectSuccess({ project });
+          }),
+          catchError(() => {
+            if (action.isSelf) {
+              this.appService.toastNotification({
+                message: 'common_members_tabs.no_longer_member',
+                paramsMessage: { name: action.projectName, type: 'project' },
+                status: TuiNotification.Info,
+                closeOnNavigation: false,
+                autoClose: true,
+              });
+              void this.router.navigate(['/']);
+            }
+            return EMPTY;
+          })
         )
-      );
-    },
-    { dispatch: false }
-  );
+      )
+    );
+  });
 
   public userLostWorkspaceMembership$ = createEffect(() => {
     return this.actions$.pipe(

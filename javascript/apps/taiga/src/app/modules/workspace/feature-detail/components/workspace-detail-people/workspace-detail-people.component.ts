@@ -6,7 +6,12 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  Input,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -29,13 +34,6 @@ import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 import { invitationWorkspaceActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 
-interface WorkspaceDetailState {
-  workspace: Workspace | null;
-  totalMembers: number;
-  totalNonMembers: number;
-  totalInvitationMembers: number;
-  invitationsOffset: number;
-}
 @UntilDestroy()
 @Component({
   selector: 'tg-workspace-detail-people',
@@ -45,13 +43,21 @@ interface WorkspaceDetailState {
   providers: [RxState],
 })
 export class WorkspaceDetailPeopleComponent implements OnInit {
-  public model$ = this.state.select();
+  @Input() public id!: Workspace['id'];
+
   public selectedTab = 1;
   public invitePeople = false;
   public resetForm = false;
 
+  public workspace = this.store.selectSignal(selectWorkspace);
+  public totalMembers = this.store.selectSignal(selectTotalMembers);
+  public totalInvitationMembers = this.store.selectSignal(
+    selectTotalInvitations
+  );
+  public totalNonMembers = this.store.selectSignal(selectTotalNonMembers);
+  public invitationsOffset = this.store.selectSignal(selectInvitationsOffset);
+
   constructor(
-    private state: RxState<WorkspaceDetailState>,
     private store: Store,
     private wsService: WsService,
     private actions$: Actions
@@ -64,7 +70,7 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
       .subscribe(() => {
         this.store.dispatch(
           workspaceDetailApiActions.getWorkspaceMemberInvitations({
-            id: this.state.get('workspace')!.id,
+            id: this.id,
             offset: 0,
           })
         );
@@ -72,44 +78,22 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.state.connect(
-      'workspace',
-      this.store.select(selectWorkspace).pipe(filterNil())
-    );
-    this.state.connect('totalMembers', this.store.select(selectTotalMembers));
-    this.state.connect(
-      'totalNonMembers',
-      this.store.select(selectTotalNonMembers)
-    );
-    this.state.connect(
-      'totalInvitationMembers',
-      this.store.select(selectTotalInvitations)
-    );
-    this.state.connect(
-      'invitationsOffset',
-      this.store.select(selectInvitationsOffset)
-    );
-
-    this.state.hold(this.state.select('workspace'), (workspace) => {
-      if (workspace) {
-        this.store.dispatch(
-          workspaceDetailApiActions.initWorkspacePeople({
-            id: workspace.id,
-          })
-        );
-      }
-    });
+    if (this.id) {
+      this.store.dispatch(
+        workspaceDetailApiActions.initWorkspacePeople({
+          id: this.id,
+        })
+      );
+    }
 
     this.events();
   }
 
   public events() {
-    const workspace = this.state.get('workspace');
-
-    if (workspace) {
+    if (this.id) {
       this.wsService
         .command('subscribe_to_workspace_events', {
-          workspace: workspace.id,
+          workspace: this.id,
         })
         .subscribe();
 
@@ -120,7 +104,7 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
             workspace: Workspace;
           };
         }>({
-          channel: `workspaces.${workspace.id}`,
+          channel: `workspaces.${this.id}`,
           type: 'workspacememberships.delete',
         })
         .pipe(
@@ -138,7 +122,7 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
         .subscribe(([eventResponse]) => {
           this.store.dispatch(
             workspaceDetailEventActions.removeMember({
-              id: workspace.id,
+              id: this.id,
               username: eventResponse.event.content.membership.user.username,
             })
           );
@@ -146,56 +130,56 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
 
       this.wsService
         .events<{ workspace: string }>({
-          channel: `workspaces.${workspace.id}`,
+          channel: `workspaces.${this.id}`,
           type: 'workspacememberships.create',
         })
         .pipe(untilDestroyed(this))
         .subscribe(() => {
           this.store.dispatch(
             workspaceDetailEventActions.updateMembersInvitationsList({
-              id: workspace.id,
+              id: this.id,
             })
           );
         });
 
       this.wsService
         .events<{ workspace: string }>({
-          channel: `workspaces.${workspace.id}`,
+          channel: `workspaces.${this.id}`,
           type: 'workspaceinvitations.create',
         })
         .pipe(untilDestroyed(this))
         .subscribe(() => {
           this.store.dispatch(
             workspaceDetailEventActions.updateNonMembersInvitationsList({
-              id: workspace.id,
+              id: this.id,
             })
           );
         });
 
       this.wsService
         .events<{ workspace: string }>({
-          channel: `workspaces.${workspace.id}`,
+          channel: `workspaces.${this.id}`,
           type: 'workspaceinvitations.update',
         })
         .pipe(untilDestroyed(this))
         .subscribe(() => {
           this.store.dispatch(
             workspaceDetailEventActions.updateInvitationsList({
-              id: workspace.id,
+              id: this.id,
             })
           );
         });
 
       this.wsService
         .events<{ workspace: string }>({
-          channel: `workspaces.${workspace.id}`,
+          channel: `workspaces.${this.id}`,
           type: 'projectmemberships.create',
         })
         .pipe(untilDestroyed(this))
         .subscribe(() => {
           this.store.dispatch(
             workspaceDetailEventActions.updateNonMembersList({
-              id: workspace.id,
+              id: this.id,
             })
           );
         });

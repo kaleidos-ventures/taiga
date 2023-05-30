@@ -14,7 +14,6 @@ import {
   trigger,
 } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -140,7 +139,6 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
 
   constructor(
     private wsService: WsService,
-    private route: ActivatedRoute,
     private store: Store,
     private userStorageService: UserStorageService,
     private state: RxState<WorkspaceDetailState>
@@ -314,7 +312,10 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
 
   public invitationCreateEvent(projectId: string) {
     const workspace = this.state.get('workspace');
-    if (workspace) {
+    const projectInWorkspace = this.state.get('projects').find((project) => {
+      return project.id === projectId;
+    });
+    if (workspace && !projectInWorkspace) {
       if (workspace.userRole === 'admin') {
         this.newProjectsToAnimate.push(projectId);
       }

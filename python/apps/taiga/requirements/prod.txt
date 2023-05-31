@@ -50,9 +50,12 @@ cssselect2==0.7.0
 django==4.1.3
     # via
     #   -r requirements/commons.in
+    #   django-nonrelated-inlines
     #   django-stubs
     #   django-stubs-ext
     #   easy-thumbnails
+django-nonrelated-inlines==0.2
+    # via -r requirements/commons.in
 django-stubs==1.13.0
     # via -r requirements/commons.in
 django-stubs-ext==0.7.0

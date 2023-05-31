@@ -16,7 +16,7 @@ class PubSubBackendChoices(Enum):
 
 
 class EventsSettings(BaseSettings):
-    PUBSUB_BACKEND: PubSubBackendChoices = PubSubBackendChoices.MEMORY
+    PUBSUB_BACKEND: PubSubBackendChoices = PubSubBackendChoices.REDIS
 
     # Settings for PubSubBackendChoices.MEMORY
     # -- none --

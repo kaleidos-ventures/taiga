@@ -65,6 +65,7 @@ jobs:
         run: |
           python -m taiga devserve -w > taiga-back.log 2> taiga-back.err &
         env:
+          TAIGA_EVENTS__PUBSUB_BACKEND: "memory"
           TAIGA_DEBUG: true
           TAIGA_DB_NAME: taiga
           TAIGA_DB_USER: postgres

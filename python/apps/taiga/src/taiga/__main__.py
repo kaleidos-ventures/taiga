@@ -26,12 +26,17 @@ from typing import Any, Optional
 import typer
 import uvicorn
 from taiga import __version__
+from taiga.base.db.commands import Verbosity as DBVerbosity
 from taiga.base.db.commands import cli as db_cli
+from taiga.base.db.commands import load_fixtures
+from taiga.base.db.commands import migrate as db_migrate
 from taiga.base.django.commands import call_django_command
 from taiga.base.i18n.commands import cli as i18n_cli
+from taiga.base.i18n.commands import compile_catalog
 from taiga.base.sampledata.commands import cli as sampledata_cli
 from taiga.emails.commands import cli as emails_cli
 from taiga.tasksqueue.commands import cli as tasksqueue_cli
+from taiga.tasksqueue.commands import init as init_tasksqueue
 from taiga.tasksqueue.commands import run_worker
 from taiga.tokens.commands import cli as tokens_cli
 from taiga.users.commands import cli as users_cli
@@ -90,6 +95,18 @@ def devserve(
 
 @cli.command(help="Run a Taiga server.")
 def serve(host: str = typer.Option("0.0.0.0", "--host", "-h"), port: int = typer.Option(8000, "--port", "-p")) -> None:
+    _run_api(host=host, port=port, reload=False)
+
+
+@cli.command(help="Init and run a Taiga server.")
+def init_and_serve(
+    host: str = typer.Option("0.0.0.0", "--host", "-h"), port: int = typer.Option(8000, "--port", "-p")
+) -> None:
+    db_migrate(fake=False, plan=False, run_syncdb=True, verbosity=DBVerbosity.v1, app_label="")
+    init_tasksqueue(info=False)
+    load_fixtures(fixture=["initial_project_templates"], verbosity=DBVerbosity.v1)
+    collectstatic(dry_run=False, clear=True, link=False, interactive=False, verbosity=Verbosity.v0)
+    compile_catalog()
     _run_api(host=host, port=port, reload=False)
 
 

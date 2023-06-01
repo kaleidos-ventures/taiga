@@ -45,14 +45,17 @@ export class AvatarComponent {
   public setAvatarName(name: string) {
     const chunks = name.split(' ').slice(0, 2);
     const tempName: string[] = [];
+    let firstIsIcon = false;
     chunks.forEach((chunk, i) => {
       if (this.isItAnIcon(chunk) && i === 0) {
         // necessary to display emoji in the avatar
         tempName.push(chunk.split('').join(' '));
-      } else if (!this.isItAnIcon(chunk)) {
+        firstIsIcon = true;
+      } else if (!this.isItAnIcon(chunk) && !firstIsIcon) {
         tempName.push(chunk[0]);
       }
     });
+
     return tempName.join(' ');
   }
 

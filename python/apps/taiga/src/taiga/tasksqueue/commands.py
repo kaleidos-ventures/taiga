@@ -48,11 +48,14 @@ def init(info: bool = typer.Option(False, "--info", "-i", help="Only show info a
             typer.echo(tqm.migration_schema)
         else:
             typer.echo("Initialize Tasks Queue database... ", nl=False)
-            try:
-                tqm.migrate()
-                typer.secho("OK", fg="bright_green", bold=True)
-            except Exception:
-                typer.echo("PASS [The db schema is just applied]")
+            if not tqm.is_migration_applied:
+                try:
+                    tqm.migrate()
+                    typer.secho("OK", fg="bright_green", bold=True)
+                except Exception as e:
+                    typer.echo(f"Unknown error applying procrastinate migrations: {e}")
+            else:
+                typer.secho("PASS [The db schema is just applied]", fg="bright_yellow", bold=True)
 
 
 @cli.command(help="Check the state of the TasksQueue setup")

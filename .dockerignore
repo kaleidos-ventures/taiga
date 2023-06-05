@@ -1,0 +1,38 @@
+# python
+**.mypy_cache
+**.pytest_cache
+.Python
+.cache
+.dockerignore
+.env
+python/**__pycache__
+python/**media
+!python/apps/taiga/src/taiga/base/sampledata/media
+python/**pytest.ini
+python/**requirements
+!python/apps/taiga/requirements/prod.txt
+python/**scripts
+python/**static
+!python/**emails/static
+python/**tests
+python/.venv
+
+# javascript
+javascript/**node_modules
+javascript/**email-server
+javascript/**taiga-e2e
+javascript/**taiga-mjml
+javascript/.angular
+javascript/**.spect.ts
+javascript/apps/taiga/src/assets/config.json
+
+# common
+**docs
+.git
+.github
+.gitignore
+AUTHORS.md
+CODE_OF_CONDUCT.md
+DCOLICENSE
+LICENSE
+README.md

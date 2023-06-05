@@ -77,6 +77,7 @@ class Settings(BaseSettings):
     WORKSPACE_INVITATION_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
 
     # Projects
+    # TODO: move this lifetime to general invitation lifetime for pj and ws
     PROJECT_INVITATION_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
     DEFAULT_PROJECT_TEMPLATE: str = "kanban"
 

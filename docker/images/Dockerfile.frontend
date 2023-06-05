@@ -1,0 +1,32 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (c) 2021-present Kaleidos Ventures SL
+
+##############################
+# BUILD STAGE
+##############################
+FROM node:18-alpine as build-stage
+LABEL maintainer="support@taiga.io"
+
+WORKDIR /taiga
+
+COPY javascript/ /taiga/
+RUN set -eux; \
+    npm install; \
+    npm run build:prod;
+
+##############################
+# NGINX STAGE
+##############################
+FROM nginx:1-alpine
+LABEL maintainer="support@taiga.io"
+
+COPY --from=hairyhenderson/gomplate:stable /gomplate /bin/gomplate
+COPY --from=build-stage /taiga/dist/taiga/browser /usr/share/nginx/html
+COPY docker/images/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/images/config.json.template /
+COPY docker/images/config.sh /docker-entrypoint.d/40-config.sh
+RUN set -eux; \
+    chmod 775 /docker-entrypoint.d/40-config.sh;

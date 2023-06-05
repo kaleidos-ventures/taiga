@@ -34,7 +34,6 @@ To enable pre-commit git hooks run:
 > NOTE: You can execute all pre-commit hooks **when this setup process is complete** with:
 >
 > ```bash
-> $ cd python/
 > (taiga)$ pre-commit run -a
 > ```
 

@@ -13,7 +13,7 @@ from taiga.base.django.settings import *  # noqa, pylint: disable=unused-wildcar
 DEBUG = True
 
 MEDIA_ROOT = "/tmp/taiga/media"
-STATICA_ROOT = "/tmp/taiga/static"
+STATIC_ROOT = "/tmp/taiga/static"
 
 
 INSTALLED_APPS += [  # noqa: F405

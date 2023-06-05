@@ -1,0 +1,130 @@
+version: "3.8"
+
+x-environment:
+  &default-back-environment
+  # Taiga settings
+  TAIGA_LANG: "${TAIGA_LANG}"
+  TAIGA_SECRET_KEY: "${TAIGA_SECRET_KEY}"
+  TAIGA_BACKEND_URL: "${TAIGA_BACKEND_URL}"
+  TAIGA_FRONTEND_URL: "${TAIGA_FRONTEND_URL}"
+  TAIGA_SUPPORT_EMAIL: "${TAIGA_SUPPORT_EMAIL}"
+  TAIGA_STATIC_ROOT: "/taiga/static"
+  TAIGA_MEDIA_ROOT: "/taiga/media"
+  # Database settings
+  TAIGA_DB_HOST: "taiga-db"
+  TAIGA_DB_NAME: "${TAIGA_DB_NAME}"
+  TAIGA_DB_USER: "${TAIGA_DB_USER}"
+  TAIGA_DB_PASSWORD: "${TAIGA_DB_PASSWORD}"
+  # Social auth
+  TAIGA_GITHUB_CLIENT_ID: "${TAIGA_GITHUB_CLIENT_ID}"
+  TAIGA_GITHUB_CLIENT_SECRET: "${TAIGA_GITHUB_CLIENT_SECRET}"
+  TAIGA_GITLAB_URL: "${TAIGA_GITLAB_URL}"
+  TAIGA_GITLAB_CLIENT_ID: "${TAIGA_GITLAB_CLIENT_ID}"
+  TAIGA_GITLAB_CLIENT_SECRET: "${TAIGA_GITLAB_CLIENT_SECRET}"
+  TAIGA_GOOGLE_CLIENT_ID: "${TAIGA_GOOGLE_CLIENT_ID}"
+  TAIGA_GOOGLE_CLIENT_SECRET: "${TAIGA_GOOGLE_CLIENT_SECRET}"
+  # Email settings
+  TAIGA_EMAIL__BACKEND: "${TAIGA_EMAIL_BACKEND}"
+  TAIGA_EMAIL__DEFAULT_SENDER: "${TAIGA_EMAIL_DEFAULT_SENDER}"
+  TAIGA_EMAIL__SERVER: "${TAIGA_EMAIL_SERVER}"
+  TAIGA_EMAIL__USERNAME: "${TAIGA_EMAIL_USERNAME}"
+  TAIGA_EMAIL__PASSWORD: "${TAIGA_EMAIL_PASSWORD}"
+  TAIGA_EMAIL__PORT: "${TAIGA_EMAIL_PORT}"
+  TAIGA_EMAIL__USE_TLS: "${TAIGA_EMAIL_USE_TLS}"
+  TAIGA_EMAIL__USE_SSL: "${TAIGA_EMAIL_USE_SSL}"
+  # Redis settings
+  TAIGA_EVENTS__REDIS_HOST: "taiga-redis"
+
+services:
+  taiga-back:
+    image: taigaio/backend:alpha
+    command: "init-and-serve"
+    environment: *default-back-environment
+    volumes:
+      - taiga-static-data:/taiga/static
+      - taiga-media-data:/taiga/media
+    networks:
+      - taiga
+    depends_on:
+      taiga-db:
+        condition: service_healthy
+      taiga-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-m", "taiga", "--help"]
+      interval: 2s
+      timeout: 15s
+      retries: 5
+
+  taiga-worker:
+    image: taigaio/backend:alpha
+    command: "tasksqueue worker -n main -c 4"
+    environment: *default-back-environment
+    volumes:
+      - taiga-static-data:/taiga/static
+      - taiga-media-data:/taiga/media
+    networks:
+      - taiga
+    depends_on:
+      taiga-db:
+        condition: service_healthy
+      taiga-back:
+        condition: service_healthy
+
+  taiga-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: "${TAIGA_DB_NAME}"
+      POSTGRES_USER: "${TAIGA_DB_USER}"
+      POSTGRES_PASSWORD: "${TAIGA_DB_PASSWORD}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TAIGA_DB_USER}"]
+      interval: 2s
+      timeout: 15s
+      retries: 5
+    volumes:
+      - taiga-db-data:/var/lib/postgresql/data
+    networks:
+      - taiga
+
+  taiga-redis:
+    image: redis:7
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 15s
+      retries: 5
+    networks:
+      - taiga
+
+  taiga-front:
+    image: taigaio/frontend:alpha
+    environment:
+      TAIGA_BACKEND_URL: "${TAIGA_BACKEND_URL}"
+      TAIGA_EVENTS_URL: "${TAIGA_EVENTS_URL}"
+      TAIGA_ADMIN_EMAIL: "${TAIGA_ADMIN_EMAIL}"
+      TAIGA_SUPPORT_EMAIL: "${TAIGA_SUPPORT_EMAIL}"
+      # Social auth
+      TAIGA_GITHUB_CLIENT_ID: "${TAIGA_GITHUB_CLIENT_ID}"
+      TAIGA_GITLAB_URL: "${TAIGA_GITLAB_URL}"
+      TAIGA_GITLAB_CLIENT_ID: "${TAIGA_GITLAB_CLIENT_ID}"
+      TAIGA_GOOGLE_CLIENT_ID: "${TAIGA_GOOGLE_CLIENT_ID}"
+    networks:
+      - taiga
+    ports:
+      - "9000:80"
+    volumes:
+      # - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - taiga-static-data:/taiga/static
+      - taiga-media-data:/taiga/media
+    depends_on:
+      - taiga-back
+      - taiga-worker
+
+volumes:
+  taiga-static-data:
+  taiga-media-data:
+  taiga-db-data:
+
+networks:
+  taiga:

@@ -1,0 +1,19 @@
+{
+  "api": "{{ .Env.TAIGA_BACKEND_URL }}/api/v2",
+  "ws": "{{ .Env.TAIGA_EVENTS_URL }}",
+  "adminEmail": "{{ .Env.TAIGA_ADMIN_EMAIL }}",
+  "supportEmail": "{{ .Env.TAIGA_SUPPORT_EMAIL }}",
+  "social": {
+    "github": {
+      "clientId": "{{ .Env.TAIGA_GITHUB_CLIENT_ID }}"
+    },
+    "gitlab": {
+      "serverUrl": "{{ .Env.TAIGA_GITLAB_URL }}",
+      "clientId": "{{ .Env.TAIGA_GITLAB_CLIENT_ID }}"
+    },
+    "google": {
+      "clientId": "{{ .Env.TAIGA_GOOGLE_CLIENT_ID }}"
+    }
+  }
+}
+

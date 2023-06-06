@@ -1,0 +1,7 @@
+<svg id="sort" viewBox="0 0 16 16"
+  xmlns="http://www.w3.org/2000/svg">
+  <path d="M7.23975 11.0054L5 13.2451L2.76025 11.0054" stroke="#007CA5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M5 2.76514V13.2451" stroke="#007CA5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M8.75439 5.01074L11 2.76514L13.2456 5.01074" stroke="#BEC7D8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M11 2.76514V13.2451" stroke="#BEC7D8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

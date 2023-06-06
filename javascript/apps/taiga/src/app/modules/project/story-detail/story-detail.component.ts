@@ -25,7 +25,11 @@ import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiButtonComponent, TuiNotification } from '@taiga-ui/core';
+import {
+  TuiButtonComponent,
+  TuiNotification,
+  TuiScrollbarComponent,
+} from '@taiga-ui/core';
 import {
   Membership,
   Project,
@@ -36,8 +40,10 @@ import {
   StoryUpdate,
   StoryView,
   User,
+  UserComment,
 } from '@taiga/data';
 import { map, merge, pairwise, startWith, take } from 'rxjs';
+
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
@@ -52,6 +58,8 @@ import {
   selectStoryView,
   selectWorkflow,
 } from './data-access/+state/selectors/story-detail.selectors';
+import { storyDetailFeature } from './data-access/+state/reducers/story-detail.reducer';
+import { OrderComments } from '~/app/shared/comments/comments.component';
 
 export interface StoryDetailState {
   project: Project;
@@ -67,6 +75,10 @@ export interface StoryDetailState {
   fieldFocus: boolean;
   fieldEdit: boolean;
   showDiscardChangesModal: boolean;
+  comments: UserComment[] | null;
+  totalComments: number | null;
+  commentsOrder: OrderComments;
+  commentsLoading: boolean;
 }
 
 export interface StoryDetailForm {
@@ -100,6 +112,9 @@ export class StoryDetailComponent {
   @ViewChild('nextStory') public nextStory!: TuiButtonComponent;
 
   @ViewChild('previousStory') public previousStory!: TuiButtonComponent;
+
+  @ViewChild(TuiScrollbarComponent, { read: ElementRef })
+  private scrollBar?: ElementRef<HTMLElement>;
 
   @Output()
   public toggleSidebar = new EventEmitter<void>();
@@ -213,6 +228,22 @@ export class StoryDetailComponent {
     this.state.connect(
       'canComment',
       this.permissionService.hasPermissions$('story', ['comment'])
+    );
+    this.state.connect(
+      'comments',
+      this.store.select(storyDetailFeature.selectComments)
+    );
+    this.state.connect(
+      'totalComments',
+      this.store.select(storyDetailFeature.selectTotalComments)
+    );
+    this.state.connect(
+      'commentsOrder',
+      this.store.select(storyDetailFeature.selectCommentsOrder)
+    );
+    this.state.connect(
+      'commentsLoading',
+      this.store.select(storyDetailFeature.selectLoadingComments)
     );
 
     this.state
@@ -473,6 +504,16 @@ export class StoryDetailComponent {
 
   public keepEditing() {
     this.state.set({ showDiscardChangesModal: false });
+  }
+
+  public changeCommentsOrder(order: OrderComments) {
+    this.store.dispatch(
+      StoryDetailActions.changeOrderComments({
+        order,
+        storyRef: this.state.get('story').ref,
+        projectId: this.state.get('project').id,
+      })
+    );
   }
 
   private events() {

@@ -210,6 +210,7 @@ Copyright (c) 2023-present Kaleidos INC
             ">
             <div class="main-content-wrapper">
               <tui-scrollbar
+                tgStoryCommentsPagination
                 [style.height.px]="columnHeight"
                 data-js="story-detail-scroll">
                 <div class="main-content">
@@ -253,17 +254,14 @@ Copyright (c) 2023-present Kaleidos INC
                     (editChange)="
                       fieldEdit($event)
                     "></tg-story-detail-description>
-                  <!-- TODO remove when comments are implemented -->
-                  <div
-                    class="placeholder"
-                    *ngIf="vm.canComment">
-                    User has input for comments
-                  </div>
-                  <div
-                    class="placeholder"
-                    *ngIf="!vm.canComment">
-                    User doesn't have input for comments
-                  </div>
+
+                  <tg-comments
+                    [comments]="vm.comments"
+                    [total]="vm.totalComments"
+                    [canComment]="vm.canComment"
+                    [order]="vm.commentsOrder"
+                    [loading]="vm.commentsLoading"
+                    (changeOrder)="changeCommentsOrder($event)"></tg-comments>
                 </div>
               </tui-scrollbar>
             </div>

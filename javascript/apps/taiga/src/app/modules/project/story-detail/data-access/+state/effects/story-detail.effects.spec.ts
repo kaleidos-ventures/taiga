@@ -16,6 +16,7 @@ import { ProjectApiService } from '@taiga/api';
 import {
   ProjectMockFactory,
   StoryDetailMockFactory,
+  UserCommentMockFactory,
   WorkflowMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
@@ -34,6 +35,7 @@ import {
   selectWorkflow,
 } from '../selectors/story-detail.selectors';
 import { StoryDetailEffects } from './story-detail.effects';
+import { storyDetailFeature } from '../reducers/story-detail.reducer';
 
 describe('StoryDetailEffects', () => {
   let actions$: Observable<Action>;
@@ -341,5 +343,82 @@ describe('StoryDetailEffects', () => {
         `/project/${project.id}/${project.slug}/kanban`,
       ]);
     });
+  });
+
+  it('initStory - should redirect to fetchComments action', () => {
+    const effects = spectator.inject(StoryDetailEffects);
+    const story = StoryDetailMockFactory();
+    const projectId = randUuid();
+
+    const comments = [UserCommentMockFactory(), UserCommentMockFactory()];
+
+    store.overrideSelector(storyDetailFeature.selectCommentsOrder, 'createdAt');
+    store.overrideSelector(storyDetailFeature.selectComments, comments);
+
+    const action = StoryDetailActions.initStory({
+      projectId,
+      storyRef: story.ref,
+    });
+    const outcome = StoryDetailApiActions.fetchComments({
+      projectId,
+      storyRef: story.ref,
+      order: 'createdAt',
+      offset: 2,
+    });
+
+    actions$ = hot('-a', { a: action });
+    const expected = hot('-b', { b: outcome });
+
+    expect(effects.redirectToFetchComments$).toBeObservable(expected);
+  });
+
+  it('changeOrderComments - should redirect to fetchComments action', () => {
+    const effects = spectator.inject(StoryDetailEffects);
+    const story = StoryDetailMockFactory();
+    const projectId = randUuid();
+    const action = StoryDetailActions.changeOrderComments({
+      projectId,
+      storyRef: story.ref,
+      order: 'createdAt',
+    });
+    const outcome = StoryDetailApiActions.fetchComments({
+      projectId,
+      storyRef: story.ref,
+      order: 'createdAt',
+      offset: 0,
+    });
+
+    actions$ = hot('-a', { a: action });
+    const expected = hot('-b', { b: outcome });
+
+    expect(effects.changeOrderComments$).toBeObservable(expected);
+  });
+
+  it('should fetch comments successfully', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const story = StoryDetailMockFactory();
+    const projectId = randUuid();
+    const action = StoryDetailApiActions.fetchComments({
+      projectId,
+      storyRef: story.ref,
+      order: 'createdAt',
+      offset: 0,
+    });
+    const effects = spectator.inject(StoryDetailEffects);
+    const comments = [UserCommentMockFactory(), UserCommentMockFactory()];
+    const outcome = StoryDetailApiActions.fetchCommentsSuccess({
+      comments: comments,
+      total: comments.length,
+      order: 'createdAt',
+      offset: 0,
+    });
+
+    actions$ = hot('-a', { a: action });
+    const response = cold('-a|', { a: { comments, total: comments.length } });
+    const expected = cold('--b', { b: outcome });
+
+    projectApiService.getComments.mockReturnValue(response);
+
+    expect(effects.fetchComments$).toBeObservable(expected);
   });
 });

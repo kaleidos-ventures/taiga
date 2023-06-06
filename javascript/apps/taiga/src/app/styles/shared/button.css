@@ -49,6 +49,9 @@ ACTION BUTTON 2
 Used only on the three dots of the kanban cards (icon more-vertical)
 Used across all Taiga
 
+Sort
+Used only in comment list sort button
+
 ***************************************/
 
 /* stylelint-disable selector-max-type */
@@ -374,7 +377,8 @@ Used across all Taiga
 }
 
 [data-appearance="action-button"]:is(button, a),
-[data-appearance="action-button-2"]:is(button, a) {
+[data-appearance="action-button-2"]:is(button, a),
+[data-appearance="sort"]:is(button, a) {
   @mixin button-dropdown-expanded {
     background: var(--color-gray30);
     color: var(--color-secondary);
@@ -407,6 +411,17 @@ Used across all Taiga
   & tui-svg {
     block-size: 1rem;
     inline-size: 1rem;
+  }
+}
+
+[data-appearance="sort"]:is(button, a) {
+  & tui-svg {
+    block-size: 1rem;
+    inline-size: 1rem;
+  }
+
+  & [tuiWrapper] {
+    border-radius: 4px;
   }
 }
 

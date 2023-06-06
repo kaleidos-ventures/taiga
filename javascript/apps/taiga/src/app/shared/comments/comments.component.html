@@ -1,0 +1,115 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <div class="header">
+    <h2 class="title">
+      {{ t('comments.title') }}
+      <span
+        *ngIf="total"
+        class="total-comments"
+        >({{ total }})</span
+      >
+    </h2>
+
+    <div
+      class="sort"
+      *ngIf="total">
+      <p
+        *ngIf="order === '-createdAt'"
+        aria-hidden="true">
+        {{ t('comments.order.new') }}
+      </p>
+
+      <p
+        *ngIf="order === 'createdAt'"
+        aria-hidden="true">
+        {{ t('comments.order.old') }}
+      </p>
+
+      <button
+        (click)="toggleOrder()"
+        type="button"
+        class="sort"
+        appearance="sort"
+        [attr.aria-label]="
+          order === '-createdAt'
+            ? t('comments.order.new')
+            : t('comments.order.old')
+        "
+        [tuiHint]="t('comments.order.reverse')"
+        tuiIconButton
+        [icon]="order === 'createdAt' ? 'sort' : 'sort-reverse'"></button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="loading && !comments?.length">
+    <tg-comment-skeleton></tg-comment-skeleton>
+    <tg-comment-skeleton></tg-comment-skeleton>
+    <tg-comment-skeleton></tg-comment-skeleton>
+  </ng-container>
+
+  <tg-comment-user-input
+    (click)="openCommentInput()"
+    *ngIf="canComment && order === '-createdAt'"></tg-comment-user-input>
+
+  <ng-container *ngIf="total">
+    <div class="comment-list">
+      <div
+        *ngFor="let comment of comments; trackBy: trackIndex"
+        class="comment">
+        <div class="creation-info">
+          <tg-user-avatar
+            size="m"
+            class="no-border"
+            [user]="comment.createdBy"
+            [color]="comment.createdBy.color"
+            type="light"
+            [rounded]="true"
+            aria-hidden="true"></tg-user-avatar>
+          <div>
+            <span class="creation-info-fullname">
+              {{ comment.createdBy.fullName }}
+            </span>
+            <span class="creation-info-username">
+              @{{ comment.createdBy.username }}
+            </span>
+            <span>∙</span>
+            <span
+              *ngIf="comment.createdAt"
+              [title]="comment.createdAt | date: 'medium'"
+              class="creation-info-date">
+              {{ comment.createdAt | dateDistance }}
+            </span>
+          </div>
+        </div>
+
+        <div class="comment-content">
+          <div
+            tgCodeHightlight
+            class="description-content"
+            [innerHTML]="comment.text | safeHtml"></div>
+        </div>
+      </div>
+    </div>
+
+    <ng-container *ngIf="loading && comments?.length">
+      <tg-comment-skeleton></tg-comment-skeleton>
+    </ng-container>
+
+    <tg-comment-user-input
+      class="bottom"
+      (click)="openCommentInput()"
+      *ngIf="canComment && order === 'createdAt'"></tg-comment-user-input>
+  </ng-container>
+  <div
+    *ngIf="!total && !loading && !canComment"
+    class="no-comments">
+    {{ t('comments.no_comments') }}
+  </div>
+</ng-container>

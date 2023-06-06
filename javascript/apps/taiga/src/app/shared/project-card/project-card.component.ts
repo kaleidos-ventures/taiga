@@ -182,7 +182,7 @@ export class ProjectCardComponent implements OnInit {
   public animationAcceptedInvitation: 'done' | null = null;
 
   public get showActions() {
-    return this.workspace.userRole === 'admin' && this.hasActions;
+    return this.workspace.userRole === 'member' && this.hasActions;
   }
 
   public ngOnInit(): void {
@@ -218,7 +218,7 @@ export class ProjectCardComponent implements OnInit {
 
   public onRejectInvite() {
     if (this.project) {
-      if (this.workspace.userRole === 'admin') {
+      if (this.workspace.userRole === 'member') {
         this.rejectedByAdmin = true;
         this.invitationStatus = 'accepted';
       }

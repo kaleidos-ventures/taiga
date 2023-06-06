@@ -83,7 +83,7 @@ export class InitStepComponent implements OnInit, OnChanges {
 
   public get workspacesMember(): Workspace[] {
     return this.workspaces.filter(
-      (workspace) => workspace.userRole === 'admin'
+      (workspace) => workspace.userRole === 'member'
     );
   }
 

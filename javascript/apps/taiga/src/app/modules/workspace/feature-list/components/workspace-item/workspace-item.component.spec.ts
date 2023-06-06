@@ -12,7 +12,6 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { RxState } from '@rx-angular/state';
 import {
   Project,
-  WorkspaceAdminMockFactory,
   WorkspaceMemberMockFactory,
   WorkspaceMockFactory,
 } from '@taiga/data';
@@ -42,7 +41,6 @@ describe('WorkspaceItem', () => {
   };
 
   const workspaceItem = WorkspaceMockFactory();
-  const workspaceItemAdmin = WorkspaceAdminMockFactory();
   const workspaceItemMember = WorkspaceMemberMockFactory();
 
   const initialState = {
@@ -56,7 +54,6 @@ describe('WorkspaceItem', () => {
       loadingWorkspaces: [],
       workspaceProjects: {
         [workspaceItem.id]: workspaceItem.latestProjects,
-        [workspaceItemAdmin.id]: workspaceItemAdmin.latestProjects,
         [workspaceItemMember.id]: workspaceItemMember.latestProjects,
       },
     },
@@ -304,13 +301,13 @@ describe('WorkspaceItem', () => {
       });
     });
 
-    it('Workspace admin recived invitation to workspace project', (done) => {
+    it('Workspace member recived invitation to workspace project', (done) => {
       const currentWorkspace = spectator.component.workspace.id;
 
       const dispatchSpy = jest.spyOn(store, 'dispatch');
       spectator.component.wsEvent(
         'projectinvitations.create',
-        workspaceItemAdmin.id,
+        workspaceItemMember.id,
         currentWorkspace
       );
       spectator.detectChanges();
@@ -370,14 +367,14 @@ describe('WorkspaceItem', () => {
     });
 
     it('Checking when the member user has the invitations also in the projects list', (done) => {
-      const projectsToShow = 18;
+      const projectsToShow = 12;
 
       spectator.component.projectsToShow = projectsToShow;
       spectator.detectChanges();
 
       expect(workspaceItemMember.userRole).toEqual('member');
-      expect(workspaceItemMember.latestProjects.length).toEqual(12); // 6 private projects + 6 public projects with invite
-      expect(workspaceItemMember.invitedProjects.length).toEqual(12);
+      expect(workspaceItemMember.latestProjects.length).toEqual(12); // 6 regular projects + 6 invites
+      expect(workspaceItemMember.invitedProjects.length).toEqual(6);
       expect(workspaceItemMember.totalProjects).toEqual(12);
 
       spectator.component.model$.subscribe(
@@ -388,9 +385,9 @@ describe('WorkspaceItem', () => {
             (project) => project.id
           );
 
-          const uniqIds = [...new Set(ids)];
+          const uniqSlugs = [...new Set(ids)];
 
-          expect(uniqIds.length).toEqual(projectsToShow);
+          expect(uniqSlugs.length).toEqual(projectsToShow);
           expect(showMoreProjects).toEqual(false);
 
           done();
@@ -399,129 +396,15 @@ describe('WorkspaceItem', () => {
     });
 
     it('Checking the pagination when the member user has the invitations also in the projects list', (done) => {
-      const projectsToShow = 12;
-
-      spectator.component.projectsToShow = projectsToShow;
-      spectator.detectChanges();
-
-      expect(workspaceItemMember.userRole).toEqual('member');
-      expect(workspaceItemMember.latestProjects.length).toEqual(12); // 6 private projects + 6 public projects with invite
-      expect(workspaceItemMember.invitedProjects.length).toEqual(12);
-      expect(workspaceItemMember.totalProjects).toEqual(12);
-
-      spectator.component.model$.subscribe(
-        ({ projects, invitations, showMoreProjects, remainingProjects }) => {
-          expect(projects.length + invitations.length).toEqual(12);
-
-          const ids = [...projects, ...invitations].map(
-            (project) => project.id
-          );
-
-          const uniqSlugs = [...new Set(ids)];
-
-          expect(uniqSlugs.length).toEqual(projectsToShow);
-          expect(showMoreProjects).toEqual(true);
-          expect(remainingProjects).toEqual(
-            workspaceItemAdmin.totalProjects + 6 - projectsToShow // 6 = invitations to private projects
-          );
-
-          done();
-        }
-      );
-    });
-
-    it('Accept invitation does not remove the project from invitations but remove it from projects', (done) => {
-      const projectsToShow = 50;
-
-      const acceptedInvitationId = workspaceItemMember.invitedProjects[0].id;
-      const acceptedInvitationName =
-        workspaceItemMember.invitedProjects[0].name;
-
-      spectator.component.projectsToShow = projectsToShow;
-
-      store.setState({
-        ...initialState,
-        invitation: {
-          acceptedInvite: [acceptedInvitationId],
-        },
-      });
-
-      spectator.component.acceptProjectInvite(
-        acceptedInvitationId,
-        acceptedInvitationName
-      );
-      spectator.detectChanges();
-
-      spectator.component.model$.subscribe(({ projects, invitations }) => {
-        expect(
-          invitations.find(
-            (invitation) => invitation.id === acceptedInvitationId
-          )
-        ).toBeTruthy();
-        expect(
-          projects.find((project) => project.id === acceptedInvitationId)
-        ).toBeFalsy();
-
-        done();
-      });
-    });
-  });
-
-  describe('admin', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        props: {
-          wsEvents: of(wsEvent$),
-          workspace: workspaceItemAdmin,
-          projectsToShow: 8,
-        },
-        detectChanges: false,
-      });
-      const service = spectator.inject(WsService);
-      service.command.mockReturnValue(new Observable());
-      service.events.mockReturnValue(new Observable());
-      store = spectator.inject(MockStore);
-    });
-
-    it('Checking when the admin user has the invitations also in the projects list', (done) => {
-      const projectsToShow = 12;
-
-      spectator.component.projectsToShow = projectsToShow;
-      spectator.detectChanges();
-
-      expect(workspaceItemAdmin.userRole).toEqual('admin');
-      expect(workspaceItemAdmin.latestProjects.length).toEqual(12); // 6 regular projects + 6 invites
-      expect(workspaceItemAdmin.invitedProjects.length).toEqual(6);
-      expect(workspaceItemAdmin.totalProjects).toEqual(12);
-
-      spectator.component.model$.subscribe(
-        ({ projects, invitations, showMoreProjects }) => {
-          expect(projects.length + invitations.length).toEqual(projectsToShow);
-
-          const ids = [...projects, ...invitations].map(
-            (project) => project.id
-          );
-
-          const uniqSlugs = [...new Set(ids)];
-
-          expect(uniqSlugs.length).toEqual(projectsToShow);
-          expect(showMoreProjects).toEqual(false);
-
-          done();
-        }
-      );
-    });
-
-    it('Checking the pagination when the admin user has the invitations also in the projects list', (done) => {
       const projectsToShow = 8;
 
       spectator.component.projectsToShow = projectsToShow;
       spectator.detectChanges();
 
-      expect(workspaceItemAdmin.userRole).toEqual('admin');
-      expect(workspaceItemAdmin.latestProjects.length).toEqual(12); // 6 regular projects + 6 invites
-      expect(workspaceItemAdmin.invitedProjects.length).toEqual(6);
-      expect(workspaceItemAdmin.totalProjects).toEqual(12);
+      expect(workspaceItemMember.userRole).toEqual('member');
+      expect(workspaceItemMember.latestProjects.length).toEqual(12); // 6 regular projects + 6 invites
+      expect(workspaceItemMember.invitedProjects.length).toEqual(6);
+      expect(workspaceItemMember.totalProjects).toEqual(12);
 
       spectator.component.model$.subscribe(
         ({ projects, invitations, showMoreProjects, remainingProjects }) => {
@@ -536,7 +419,7 @@ describe('WorkspaceItem', () => {
           expect(uniqSlugs.length).toEqual(projectsToShow);
           expect(showMoreProjects).toEqual(true);
           expect(remainingProjects).toEqual(
-            workspaceItemAdmin.totalProjects - projectsToShow
+            workspaceItemMember.totalProjects - projectsToShow
           );
 
           done();

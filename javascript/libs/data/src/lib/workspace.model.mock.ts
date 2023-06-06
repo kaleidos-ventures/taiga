@@ -164,21 +164,11 @@ export const WorkspaceMemberMockFactory = (): Workspace => {
     });
 
     invitedProjects.push(project);
-  }
 
-  // all the invitations are also in the project list if the user is a member & the project has public permissions
-  for (let i = 0; i < numProjects; i++) {
-    const project = ProjectMockFactory({
-      id: workspace.id,
-      color: workspace.color,
-      slug: workspace.slug,
-      name: workspace.name,
-      userRole: workspace.userRole,
-    });
-
-    invitedProjects.push(project);
+    // all the invitations are also in the project list if the user is a member
     latestProjects.push(project);
   }
+
   return {
     ...workspace,
     latestProjects,

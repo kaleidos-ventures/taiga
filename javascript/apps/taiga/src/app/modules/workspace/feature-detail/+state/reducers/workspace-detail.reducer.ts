@@ -128,8 +128,8 @@ export const reducer = createImmerReducer(
       state,
       { projectId, invitations, project, role }
     ): WorkspaceDetailState => {
-      // Add invitation if you are not admin, if you are admin transform the invitation in a project inside the workspace.
-      if (role !== 'admin') {
+      // Add invitation if you are not member, if you are member transform the invitation in a project inside the workspace.
+      if (role !== 'member') {
         const invitationToAdd = invitations.filter((project) => {
           return project.id === projectId;
         });

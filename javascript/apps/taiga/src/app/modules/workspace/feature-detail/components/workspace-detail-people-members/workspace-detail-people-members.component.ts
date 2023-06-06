@@ -7,13 +7,6 @@
  */
 
 import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
-import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
@@ -38,7 +31,12 @@ import {
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 import { filterNil } from '~/app/shared/utils/operators';
-import { slideInOut } from '~/app/shared/utils/animations';
+import {
+  slideInOut,
+  removeCell,
+  showUndo,
+  undoDone,
+} from '~/app/shared/utils/animations';
 
 @Component({
   selector: 'tg-workspace-detail-people-members',
@@ -46,90 +44,7 @@ import { slideInOut } from '~/app/shared/utils/animations';
   styleUrls: ['./workspace-detail-people-members.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
-  animations: [
-    slideInOut,
-    trigger('removeAnimationCell', [
-      state(
-        'inactive',
-        style({
-          opacity: 1,
-          transform: 'translateY(0)',
-        })
-      ),
-      state(
-        'active',
-        style({
-          opacity: 0,
-          transform: 'translateY(-100%)',
-        })
-      ),
-      transition('inactive => active', [
-        style({ opacity: 0.7 }),
-        animate('0.3s 0.5s ease-in'),
-      ]),
-      transition('active => inactive', [animate('0.3s')]),
-    ]),
-    trigger('removeAnimationUndo', [
-      transition(
-        'void => *', // ---> Entering --->
-        [
-          style({
-            opacity: 0,
-            transform: 'translateY(0%)',
-          }),
-          animate(
-            '400ms ease-out',
-            style({
-              opacity: 1,
-              transform: 'translateY(-100%)',
-            })
-          ),
-        ]
-      ),
-      transition(
-        '* => void', // ---> Leaving --->
-        [
-          animate(
-            '400ms ease-out',
-            style({
-              opacity: 0,
-              transform: 'translateX(0%)',
-            })
-          ),
-        ]
-      ),
-    ]),
-    trigger('removeUndoDone', [
-      transition(
-        'void => *', // ---> Entering --->
-        [
-          style({
-            opacity: 0,
-            transform: 'translateX(100%)',
-          }),
-          animate(
-            '400ms ease-out',
-            style({
-              opacity: 1,
-              transform: 'translateX(0%)',
-            })
-          ),
-        ]
-      ),
-      transition(
-        '* => void', // ---> Leaving --->
-        [
-          animate(
-            '400ms 1s ease-out',
-            style({
-              opacity: 0,
-              transform: 'translateX(100%)',
-            })
-          ),
-        ]
-      ),
-    ]),
-  ],
+  animations: [slideInOut, removeCell, showUndo, undoDone],
 })
 export class WorkspaceDetailPeopleMembersComponent
   implements OnInit, AfterContentInit

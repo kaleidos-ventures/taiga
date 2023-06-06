@@ -37,18 +37,18 @@ Copyright (c) 2023-present Kaleidos INC
               [@slideInOut]>
               <tg-ui-dtable-cell
                 class="user"
-                [@removeAnimationCell]="member.cancelled">
+                [@removeCell]="member.cancelled">
                 <tg-user-card
                   [user]="member.user"
                   [navigateToUser]="true"></tg-user-card>
               </tg-ui-dtable-cell>
-              <tg-ui-dtable-cell [@removeAnimationCell]="member.cancelled">
+              <tg-ui-dtable-cell [@removeCell]="member.cancelled">
                 <tg-workspace-detail-people-members-projects [member]="member">
                 </tg-workspace-detail-people-members-projects>
               </tg-ui-dtable-cell>
               <tg-ui-dtable-cell
                 class="action-column"
-                [@removeAnimationCell]="member.cancelled">
+                [@removeCell]="member.cancelled">
                 <tg-workspace-detail-people-members-remove
                   [class.highlighted]="vm.highlightedRow === member"
                   *ngIf="vm.currentUser.username !== member.user.username"
@@ -69,10 +69,8 @@ Copyright (c) 2023-present Kaleidos INC
               <div
                 *ngIf="member.cancelled === 'active'"
                 class="remove-countdown"
-                [@removeAnimationUndo]
-                (@removeAnimationUndo.done)="
-                  animationUndoValidateRemoved(member)
-                ">
+                [@showUndo]
+                (@showUndo.done)="animationUndoValidateRemoved(member)">
                 <tg-ui-context-notification
                   alertLevel="none"
                   status="info">
@@ -100,8 +98,8 @@ Copyright (c) 2023-present Kaleidos INC
               </div>
               <div
                 *ngIf="member.undo"
-                [@removeUndoDone]
-                (@removeUndoDone.done)="clearUndo(member)"
+                [@undoDone]
+                (@undoDone.done)="clearUndo(member)"
                 class="remove-action-undo-done">
                 <tg-ui-context-notification
                   alertLevel="none"

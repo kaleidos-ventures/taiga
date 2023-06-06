@@ -6,7 +6,13 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { animate, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  style,
+  transition,
+  trigger,
+  state,
+} from '@angular/animations';
 
 export const fadeIntOutAnimation = trigger('fadeInOut', [
   transition(':enter', [
@@ -91,6 +97,78 @@ export const slideIn = trigger('slideIn', [
       style({
         blockSize: '*',
         opacity: '1',
+      })
+    ),
+  ]),
+]);
+
+export const removeCell = trigger('removeCell', [
+  state(
+    'inactive',
+    style({
+      opacity: 1,
+      transform: 'translateY(0%)',
+    })
+  ),
+  state(
+    'active',
+    style({
+      opacity: 0,
+      transform: 'translateY(-100%)',
+    })
+  ),
+  transition('inactive => active', [
+    style({ opacity: 0.7 }),
+    animate('0.3s 0.5s'),
+  ]),
+  transition('active => inactive', [animate('0.3s')]),
+]);
+
+export const showUndo = trigger('showUndo', [
+  transition(':enter', [
+    style({
+      opacity: 0,
+      transform: 'translateY(0%)',
+    }),
+    animate(
+      '400ms 0.5s ease-out',
+      style({
+        opacity: 1,
+        transform: 'translateY(-100%)',
+      })
+    ),
+  ]),
+  transition(':leave', [
+    animate(
+      '400ms ease-out',
+      style({
+        opacity: 0,
+        transform: 'translateX(0%)',
+      })
+    ),
+  ]),
+]);
+
+export const undoDone = trigger('undoDone', [
+  transition(':enter', [
+    style({
+      opacity: 0,
+      transform: 'translateX(100%)',
+    }),
+    animate(
+      '400ms ease-out',
+      style({
+        opacity: 1,
+        transform: 'translateX(0%)',
+      })
+    ),
+  ]),
+  transition(':leave', [
+    animate(
+      '400ms ease-out',
+      style({
+        opacity: 0,
+        transform: 'translateX(100%)',
       })
     ),
   ]),

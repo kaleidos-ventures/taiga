@@ -21,6 +21,9 @@ export const {
   selectInvitationUpdateAnimation,
   selectInvitationCancelAnimation,
   selectCancelledInvitations,
-  selectUndoDoneAnimation,
+  selectInvitationUndoDoneAnimation,
   selectOpenRevokeInvitationDialog,
+  selectCancelledRemovedMember,
+  selectMemberUndoDoneAnimation,
+  selectOpenRemoveMemberDialog,
 } = membersFeature;

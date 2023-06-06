@@ -37,6 +37,12 @@ tg-ui-dtable-row {
       background-color: var(--color-gray10);
     }
   }
+
+  &.transparent {
+    &:hover {
+      background-color: transparent;
+    }
+  }
 }
 
 tg-ui-user-skeleton {

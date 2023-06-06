@@ -38,7 +38,9 @@ import {
   selectInvitationsOffset,
   selectMembersOffset,
   selectOpenRevokeInvitationDialog,
-  selectUndoDoneAnimation,
+  selectInvitationUndoDoneAnimation,
+  selectMemberUndoDoneAnimation,
+  selectOpenRemoveMemberDialog,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { initRolesPermissions } from '~/app/modules/project/settings/feature-roles-permissions/+state/actions/roles-permissions.actions';
@@ -283,21 +285,23 @@ export class MembersEffects {
         return openRevokeInvitation !== action.invitation.email;
       }),
       map(([{ invitation }]) => {
-        return membersActions.undoDoneAnimation({ invitation });
+        return membersActions.invitationUndoDoneAnimation({ invitation });
       })
     );
   });
 
   public undoDoneAnimation$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(membersActions.undoDoneAnimation),
+      ofType(membersActions.invitationUndoDoneAnimation),
       delay(3000),
-      concatLatestFrom(() => this.store.select(selectUndoDoneAnimation)),
+      concatLatestFrom(() =>
+        this.store.select(selectInvitationUndoDoneAnimation)
+      ),
       filter(([action, undoDoneActive]) => {
         return undoDoneActive.includes(action.invitation.email);
       }),
       map(([{ invitation }]) => {
-        return membersActions.removeUndoDoneAnimation({ invitation });
+        return membersActions.removeInvitationUndoDoneAnimation({ invitation });
       })
     );
   });
@@ -421,6 +425,34 @@ export class MembersEffects {
               return EMPTY;
             })
           );
+      })
+    );
+  });
+
+  public showRemoveMemberUndoConfirmation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.undoCancelRemoveMemberUI),
+      delay(1000),
+      concatLatestFrom(() => this.store.select(selectOpenRemoveMemberDialog)),
+      filter(([action, openRemoveMember]) => {
+        return openRemoveMember !== action.member.user.username;
+      }),
+      map(([{ member }]) => {
+        return membersActions.removeMemberUndoDoneAnimation({ member });
+      })
+    );
+  });
+
+  public undoRemoveMemberDoneAnimation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.removeMemberUndoDoneAnimation),
+      delay(3000),
+      concatLatestFrom(() => this.store.select(selectMemberUndoDoneAnimation)),
+      filter(([action, undoDoneActive]) => {
+        return undoDoneActive.includes(action.member.user.username);
+      }),
+      map(([{ member }]) => {
+        return membersActions.deleteRemoveMemberUndoDoneAnimation({ member });
       })
     );
   });

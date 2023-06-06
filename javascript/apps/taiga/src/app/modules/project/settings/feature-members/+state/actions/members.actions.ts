@@ -51,10 +51,10 @@ export const membersActions = createActionGroup({
     'Undo cancel invitation UI': props<{
       invitation: Invitation;
     }>(),
-    'Undo done animation': props<{
+    'Invitation undo done animation': props<{
       invitation: Invitation;
     }>(),
-    'Remove undo done animation': props<{
+    'Remove Invitation undo done animation': props<{
       invitation: Invitation;
     }>(),
     'Set animation status': props<{
@@ -112,6 +112,21 @@ export const membersActions = createActionGroup({
     'Remove member': props<{
       username: User['username'];
       isSelf?: boolean;
+    }>(),
+    'Cancel remove member UI': props<{
+      member: Membership;
+    }>(),
+    'Undo cancel remove member UI': props<{
+      member: Membership;
+    }>(),
+    'Remove member undo done animation': props<{
+      member: Membership;
+    }>(),
+    'Delete remove member undo done animation': props<{
+      member: Membership;
+    }>(),
+    'Open remove member': props<{
+      member: Membership | null;
     }>(),
   },
 });

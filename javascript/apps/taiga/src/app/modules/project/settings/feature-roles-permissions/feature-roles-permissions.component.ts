@@ -221,7 +221,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       .pipe(
         untilDestroyed(this),
         tap(() => this.form.markAsDirty()),
-        debounceTime(0)
+        debounceTime(10000)
       )
       .subscribe(() => {
         this.saveMembers(role);
@@ -233,7 +233,7 @@ export class ProjectSettingsFeatureRolesPermissionsComponent
       .pipe(
         untilDestroyed(this),
         tap(() => this.publicForm.markAsDirty()),
-        debounceTime(0)
+        debounceTime(10000)
       )
       .subscribe(() => {
         this.savePublic();

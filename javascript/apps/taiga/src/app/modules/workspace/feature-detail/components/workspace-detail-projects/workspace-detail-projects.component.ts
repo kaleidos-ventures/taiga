@@ -203,28 +203,23 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
           (project) => !state.acceptedInvites.includes(project.id)
         );
 
-        // workspace admin may have an invitation to a project that it already has access to.
-        if (state.workspace?.userRole === 'admin') {
-          invitations = [];
-        } else {
-          if (state.workspace?.userRole === 'member') {
-            // a member can have some projects in both list because the project could have access permissions for workspace members
-            invitations = invitations.filter((invitation) => {
-              return !projects.find((project) => {
-                return project.id === invitation.id;
-              });
-            });
-          } else {
-            projects = projects.filter((project) => {
-              return !invitations.find((invitation) => {
-                return project.id === invitation.id;
-              });
-            });
-          }
+        if (state.workspace?.userRole === 'member') {
+          // a member can have some projects in both list because the project could have access permissions for workspace members
           invitations = invitations.filter((invitation) => {
-            return !state.rejectedInvites.includes(invitation.id);
+            return !projects.find((project) => {
+              return project.id === invitation.id;
+            });
+          });
+        } else {
+          projects = projects.filter((project) => {
+            return !invitations.find((invitation) => {
+              return project.id === invitation.id;
+            });
           });
         }
+        invitations = invitations.filter((invitation) => {
+          return !state.rejectedInvites.includes(invitation.id);
+        });
 
         const allVisibleProjects = [...invitations, ...projects];
 
@@ -316,7 +311,7 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
       return project.id === projectId;
     });
     if (workspace && !projectInWorkspace) {
-      if (workspace.userRole === 'admin') {
+      if (workspace.userRole === 'member') {
         this.newProjectsToAnimate.push(projectId);
       }
       this.store.dispatch(

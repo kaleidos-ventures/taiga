@@ -43,10 +43,7 @@ Copyright (c) 2023-present Kaleidos INC
             {{ project.name }}
           </a>
           <a
-            *ngIf="
-              project.workspace.userRole === 'admin' ||
-              project.workspace.userRole === 'member'
-            "
+            *ngIf="project.workspace.userRole === 'member'"
             class="workspace-data-workspace workspace-data-workspace-anchor"
             [routerLink]="[
               '/workspace',

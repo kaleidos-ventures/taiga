@@ -74,7 +74,7 @@ describe('InitStepComponent', () => {
             invitedProjects: [],
             totalProjects: 0,
             hasProjects: true,
-            userRole: 'admin',
+            userRole: 'member',
           },
         ],
       },
@@ -106,7 +106,7 @@ describe('InitStepComponent', () => {
   it('test that a workspace is activated', () => {
     const workspace = WorkspaceMockFactory();
     workspace.id = workspaceId;
-    workspace.userRole = 'admin';
+    workspace.userRole = 'member';
     spectator.component.workspaces = [workspace];
     spectator.component.selectedWorkspaceId = workspace.id;
     spectator.component.initForm();

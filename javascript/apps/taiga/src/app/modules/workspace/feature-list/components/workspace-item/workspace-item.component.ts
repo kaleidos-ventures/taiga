@@ -250,29 +250,24 @@ export class WorkspaceItemComponent
           (project) => !state.acceptedInvites.includes(project.id)
         );
 
-        // workspace admin/member may have an invitation to a project that it already has access to.
-        if (this.workspace.userRole === 'admin') {
-          invitations = [];
-        } else {
-          if (this.workspace.userRole === 'member') {
-            // a member can have some projects in both list because the project could have access permissions for workspace members
-            invitations = invitations.filter((invitation) => {
-              return !projects.find((project) => {
-                return project.id === invitation.id;
-              });
-            });
-          } else {
-            projects = projects.filter((project) => {
-              return !invitations.find((invitation) => {
-                return project.id === invitation.id;
-              });
-            });
-          }
-
+        if (this.workspace.userRole === 'member') {
+          // a member can have some projects in both list because the project could have access permissions for workspace members
           invitations = invitations.filter((invitation) => {
-            return !state.rejectedInvites.includes(invitation.id);
+            return !projects.find((project) => {
+              return project.id === invitation.id;
+            });
+          });
+        } else {
+          projects = projects.filter((project) => {
+            return !invitations.find((invitation) => {
+              return project.id === invitation.id;
+            });
           });
         }
+
+        invitations = invitations.filter((invitation) => {
+          return !state.rejectedInvites.includes(invitation.id);
+        });
 
         const totalInvitations = invitations.length;
         const allVisibleProjects = [...invitations, ...projects];
@@ -505,7 +500,7 @@ export class WorkspaceItemComponent
 
       const invitations = [...this.state.get('invitations')];
       invitations.unshift(fakeInvitation);
-      if (this.workspace.userRole === 'admin') {
+      if (this.workspace.userRole === 'member') {
         this.newProjectsToAnimate.push(projectName);
       }
       this.store.dispatch(
@@ -527,7 +522,7 @@ export class WorkspaceItemComponent
       });
 
       if (!projectInWorkspace) {
-        if (this.workspace.userRole === 'admin') {
+        if (this.workspace.userRole === 'member') {
           this.newProjectsToAnimate.push(projectId);
         }
 
@@ -660,7 +655,7 @@ export class WorkspaceItemComponent
     const hasProjects = this.workspace.hasProjects;
     const latestProjects = this.workspace.latestProjects.length;
     const isSlideOutAnimationActive = this.state.get('slideOutActive');
-    const isAdmin = this.workspace.userRole === 'admin';
+    const isMember = this.workspace.userRole === 'member';
     const hasActiveInvitations = this.getActiveInvitations().length;
 
     return (
@@ -668,7 +663,7 @@ export class WorkspaceItemComponent
       !isSlideOutAnimationActive &&
       !latestProjects &&
       !hasActiveInvitations &&
-      !isAdmin
+      !isMember
     );
   }
 
@@ -677,14 +672,14 @@ export class WorkspaceItemComponent
     const latestProjects = this.workspace.latestProjects.length;
     const isSlideOutAnimationActive = this.state.get('slideOutActive');
     const hasActiveInvitations = this.getActiveInvitations().length;
-    const isAdmin = this.workspace.userRole === 'admin';
+    const isMember = this.workspace.userRole === 'member';
 
     return (
       !hasProjects &&
       !isSlideOutAnimationActive &&
       !latestProjects &&
       !hasActiveInvitations &&
-      !isAdmin
+      !isMember
     );
   }
 

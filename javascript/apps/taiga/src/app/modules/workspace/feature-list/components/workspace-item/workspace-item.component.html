@@ -17,9 +17,7 @@ Copyright (c) 2023-present Kaleidos INC
       </tg-ui-avatar>
       <div class="workspace-item-title-wrapper">
         <a
-          *ngIf="
-            workspace.userRole === 'admin' || workspace.userRole === 'member'
-          "
+          *ngIf="workspace.userRole === 'member'"
           class="workspace-item-title-active"
           data-test="workspace-item-title"
           [routerLink]="[
@@ -54,16 +52,9 @@ Copyright (c) 2023-present Kaleidos INC
         </h2>
       </div>
 
-      <tg-ui-badge
-        *ngIf="workspace.userRole"
-        [label]="t('commons.roles.' + workspace.userRole)"
-        size="s"
-        [color]="workspace.userRole === 'guest' ? 'gray' : 'info'">
-      </tg-ui-badge>
-
       <div class="workspace-item-action">
         <a
-          *ngIf="workspace.userRole === 'admin'"
+          *ngIf="workspace.userRole === 'member'"
           data-test="new-project-btn"
           appearance="primary"
           [attr.aria-label]="t('workspace.create_project')"
@@ -95,7 +86,7 @@ Copyright (c) 2023-present Kaleidos INC
       <tg-project-card
         *ngIf="
           workspace.latestProjects.length === 0 &&
-          workspace.userRole === 'admin' &&
+          workspace.userRole === 'member' &&
           vm.projects.length === 0
         "
         [workspace]="workspace"

@@ -12,7 +12,7 @@ Copyright (c) 2023-present Kaleidos INC
       <div class="wks-main-content-top">
         <h2 class="wks-main-content-title">{{ t('commons.projects') }}</h2>
         <a
-          *ngIf="vm.workspace.userRole === 'admin'"
+          *ngIf="vm.workspace.userRole === 'member'"
           appearance="primary"
           [routerLink]="['/new-project']"
           [queryParams]="{ workspace: vm.workspace.id }"
@@ -27,7 +27,7 @@ Copyright (c) 2023-present Kaleidos INC
           !vm.workspace.totalProjects &&
           !vm.invitations.length &&
           vm.workspace.hasProjects &&
-          vm.workspace.userRole !== 'admin' &&
+          vm.workspace.userRole !== 'member' &&
           !vm.creatingWorkspaceDetail
         "
         class="workspace-message-placeholder detail"
@@ -38,7 +38,7 @@ Copyright (c) 2023-present Kaleidos INC
           !vm.workspace.totalProjects &&
           !vm.invitations.length &&
           !vm.workspace.hasProjects &&
-          vm.workspace.userRole !== 'admin' &&
+          vm.workspace.userRole !== 'member' &&
           !vm.creatingWorkspaceDetail
         "
         class="workspace-message-placeholder detail"
@@ -51,7 +51,7 @@ Copyright (c) 2023-present Kaleidos INC
         <div
           *ngIf="
             vm.projects.length === 0 &&
-            vm.workspace.userRole === 'admin' &&
+            vm.workspace.userRole === 'member' &&
             !vm.creatingWorkspaceDetail
           ">
           <tg-project-card

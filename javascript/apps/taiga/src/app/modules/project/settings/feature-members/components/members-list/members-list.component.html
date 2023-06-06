@@ -16,7 +16,7 @@ Copyright (c) 2023-present Kaleidos INC
         <tg-ui-dtable-header>{{
           t('project_settings.members.column_role')
         }}</tg-ui-dtable-header>
-        <tg-ui-dtable-header class="column-actions">
+        <tg-ui-dtable-header class="action-column-header">
           <span class="header-row-action">
             {{ t('common_members_tabs.column_actions') }}
           </span>
@@ -26,34 +26,95 @@ Copyright (c) 2023-present Kaleidos INC
         <ng-container
           *ngFor="let member of vm.members; trackBy: trackByUsername">
           <tg-ui-dtable-row
-            [@.disabled]="vm.animationDisabled"
-            [class.active]="activeMemberList.includes(member.user.username)">
-            <tg-ui-dtable-cell class="user">
+            [@.disabled]="animationDisabled"
+            [ngClass]="{
+              transparent: member.cancelled === 'active',
+              active: activeMemberList.includes(member.data.user.username)
+            }">
+            <tg-ui-dtable-cell
+              class="user"
+              [@removeCell]="member.cancelled">
               <tg-user-card
-                [user]="member.user"
-                [isSelf]="member.user.username === vm.user?.username"
+                [user]="member.data.user"
+                [isSelf]="member.data.user.username === vm.user?.username"
                 [navigateToUser]="true"></tg-user-card>
             </tg-ui-dtable-cell>
-            <tg-ui-dtable-cell>
+            <tg-ui-dtable-cell [@removeCell]="member.cancelled">
               <tg-members-role-select
-                [invitationOrMember]="member"
+                [invitationOrMember]="member.data"
                 [roles]="vm.roles"
                 [isMember]="true"
                 [isSelf]="
-                  member.user.username === vm.user?.username
+                  member.data.user.username === vm.user?.username
                 "></tg-members-role-select>
             </tg-ui-dtable-cell>
-            <tg-ui-dtable-cell class="action-column">
+            <tg-ui-dtable-cell
+              [@removeCell]="member.cancelled"
+              (@removeCell.done)="setBtnFocus()"
+              class="action-column">
               <tg-remove-member
                 [roles]="vm.roles"
                 [project]="vm.project"
                 [user]="vm.user"
-                [member]="member"
+                [member]="member.data"
+                (confirmed)="onConfirmRemoveMember($event, member.data)"
                 (dropdownStateChanged)="
-                  addToActiveMemberList($event, member.user.username)
+                  addToActiveMemberList($event, member.data)
                 ">
               </tg-remove-member>
             </tg-ui-dtable-cell>
+
+            <div
+              *ngIf="member.cancelled === 'active'"
+              [@showUndo]
+              class="countdown">
+              <tg-ui-context-notification
+                alertLevel="none"
+                status="info">
+                <div class="countdown-wrapper">
+                  <span>
+                    {{
+                      t('project_settings.members.remove.remove_member', {
+                        member: member.data.user.fullName
+                      })
+                    }}
+                  </span>
+                  <button
+                    #undoButton
+                    class="undo"
+                    data-test="undo-remove-member"
+                    tuiLink
+                    (click)="undoRemove(member.data)"
+                    appearance="tertiary">
+                    {{ t('project_settings.members.undo') }}
+                  </button>
+                </div>
+              </tg-ui-context-notification>
+            </div>
+            <div
+              *ngIf="member.undo"
+              [@undoDone]
+              class="action-undo">
+              <tg-ui-context-notification
+                alertLevel="none"
+                status="info">
+                <div class="countdown-wrapper">
+                  <span>
+                    {{ t('project_settings.members.action_undone') }}
+                  </span>
+                  <button
+                    class="close-button no-padding"
+                    size="m"
+                    appearance="action-button"
+                    [attr.aria-label]="
+                      t('project_settings.members.close_undone')
+                    "
+                    tuiIconButton
+                    icon="close"
+                    (click)="removeUndoneDoneAnimation(member.data)"></button>
+                </div>
+              </tg-ui-context-notification>
+            </div>
           </tg-ui-dtable-row>
         </ng-container>
       </ng-container>

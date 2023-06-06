@@ -9,7 +9,6 @@
 import {
   animate,
   AnimationEvent,
-  state,
   style,
   transition,
   trigger,
@@ -17,7 +16,9 @@ import {
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   HostListener,
+  ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -35,11 +36,13 @@ import {
   selectInvitationUpdateAnimation,
   selectOpenRevokeInvitationDialog,
   selectTotalInvitations,
-  selectUndoDoneAnimation,
+  selectInvitationUndoDoneAnimation,
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { selectMemberRolesOrdered } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
+import { removeCell, showUndo, undoDone } from '~/app/shared/utils/animations';
+
 const cssValue = getComputedStyle(document.documentElement);
 interface InvitationData {
   data: Invitation;
@@ -49,8 +52,6 @@ interface InvitationData {
   cancelledTabIndex: string;
 }
 
-const revokeConfirmationDialogClose = '0.5s';
-
 @Component({
   selector: 'tg-pending-members-list',
   templateUrl: './pending-members-list.component.html',
@@ -58,87 +59,9 @@ const revokeConfirmationDialogClose = '0.5s';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
   animations: [
-    trigger('revokeAnimationCell', [
-      state(
-        'inactive',
-        style({
-          opacity: 1,
-          transform: 'translateY(0%)',
-        })
-      ),
-      state(
-        'active',
-        style({
-          opacity: 0,
-          transform: 'translateY(-100%)',
-        })
-      ),
-      transition('inactive => active', [
-        style({ opacity: 0.7 }),
-        animate(`0.3s ${revokeConfirmationDialogClose}`),
-      ]),
-      transition('active => inactive', [animate('0.3s')]),
-    ]),
-    trigger('revokeAnimationUndo', [
-      transition(
-        'void => *', // ---> Entering --->
-        [
-          style({
-            opacity: 0,
-            transform: 'translateY(0%)',
-          }),
-          animate(
-            `400ms ${revokeConfirmationDialogClose} ease-out`,
-            style({
-              opacity: 1,
-              transform: 'translateY(-100%)',
-            })
-          ),
-        ]
-      ),
-      transition(
-        '* => void', // ---> Leaving --->
-        [
-          animate(
-            '400ms ease-out',
-            style({
-              opacity: 0,
-              transform: 'translateX(0%)',
-            })
-          ),
-        ]
-      ),
-    ]),
-    trigger('revokeUndoDone', [
-      transition(
-        'void => *', // ---> Entering --->
-        [
-          style({
-            opacity: 0,
-            transform: 'translateX(100%)',
-          }),
-          animate(
-            '400ms ease-out',
-            style({
-              opacity: 1,
-              transform: 'translateX(0%)',
-            })
-          ),
-        ]
-      ),
-      transition(
-        '* => void', // ---> Leaving --->
-        [
-          animate(
-            '400ms ease-out',
-            style({
-              opacity: 0,
-              transform: 'translateX(100%)',
-            })
-          ),
-        ]
-      ),
-    ]),
+    removeCell,
+    showUndo,
+    undoDone,
     trigger('settingInvitationAnimation', [
       transition(
         'void => create', // ---> Entering --->
@@ -205,6 +128,9 @@ const revokeConfirmationDialogClose = '0.5s';
   ],
 })
 export class PendingMembersListComponent {
+  @ViewChild('undoButton', { read: ElementRef, static: false })
+  public undoButton!: ElementRef<HTMLElement>;
+
   @HostListener('window:beforeunload')
   public revokePendingInvitations() {
     if (this.revokePendingConfirmTimeouts.size) {
@@ -300,7 +226,10 @@ export class PendingMembersListComponent {
       this.store.select(selectOpenRevokeInvitationDialog)
     );
 
-    this.state.connect('undo', this.store.select(selectUndoDoneAnimation));
+    this.state.connect(
+      'undo',
+      this.store.select(selectInvitationUndoDoneAnimation)
+    );
 
     this.state.connect(
       'roles',
@@ -364,6 +293,10 @@ export class PendingMembersListComponent {
     );
   }
 
+  public setBtnFocus() {
+    this.undoButton?.nativeElement.focus({ preventScroll: true });
+  }
+
   public onConfirmCancelInvitation(invitation: Invitation) {
     this.store.dispatch(membersActions.cancelInvitationUI({ invitation }));
 
@@ -381,7 +314,9 @@ export class PendingMembersListComponent {
   }
 
   public removeUndoneDoneAnimation(invitation: Invitation) {
-    this.store.dispatch(membersActions.removeUndoDoneAnimation({ invitation }));
+    this.store.dispatch(
+      membersActions.removeInvitationUndoDoneAnimation({ invitation })
+    );
   }
 
   public getUsername(invitation: Invitation) {

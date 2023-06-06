@@ -19,7 +19,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { ShortcutsService } from '@taiga/core';
 import { Membership, Project, Role, User } from '@taiga/data';
-import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +34,7 @@ export class RemoveMemberComponent implements OnChanges {
   @Input() public roles!: Role[];
   @Output() public dropdownStateChanged: EventEmitter<boolean> =
     new EventEmitter<boolean>();
+  @Output() public confirmed = new EventEmitter();
 
   public hasSingleAdmin!: boolean;
 
@@ -52,9 +52,10 @@ export class RemoveMemberComponent implements OnChanges {
       this.roles?.find((it) => it.isAdmin)?.numMembers === 1 || false;
   }
 
-  public removeUserFromProject(username: string, isSelfUserLeaveing?: boolean) {
-    const isSelf = !!isSelfUserLeaveing;
-    this.store.dispatch(membersActions.removeMember({ username, isSelf }));
+  public confirm(isSelfUserLeaving?: boolean) {
+    this.confirmed.emit(isSelfUserLeaving);
+    this.removeDropdownState = false;
+    this.emitDropdownStateChanged();
   }
 
   public openLeaveDropdown() {

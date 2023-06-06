@@ -25,10 +25,13 @@ export interface MembersState {
   invitationsOffset: number;
   animationDisabled: boolean;
   cancelledInvitations: User['email'][];
-  undoDoneAnimation: User['email'][];
+  invitationUndoDoneAnimation: User['email'][];
   invitationUpdateAnimation: UpdateAnimation | null;
   invitationCancelAnimation: 'cancelled' | null;
   openRevokeInvitationDialog: User['email'] | null;
+  cancelledRemovedMember: Membership['user']['username'][];
+  memberUndoDoneAnimation: Membership['user']['username'][];
+  openRemoveMemberDialog: Membership['user']['username'] | null;
 }
 
 export const initialState: MembersState = {
@@ -42,10 +45,13 @@ export const initialState: MembersState = {
   invitationsOffset: 0,
   animationDisabled: true,
   cancelledInvitations: [],
-  undoDoneAnimation: [],
+  invitationUndoDoneAnimation: [],
   invitationUpdateAnimation: null,
   invitationCancelAnimation: null,
   openRevokeInvitationDialog: null,
+  cancelledRemovedMember: [],
+  memberUndoDoneAnimation: [],
+  openRemoveMemberDialog: null,
 };
 
 export const reducer = createImmerReducer(
@@ -56,18 +62,22 @@ export const reducer = createImmerReducer(
     state.membersLoading = true;
     state.animationDisabled = true;
     state.cancelledInvitations = [];
-    state.undoDoneAnimation = [];
+    state.invitationUndoDoneAnimation = [];
     state.invitationsLoading = true;
     state.invitationUpdateAnimation = null;
     state.invitationCancelAnimation = null;
+    state.cancelledRemovedMember = [];
+    state.memberUndoDoneAnimation = [];
 
     return state;
   }),
   on(membersActions.selectTab, (state): MembersState => {
-    state.undoDoneAnimation = [];
+    state.invitationUndoDoneAnimation = [];
     state.invitationUpdateAnimation = null;
     state.invitationCancelAnimation = null;
     state.openRevokeInvitationDialog = null;
+    state.memberUndoDoneAnimation = [];
+    state.openRemoveMemberDialog = null;
 
     return state;
   }),
@@ -142,18 +152,19 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    membersActions.undoDoneAnimation,
+    membersActions.invitationUndoDoneAnimation,
     (state, { invitation }): MembersState => {
-      state.undoDoneAnimation.push(invitation.email);
+      state.invitationUndoDoneAnimation.push(invitation.email);
       return state;
     }
   ),
   on(
-    membersActions.removeUndoDoneAnimation,
+    membersActions.removeInvitationUndoDoneAnimation,
     (state, { invitation }): MembersState => {
-      state.undoDoneAnimation = state.undoDoneAnimation.filter(
-        (undoAnimation) => undoAnimation !== invitation.email
-      );
+      state.invitationUndoDoneAnimation =
+        state.invitationUndoDoneAnimation.filter(
+          (undoAnimation) => undoAnimation !== invitation.email
+        );
       return state;
     }
   ),
@@ -199,7 +210,48 @@ export const reducer = createImmerReducer(
 
       return state;
     }
-  )
+  ),
+  on(membersActions.cancelRemoveMemberUI, (state, { member }): MembersState => {
+    state.animationDisabled = false;
+    state.totalMemberships = state.totalMemberships - 1;
+    state.cancelledRemovedMember.push(member.user.username);
+
+    return state;
+  }),
+  on(
+    membersActions.undoCancelRemoveMemberUI,
+    (state, { member }): MembersState => {
+      state.totalMemberships = state.totalMemberships + 1;
+      state.cancelledRemovedMember = state.cancelledRemovedMember.filter(
+        (cancelled) => cancelled !== member.user.username
+      );
+
+      return state;
+    }
+  ),
+  on(
+    membersActions.removeMemberUndoDoneAnimation,
+    (state, { member }): MembersState => {
+      state.memberUndoDoneAnimation.push(member.user.username);
+
+      return state;
+    }
+  ),
+  on(
+    membersActions.deleteRemoveMemberUndoDoneAnimation,
+    (state, { member }): MembersState => {
+      state.memberUndoDoneAnimation = state.memberUndoDoneAnimation.filter(
+        (undoAnimation) => undoAnimation !== member.user.username
+      );
+
+      return state;
+    }
+  ),
+  on(membersActions.openRemoveMember, (state, { member }): MembersState => {
+    state.openRemoveMemberDialog = member?.user.username ?? null;
+
+    return state;
+  })
 );
 
 export const membersFeature = createFeature({

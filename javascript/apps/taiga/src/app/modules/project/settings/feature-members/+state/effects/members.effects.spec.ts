@@ -36,7 +36,7 @@ import {
   selectInvitationsOffset,
   selectMembersOffset,
   selectOpenRevokeInvitationDialog,
-  selectUndoDoneAnimation,
+  selectInvitationUndoDoneAnimation,
 } from '../selectors/members.selectors';
 import { MembersEffects } from './members.effects';
 
@@ -276,7 +276,7 @@ describe('MembersEffects', () => {
       });
 
       expectObservable(effects.showUndoConfirmation$).toBe('1001ms a', {
-        a: membersActions.undoDoneAnimation({ invitation }),
+        a: membersActions.invitationUndoDoneAnimation({ invitation }),
       });
     });
   });
@@ -310,17 +310,19 @@ describe('MembersEffects', () => {
       expect(actual).toEqual(expected);
     });
 
-    store.overrideSelector(selectUndoDoneAnimation, [invitation.email]);
+    store.overrideSelector(selectInvitationUndoDoneAnimation, [
+      invitation.email,
+    ]);
 
     testScheduler.run((helpers) => {
       const { expectObservable, hot } = helpers;
 
       actions$ = hot('-a', {
-        a: membersActions.undoDoneAnimation({ invitation }),
+        a: membersActions.invitationUndoDoneAnimation({ invitation }),
       });
 
       expectObservable(effects.undoDoneAnimation$).toBe('3001ms a', {
-        a: membersActions.removeUndoDoneAnimation({ invitation }),
+        a: membersActions.removeInvitationUndoDoneAnimation({ invitation }),
       });
     });
   });

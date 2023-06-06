@@ -1,4 +1,4 @@
-<!--removeUserFromProject(member.user.username)
+<!--
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -63,7 +63,7 @@ Copyright (c) 2023-present Kaleidos INC
             tuiButton
             icon="leave"
             appearance="secondary"
-            (click)="removeUserFromProject(member.user.username, true)">
+            (click)="confirm(true)">
             {{ t('common_members_tabs.leave_confirm') }}
           </button>
         </div>
@@ -106,7 +106,7 @@ Copyright (c) 2023-present Kaleidos INC
           tuiButton
           icon="trash"
           appearance="destructive"
-          (click)="removeUserFromProject(member.user.username, false)">
+          (click)="confirm(false)">
           {{ t('common_members_tabs.remove_confirm') }}
         </button>
       </div>

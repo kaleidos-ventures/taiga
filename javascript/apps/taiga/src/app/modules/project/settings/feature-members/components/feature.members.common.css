@@ -50,10 +50,65 @@ Copyright (c) 2023-present Kaleidos INC
   padding-inline-end: var(--spacing-8);
 }
 
-.action-column,
-.column-actions {
+.action-column-header,
+.action-column {
   align-items: center;
   block-size: 100%;
   display: flex;
   justify-content: flex-end;
+}
+
+.action-column {
+  padding-block: var(--spacing-8);
+}
+
+tg-ui-dtable {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+tg-ui-dtable-row {
+  --cells-layout: 1fr 1fr 140px;
+
+  /* stylelint-disable-next-line selector-max-type */
+  & > tg-ui-dtable-cell {
+    transform: translateY(0%);
+  }
+
+  & > .countdown {
+    transform: translateY(-100%);
+  }
+}
+
+.countdown-wrapper {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-24);
+}
+
+.countdown {
+  background: var(--color-white);
+  display: flex;
+  inline-size: 100%;
+  inset-block-start: 100%;
+  inset-inline-end: 0;
+  justify-content: flex-end;
+  position: absolute;
+
+  & button {
+    text-decoration: underline;
+  }
+}
+
+.action-undo {
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  position: absolute;
+}
+
+.undo {
+  color: var(--color-info80);
+
+  --color-secondary: currentcolor;
 }

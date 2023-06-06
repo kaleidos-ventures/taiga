@@ -1,0 +1,26 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <tg-user-avatar
+      size="m"
+      class="no-border"
+      [user]="vm.user"
+      [color]="vm.user.color"
+      type="light"
+      [rounded]="true"
+      aria-hidden="true"></tg-user-avatar>
+
+    <button
+      type="button"
+      class="open-comment-input">
+      {{ t('comments.leave_comment') }}
+    </button>
+  </ng-container>
+</ng-container>

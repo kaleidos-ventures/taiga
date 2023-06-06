@@ -25,6 +25,7 @@ import {
   StoryUpdate,
   User,
   Workflow,
+  UserComment,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -504,5 +505,34 @@ export class ProjectApiService {
     return this.http.delete<void>(
       `${this.config.apiUrl}/projects/${id}/memberships/${username}`
     );
+  }
+
+  public getComments(
+    projectId: Project['id'],
+    ref: Story['ref'],
+    order: string,
+    offset: number,
+    limit: number
+  ): Observable<{ comments: UserComment[]; total: number }> {
+    return this.http
+      .get<UserComment[]>(
+        `${this.config.apiUrl}/projects/${projectId}/stories/${ref}/comments`,
+        {
+          observe: 'response',
+          params: {
+            order,
+            offset,
+            limit,
+          },
+        }
+      )
+      .pipe(
+        map((response) => {
+          return {
+            total: Number(response.headers.get('pagination-total')),
+            comments: response.body ?? [],
+          };
+        })
+      );
   }
 }

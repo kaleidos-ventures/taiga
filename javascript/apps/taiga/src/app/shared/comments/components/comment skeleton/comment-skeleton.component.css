@@ -1,0 +1,50 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import url("tools/animations.css");
+
+:host {
+  --white: rgb(255, 255, 255);
+  --padding: var(--spacing-12);
+
+  display: block;
+}
+
+.wrapper-skeleton {
+  background-color: rgba(var(--white), 0.25);
+  display: flex;
+  gap: var(--spacing-4);
+  padding: var(--padding);
+}
+
+.row {
+  display: flex;
+  gap: var(--spacing-4);
+  inline-size: 100%;
+
+  &.column {
+    flex-direction: column;
+  }
+
+  &.space-between {
+    justify-content: space-between;
+  }
+}
+
+.avatar {
+  aspect-ratio: 1/1;
+  background: var(--color-gray20);
+  inline-size: var(--spacing-16);
+}
+
+.line {
+  background: var(--color-gray20);
+  block-size: 0.875rem;
+  border-radius: 4px;
+  display: block;
+}

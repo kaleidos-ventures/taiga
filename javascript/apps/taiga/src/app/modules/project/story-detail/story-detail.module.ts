@@ -45,6 +45,8 @@ import { DataAccessStoryDetailModule } from './data-access/story-detail-data-acc
 import { StoryDetailComponent } from './story-detail.component';
 import { EditorComponent } from '~/app/shared/editor/editor.component';
 import { StoryDetailDescriptionStickyDirective } from './components/story-detail-description/story-detail-description-sticky.directive';
+import { CommentsComponent } from '~/app/shared/comments/comments.component';
+import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
 
 @NgModule({
   imports: [
@@ -80,6 +82,8 @@ import { StoryDetailDescriptionStickyDirective } from './components/story-detail
     CodeHightlightDirective,
     EditorComponent,
     StoryDetailDescriptionStickyDirective,
+    CommentsComponent,
+    StoryCommentsPaginationDirective,
   ],
   declarations: [
     StoryDetailComponent,

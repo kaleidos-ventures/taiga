@@ -15,7 +15,9 @@ import {
   StoryUpdate,
   StoryView,
   Workflow,
+  UserComment,
 } from '@taiga/data';
+import { OrderComments } from '~/app/shared/comments/comments.component';
 
 export const StoryDetailActions = createActionGroup({
   source: 'StoryDetail',
@@ -50,6 +52,15 @@ export const StoryDetailActions = createActionGroup({
       storyRef: Story['ref'];
       members: Membership[];
     }>(),
+    'Next Comment Page': props<{
+      storyRef: Story['ref'];
+      projectId: Project['id'];
+    }>(),
+    'Change Order Comments': props<{
+      order: 'createdAt' | '-createdAt';
+      storyRef: Story['ref'];
+      projectId: Project['id'];
+    }>(),
   },
 });
 
@@ -65,5 +76,17 @@ export const StoryDetailApiActions = createActionGroup({
     }>(),
     'Assign Member Success': emptyProps(),
     'UnAssign Member Success': emptyProps(),
+    'Fetch Comments': props<{
+      storyRef: Story['ref'];
+      projectId: Project['id'];
+      offset: number;
+      order: OrderComments;
+    }>(),
+    'Fetch Comments Success': props<{
+      comments: UserComment[];
+      total: number;
+      order: OrderComments;
+      offset: number;
+    }>(),
   },
 });

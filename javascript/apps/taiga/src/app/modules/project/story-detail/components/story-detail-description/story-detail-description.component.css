@@ -69,6 +69,8 @@ Copyright (c) 2023-present Kaleidos INC
   color: var(--color-gray70);
   font-size: var(--font-size-medium);
   font-style: italic;
+  margin: 0;
+  padding-block-end: var(--spacing-20);
   padding-block-start: var(--spacing-16);
   text-align: center;
 }

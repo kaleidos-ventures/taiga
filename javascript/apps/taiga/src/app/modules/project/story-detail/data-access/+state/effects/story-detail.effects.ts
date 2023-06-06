@@ -29,6 +29,7 @@ import {
   selectStory,
   selectWorkflow,
 } from '../selectors/story-detail.selectors';
+import { storyDetailFeature } from '../reducers/story-detail.reducer';
 
 @Injectable()
 export class StoryDetailEffects {
@@ -251,6 +252,65 @@ export class StoryDetailEffects {
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
           this.appService.toastSaveChangesError(httpResponse);
+        },
+      })
+    );
+  });
+
+  public redirectToFetchComments$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailActions.initStory, StoryDetailActions.nextCommentPage),
+      concatLatestFrom(() => [
+        this.store
+          .select(storyDetailFeature.selectComments)
+          .pipe(map((comments) => comments?.length ?? 0)),
+        this.store.select(storyDetailFeature.selectCommentsOrder),
+      ]),
+      map(([action, offset, order]) => {
+        return StoryDetailApiActions.fetchComments({
+          projectId: action.projectId,
+          storyRef: action.storyRef,
+          order,
+          offset,
+        });
+      })
+    );
+  });
+
+  public changeOrderComments$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailActions.changeOrderComments),
+      map((action) => {
+        return StoryDetailApiActions.fetchComments({
+          projectId: action.projectId,
+          storyRef: action.storyRef,
+          order: action.order,
+          offset: 0,
+        });
+      })
+    );
+  });
+
+  public fetchComments$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailApiActions.fetchComments),
+      fetch({
+        run: ({ projectId, storyRef, offset, order }) => {
+          return this.projectApiService
+            .getComments(projectId, storyRef, order, offset, 40)
+            .pipe(
+              map(({ comments, total }) => {
+                return StoryDetailApiActions.fetchCommentsSuccess({
+                  comments,
+                  total,
+                  order,
+                  offset,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastGenericError(httpResponse);
         },
       })
     );

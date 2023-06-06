@@ -1,0 +1,26 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+:host {
+  display: flex;
+  gap: var(--spacing-8);
+  margin-block-end: var(--spacing-16);
+  padding-inline-start: var(--spacing-8);
+}
+
+.open-comment-input {
+  background: var(--color-white);
+  block-size: 53px;
+  border: 2px solid var(--color-gray30);
+  border-radius: 3px;
+  color: var(--color-gray50);
+  cursor: pointer;
+  inline-size: 100%;
+  padding-inline-start: var(--spacing-16);
+  text-align: start;
+}

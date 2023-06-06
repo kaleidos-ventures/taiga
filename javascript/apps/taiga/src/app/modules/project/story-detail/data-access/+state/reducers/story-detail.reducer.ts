@@ -7,7 +7,7 @@
  */
 
 import { createFeature, on } from '@ngrx/store';
-import { StoryDetail, StoryView, Workflow } from '@taiga/data';
+import { StoryDetail, StoryView, Workflow, UserComment } from '@taiga/data';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   KanbanActions,
@@ -20,6 +20,7 @@ import {
   StoryDetailActions,
   StoryDetailApiActions,
 } from '../actions/story-detail.actions';
+import { OrderComments } from '~/app/shared/comments/comments.component';
 
 export interface StoryDetailState {
   story: StoryDetail | null;
@@ -27,6 +28,10 @@ export interface StoryDetailState {
   loadingStory: boolean;
   loadingWorkflow: boolean;
   storyView: StoryView;
+  comments: UserComment[];
+  loadingComments: boolean;
+  totalComments: number | null;
+  commentsOrder: OrderComments;
 }
 
 export const initialStoryDetailState: StoryDetailState = {
@@ -35,6 +40,10 @@ export const initialStoryDetailState: StoryDetailState = {
   loadingStory: false,
   loadingWorkflow: false,
   storyView: LocalStorageService.get('story_view') || 'modal-view',
+  comments: [],
+  loadingComments: false,
+  totalComments: null,
+  commentsOrder: '-createdAt',
 };
 
 export const reducer = createImmerReducer(
@@ -43,6 +52,9 @@ export const reducer = createImmerReducer(
     state.loadingStory = true;
     state.loadingWorkflow = true;
     state.story = null;
+    state.comments = [];
+    state.loadingComments = false;
+    state.commentsOrder = '-createdAt';
 
     return state;
   }),
@@ -169,6 +181,34 @@ export const reducer = createImmerReducer(
       if (state.story?.ref === ref) {
         state.story = null;
       }
+
+      return state;
+    }
+  ),
+  on(StoryDetailApiActions.fetchComments, (state): StoryDetailState => {
+    state.loadingComments = true;
+
+    return state;
+  }),
+  on(
+    StoryDetailApiActions.fetchCommentsSuccess,
+    (state, { comments, total, offset }): StoryDetailState => {
+      if (offset) {
+        state.comments = [...state.comments, ...comments];
+      } else {
+        state.comments = comments;
+      }
+      state.loadingComments = false;
+      state.totalComments = total;
+
+      return state;
+    }
+  ),
+  on(
+    StoryDetailActions.changeOrderComments,
+    (state, { order }): StoryDetailState => {
+      state.commentsOrder = order;
+      state.comments = [];
 
       return state;
     }

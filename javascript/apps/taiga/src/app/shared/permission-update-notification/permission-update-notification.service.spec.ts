@@ -66,5 +66,32 @@ describe('PermissionUpdateNotificationServiceService', () => {
         'edit_story_lost_permission'
       );
     });
+
+    it('notify Lose comment permissions', () => {
+      const previousProject = ProjectMockFactory();
+      previousProject.userPermissions = [
+        'create_story',
+        'modify_story',
+        'delete_story',
+        'comment_story',
+      ];
+      const currentProject = ProjectMockFactory();
+      currentProject.userPermissions = [
+        'create_story',
+        'modify_story',
+        'delete_story',
+      ];
+      const permissionsService = spectator.inject(PermissionsService);
+      spectator.service.notify = jest.fn();
+
+      permissionsService.hasPermissions.mockReturnValueOnce(true);
+      permissionsService.hasPermissions.mockReturnValueOnce(true);
+      permissionsService.hasPermissions.mockReturnValueOnce(false);
+
+      spectator.service.notifyLosePermissions(previousProject, currentProject);
+      expect(spectator.service.notify).toHaveBeenCalledWith(
+        'lost_comment_permissions'
+      );
+    });
   });
 });

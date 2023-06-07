@@ -8,6 +8,7 @@
   "create_story_permission": "You no longer have permissions to create stories",
   "edit_story_lost_permission": "You no longer have permission to edit stories",
   "edit_story_lost_some_permission": "You have lost some permissions to edit stories",
+  "lost_comment_permissions": "You no longer have permission to comment.",
   "lost_kanban_access": "You no longer have permissions to access this content.",
   "story_title": "{{ref}} {{title}}. Position {{position}} of {{total}}",
   "story_title_a11y": "Position {{position}} of {{total}}. Press Spacebar to Reorder.",

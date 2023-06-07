@@ -39,7 +39,17 @@ export class PermissionUpdateNotificationService {
         ['view'],
         'OR'
       );
-      if (hasStoryPermissions) {
+      const hadStoryCommentPermissions =
+        previousProject?.userPermissions.includes('comment_story');
+      const hasStoryCommentPermissions = this.permissionService.hasPermissions(
+        'story',
+        ['comment'],
+        'OR'
+      );
+
+      if (hadStoryCommentPermissions && !hasStoryCommentPermissions) {
+        this.notify('lost_comment_permissions');
+      } else if (hasStoryPermissions) {
         this.notify('edit_story_lost_some_permission');
       } else if (hasStoryViewPermissions) {
         this.notify('edit_story_lost_permission');
@@ -52,6 +62,7 @@ export class PermissionUpdateNotificationService {
       message: translation,
       status: TuiNotification.Warning,
       scope: 'kanban',
+      autoClose: true,
     });
   }
 }

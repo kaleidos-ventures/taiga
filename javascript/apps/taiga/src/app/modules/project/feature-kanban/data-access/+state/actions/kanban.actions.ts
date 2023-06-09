@@ -81,6 +81,10 @@ export const KanbanActions = createActionGroup({
     'Remove Members': props<{
       members: Membership[];
     }>(),
+    'Create Status': props<{
+      status: Pick<Status, 'name' | 'color'>;
+      workflow: Workflow['slug'];
+    }>(),
   },
 });
 
@@ -107,6 +111,14 @@ export const KanbanApiActions = createActionGroup({
     'Move Story Error': props<{ story: Story['ref']; errorStatus: number }>(),
     'Assign Member Success': emptyProps(),
     'UnAssign Member Success': emptyProps(),
+    'Create status success': props<{
+      status: Status;
+      workflow: Workflow['slug'];
+    }>(),
+    'Create status error': props<{
+      statusError: number;
+      status: Status['name'];
+    }>(),
   },
 });
 
@@ -116,5 +128,9 @@ export const KanbanEventsActions = createActionGroup({
     'New Story': props<{ story: Story }>(),
     'Reorder Story': props<KanbanReorderEvent['reorder']>(),
     'Delete Story': props<{ ref: Story['ref'] }>(),
+    'Update status': props<{
+      status: Status;
+      workflow: Workflow['slug'];
+    }>(),
   },
 });

@@ -48,6 +48,9 @@ export class KanbanWorkflowComponent
   @Input()
   public workflow!: Workflow;
 
+  @Input()
+  public userIsAdmin!: boolean;
+
   @ViewChild(CdkVirtualScrollViewport)
   public cdkScrollable!: CdkVirtualScrollViewport;
 
@@ -283,5 +286,15 @@ export class KanbanWorkflowComponent
 
   public ngOnDestroy(): void {
     this.kanbanScrollManagerService.destroyKanbanWorkflow();
+  }
+
+  public navigateLeft() {
+    const leftMargin = 44;
+    this.cdkScrollable.scrollTo({
+      left:
+        this.cdkScrollable.getViewportSize() +
+        this.statusColumnSize +
+        leftMargin,
+    });
   }
 }

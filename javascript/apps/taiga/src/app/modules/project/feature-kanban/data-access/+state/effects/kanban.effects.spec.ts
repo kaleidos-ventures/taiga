@@ -382,4 +382,26 @@ describe('ProjectEffects', () => {
 
     expect(effects.deleteStoryByEvent$).toBeObservable(expected);
   });
+
+  it('create status', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(KanbanEffects);
+    const status = StatusMockFactory();
+    const workflow = 'main';
+
+    projectApiService.createStatus.mockReturnValue(cold('-b|', { b: status }));
+
+    actions$ = hot('-a', {
+      a: KanbanActions.createStatus({
+        status,
+        workflow,
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: KanbanApiActions.createStatusSuccess({ status, workflow }),
+    });
+
+    expect(effects.createStatus$).toBeObservable(expected);
+  });
 });

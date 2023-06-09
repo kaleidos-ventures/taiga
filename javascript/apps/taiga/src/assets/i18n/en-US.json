@@ -143,6 +143,9 @@
     "generic_deleted_project": "This project has been deleted.",
     "deleted_workspace": "The workspace {{name}} has been deleted."
   },
+  "form_errors": {
+    "max_length": "Character limit has been reached."
+  },
   "discard_changes": {
     "title": "Discard changes?",
     "description": "You will lose the changes you have made.",
@@ -168,7 +171,6 @@
       "story_title_label": "Story title",
       "title_story_required": "Story title can’t be empty.",
       "create_story_button": "Create Story",
-      "max_length": "Character limit has been reached.",
       "story_title_placeholder": "Start writing a Story title..."
     }
   },

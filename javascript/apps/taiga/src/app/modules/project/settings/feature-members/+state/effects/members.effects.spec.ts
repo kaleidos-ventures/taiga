@@ -37,8 +37,10 @@ import {
   selectMembersOffset,
   selectOpenRevokeInvitationDialog,
   selectInvitationUndoDoneAnimation,
+  selectMemberUndoDoneAnimation,
 } from '../selectors/members.selectors';
 import { MembersEffects } from './members.effects';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 
 describe('MembersEffects', () => {
   let actions$: Observable<Action>;
@@ -410,5 +412,86 @@ describe('MembersEffects', () => {
     });
 
     expect(effects.updateInvitationRole$).toBeObservable(expected);
+  });
+
+  it('remove member', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(MembersEffects);
+    const project = ProjectMockFactory();
+    const member = MembershipMockFactory();
+    const isSelf = false;
+
+    projectApiService.removeMember.mockReturnValue(cold('-b|', { b: null }));
+
+    store.overrideSelector(selectCurrentProject, project);
+
+    actions$ = hot('-a', {
+      a: membersActions.removeMember({
+        username: member.user.username,
+        isSelf,
+      }),
+    });
+
+    const expected = cold('--a', {
+      a: projectEventActions.userLostProjectMembership({
+        username: member.user.username,
+        projectName: project.name,
+        isSelf,
+      }),
+    });
+
+    expect(effects.removeMember$).toBeObservable(expected);
+  });
+
+  it('remove member: show undo confirmation', () => {
+    const effects = spectator.inject(MembersEffects);
+    const member = MembershipMockFactory();
+
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    testScheduler.run((helpers) => {
+      const { expectObservable, hot } = helpers;
+
+      actions$ = hot('-a', {
+        a: membersActions.undoCancelRemoveMemberUI({ member }),
+      });
+
+      expectObservable(effects.showRemoveMemberUndoConfirmation$).toBe(
+        '1001ms a',
+        {
+          a: membersActions.removeMemberUndoDoneAnimation({ member }),
+        }
+      );
+    });
+  });
+
+  it('remove member: undo done animation', () => {
+    const effects = spectator.inject(MembersEffects);
+    const member = MembershipMockFactory();
+
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    store.overrideSelector(selectMemberUndoDoneAnimation, [
+      member.user.username,
+    ]);
+
+    testScheduler.run((helpers) => {
+      const { expectObservable, hot } = helpers;
+
+      actions$ = hot('-a', {
+        a: membersActions.removeMemberUndoDoneAnimation({ member }),
+      });
+
+      expectObservable(effects.undoRemoveMemberDoneAnimation$).toBe(
+        '3001ms a',
+        {
+          a: membersActions.deleteRemoveMemberUndoDoneAnimation({ member }),
+        }
+      );
+    });
   });
 });

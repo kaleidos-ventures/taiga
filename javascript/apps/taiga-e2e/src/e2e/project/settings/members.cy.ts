@@ -12,6 +12,7 @@ import {
   addEmailToInvite,
   inviteUsers,
   typeEmailToInvite,
+  inviteToProjectRequest,
 } from '@test/support/helpers/invitation.helpers';
 import { createFullProjectInWSRequest } from '@test/support/helpers/project.helpers';
 import {
@@ -122,5 +123,147 @@ describe('change role', () => {
     cy.getBySel('disabled-change-role').should('not.exist');
     cy.get('[data-test=1user]').find('input').click();
     cy.getBySel('permissions-warning').should('be.visible');
+  });
+});
+
+describe('Remove members', () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit('/');
+    cy.initAxe();
+  });
+
+  it('remove member', () => {
+    const workspace = WorkspaceMockFactory();
+    const project = ProjectMockFactory();
+
+    createWorkspaceRequest(workspace.name)
+      .then((request) => {
+        void createFullProjectInWSRequest(request.body.id, project.name).then(
+          (response) => {
+            const invitation = [{ username: '2user', roleSlug: 'admin' }];
+            void inviteToProjectRequest(
+              response.body.id,
+              invitation,
+              '2user'
+            ).then(() => {
+              cy.visit(`/project/${response.body.id}/${response.body.slug}`);
+              cy.initAxe();
+              navigateToSettings();
+              navigateToMembersSettings();
+              cy.tgCheckA11y();
+
+              cy.get('tg-user-card')
+                .contains(invitation[0].username)
+                .should('be.visible');
+              cy.get('tg-user-card').its('length').as('membersCount');
+              cy.getBySel('members-count').should('contain', '2');
+              cy.getBySel('remove-project-member').eq(0).click();
+              cy.getBySel('confirm-remove-member').should('be.visible');
+              cy.getBySel('confirm-remove-btn').click();
+              cy.getBySel('undo-remove').should('be.visible');
+              // eslint-disable-next-line cypress/no-unnecessary-waiting
+              cy.wait(5000);
+              cy.getBySel('undo-remove').should('not.exist');
+              cy.get('tg-user-card')
+                .contains(invitation[0].username)
+                .should('not.exist');
+              cy.getBySel('members-count').should('contain', '1');
+              cy.get<number>('@membersCount').then(function () {
+                cy.get('tg-user-card').should(
+                  'have.length',
+                  this.membersCount - 1
+                );
+              });
+            });
+          }
+        );
+      })
+      .catch(console.error);
+  });
+
+  it('cancel remove member', () => {
+    const workspace = WorkspaceMockFactory();
+    const project = ProjectMockFactory();
+
+    createWorkspaceRequest(workspace.name)
+      .then((request) => {
+        void createFullProjectInWSRequest(request.body.id, project.name).then(
+          (response) => {
+            const invitation = [{ username: '2user', roleSlug: 'admin' }];
+            void inviteToProjectRequest(
+              response.body.id,
+              invitation,
+              '2user'
+            ).then(() => {
+              cy.visit(`/project/${response.body.id}/${response.body.slug}`);
+              cy.initAxe();
+              navigateToSettings();
+              navigateToMembersSettings();
+              cy.tgCheckA11y();
+
+              cy.get('tg-user-card')
+                .contains(invitation[0].username)
+                .should('be.visible');
+              cy.get('tg-user-card').its('length').as('membersCount');
+              cy.getBySel('members-count').should('contain', '2');
+              cy.getBySel('remove-project-member').eq(0).click();
+              cy.getBySel('confirm-remove-member').should('be.visible');
+              cy.getBySel('cancel-remove-btn').click();
+              cy.get('tg-user-card')
+                .contains(invitation[0].username)
+                .should('be.visible');
+              cy.getBySel('members-count').should('contain', '2');
+              cy.get<number>('@membersCount').then(function () {
+                cy.get('tg-user-card').should('have.length', this.membersCount);
+              });
+            });
+          }
+        );
+      })
+      .catch(console.error);
+  });
+
+  it('undo remove member', () => {
+    const workspace = WorkspaceMockFactory();
+    const project = ProjectMockFactory();
+
+    createWorkspaceRequest(workspace.name)
+      .then((request) => {
+        void createFullProjectInWSRequest(request.body.id, project.name).then(
+          (response) => {
+            const invitation = [{ username: '2user', roleSlug: 'admin' }];
+            void inviteToProjectRequest(
+              response.body.id,
+              invitation,
+              '2user'
+            ).then(() => {
+              cy.visit(`/project/${response.body.id}/${response.body.slug}`);
+              cy.initAxe();
+              navigateToSettings();
+              navigateToMembersSettings();
+              cy.tgCheckA11y();
+
+              cy.get('tg-user-card')
+                .contains(invitation[0].username)
+                .should('be.visible');
+              cy.get('tg-user-card').its('length').as('membersCount');
+              cy.getBySel('members-count').should('contain', '2');
+              cy.getBySel('remove-project-member').eq(0).click();
+              cy.getBySel('confirm-remove-member').should('be.visible');
+              cy.getBySel('confirm-remove-btn').click();
+              cy.getBySel('undo-remove-member').click();
+              cy.get('tg-user-card')
+                .contains(invitation[0].username)
+                .should('be.visible');
+              cy.getBySel('members-count').should('contain', '2');
+              cy.get<number>('@membersCount').then(function () {
+                cy.get('tg-user-card').should('have.length', this.membersCount);
+              });
+            });
+          }
+        );
+      })
+      .catch(console.error);
   });
 });

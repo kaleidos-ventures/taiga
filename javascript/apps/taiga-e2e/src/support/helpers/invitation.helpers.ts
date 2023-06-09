@@ -6,6 +6,10 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { InvitationRequest, InvitationResponse, Project } from '@taiga/data';
+import { getEmails, request } from './api.helpers';
+import { loginRequest } from './user.helpers';
+
 export const typeEmailToInvite = (email: string) =>
   cy.getBySel('input-add-invites').type(email);
 export const addEmailToInvite = () => {
@@ -32,4 +36,53 @@ export const selectRoleAdministrator = () => {
 
 export const acceptInvitationFromProjectOverview = () => {
   cy.getBySel('accept-invitation-id').should('be.visible').click();
+};
+
+export const inviteToProjectRequest = (
+  projectId: Project['id'],
+  invitations: InvitationRequest[],
+  user: string,
+  autoAccept = true
+) => {
+  return request<InvitationResponse>(
+    'POST',
+    `/projects/${projectId}/invitations`,
+    {
+      invitations,
+    }
+  ).then(() => {
+    return getEmails()
+      .then((result) => {
+        const email = result.body.emails.pop();
+
+        if (email) {
+          const regex = new RegExp('/accept-project-invitation/(.*?(?="))');
+          const match = regex.exec(email.html);
+
+          if (match) {
+            return match[1];
+          }
+        }
+
+        throw new Error('email token not found');
+      })
+      .then((token) => {
+        if (autoAccept) {
+          loginRequest(user, '123123')
+            .then((auth) => {
+              void request(
+                'POST',
+                `/projects/invitations/${token}/accept`,
+                undefined,
+                {
+                  auth: {
+                    bearer: auth.body.token,
+                  },
+                }
+              );
+            })
+            .catch(console.error);
+        }
+      });
+  });
 };

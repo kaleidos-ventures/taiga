@@ -1,0 +1,81 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <div class="create-status">
+    <ng-container *ngIf="showAddForm; else addStatusTpl">
+      <form
+        class="form-card"
+        (tuiActiveZoneChange)="leaveForm($event)"
+        [showFormErrors]="submitted"
+        [formGroup]="form"
+        (submit)="submit()"
+        #createStatusForm="ngForm">
+        <div class="content">
+          <span
+            class="color"
+            [style.border-color]="textColor"></span>
+          <tg-ui-input class="status-input">
+            <input
+              formControlName="status"
+              data-test="create-status-input"
+              #statusInput
+              inputRef
+              [placeholder]="t('kanban.write_status')" />
+            <ng-container inputError>
+              <tg-ui-error error="required">
+                {{ t('kanban.status_empty') }}</tg-ui-error
+              >
+            </ng-container>
+          </tg-ui-input>
+        </div>
+        <div
+          *ngIf="form.get('status')!.value?.length! >= statusMaxLength"
+          class="max-length">
+          {{ t('form_errors.max_length') }}
+        </div>
+        <div class="actions">
+          <button
+            tgRestoreFocusTarget="show-create-status-form"
+            tuiButton
+            data-test="status-create"
+            appearance="primary"
+            type="submit">
+            {{ t('kanban.create_status') }}
+          </button>
+
+          <button
+            tgRestoreFocusTarget="show-create-status-form"
+            appearance="secondary"
+            class="cancel"
+            data-test="status-cancel"
+            tuiButton
+            type="button"
+            (click)="cancelStatusCreate()">
+            {{ t('commons.cancel') }}
+          </button>
+        </div>
+      </form>
+    </ng-container>
+    <ng-template #addStatusTpl>
+      <button
+        #createStatusButton
+        tgRestoreFocusTarget="show-create-status-form"
+        class="open-create-status-form"
+        data-test="open-create-status-form"
+        appearance="tertiary"
+        tuiButton
+        icon="plus"
+        type="button"
+        (click)="showForm()"
+        iconAlign="left">
+        {{ t('kanban.add_status') }}
+      </button>
+    </ng-template>
+  </div>
+</ng-container>

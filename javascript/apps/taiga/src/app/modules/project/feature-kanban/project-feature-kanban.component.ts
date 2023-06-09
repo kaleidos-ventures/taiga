@@ -10,6 +10,7 @@ import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -23,6 +24,7 @@ import {
   Story,
   StoryDetail,
   StoryView,
+  WorkflowStatus,
 } from '@taiga/data';
 import {
   combineLatest,
@@ -252,12 +254,35 @@ export class ProjectFeatureKanbanComponent {
       .projectEvents<{ membership: Membership; workspace: string }>(
         'projectmemberships.delete'
       )
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed())
       .subscribe((eventResponse) => {
         this.store.dispatch(
           ProjectActions.projectEventActions.removeMember(
             eventResponse.event.content
           )
+        );
+      });
+
+    this.wsService
+      .projectEvents<{ workflowStatus: WorkflowStatus }>(
+        'workflowstatuses.create'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const workflowStatusResponse =
+          eventResponse.event.content.workflowStatus;
+        const status = {
+          id: workflowStatusResponse.id,
+          name: workflowStatusResponse.name,
+          slug: workflowStatusResponse.slug,
+          color: workflowStatusResponse.color,
+          order: workflowStatusResponse.order,
+        };
+        this.store.dispatch(
+          KanbanEventsActions.updateStatus({
+            status,
+            workflow: workflowStatusResponse.workflow.slug,
+          })
         );
       });
 

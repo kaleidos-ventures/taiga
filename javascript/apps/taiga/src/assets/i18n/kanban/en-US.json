@@ -18,5 +18,9 @@
   "final_position_live_announce": "Final position {{ storyIndex }} of {{totalStories}}. Status {{status}}",
   "grabbed_live_announce": "{{title}} grabbed, current position {{position}}. Up and down arrow keys to change position, left and right arrow keys to change status, Spacebar to drop, Escape key to cancel",
   "dropped_live_announce": "{{title}} dropped",
-  "reorder_cancelled_live_announce": "reorder cancelled"
+  "reorder_cancelled_live_announce": "reorder cancelled",
+  "add_status": "Add status",
+  "create_status": "Create status",
+  "write_status": "Write a status name",
+  "status_empty": "Status name can’t be empty."
 }

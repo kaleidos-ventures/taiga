@@ -65,7 +65,7 @@ describe('Kanban', () => {
     cy.getBySel('assign-user-dialog').should('be.visible');
     cy.getBySel('unassigned-member').first().click();
     cy.getBySel('input-search').type('{esc}');
-    cy.getBySel('assign-btn').first().contains('No').should('be.visible');
+    cy.getBySel('assign-btn').first().contains('NF').should('be.visible');
   });
 
   it('assign story no matches', () => {
@@ -90,5 +90,32 @@ describe('Kanban', () => {
     cy.getBySel('assigned-member').first().click();
     cy.getBySel('input-search').type('{esc}');
     cy.getBySel('assign-btn').first().contains('Assign').should('be.visible');
+  });
+
+  it('create status', () => {
+    const statusName = randProductName();
+    cy.getBySel('open-create-status-form').click();
+    cy.getBySel('create-status-input').should('be.visible');
+    cy.getBySel('create-status-input').type(statusName);
+    cy.getBySel('status-create').click();
+    cy.get('tg-kanban-status').last().contains(statusName).should('be.visible');
+  });
+
+  it('cancel create status', () => {
+    const statusName = randProductName();
+    cy.getBySel('open-create-status-form').click();
+    cy.getBySel('create-status-input').should('be.visible');
+    cy.getBySel('create-status-input').type(statusName);
+    cy.getBySel('status-cancel').click();
+    cy.get('tg-kanban-status').last().should('not.contain', statusName);
+  });
+
+  it('create status when click outside', () => {
+    const statusName = randProductName();
+    cy.getBySel('open-create-status-form').click();
+    cy.getBySel('create-status-input').should('be.visible');
+    cy.getBySel('create-status-input').type(statusName);
+    cy.get('tg-kanban-status').last().click();
+    cy.get('tg-kanban-status').last().should('contain', statusName);
   });
 });

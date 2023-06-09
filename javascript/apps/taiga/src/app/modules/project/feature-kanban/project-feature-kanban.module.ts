@@ -36,6 +36,7 @@ import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.compon
 import { AssignUserComponent } from '../components/assign-user/assign-user.component';
 import { KanbanCreateStoryInlineComponent } from './components/create-story-inline/kanban-create-story-inline.component';
 import { KanbanStatusComponent } from './components/status/kanban-status.component';
+import { KanbanCreateStatusComponent } from './components/create-status/kanban-create-status.component';
 import { A11yDragStoryDirective } from './components/story/kanban-story-a11y-drag.directive';
 import { KanbanStoryComponent } from './components/story/kanban-story.component';
 import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
@@ -45,11 +46,14 @@ import { KanbanStatusKeyboardNavigationDirective } from './directives/kanban-sta
 import { KanbanStoryKeyboardNavigationDirective } from './directives/kanban-story-keyboard-navigation/kanban-story-keyboard-navigation.directive';
 import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
+import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
 
 @NgModule({
   declarations: [
     ProjectFeatureKanbanComponent,
     KanbanStatusComponent,
+    KanbanCreateStatusComponent,
     KanbanWorkflowComponent,
     KanbanStoryKeyboardNavigationDirective,
     KanbanStatusKeyboardNavigationDirective,
@@ -88,6 +92,8 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     DropdownModule,
     AssignUserComponent,
     OutsideClickDirective,
+    RestoreFocusTargetDirective,
+    RestoreFocusDirective,
   ],
   providers: [
     {

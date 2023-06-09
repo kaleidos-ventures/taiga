@@ -1,0 +1,69 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+@import url("tools/typography.css");
+
+:host {
+  margin-inline-end: var(--spacing-24);
+  min-inline-size: 122px;
+
+  &.open {
+    inline-size: var(--column-width);
+  }
+}
+
+.create-status {
+  inline-size: 100%;
+}
+
+.status-input {
+  inline-size: 100%;
+}
+
+.open-create-status-form {
+  margin-block-start: var(--spacing-8);
+  text-wrap: nowrap;
+}
+
+.form-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray30);
+  border-radius: 3px;
+  box-shadow: 3px 4px 14px 0 rgba(0, 138, 168, 0.15);
+  padding: var(--spacing-8);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: var(--spacing-4);
+}
+
+.cancel {
+  margin-inline-start: var(--spacing-8);
+}
+
+.content {
+  align-items: start;
+  display: flex;
+}
+
+.color {
+  aspect-ratio: 1 / 1;
+  block-size: 12px;
+  border: 3px solid;
+  border-radius: 6px;
+  margin-block-start: 10px;
+  margin-inline-end: var(--spacing-8);
+}
+
+.max-length {
+  @mixin font-small;
+
+  color: var(--color-gray90);
+  padding-inline-start: var(--spacing-24);
+}

@@ -535,4 +535,15 @@ export class ProjectApiService {
         })
       );
   }
+
+  public createStatus(
+    project: Project['id'],
+    status: Pick<Status, 'name' | 'color'>,
+    workflow: Workflow['slug']
+  ) {
+    return this.http.post<Status>(
+      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/statuses`,
+      status
+    );
+  }
 }

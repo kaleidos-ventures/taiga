@@ -335,6 +335,39 @@ export class KanbanEffects {
     );
   });
 
+  public createStatus$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.createStatus),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: ({ status, workflow }, project) => {
+          return this.projectApiService
+            .createStatus(project.id, status, workflow)
+            .pipe(
+              map((newStatus) => {
+                return KanbanApiActions.createStatusSuccess({
+                  status: newStatus,
+                  workflow,
+                });
+              })
+            );
+        },
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status !== 403) {
+            this.appService.errorManagement(httpResponse);
+          }
+
+          return KanbanApiActions.createStatusError({
+            statusError: httpResponse.status,
+            status: action.status.name,
+          });
+        },
+      })
+    );
+  });
+
   constructor(
     private appService: AppService,
     private actions$: Actions,

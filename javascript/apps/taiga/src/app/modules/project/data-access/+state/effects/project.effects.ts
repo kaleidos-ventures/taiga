@@ -289,9 +289,9 @@ export class ProjectEffects {
               this.appService.toastNotification({
                 message: 'common_members_tabs.no_longer_member',
                 paramsMessage: { name: action.projectName, type: 'project' },
-                status: TuiNotification.Info,
+                status: TuiNotification.Error,
                 closeOnNavigation: false,
-                autoClose: true,
+                autoClose: false,
               });
 
               if (!url.includes('/kanban') && !url.includes('/stories/')) {
@@ -309,9 +309,9 @@ export class ProjectEffects {
               this.appService.toastNotification({
                 message: 'common_members_tabs.no_longer_member',
                 paramsMessage: { name: action.projectName, type: 'project' },
-                status: TuiNotification.Info,
+                status: TuiNotification.Error,
                 closeOnNavigation: false,
-                autoClose: true,
+                autoClose: false,
               });
               void this.router.navigate(['/']);
             }

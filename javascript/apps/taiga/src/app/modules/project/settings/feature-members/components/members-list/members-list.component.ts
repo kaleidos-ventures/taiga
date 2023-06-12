@@ -32,7 +32,12 @@ import {
 } from '~/app/modules/project/settings/feature-members/+state/selectors/members.selectors';
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 import { selectMemberRolesOrdered } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
-import { removeCell, showUndo, undoDone } from '~/app/shared/utils/animations';
+import {
+  removeCell,
+  showUndo,
+  undoDone,
+  slideInOut,
+} from '~/app/shared/utils/animations';
 import { filterNil } from '~/app/shared/utils/operators';
 
 interface MemberData {
@@ -48,7 +53,7 @@ interface MemberData {
   styleUrls: ['./members-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
-  animations: [removeCell, showUndo, undoDone],
+  animations: [removeCell, showUndo, undoDone, slideInOut],
 })
 export class MembersListComponent implements AfterContentInit {
   @ViewChild('undoButton', { read: ElementRef, static: false })
@@ -215,6 +220,11 @@ export class MembersListComponent implements AfterContentInit {
     if (timeout) {
       clearTimeout(timeout);
       this.removePendingConfirmTimeouts.delete(member);
+      this.store.dispatch(membersActions.openRemoveMember({ member: null }));
+      const index = this.activeMemberList.indexOf(member.user.username);
+      if (index !== -1) {
+        this.activeMemberList.splice(index, 1);
+      }
     }
   }
 

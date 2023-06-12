@@ -13,6 +13,8 @@ import { RouterModule } from '@angular/router';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
+import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { TuiDataListModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import {
@@ -79,6 +81,8 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     DynamicTableModule,
     ModalModule,
     InviteUserModalModule,
+    RestoreFocusTargetDirective,
+    RestoreFocusDirective,
     PaginationComponent,
     StoreModule.forFeature(membersFeature),
     EffectsModule.forFeature([MembersEffects]),

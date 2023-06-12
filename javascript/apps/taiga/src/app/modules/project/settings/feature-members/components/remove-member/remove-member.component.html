@@ -6,38 +6,50 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 
 <ng-container *transloco="let t">
-  <button
+  <tui-hosted-dropdown
     *ngIf="member.user.username !== user?.username"
-    data-test="remove-project-member"
-    appearance="primary"
-    tuiLink
-    class="row-action"
-    [class.active]="removeDropdownState"
-    (click)="openRemoveDropdown()"
-    [tuiDropdown]="removeFromProject"
-    [tuiDropdownManual]="removeDropdownState"
-    (tuiActiveZoneChange)="closeDropdown()"
     [tuiDropdownAlign]="'right'"
-    type="button">
-    {{ t('common_members_tabs.remove') }}
-  </button>
-  <button
+    [content]="removeFromProject"
+    [(open)]="removeDropdownState"
+    (tuiActiveZoneChange)="closeDropdown()">
+    <button
+      [tgRestoreFocusTarget]="'remove-member' + member.user.username"
+      data-test="remove-project-member"
+      appearance="primary"
+      tuiLink
+      class="row-action"
+      [class.active]="removeDropdownState"
+      (click)="openRemoveDropdown()"
+      aria-haspopup="true"
+      [attr.aria-expanded]="removeDropdownState"
+      type="button">
+      {{ t('common_members_tabs.remove') }}
+    </button>
+  </tui-hosted-dropdown>
+
+  <tui-hosted-dropdown
     *ngIf="member.user.username === user?.username"
-    appearance="primary"
-    tuiLink
-    class="row-action"
-    [class.active]="leaveDropdownState"
-    (click)="openLeaveDropdown()"
-    [tuiDropdown]="leaveAsAdmin"
-    [tuiDropdownManual]="leaveDropdownState"
     [tuiDropdownAlign]="'right'"
-    (tuiActiveZoneChange)="closeDropdown()"
-    type="button">
-    {{ t('common_members_tabs.leave') }}
-  </button>
+    [content]="leaveAsAdmin"
+    [(open)]="leaveDropdownState"
+    (tuiActiveZoneChange)="closeDropdown()">
+    <button
+      [tgRestoreFocusTarget]="'leave' + member.user.username"
+      appearance="primary"
+      tuiLink
+      class="row-action"
+      [class.active]="leaveDropdownState"
+      (click)="openLeaveDropdown()"
+      aria-haspopup="true"
+      [attr.aria-expanded]="leaveDropdownState"
+      type="button">
+      {{ t('common_members_tabs.leave') }}
+    </button>
+  </tui-hosted-dropdown>
 
   <ng-template #leaveAsAdmin>
     <div
+      [tgRestoreFocus]="'leave' + member.user.username"
       class="action-dialog"
       cdkTrapFocus>
       <ng-container *ngIf="!hasSingleAdmin">
@@ -82,13 +94,14 @@ Copyright (c) 2023-present Kaleidos INC
 
   <ng-template #removeFromProject>
     <div
+      [tgRestoreFocus]="'remove-member' + member.user.username"
       class="action-dialog"
       data-test="confirm-remove-member"
       cdkTrapFocus>
       <p class="action-dialog-title">
         {{
           t('common_members_tabs.remove_title', {
-            user_name: member.user.username
+            user_name: member.user.fullName || member.user.username
           })
         }}
       </p>

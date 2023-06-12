@@ -89,20 +89,20 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
       catchError((httpResponse: HttpErrorResponse) => {
         const projectId = route.params.id as string;
 
-        // Display toast notification
-        appService.toastNotification({
-          message: 'errors.invalid_token_toast_message',
-          status: TuiNotification.Error,
-          closeOnNavigation: false,
-        });
-
         // Handle 404 error
         if (httpResponse.status === 404 && authService.isLogged()) {
           return (function handle404Error() {
             return projectApiService.getProject(projectId).pipe(
               catchError((httpErrorResponse: HttpErrorResponse) => {
+                // Display toast notification
+                appService.toastNotification({
+                  message: 'errors.invalid_token_toast_message',
+                  status: TuiNotification.Error,
+                  closeOnNavigation: false,
+                });
+
                 if (httpErrorResponse.status === 403) {
-                  void router.navigate(['/403']);
+                  void router.navigate(['/']);
                 } else {
                   void router.navigate(['/404']);
                 }
@@ -117,6 +117,13 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
             );
           })();
         }
+
+        // Display toast notification
+        appService.toastNotification({
+          message: 'errors.invalid_token_toast_message',
+          status: TuiNotification.Error,
+          closeOnNavigation: false,
+        });
 
         // Handle other errors when logged in
         if (authService.isLogged()) {

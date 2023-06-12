@@ -207,7 +207,9 @@ export const reducer = createImmerReducer(
       state.members = state.members.filter(
         (member) => member.user.username !== username
       );
-
+      state.cancelledRemovedMember = state.cancelledRemovedMember.filter(
+        (cancelled) => cancelled !== username
+      );
       return state;
     }
   ),

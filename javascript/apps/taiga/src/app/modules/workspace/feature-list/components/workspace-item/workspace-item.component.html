@@ -52,6 +52,13 @@ Copyright (c) 2023-present Kaleidos INC
         </h2>
       </div>
 
+      <tg-ui-badge
+        *ngIf="workspace.userRole === 'member'"
+        [label]="t('commons.roles.' + workspace.userRole)"
+        size="s"
+        color="info">
+      </tg-ui-badge>
+
       <div class="workspace-item-action">
         <a
           *ngIf="workspace.userRole === 'member'"

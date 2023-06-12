@@ -570,7 +570,9 @@ export const reducer = createImmerReducer(
 
     if (oldStory?.status.slug !== story?.status.slug) {
       state = removeStory(state, (it) => it.ref === story.ref);
-      state.stories[story.status.slug].push(story);
+      if (state.stories[story.status.slug]) {
+        state.stories[story.status.slug].push(story);
+      }
     } else {
       state = replaceStory(state, (it) => {
         if (it.ref === story.ref) {

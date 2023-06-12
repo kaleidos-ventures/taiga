@@ -8,16 +8,15 @@
 
 import { Directive, ElementRef, Input, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { fromEvent, take } from 'rxjs';
-import { StoryDetailDescriptionComponent } from './story-detail-description.component';
+import { fromEvent } from 'rxjs';
 
 @UntilDestroy()
 @Directive({
-  selector: '[tgStoryDetailScriptionSticky]',
+  selector: '[tgStoryDetailDescriptionSticky]',
   standalone: true,
 })
-export class StoryDetailScriptionStickyDirective implements OnDestroy {
-  @Input('tgStoryDetailScriptionSticky')
+export class StoryDetailDescriptionStickyDirective implements OnDestroy {
+  @Input('tgStoryDetailDescriptionSticky')
   public set editor(enable: boolean) {
     if (enable) {
       this.init();
@@ -27,22 +26,17 @@ export class StoryDetailScriptionStickyDirective implements OnDestroy {
   private resizeObserver?: ResizeObserver;
 
   public get nativeElement() {
-    return this.elementRef.nativeElement as HTMLElement;
+    return this.elementRef.nativeElement;
   }
 
-  constructor(
-    private elementRef: ElementRef,
-    private storyDetailDescriptionComponent: StoryDetailDescriptionComponent
-  ) {
-    this.storyDetailDescriptionComponent.state.select('edit').pipe(take(1));
-  }
+  constructor(private elementRef: ElementRef<HTMLElement>) {}
 
   public init(): void {
     const scroll = this.nativeElement.closest<HTMLElement>(
       '[data-js="story-detail-scroll"]'
     );
 
-    const editor = this.nativeElement;
+    const editor = this.nativeElement.querySelector<HTMLElement>('editor');
     const toxEditorHeader =
       editor?.querySelector<HTMLElement>('.tox-editor-header');
     const storyContent = document.querySelector<HTMLElement>(

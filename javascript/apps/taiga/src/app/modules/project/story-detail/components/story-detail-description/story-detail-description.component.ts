@@ -31,6 +31,8 @@ import { PermissionsService } from '~/app/services/permissions.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectApiService } from '@taiga/api';
+import { EditorImageUploadService } from '~/app/shared/editor/editor-image-upload.service';
+import { StoryDetailDescriptionImageUploadService } from '~/app/modules/project/story-detail/components/story-detail-description/story-detail-description-image-upload.service';
 
 export interface StoryDetailDescriptionState {
   projectId: Project['id'];
@@ -38,7 +40,6 @@ export interface StoryDetailDescriptionState {
   editedStory: StoryDetail['version'];
   conflict: boolean;
   edit: boolean;
-  editorFocused: boolean;
   hasPermissionToEdit: boolean;
   editorReady: boolean;
   lan: {
@@ -52,7 +53,13 @@ export interface StoryDetailDescriptionState {
   templateUrl: './story-detail-description.component.html',
   styleUrls: ['./story-detail-description.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState],
+  providers: [
+    RxState,
+    {
+      provide: EditorImageUploadService,
+      useClass: StoryDetailDescriptionImageUploadService,
+    },
+  ],
 })
 export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
   @ViewChild('descriptionContent')
@@ -77,11 +84,6 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
     return this.state.get('edit');
   }
 
-  @HostBinding('class.editor-focused')
-  public get editorFocused() {
-    return this.state.get('editorFocused');
-  }
-
   @HostBinding('class.has-permission-to-edit')
   public get hasPermissionToEdit() {
     return this.state.get('hasPermissionToEdit');
@@ -101,9 +103,6 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
 
   public descriptionHeight = 200;
 
-  // https://github.com/tinymce/tinymce-angular/issues/311
-  public description = '';
-
   public descriptionForm = new FormGroup({
     description: new FormControl('', {
       nonNullable: true,
@@ -112,6 +111,10 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
 
   public model$ = this.state.select();
   public showConfirmEditDescriptionModal = false;
+
+  public get description() {
+    return this.state.get('story').description;
+  }
 
   constructor(
     public state: RxState<StoryDetailDescriptionState>,
@@ -152,6 +155,10 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
         this.saveState();
       }
     );
+  }
+
+  public onContentChange(content: string) {
+    this.setDescription(content);
   }
 
   public imageUploadHandler(blobInfo: {
@@ -207,8 +214,6 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
   }
 
   public save() {
-    this.descriptionForm.get('description')?.setValue(this.description);
-
     const newVersion =
       this.state.get('story').version !== this.state.get('editedStory');
 
@@ -267,16 +272,6 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
   public acceptConflict() {
     this.setConflict(false);
     this.setEdit(false);
-  }
-
-  public focusIn() {
-    this.state.set({ editorFocused: true });
-    this.focusChange.next(true);
-  }
-
-  public focusOut() {
-    this.state.set({ editorFocused: false });
-    this.focusChange.next(false);
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -347,7 +342,6 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
     this.editChange.next(edit);
 
     if (!edit) {
-      this.focusOut();
       this.state.set({ editorReady: false });
       this.removeLocalState();
     }
@@ -355,7 +349,5 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
 
   private setDescription(value: string) {
     this.descriptionForm.get('description')!.setValue(value);
-
-    this.description = this.descriptionForm.get('description')!.value;
   }
 }

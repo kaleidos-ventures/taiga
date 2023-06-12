@@ -38,12 +38,13 @@ import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.compon
 import { AssignUserComponent } from '../components/assign-user/assign-user.component';
 import { FieldConflictComponent } from '../components/field-conflict/field-conflict.component';
 import { StoryDetailAssignComponent } from './components/story-detail-assign/story-detail-assign.component';
-import { StoryDetailScriptionStickyDirective } from './components/story-detail-description/story-detail-description-sticky.directive';
 import { StoryDetailDescriptionComponent } from './components/story-detail-description/story-detail-description.component';
 import { StoryDetailStatusComponent } from './components/story-detail-status/story-detail-status.component';
 import { StoryDetailTitleComponent } from './components/story-detail-title/story-detail-title.component';
 import { DataAccessStoryDetailModule } from './data-access/story-detail-data-access.module';
 import { StoryDetailComponent } from './story-detail.component';
+import { EditorComponent } from '~/app/shared/editor/editor.component';
+import { StoryDetailDescriptionStickyDirective } from './components/story-detail-description/story-detail-description-sticky.directive';
 
 @NgModule({
   imports: [
@@ -76,8 +77,9 @@ import { StoryDetailComponent } from './story-detail.component';
     EditorModule,
     ClickActionAreaDirective,
     SafeHtmlPipe,
-    StoryDetailScriptionStickyDirective,
     CodeHightlightDirective,
+    EditorComponent,
+    StoryDetailDescriptionStickyDirective,
   ],
   declarations: [
     StoryDetailComponent,

@@ -1,0 +1,87 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *ngIf="model$ | async as vm">
+  <editor
+    class="editor"
+    [(ngModel)]="field"
+    (ngModelChange)="contentChange.next($event)"
+    (onFocus)="onFocus()"
+    (onBlur)="onBlur()"
+    (onInit)="ready()"
+    [init]="{
+      language: vm.lan.code,
+      language_url: vm.lan.url,
+      menubar: '',
+      height: height,
+      toolbar:
+        'blocks | bold italic underline strikethrough | bullist numlist | link image codesample| emoticons |  alignleft aligncenter alignright | outdent indent | forecolor backcolor removeformat | hr',
+      toolbar_mode: 'sliding',
+      quickbars_selection_toolbar:
+        'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+      contextmenu: 'link image table',
+      template_cdate_format: '[Date Created (CDATE): %m/%d/%Y : %H:%M:%S]',
+      template_mdate_format: '[Date Modified (MDATE): %m/%d/%Y : %H:%M:%S]',
+      plugins: [
+        'advlist',
+        'autolink',
+        'link',
+        'image',
+        'lists',
+        'charmap',
+        'preview',
+        'anchor',
+        'searchreplace',
+        'wordcount',
+        'visualblocks',
+        'visualchars',
+        'code',
+        'fullscreen',
+        'insertdatetime',
+        'media',
+        'table',
+        'emoticons',
+        'template',
+        'help',
+        'preview',
+        'importcss',
+        'save',
+        'directionality',
+        'codesample',
+        'nonbreaking',
+        'autoresize'
+      ],
+      codesample_languages: [
+        { text: 'HTML/XML', value: 'markup' },
+        { text: 'JavaScript', value: 'javascript' },
+        { text: 'TypeScript', value: 'typescript' },
+        { text: 'CSS', value: 'css' },
+        { text: 'Diff', value: 'diff' },
+        { text: 'PHP', value: 'php' },
+        { text: 'Ruby', value: 'ruby' },
+        { text: 'Python', value: 'python' },
+        { text: 'Java', value: 'java' },
+        { text: 'C', value: 'c' },
+        { text: 'C#', value: 'csharp' },
+        { text: 'C++', value: 'cpp' }
+      ],
+      block_formats:
+        'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3; Header 4=h4; Header 5=h5; Header 6=h6; Code =code;',
+      icons_url: '/assets/editor/icons.js',
+      icons: 'taiga-icon-pack',
+      promotion: false,
+      branding: false,
+      auto_focus: true,
+      content_css: ['/assets/editor/iframe.css', '/assets/editor/prism.css'],
+      codesample_global_prismjs: true,
+      images_upload_handler: editorImageUploadService.imageUploadHandler.bind(
+        editorImageUploadService
+      ),
+      images_file_types: 'jpeg,jpg,jpe,jfi,jif,jfif,png,gif,bmp,webp,svg'
+    }"></editor>
+</ng-container>

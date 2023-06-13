@@ -9,8 +9,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProjectFeatureKanbanModule } from '../feature-kanban/project-feature-kanban.module';
-import { ProjectFeatureStoryWrapperFullViewModule } from '../feature-story-wrapper-full-view/project-feature-story-wrapper-full-view.module';
 import { ProjectFeatureViewSetterComponent } from './project-feature-view-setter.component';
 
 const routes: Routes = [
@@ -20,11 +18,9 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    ProjectFeatureKanbanModule,
     RouterModule.forChild(routes),
-    ProjectFeatureStoryWrapperFullViewModule,
+    ProjectFeatureViewSetterComponent,
   ],
-  declarations: [ProjectFeatureViewSetterComponent],
   providers: [],
   exports: [ProjectFeatureViewSetterComponent, RouterModule],
 })

@@ -65,12 +65,7 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
             return of(true);
           } else {
             if (invitation.status === 'revoked') {
-              appService.toastNotification({
-                message: 'errors.you_dont_have_permission_to_see',
-                status: TuiNotification.Error,
-                autoClose: false,
-                closeOnNavigation: false,
-              });
+              showToast(appService, 'errors.you_dont_have_permission_to_see');
               void router.navigate(['/signup']);
             } else {
               void router.navigate(['/signup'], {
@@ -94,16 +89,14 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
           return (function handle404Error() {
             return projectApiService.getProject(projectId).pipe(
               catchError((httpErrorResponse: HttpErrorResponse) => {
-                // Display toast notification
-                appService.toastNotification({
-                  message: 'errors.invalid_token_toast_message',
-                  status: TuiNotification.Error,
-                  closeOnNavigation: false,
-                });
-
                 if (httpErrorResponse.status === 403) {
+                  showToast(
+                    appService,
+                    'errors.you_dont_have_permission_to_see'
+                  );
                   void router.navigate(['/']);
                 } else {
+                  showToast(appService);
                   void router.navigate(['/404']);
                 }
                 return EMPTY;
@@ -118,13 +111,7 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
           })();
         }
 
-        // Display toast notification
-        appService.toastNotification({
-          message: 'errors.invalid_token_toast_message',
-          status: TuiNotification.Error,
-          closeOnNavigation: false,
-        });
-
+        showToast(appService);
         // Handle other errors when logged in
         if (authService.isLogged()) {
           void router.navigate(['/']);
@@ -136,3 +123,14 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
       })
     );
 };
+
+export function showToast(
+  appService: AppService,
+  message = 'errors.invalid_token_toast_message'
+) {
+  appService.toastNotification({
+    message,
+    status: TuiNotification.Error,
+    closeOnNavigation: false,
+  });
+}

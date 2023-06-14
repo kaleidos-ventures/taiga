@@ -57,9 +57,6 @@ createdb -U $dbuser -h $dbhost -p $dbport $dbname
 if [ "$?" -ne "0" ]; then
   echo && echo "Error accessing the database, aborting."
 else
-  echo "-> Generate initial migrations"
-  python -m taiga db drop-migrations
-  python -m taiga db init-migrations
   echo "-> Load migrations"
   python -m taiga db migrate --syncdb
   echo "-> Initialize taskqueue"

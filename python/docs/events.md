@@ -607,6 +607,19 @@ Content for:
   ```
 
 
+#### `workflowstatuses.create`
+
+It happens when a new workflow status has been created.
+
+Content for:
+- project channel:
+  ```
+  {
+      "status": {... "workflow status object" ...}
+  }
+  ```
+
+
 #### `stories.create`
 
 It happens when a new story has been created.

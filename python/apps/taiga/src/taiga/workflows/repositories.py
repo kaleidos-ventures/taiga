@@ -98,7 +98,7 @@ create_workflow = sync_to_async(create_workflow_sync)
 
 
 ##########################################################
-# Workflow - get workflows
+# Workflow - list workflows
 ##########################################################
 
 
@@ -144,6 +144,7 @@ DEFAULT_QUERYSET_WORKFLOW_STATUS = WorkflowStatus.objects.all()
 
 
 class WorkflowStatusFilters(TypedDict, total=False):
+    id: UUID
     slug: str
     workflow_id: UUID
     workflow_slug: str
@@ -165,6 +166,34 @@ def _apply_filters_to_workflow_status_queryset(
     return qs.filter(**filter_data)
 
 
+WorkflowStatusSelectRelated = list[
+    Literal[
+        "workflow",
+    ]
+]
+
+
+def _apply_select_related_to_workflow_status_queryset(
+    qs: QuerySet[WorkflowStatus],
+    select_related: WorkflowStatusSelectRelated,
+) -> QuerySet[WorkflowStatus]:
+    return qs.select_related(*select_related)
+
+
+WorkflowStatusOrderBy = list[
+    Literal[
+        "order",
+        "-order",
+    ]
+]
+
+
+def _apply_order_by_to_workflow_status_queryset(
+    qs: QuerySet[WorkflowStatus], order_by: WorkflowStatusOrderBy
+) -> QuerySet[WorkflowStatus]:
+    return qs.order_by(*order_by)
+
+
 ##########################################################
 # WorkflowStatus - create workflow status
 ##########################################################
@@ -172,22 +201,48 @@ def _apply_filters_to_workflow_status_queryset(
 
 def create_workflow_status_sync(
     name: str,
-    slug: str,
+    slug: str | None,
     color: int,
     order: int,
     workflow: Workflow,
 ) -> WorkflowStatus:
-
-    return WorkflowStatus.objects.create(
+    status = WorkflowStatus(
         name=name,
-        slug=slug,
         color=color,
         order=order,
         workflow=workflow,
     )
+    if slug:
+        status.slug = slug
+
+    status.save()
+
+    return status
 
 
 create_workflow_status = sync_to_async(create_workflow_status_sync)
+
+
+##########################################################
+# WorkflowStatus - list workflow statuses
+##########################################################
+
+
+@sync_to_async
+def list_workflow_statuses(
+    filters: WorkflowStatusFilters = {},
+    order_by: WorkflowStatusOrderBy = ["order"],
+    offset: int | None = None,
+    limit: int | None = None,
+) -> list[WorkflowStatus]:
+
+    qs = _apply_filters_to_workflow_status_queryset(qs=DEFAULT_QUERYSET_WORKFLOW_STATUS, filters=filters)
+    qs = _apply_order_by_to_workflow_status_queryset(qs=qs, order_by=order_by)
+
+    if limit is not None and offset is not None:
+        limit += offset
+
+    return list(qs[offset:limit])
 
 
 ##########################################################
@@ -196,20 +251,14 @@ create_workflow_status = sync_to_async(create_workflow_status_sync)
 
 
 @sync_to_async
-def get_status(filters: WorkflowStatusFilters = {}) -> WorkflowStatus | None:
+def get_status(
+    filters: WorkflowStatusFilters = {},
+    select_related: WorkflowStatusSelectRelated = [],
+) -> WorkflowStatus | None:
     qs = _apply_filters_to_workflow_status_queryset(qs=DEFAULT_QUERYSET_WORKFLOW_STATUS, filters=filters)
+    qs = _apply_select_related_to_workflow_status_queryset(qs=qs, select_related=select_related)
 
     try:
         return qs.get()
     except WorkflowStatus.DoesNotExist:
         return None
-
-
-##########################################################
-# WorkflowStatus - misc
-##########################################################
-
-
-@sync_to_async
-def list_workflow_statuses(workflow: Workflow) -> list[WorkflowStatus]:
-    return list(workflow.statuses.all())

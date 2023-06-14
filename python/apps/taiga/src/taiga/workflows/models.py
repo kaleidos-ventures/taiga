@@ -14,7 +14,7 @@ from taiga.base.utils.slug import slugify_uniquely_for_queryset
 
 class Workflow(models.BaseModel):
     name = models.CharField(max_length=250, null=False, blank=False, verbose_name="name")
-    slug = models.CharField(max_length=250, null=False, blank=False, verbose_name="slug")
+    slug = models.LowerSlugField(max_length=250, null=False, blank=False, verbose_name="slug")
     order = models.BigIntegerField(default=timestamp_mics, null=False, blank=False, verbose_name="order")
     project = models.ForeignKey(
         "projects.Project",
@@ -45,10 +45,12 @@ class Workflow(models.BaseModel):
 
 
 class WorkflowStatus(models.BaseModel):
-    name = models.CharField(max_length=250, null=False, blank=False, verbose_name="name")
-    slug = models.CharField(max_length=250, null=False, blank=False, verbose_name="slug")
+    name = models.CharField(max_length=30, null=False, blank=False, verbose_name="name")
+    slug = models.LowerSlugField(max_length=250, null=False, blank=False, verbose_name="slug")
     color = models.IntegerField(null=False, blank=False, default=1, verbose_name="color")
-    order = models.BigIntegerField(default=timestamp_mics, null=False, blank=False, verbose_name="order")
+    order = models.DecimalField(
+        max_digits=16, decimal_places=10, default=100, null=False, blank=False, verbose_name="order"
+    )
     workflow = models.ForeignKey(
         "workflows.Workflow",
         null=False,
@@ -61,6 +63,9 @@ class WorkflowStatus(models.BaseModel):
     class Meta:
         verbose_name = "workflow status"
         verbose_name_plural = "workflow statuses"
+        constraints = [
+            models.UniqueConstraint(fields=["workflow", "slug"], name="%(app_label)s_%(class)s_unique_workflow_slug"),
+        ]
         indexes = [
             models.Index(fields=["workflow", "slug"]),
         ]

@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "70ad43bc-0496-49d5-8f46-465db3fc5e27",
+		"_postman_id": "eef95fcc-33cb-4e1d-98c7-3a4c00aa9f20",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -1598,60 +1598,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "project workflows",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-id}}",
-								"workflows"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -2223,6 +2169,172 @@
 								"{{pj-id}}",
 								"invitations",
 								"{{invit-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "workflow",
+			"item": [
+				{
+					"name": "project workflows",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "project workflow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"   pm.environment.set(\"story_version\", pm.response.json().version);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create workflow status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"       pm.environment.set(\"ref1\", pm.response.json().ref);",
+									"       pm.environment.set(\"story_ref\", pm.response.json().ref);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Closed\",\n    \"color\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}",
+								"statuses"
 							]
 						}
 					},

@@ -61,7 +61,7 @@ async def test_list_workflows_schemas_ok() -> None:
     workflows = await repositories.list_workflows(filters={"project_id": project.id}, prefetch_related=["statuses"])
 
     assert len(workflows) == 1
-    assert len(await _list_workflow_statuses(workflows[0])) == 4
+    assert len(await _list_workflow_statuses(workflow=workflows[0])) == 4
     assert hasattr(workflows[0], "id")
 
 
@@ -79,14 +79,14 @@ async def test_list_project_without_workflows_ok() -> None:
 
 async def test_list_workflows_statuses_ok() -> None:
     workflow = await f.create_workflow()
-    statuses = await repositories.list_workflow_statuses(workflow=workflow)
+    statuses = await repositories.list_workflow_statuses(filters={"workflow_id": workflow.id})
 
     assert len(statuses) > 0
 
 
 async def test_list_no_workflows_statuses() -> None:
     workflow = await f.create_workflow(statuses=[])
-    statuses = await repositories.list_workflow_statuses(workflow=workflow)
+    statuses = await repositories.list_workflow_statuses(filters={"workflow_id": workflow.id})
 
     assert len(statuses) == 0
 
@@ -115,7 +115,7 @@ async def test_get_project_without_workflow_ok() -> None:
 ##########################################################
 
 
-async def test_get_workflow_stauts_ok() -> None:
+async def test_get_workflow_status_ok() -> None:
     project = await f.create_project()
     workflows = await _list_workflows(project=project)
     workflow = workflows[0]

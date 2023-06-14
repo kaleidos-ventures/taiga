@@ -12,9 +12,11 @@ from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
 
+WRONG_SLUG = "wrong_slug"
+
 
 ##########################################################
-# GET /projects/<project_slug>/workflows
+# Workflow GET /projects/<project_id>/workflows
 ##########################################################
 
 
@@ -43,9 +45,9 @@ async def test_get_workflows_wrong_permissions(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-##########################################################
-# GET /projects/<project_slug>/workflows/{workflow_slug}
-##########################################################
+#################################################################
+# Workflow GET /projects/<project_id>/workflows/{workflow_slug}
+#################################################################
 
 
 async def test_get_workflow(client):
@@ -81,4 +83,46 @@ async def test_get_workflow_wrong_permissions(client):
 
     client.login(user)
     response = client.get(f"/projects/{project.b64id}/workflows/{workflow.slug}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+################################################################################
+# Workflow status POST /projects/<project_id>/workflows/<workflow_slug>/statuses
+################################################################################
+
+
+async def test_create_workflow_status_invalid_workflow(client):
+    project = await f.create_project()
+    await f.create_workflow(project=project)
+
+    data = {"name": "Closed", "color": 5}
+
+    client.login(project.created_by)
+    response = client.post(f"/projects/{project.b64id}/workflows/{WRONG_SLUG}/statuses", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_create_workflow_status_being_pj_admin_ok(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+
+    data = {"name": "Closed", "color": 5}
+
+    client.login(project.created_by)
+    response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/statuses", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_create_workflow_status_forbidden(client):
+    pj_member = await f.create_user()
+    project = await f.create_project()
+    pj_role = await f.create_project_role(is_admin=False, project=project)
+    await f.create_project_membership(user=pj_member, project=project, role=pj_role)
+
+    workflow = await f.create_workflow(project=project)
+
+    data = {"name": "Closed", "color": 5}
+
+    client.login(pj_member)
+    response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/statuses", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text

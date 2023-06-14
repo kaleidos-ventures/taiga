@@ -6,13 +6,18 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 
+from decimal import Decimal
 from typing import cast
 from uuid import UUID
 
+from taiga.workflows import events as workflow_events
 from taiga.workflows import repositories as workflows_repositories
-from taiga.workflows.models import Workflow
-from taiga.workflows.serializers import WorkflowSerializer
+from taiga.workflows.models import Workflow, WorkflowStatus
+from taiga.workflows.serializers import WorkflowSerializer, WorkflowStatusSerializer
 from taiga.workflows.serializers import services as serializers_services
+
+DEFAULT_ORDER_OFFSET = Decimal(100)  # default offset when adding a workflow status
+
 
 ##########################################################
 # list workflows
@@ -30,7 +35,7 @@ async def list_workflows(project_id: UUID) -> list[WorkflowSerializer]:
     return [
         serializers_services.serialize_workflow(
             workflow=workflow,
-            workflow_statuses=await workflows_repositories.list_workflow_statuses(workflow=workflow),
+            workflow_statuses=await workflows_repositories.list_workflow_statuses(filters={"workflow_id": workflow.id}),
         )
         for workflow in workflows
     ]
@@ -62,6 +67,59 @@ async def get_workflow_detail(project_id: UUID, workflow_slug: str) -> WorkflowS
             select_related=["project"],
         ),
     )
-    return serializers_services.serialize_workflow(
-        workflow=workflow, workflow_statuses=await workflows_repositories.list_workflow_statuses(workflow=workflow)
+    workflow_statuses = await workflows_repositories.list_workflow_statuses(filters={"workflow_id": workflow.id})
+    return serializers_services.serialize_workflow(workflow=workflow, workflow_statuses=workflow_statuses)
+
+
+##########################################################
+# create workflow status
+##########################################################
+
+
+async def create_workflow_status(name: str, color: int, workflow: Workflow) -> WorkflowStatusSerializer:
+    latest_status = await workflows_repositories.list_workflow_statuses(
+        filters={"workflow_id": workflow.id}, order_by=["-order"], offset=0, limit=1
     )
+    order = DEFAULT_ORDER_OFFSET + (latest_status[0].order if latest_status else 0)
+
+    # Create workflow status
+    status = await workflows_repositories.create_workflow_status(
+        name=name, slug=None, color=color, order=order, workflow=workflow
+    )
+
+    # Get detailed status
+    detailed_status = await get_status_detail(workflow_id=workflow.id, status_slug=status.slug)
+
+    # Emit event
+    await workflow_events.emit_event_when_workflow_status_is_created(project=workflow.project, status=detailed_status)
+
+    return detailed_status
+
+
+##########################################################
+# get workflow status
+##########################################################
+
+
+async def get_status(workflow_id: UUID, status_slug: str) -> WorkflowStatus | None:
+    return await workflows_repositories.get_status(
+        filters={
+            "workflow_id": workflow_id,
+            "slug": status_slug,
+        },
+        select_related=["workflow"],
+    )
+
+
+async def get_status_detail(workflow_id: UUID, status_slug: str) -> WorkflowStatusSerializer:
+    status = cast(
+        WorkflowStatus,
+        await workflows_repositories.get_status(
+            filters={
+                "workflow_id": workflow_id,
+                "slug": status_slug,
+            },
+            select_related=["workflow"],
+        ),
+    )
+    return serializers_services.serialize_workflow_status(workflow_status=status)

@@ -546,4 +546,13 @@ export class ProjectApiService {
       status
     );
   }
+
+  public newComment(projectId: Project['id'], ref: Story['ref'], text: string) {
+    return this.http.post(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${ref}/comments`,
+      {
+        text,
+      }
+    );
+  }
 }

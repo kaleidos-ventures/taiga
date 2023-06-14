@@ -21,6 +21,30 @@ import { ProjectInvitationCTAGuard } from './modules/project/data-access/guards/
 import { ProjectInvitationGuard } from './modules/project/data-access/guards/project-invitation.guard';
 import { WorkspaceInvitationCTAGuard } from './modules/workspace/feature-detail/guards/workspace-invitation-cta.guard';
 
+function isViewSetterKanbaStory(
+  future: ActivatedRouteSnapshot,
+  curr: ActivatedRouteSnapshot
+) {
+  const story = ':slug/stories/:storyRef';
+  const kanban = ':slug/kanban';
+
+  const urls = [story, kanban];
+
+  const findUrl = (it: ActivatedRouteSnapshot): boolean => {
+    const finded = !!urls.find((url) => it.routeConfig?.path === url);
+
+    if (finded) {
+      return true;
+    } else if (it.parent) {
+      return findUrl(it.parent);
+    } else {
+      return false;
+    }
+  };
+
+  return findUrl(future) && findUrl(curr);
+}
+
 /*
 Add to your route if you want to control the if the component is reused in the same url:
 
@@ -41,6 +65,10 @@ export class CustomReuseStrategy extends BaseRouteReuseStrategy {
     ) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return future.data.reuseComponent;
+    }
+
+    if (isViewSetterKanbaStory(future, curr)) {
+      return true;
     }
 
     return future.routeConfig === curr.routeConfig;

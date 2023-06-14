@@ -16,6 +16,7 @@ Copyright (c) 2023-present Kaleidos INC
           [formGroup]="descriptionForm"
           (ngSubmit)="save()">
           <tg-editor
+            id="edit-description"
             [tgStoryDetailDescriptionSticky]="vm.editorReady"
             [field]="descriptionForm.get('description')!.value"
             [height]="descriptionHeight"

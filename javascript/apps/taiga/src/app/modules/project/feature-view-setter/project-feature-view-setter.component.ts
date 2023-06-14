@@ -10,14 +10,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   ViewChild,
   ViewContainerRef,
   inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, distinctUntilChanged, map } from 'rxjs';
-import { RxEffects } from '@rx-angular/state/effects';
+import { distinctUntilChanged, filter, map, pairwise, startWith } from 'rxjs';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { StoryDetailActions } from '../story-detail/data-access/+state/actions/story-detail.actions';
 import {
@@ -26,7 +26,19 @@ import {
 } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { ProjectFeatureStoryWrapperFullViewModule } from '../feature-story-wrapper-full-view/project-feature-story-wrapper-full-view.module';
-import { filterNil } from '~/app/shared/utils/operators';
+import { filterFalsy, filterNil } from '~/app/shared/utils/operators';
+import { Router } from '@angular/router';
+import { RxState } from '@rx-angular/state';
+import { StoryDetail, StoryView } from '@taiga/data';
+
+interface ProjectFeatureViewSetterComponentState {
+  storyView: StoryView;
+  selectStory: StoryDetail | null;
+  isKanban: boolean;
+  kanbanHost: ViewContainerRef | undefined;
+  url: string;
+}
+
 @UntilDestroy()
 @Component({
   selector: 'tg-project-feature-view-setter',
@@ -35,56 +47,72 @@ import { filterNil } from '~/app/shared/utils/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonTemplateModule, ProjectFeatureStoryWrapperFullViewModule],
-  providers: [RxEffects],
+  providers: [RxState],
 })
-export class ProjectFeatureViewSetterComponent {
+export class ProjectFeatureViewSetterComponent implements OnDestroy {
   @ViewChild('kanbanHost', { read: ViewContainerRef })
   public set kanbanHost(host: ViewContainerRef | undefined) {
-    this.kanbanHost$.next(host);
+    this.state.set({ kanbanHost: host });
   }
 
-  public storyView$ = this.store.select(selectStoryView);
-  public selectStory$ = this.store.select(selectStory);
-  public isKanban = false;
-  public kanbanHost$ = new BehaviorSubject<ViewContainerRef | undefined>(
-    undefined
-  );
+  public state = inject(
+    RxState
+  ) as RxState<ProjectFeatureViewSetterComponentState>;
 
-  private effects = inject(RxEffects);
+  public model$ = this.state.select();
 
   constructor(
+    private router: Router,
     private store: Store,
     private routerHistory: RouteHistoryService,
     private cd: ChangeDetectorRef
   ) {
-    const url = window.location.href;
-    this.isKanban = url.includes('kanban');
-
-    this.routerHistory.urlChanged
-      .pipe(
+    this.state.connect('storyView', this.store.select(selectStoryView));
+    this.state.connect('selectStory', this.store.select(selectStory));
+    this.state.connect(
+      'url',
+      this.routerHistory.urlChanged.pipe(
         untilDestroyed(this),
         map(({ url }) => url),
+        startWith(this.router.url),
         distinctUntilChanged()
       )
-      .subscribe((url) => {
-        this.isKanban = url.includes('kanban');
-        const isStory = url.includes('/stories');
+    );
+    this.state.connect(
+      'isKanban',
+      this.state.select('url').pipe(map((url) => url.includes('kanban')))
+    );
 
-        if (isStory) {
-          this.fetchStory();
-        }
-      });
+    this.state.hold(
+      this.state.select('url').pipe(
+        map((url) => url.includes('/stories')),
+        filterFalsy()
+      ),
+      () => {
+        this.fetchStory();
+      }
+    );
 
-    if (!this.isKanban) {
-      this.fetchStory();
-    }
-
-    this.effects.register(
-      this.kanbanHost$.pipe(distinctUntilChanged(), filterNil()),
+    this.state.hold(
+      this.state.select('kanbanHost').pipe(distinctUntilChanged(), filterNil()),
       (host) => {
         void this.loadKanban(host);
       }
     );
+
+    this.state.hold(
+      this.state.select('isKanban').pipe(
+        pairwise(),
+        filter(([, next]) => next)
+      ),
+      () => {
+        this.store.dispatch(StoryDetailActions.leaveStoryDetail());
+      }
+    );
+  }
+
+  public ngOnDestroy() {
+    this.store.dispatch(StoryDetailActions.leaveStoryDetail());
   }
 
   private fetchStory() {

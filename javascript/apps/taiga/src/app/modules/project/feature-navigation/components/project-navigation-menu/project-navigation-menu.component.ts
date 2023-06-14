@@ -22,7 +22,6 @@ import { Store } from '@ngrx/store';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { Project } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
-import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 
@@ -215,9 +214,5 @@ export class ProjectNavigationMenuComponent {
     this.displaySettingsMenu.next();
     this.dialog.open = false;
     this.dialog.type = '';
-  }
-
-  public clearStoryDetail() {
-    this.store.dispatch(StoryDetailActions.leaveStoryDetail());
   }
 }

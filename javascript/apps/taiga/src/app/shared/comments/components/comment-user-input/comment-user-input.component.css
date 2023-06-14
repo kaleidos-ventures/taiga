@@ -23,4 +23,28 @@ Copyright (c) 2023-present Kaleidos INC
   inline-size: 100%;
   padding-inline-start: var(--spacing-16);
   text-align: start;
+
+  &:focus {
+    border-color: var(--color-secondary);
+  }
+}
+
+.field-actions {
+  display: flex;
+  gap: var(--spacing-8);
+  inset-block-end: var(--spacing-8);
+  inset-inline-end: var(--spacing-8);
+  position: absolute;
+}
+
+.editor {
+  box-shadow: 3px 4px 4px rgba(0, 138, 168, 0.15);
+  position: relative;
+
+  /* Prevent flicker on open */
+  visibility: hidden;
+
+  &.ready {
+    visibility: visible;
+  }
 }

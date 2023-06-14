@@ -210,6 +210,7 @@ Copyright (c) 2023-present Kaleidos INC
             ">
             <div class="main-content-wrapper">
               <tui-scrollbar
+                tgCommentsAutoScroll
                 tgStoryCommentsPagination
                 [style.height.px]="columnHeight"
                 data-js="story-detail-scroll">
@@ -261,7 +262,8 @@ Copyright (c) 2023-present Kaleidos INC
                     [canComment]="vm.canComment"
                     [order]="vm.commentsOrder"
                     [loading]="vm.commentsLoading"
-                    (changeOrder)="changeCommentsOrder($event)"></tg-comments>
+                    (changeOrder)="changeCommentsOrder($event)"
+                    (comment)="onComment($event)"></tg-comments>
                 </div>
               </tui-scrollbar>
             </div>

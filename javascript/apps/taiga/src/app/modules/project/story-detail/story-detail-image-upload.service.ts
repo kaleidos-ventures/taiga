@@ -10,16 +10,14 @@ import { Injectable, inject } from '@angular/core';
 import { RxState } from '@rx-angular/state';
 import { ProjectApiService } from '@taiga/api';
 import { EditorImageUpload } from '~/app/shared/editor/editor-image-upload.service';
-import { StoryDetailDescriptionState } from './story-detail-description.component';
+import { StoryDetailState } from './story-detail.component';
 
 @Injectable({
   providedIn: 'root',
 })
-export class StoryDetailDescriptionImageUploadService
-  implements EditorImageUpload
-{
+export class StoryDetaiImageUploadService implements EditorImageUpload {
   public projectApiService = inject(ProjectApiService);
-  public state = inject<RxState<StoryDetailDescriptionState>>(RxState);
+  public state = inject<RxState<StoryDetailState>>(RxState);
 
   public imageUploadHandler(blobInfo: {
     filename: () => string;
@@ -30,7 +28,7 @@ export class StoryDetailDescriptionImageUploadService
     return new Promise((resolve) => {
       this.projectApiService
         .uploadStoriesMediafiles(
-          this.state.get('projectId'),
+          this.state.get('project').id,
           this.state.get('story').ref,
           [file]
         )

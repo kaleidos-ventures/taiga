@@ -31,8 +31,6 @@ import { PermissionsService } from '~/app/services/permissions.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectApiService } from '@taiga/api';
-import { EditorImageUploadService } from '~/app/shared/editor/editor-image-upload.service';
-import { StoryDetailDescriptionImageUploadService } from '~/app/modules/project/story-detail/components/story-detail-description/story-detail-description-image-upload.service';
 
 export interface StoryDetailDescriptionState {
   projectId: Project['id'];
@@ -53,13 +51,7 @@ export interface StoryDetailDescriptionState {
   templateUrl: './story-detail-description.component.html',
   styleUrls: ['./story-detail-description.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    RxState,
-    {
-      provide: EditorImageUploadService,
-      useClass: StoryDetailDescriptionImageUploadService,
-    },
-  ],
+  providers: [RxState],
 })
 export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
   @ViewChild('descriptionContent')

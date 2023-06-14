@@ -47,6 +47,7 @@ import { EditorComponent } from '~/app/shared/editor/editor.component';
 import { StoryDetailDescriptionStickyDirective } from './components/story-detail-description/story-detail-description-sticky.directive';
 import { CommentsComponent } from '~/app/shared/comments/comments.component';
 import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
+import { CommentsAutoScrollDirective } from '~/app/shared/comments/directives/comments-auto-scroll.directive';
 
 @NgModule({
   imports: [
@@ -84,6 +85,7 @@ import { StoryCommentsPaginationDirective } from './directives/story-comments-pa
     StoryDetailDescriptionStickyDirective,
     CommentsComponent,
     StoryCommentsPaginationDirective,
+    CommentsAutoScrollDirective,
   ],
   declarations: [
     StoryDetailComponent,

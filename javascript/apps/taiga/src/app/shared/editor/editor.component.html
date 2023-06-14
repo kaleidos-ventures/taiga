@@ -9,6 +9,7 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *ngIf="model$ | async as vm">
   <editor
     class="editor"
+    [id]="id"
     [(ngModel)]="field"
     (ngModelChange)="contentChange.next($event)"
     (onFocus)="onFocus()"
@@ -18,6 +19,7 @@ Copyright (c) 2023-present Kaleidos INC
       language: vm.lan.code,
       language_url: vm.lan.url,
       menubar: '',
+      placeholder: placeholder,
       height: height,
       toolbar:
         'blocks | bold italic underline strikethrough | bullist numlist | link image codesample| emoticons |  alignleft aligncenter alignright | outdent indent | forecolor backcolor removeformat | hr',

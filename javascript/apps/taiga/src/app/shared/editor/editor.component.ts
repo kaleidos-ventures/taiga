@@ -51,10 +51,16 @@ interface EditorState {
 })
 export class EditorComponent {
   @Input({ required: true })
+  public id!: string;
+
+  @Input({ required: true })
   public field!: string | null;
 
   @Input()
   public height = 200;
+
+  @Input()
+  public placeholder = '';
 
   @Output()
   public contentChange = new EventEmitter<string>();

@@ -123,5 +123,6 @@ export const projectEventActions = createActionGroup({
     }>(),
     'Remove Member': props<{ membership: Membership; workspace: string }>(),
     'Update Member': props<{ membership: Membership }>(),
+    'Create comment': props<{ storyRef: Story['ref']; projectId: string }>(),
   },
 });

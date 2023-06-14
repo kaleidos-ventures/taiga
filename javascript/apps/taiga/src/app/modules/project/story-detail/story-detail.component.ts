@@ -60,6 +60,9 @@ import {
 } from './data-access/+state/selectors/story-detail.selectors';
 import { storyDetailFeature } from './data-access/+state/reducers/story-detail.reducer';
 import { OrderComments } from '~/app/shared/comments/comments.component';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { EditorImageUploadService } from '~/app/shared/editor/editor-image-upload.service';
+import { StoryDetaiImageUploadService } from './story-detail-image-upload.service';
 
 export interface StoryDetailState {
   project: Project;
@@ -97,6 +100,10 @@ export interface StoryDetailForm {
     {
       provide: TRANSLOCO_SCOPE,
       useValue: 'story',
+    },
+    {
+      provide: EditorImageUploadService,
+      useClass: StoryDetaiImageUploadService,
     },
   ],
   hostDirectives: [
@@ -411,25 +418,35 @@ export class StoryDetailComponent {
   }
 
   public navigateToNextStory(ref: number) {
-    this.location.go(
-      `project/${this.state.get('project').id}/${
-        this.state.get('project').slug
-      }/stories/${ref}`,
-      undefined,
+    void this.router.navigate(
+      [
+        'project',
+        this.state.get('project').id,
+        this.state.get('project').slug,
+        'stories',
+        ref,
+      ],
       {
-        nextStoryNavigation: true,
+        state: {
+          nextStoryNavigation: true,
+        },
       }
     );
   }
 
   public navigateToPreviousStory(ref: number) {
-    this.location.go(
-      `project/${this.state.get('project').id}/${
-        this.state.get('project').slug
-      }/stories/${ref}`,
-      undefined,
+    void this.router.navigate(
+      [
+        'project',
+        this.state.get('project').id,
+        this.state.get('project').slug,
+        'stories',
+        ref,
+      ],
       {
-        previousStoryNavigation: true,
+        state: {
+          previousStoryNavigation: true,
+        },
       }
     );
   }
@@ -438,16 +455,22 @@ export class StoryDetailComponent {
     const ref = this.state.get('story').ref;
 
     this.store.dispatch(StoryDetailActions.leaveStoryDetail());
-    this.location.replaceState(
+    void this.router.navigateByUrl(
       `project/${this.state.get('project').id}/${
         this.state.get('project').slug
-      }/kanban`
+      }/kanban`,
+      {
+        state: {
+          ignoreNextMainFocus: true,
+        },
+      }
     );
     if (ref) {
       requestAnimationFrame(() => {
         const mainFocus = document.querySelector(
           `tg-kanban-story[data-ref='${ref}'] .story-kanban-ref-focus .story-title`
         );
+
         if (mainFocus) {
           (mainFocus as HTMLElement).focus();
         }
@@ -514,6 +537,22 @@ export class StoryDetailComponent {
         projectId: this.state.get('project').id,
       })
     );
+  }
+
+  public onComment(comment: string) {
+    this.store
+      .select(selectUser)
+      .pipe(take(1), filterNil())
+      .subscribe((user) => {
+        this.store.dispatch(
+          StoryDetailActions.newComment({
+            storyRef: this.state.get('story').ref,
+            projectId: this.state.get('project').id,
+            comment,
+            user,
+          })
+        );
+      });
   }
 
   private events() {

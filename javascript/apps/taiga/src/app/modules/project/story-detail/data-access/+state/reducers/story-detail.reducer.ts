@@ -213,6 +213,34 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    StoryDetailActions.newComment,
+    (state, { comment, user }): StoryDetailState => {
+      const newComment: UserComment = {
+        createdAt: new Date().toISOString(),
+        createdBy: {
+          fullName: user.fullName,
+          color: user.color,
+          username: user.username,
+        },
+        text: comment,
+      };
+
+      if (state.commentsOrder === '-createdAt') {
+        state.comments.unshift(newComment);
+      } else {
+        state.comments.push(newComment);
+      }
+
+      if (state.totalComments) {
+        state.totalComments++;
+      } else {
+        state.totalComments = 1;
+      }
+
+      return state;
+    }
   )
 );
 

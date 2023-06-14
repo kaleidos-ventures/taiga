@@ -64,6 +64,7 @@ export class CommentsComponent {
   @Input({ required: true }) public loading!: boolean;
   @Input() public canComment = false;
   @Output() public changeOrder = new EventEmitter<OrderComments>();
+  @Output() public comment = new EventEmitter<string>();
 
   public localStorageService = inject(LocalStorageService);
 
@@ -73,16 +74,6 @@ export class CommentsComponent {
     this.localStorageService.set('comments_order', newOrder);
 
     this.changeOrder.emit(newOrder);
-  }
-
-  public openCommentInput(): void {
-    alert(
-      `
-    (\\(\\
-    ( -.-) "Work in progress"
-    o_(")(")
-    `
-    );
   }
 
   public trackIndex(index: number): number {

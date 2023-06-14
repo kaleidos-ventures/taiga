@@ -5,15 +5,16 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2023-present Kaleidos INC
 -->
-
-<ng-container *ngIf="storyView$ | async as storyView">
-  <ng-container *ngIf="storyView !== 'full-view' || isKanban">
-    <ng-template #kanbanHost></ng-template>
-  </ng-container>
-  <ng-container *ngIf="selectStory$ | async as story">
-    <tg-project-feature-story-wrapper-full-view
-      *ngIf="
-        storyView === 'full-view' && story
-      "></tg-project-feature-story-wrapper-full-view>
+<ng-container *ngIf="model$ | async as vm">
+  <ng-container *ngIf="vm.storyView">
+    <ng-container *ngIf="vm.storyView !== 'full-view' || vm.isKanban">
+      <ng-template #kanbanHost></ng-template>
+    </ng-container>
+    <ng-container *ngIf="vm.selectStory">
+      <tg-project-feature-story-wrapper-full-view
+        *ngIf="
+          vm.storyView === 'full-view' && !vm.isKanban
+        "></tg-project-feature-story-wrapper-full-view>
+    </ng-container>
   </ng-container>
 </ng-container>

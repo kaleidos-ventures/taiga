@@ -2,6 +2,7 @@
   "title": "Comments",
   "leave_comment": "Leave a comment...",
   "no_comments": "There are no comments yet.",
+  "comment": "Comment",
   "order": {
     "new": "Newest first",
     "old": "Oldest first",

@@ -18,9 +18,53 @@ Copyright (c) 2023-present Kaleidos INC
       aria-hidden="true"></tg-user-avatar>
 
     <button
+      *ngIf="!vm.open"
+      data-test="open-comment-input"
+      tgRestoreFocusTarget="open-comment-input"
+      (click)="open()"
       type="button"
       class="open-comment-input">
       {{ t('comments.leave_comment') }}
     </button>
+
+    <div
+      (resized)="resizeEditor$.next()"
+      class="editor"
+      [class.ready]="vm.editorReady"
+      *ngIf="vm.open">
+      <tg-editor
+        id="comment"
+        tgRestoreFocus="open-comment-input"
+        field=""
+        [placeholder]="t('comments.leave_comment')"
+        (contentChange)="onCommentContentChange($event)"
+        (editorReady)="onInitEditor()"></tg-editor>
+
+      <div
+        class="field-actions"
+        *ngIf="vm.editorReady">
+        <button
+          (click)="cancel()"
+          data-test="comment-cancel"
+          tuiButton
+          type="button"
+          appearance="tertiary">
+          {{ t('commons.cancel') }}
+        </button>
+        <button
+          (click)="save()"
+          data-test="comment-save"
+          tuiButton
+          type="submit"
+          appearance="primary">
+          {{ t('comments.comment') }}
+        </button>
+      </div>
+    </div>
+
+    <tg-discard-changes-modal
+      [open]="vm.showConfirmationModal"
+      (discard)="discard$.next(true)"
+      (cancel)="discard$.next(false)"></tg-discard-changes-modal>
   </ng-container>
 </ng-container>

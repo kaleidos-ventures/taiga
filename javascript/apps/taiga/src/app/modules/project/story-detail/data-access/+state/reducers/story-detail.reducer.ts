@@ -43,7 +43,7 @@ export const initialStoryDetailState: StoryDetailState = {
   comments: [],
   loadingComments: false,
   totalComments: null,
-  commentsOrder: '-createdAt',
+  commentsOrder: LocalStorageService.get('comments_order') || '-createdAt',
 };
 
 export const reducer = createImmerReducer(
@@ -54,7 +54,8 @@ export const reducer = createImmerReducer(
     state.story = null;
     state.comments = [];
     state.loadingComments = false;
-    state.commentsOrder = '-createdAt';
+    state.commentsOrder =
+      LocalStorageService.get('comments_order') || '-createdAt';
 
     return state;
   }),

@@ -13,6 +13,7 @@ import {
   EventEmitter,
   Input,
   Output,
+  inject,
 } from '@angular/core';
 import { UserComment } from '@taiga/data';
 import { RxFor } from '@rx-angular/template/for';
@@ -24,6 +25,7 @@ import { TRANSLOCO_SCOPE, TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiHintModule } from '@taiga-ui/core';
 import { CommentUserInputComponent } from './components/comment-user-input/comment-user-input.component';
 import { CommentSkeletonComponent } from './components/comment skeleton/comment-skeleton.component';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 export type OrderComments = '-createdAt' | 'createdAt';
 
@@ -63,10 +65,14 @@ export class CommentsComponent {
   @Input() public canComment = false;
   @Output() public changeOrder = new EventEmitter<OrderComments>();
 
+  public localStorageService = inject(LocalStorageService);
+
   public toggleOrder(): void {
-    this.changeOrder.emit(
-      this.order === 'createdAt' ? '-createdAt' : 'createdAt'
-    );
+    const newOrder = this.order === 'createdAt' ? '-createdAt' : 'createdAt';
+
+    this.localStorageService.set('comments_order', newOrder);
+
+    this.changeOrder.emit(newOrder);
   }
 
   public openCommentInput(): void {

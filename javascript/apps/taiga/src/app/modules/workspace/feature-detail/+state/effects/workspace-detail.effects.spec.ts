@@ -411,10 +411,18 @@ describe('WorkspaceEffects', () => {
     );
   });
 
-  it('update workspace non members', () => {
+  it('update workspace members and non members', () => {
     const id = randUuid();
     const workspaceApiService = spectator.inject(WorkspaceApiService);
     const effects = spectator.inject(WorkspaceDetailEffects);
+
+    const membersResponse = {
+      members: [
+        WorkspaceMembershipMockFactory(),
+        WorkspaceMembershipMockFactory(),
+      ],
+      totalMembers: 2,
+    };
 
     const nonMembersResponse = {
       members: [
@@ -427,24 +435,35 @@ describe('WorkspaceEffects', () => {
     workspaceApiService.getWorkspaceNonMembers.mockReturnValue(
       cold('-b|', { b: nonMembersResponse })
     );
+    workspaceApiService.getWorkspaceMembers.mockReturnValue(
+      cold('-b|', { b: membersResponse })
+    );
 
     actions$ = hot('-a', {
-      a: workspaceDetailEventActions.updateNonMembersList({ id }),
+      a: workspaceDetailEventActions.updateMembersNonMembersProjects({ id }),
     });
 
     const store = spectator.inject(MockStore);
+    store.overrideSelector(selectMembersOffset, 0);
     store.overrideSelector(selectNonMembersOffset, 0);
     store.refreshState();
 
     const expected = cold('--a', {
-      a: workspaceDetailApiActions.getWorkspaceNonMembersSuccess({
-        members: nonMembersResponse.members,
-        totalMembers: 2,
-        offset: 0,
+      a: workspaceDetailEventActions.updateMembersNonMembersProjectsSuccess({
+        members: {
+          members: membersResponse.members,
+          totalMembers: 2,
+          offset: 0,
+        },
+        nonMembers: {
+          members: nonMembersResponse.members,
+          totalMembers: 2,
+          offset: 0,
+        },
       }),
     });
 
-    expect(effects.updateNonMembers$).toBeObservable(expected);
+    expect(effects.updateMembersNonMembersProjects$).toBeObservable(expected);
   });
 
   it('update workspace invitations', () => {

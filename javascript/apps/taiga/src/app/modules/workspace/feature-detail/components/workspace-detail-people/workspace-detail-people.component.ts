@@ -16,7 +16,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { User, Workspace } from '@taiga/data';
+import { User, Workspace, Project } from '@taiga/data';
 import { filter } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import {
@@ -178,8 +178,28 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
         .pipe(untilDestroyed(this))
         .subscribe(() => {
           this.store.dispatch(
-            workspaceDetailEventActions.updateNonMembersList({
+            workspaceDetailEventActions.updateMembersNonMembersProjects({
               id: this.id,
+            })
+          );
+        });
+
+      this.wsService
+        .events<{
+          membership: {
+            user: Pick<User, 'username' | 'fullName' | 'color'>;
+            project: Project;
+          };
+          workspace: Workspace['id'];
+        }>({
+          channel: `workspaces.${this.id}`,
+          type: 'projectmemberships.delete',
+        })
+        .pipe(untilDestroyed(this))
+        .subscribe((eventResponse) => {
+          this.store.dispatch(
+            workspaceDetailEventActions.updateMembersNonMembersProjects({
+              id: eventResponse.event.content.workspace,
             })
           );
         });

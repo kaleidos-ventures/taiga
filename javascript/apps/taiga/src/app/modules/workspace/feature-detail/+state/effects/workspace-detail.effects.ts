@@ -579,36 +579,6 @@ export class WorkspaceDetailEffects {
     );
   });
 
-  public updateNonMembers$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(workspaceDetailEventActions.updateNonMembersList),
-      concatLatestFrom(() =>
-        this.store.select(selectNonMembersOffset).pipe(filterNil())
-      ),
-      exhaustMap(([action, nonMembersOffset]) => {
-        return this.workspaceApiService
-          .getWorkspaceNonMembers(
-            action.id,
-            nonMembersOffset,
-            MEMBERS_PAGE_SIZE
-          )
-          .pipe(
-            map((membersResponse) => {
-              return workspaceDetailApiActions.getWorkspaceNonMembersSuccess({
-                members: membersResponse.members,
-                totalMembers: membersResponse.totalMembers,
-                offset: nonMembersOffset,
-              });
-            }),
-            catchError((httpResponse: HttpErrorResponse) => {
-              this.appService.errorManagement(httpResponse);
-              return EMPTY;
-            })
-          );
-      })
-    );
-  });
-
   public updateInvitationsMembersList$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(workspaceDetailEventActions.updateInvitationsList),
@@ -635,6 +605,51 @@ export class WorkspaceDetailEffects {
               return EMPTY;
             })
           );
+      })
+    );
+  });
+
+  public updateMembersNonMembersProjects$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(workspaceDetailEventActions.updateMembersNonMembersProjects),
+      concatLatestFrom(() => [
+        this.store.select(selectMembersOffset).pipe(filterNil()),
+        this.store.select(selectNonMembersOffset).pipe(filterNil()),
+      ]),
+      exhaustMap(([action, membersOffset, nonMembersOffset]) => {
+        return zip(
+          this.workspaceApiService.getWorkspaceMembers(
+            action.id,
+            membersOffset,
+            MEMBERS_PAGE_SIZE
+          ),
+          this.workspaceApiService.getWorkspaceNonMembers(
+            action.id,
+            nonMembersOffset,
+            MEMBERS_PAGE_SIZE
+          )
+        ).pipe(
+          map((response) => {
+            return workspaceDetailEventActions.updateMembersNonMembersProjectsSuccess(
+              {
+                members: {
+                  members: response[0].members,
+                  totalMembers: response[0].totalMembers,
+                  offset: membersOffset,
+                },
+                nonMembers: {
+                  members: response[1].members,
+                  totalMembers: response[1].totalMembers,
+                  offset: nonMembersOffset,
+                },
+              }
+            );
+          }),
+          catchError((httpResponse: HttpErrorResponse) => {
+            this.appService.errorManagement(httpResponse);
+            return EMPTY;
+          })
+        );
       })
     );
   });

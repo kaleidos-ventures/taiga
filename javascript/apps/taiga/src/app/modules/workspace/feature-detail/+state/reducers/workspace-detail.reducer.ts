@@ -377,6 +377,19 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    workspaceDetailEventActions.updateMembersNonMembersProjectsSuccess,
+    (state, { members, nonMembers }): WorkspaceDetailState => {
+      state.members.membersList = members.members;
+      state.members.total = members.totalMembers;
+      state.members.offset = members.offset;
+      state.nonMembers.membersList = nonMembers.members;
+      state.nonMembers.total = nonMembers.totalMembers;
+      state.nonMembers.offset = nonMembers.offset;
+
+      return state;
+    }
   )
 );
 

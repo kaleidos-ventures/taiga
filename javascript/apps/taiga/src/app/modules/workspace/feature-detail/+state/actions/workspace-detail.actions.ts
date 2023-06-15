@@ -206,9 +206,6 @@ export const workspaceDetailEventActions = createActionGroup({
         offset: number;
       };
     }>(),
-    'Update non members list': props<{
-      id: Workspace['id'];
-    }>(),
     'Update invitations list': props<{
       id: Workspace['id'];
     }>(),
@@ -216,6 +213,21 @@ export const workspaceDetailEventActions = createActionGroup({
       members: InvitationWorkspaceMember[];
       totalMembers: number;
       offset: number;
+    }>(),
+    'Update members non members projects': props<{
+      id: Workspace['id'];
+    }>(),
+    'Update members non members projects success': props<{
+      members: {
+        members: WorkspaceMembership[];
+        totalMembers: number;
+        offset: number;
+      };
+      nonMembers: {
+        members: WorkspaceMembership[];
+        totalMembers: number;
+        offset: number;
+      };
     }>(),
   },
 });

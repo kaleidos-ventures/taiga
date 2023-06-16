@@ -13,17 +13,24 @@ import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { selectLanguages } from '@taiga/core';
 import { User } from '@taiga/data';
-import { Observable } from 'rxjs';
-import { distinctUntilChanged, filter, map, share, skip } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  share,
+  skip,
+  switchMap,
+} from 'rxjs/operators';
 import { WsService } from '~/app/services/ws';
 import { setUser } from './modules/auth/data-access/+state/actions/auth.actions';
 import { selectUser } from './modules/auth/data-access/+state/selectors/auth.selectors';
 import { AuthService } from './modules/auth/services/auth.service';
 import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { RouteHistoryService } from './shared/route-history/route-history.service';
-import { filterNil } from './shared/utils/operators';
 import { NavigationService } from './shared/navigation/navigation.service';
 import { InputModalityDetector } from '@angular/cdk/a11y';
+import { LanguageService } from './services/language/language.service';
 
 @Component({
   selector: 'tg-root',
@@ -44,7 +51,9 @@ export class AppComponent {
     private routeHistoryService: RouteHistoryService,
     private translocoService: TranslocoService,
     private navigationService: NavigationService,
-    private inputModalityDetector: InputModalityDetector
+    private inputModalityDetector: InputModalityDetector,
+    private localStorageService: LocalStorageService,
+    private languageService: LanguageService
   ) {
     this.userModality();
     this.language();
@@ -115,13 +124,30 @@ export class AppComponent {
     this.store
       .select(selectUser)
       .pipe(
-        filterNil(),
+        switchMap((user) => {
+          if (!user) {
+            return this.languageService.getUserLanguage().pipe(
+              map((lang) => {
+                return {
+                  userLang: lang.code,
+                  anonymous: true,
+                };
+              })
+            );
+          }
+          return of({ userLang: user.lang, anonymous: false });
+        }),
         concatLatestFrom(() => [this.store.select(selectLanguages)])
       )
       .subscribe(([user, languages]) => {
-        const lang = languages.find((it) => it.code === user.lang);
+        const lang = languages.find((it) => it.code === user.userLang);
 
-        this.translocoService.setActiveLang(user.lang);
+        this.translocoService.setActiveLang(user.userLang);
+
+        if (!user.anonymous) {
+          // remember the user language when he is not logged
+          this.localStorageService.set('lang', user.userLang);
+        }
 
         if (lang) {
           document.body.setAttribute(

@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
 import { Language } from '@taiga/data';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,18 @@ export class SystemApiService {
   constructor(private http: HttpClient, private config: ConfigService) {}
 
   public getLanguages() {
-    return this.http.get<Language[]>(`${this.config.apiUrl}/system/languages`);
+    return this.http
+      .get<Language[]>(`${this.config.apiUrl}/system/languages`)
+      .pipe(
+        map((languages) => {
+          return languages.map((language) => {
+            if (language.code.includes('es')) {
+              return { ...language, isDefault: true };
+            }
+
+            return { ...language, isDefault: false };
+          });
+        })
+      );
   }
 }

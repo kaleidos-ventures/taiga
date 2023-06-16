@@ -14,6 +14,7 @@ import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth
 import { TuiLanguage } from '@taiga-ui/i18n';
 import { TUI_ENGLISH_LANGUAGE, TUI_SPANISH_LANGUAGE } from '@taiga-ui/i18n';
 import editorLanguages from '~/assets/editor/languages.json';
+import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +33,7 @@ export class LanguageService {
         return this.store.select(selectUser).pipe(
           map((user) => {
             return {
-              userLang: user?.lang,
+              userLang: user?.lang ?? LocalStorageService.get('lang'),
               langs,
             };
           })

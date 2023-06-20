@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [ '3.10' ]
+        python-version: ["3.10"]
 
     services:
       postgres:
@@ -23,82 +23,81 @@ jobs:
         options: '--health-cmd "pg_isready" --health-interval 5s --health-timeout 5s --health-retries 6 --health-start-period 20s'
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Postgres restore fixture
-      run: |
-        pg_restore --no-privileges --no-owner --dbname="postgres://postgres:postgres@localhost:5432/taiga" "./.github/sql-fixtures/fixtures.sql"
+      - name: Postgres restore fixture
+        run: |
+          pg_restore --no-privileges --no-owner --dbname="postgres://postgres:postgres@localhost:5432/taiga" "./.github/sql-fixtures/fixtures.sql"
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: |
+            **/setup.py
+            **/setup.cfg
+            **/requirements/*.txt
 
-    - name: Enable cache
-      uses: actions/cache@v3
-      id: cache-back
-      with:
-        path: ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('**/python/apps/taiga/requirements/devel.txt') }}
+      - name: Install requirements
+        working-directory: ./python/apps/taiga
+        run: |
+          python -m pip install --upgrade pip wheel setuptools
+          python -m pip install -r requirements/devel.txt
+          python -m pip install -e .
 
-    - name: Install requirements
-      if: steps.cache-back.outputs.cache-hit != 'true'
-      working-directory: ./python/apps/taiga
-      run: |
-        python -m pip install --upgrade pip wheel setuptools
-        python -m pip install -r requirements/devel.txt
-        python -m pip install -e .
+      - name: Run back server
+        working-directory: ./python/apps/taiga
+        run: |
+          python -m taiga devserve -w > taiga-back.log 2> taiga-back.err &
+        env:
+          TAIGA_EVENTS__PUBSUB_BACKEND: "memory"
+          TAIGA_DEBUG: true
+          TAIGA_DB_NAME: taiga
+          TAIGA_DB_USER: postgres
+          TAIGA_DB_PASSWORD: postgres
+          TAIGA_DB_HOST: localhost
+          TAIGA_DB_PORT: 5432
+          TAIGA_SECRET_KEY: secret
+          TAIGA_ACCESS_TOKEN_LIFETIME: 1000000
 
-    - name: Run back server
-      working-directory: ./python/apps/taiga
-      run: |
-        python -m taiga devserve -w &
-      env:
-        TAIGA_DEBUG: true
-        TAIGA_DB_NAME: taiga
-        TAIGA_DB_USER: postgres
-        TAIGA_DB_PASSWORD: postgres
-        TAIGA_DB_HOST: localhost
-        TAIGA_DB_PORT: 5432
-        TAIGA_SECRET_KEY: secret
-        TAIGA_ACCESS_TOKEN_LIFETIME: 1000000
+      - name: Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: "./javascript/.nvmrc"
+          cache: "npm"
+          cache-dependency-path: javascript/package-lock.json
 
-    - name: Node 16
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-        cache: 'npm'
-        cache-dependency-path: javascript/package-lock.json
+      - name: Install dependencies
+        working-directory: ./javascript
+        run: npm ci
+        shell: bash
 
-    - name: Install dependencies
-      working-directory: ./javascript
-      run: npm ci
-      shell: bash
+      - name: Default config
+        working-directory: ./javascript
+        run: npm run default-config
 
-    - name: Default config
-      working-directory: ./javascript
-      run: npm run default-config
+      - name: Email serve
+        working-directory: ./javascript
+        run: npm run email:serve &
 
-    - name: Cypress run
-      uses: cypress-io/github-action@v3
-      # complete logs
-      # env:
-      #   DEBUG: cypress:*
-      env:
-        DEBUG: '@cypress/github-action'
-      with:
-        install: false
-        command: npm run e2e
-        working-directory: ./javascript/
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        env:
+          DEBUG: "@cypress/github-action"
+        with:
+          install: false
+          command: npm run e2e
+          working-directory: ./javascript/
 
-    - uses: actions/upload-artifact@v1
-      if: failure()
-      with:
-        name: cypress-screenshots
-        path: javascript/dist/cypress/apps/taiga-e2e/screenshots
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: javascript/dist/cypress/apps/taiga-e2e/screenshots
 
-    - uses: actions/upload-artifact@v1
-      if: always()
-      with:
-        name: cypress-videos
-        path: javascript/dist/cypress/apps/taiga-e2e/videos
+      - uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: javascript/dist/cypress/apps/taiga-e2e/videos

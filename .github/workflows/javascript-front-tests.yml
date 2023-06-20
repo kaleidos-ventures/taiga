@@ -3,11 +3,11 @@ name: Front - tests
 on:
   workflow_dispatch:
   push:
-    branches: [ 'main' ]
+    branches: ["main"]
     paths:
       - javascript/**
   pull_request:
-    branches: [ '*' ]
+    branches: ["*"]
     paths:
       - javascript/**
 
@@ -16,42 +16,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Node 16
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-        cache: 'npm'
-        cache-dependency-path: javascript/package-lock.json
+      - name: Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: "./javascript/.nvmrc"
+          cache: "npm"
+          cache-dependency-path: javascript/package-lock.json
 
-    - name: Install dependencies
-      working-directory: ./javascript
-      run: npm ci
-      shell: bash
+      - name: Install dependencies
+        working-directory: ./javascript
+        run: npm ci
+        shell: bash
 
-    - name: pass linters
-      working-directory: ./javascript
-      run: npm run lint
+      - name: pass linters
+        working-directory: ./javascript
+        run: npm run lint
 
   unit-test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Node 16
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-        cache: 'npm'
-        cache-dependency-path: javascript/package-lock.json
+      - name: Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: "./javascript/.nvmrc"
+          cache: "npm"
+          cache-dependency-path: javascript/package-lock.json
 
-    - name: Install dependencies
-      working-directory: ./javascript
-      run: npm ci
-      shell: bash
+      - name: Install dependencies
+        working-directory: ./javascript
+        run: npm ci
+        shell: bash
 
-    - name: pass unit test
-      working-directory: ./javascript
-      run: npm run test
+      - name: pass unit test
+        working-directory: ./javascript
+        run: npm run test

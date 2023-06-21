@@ -4,28 +4,29 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
-from uuid import UUID
 
-from taiga.base.serializers import BaseModel
+from taiga.base.serializers import UUIDB64, BaseModel
+from taiga.workflows.serializers.nested import WorkflowNestedSerializer, WorkflowStatusNestedSerializer
 
 
 class WorkflowStatusSerializer(BaseModel):
-    id: UUID
+    id: UUIDB64
     name: str
     slug: str
     color: int
     order: int
+    workflow: WorkflowNestedSerializer
 
     class Config:
         orm_mode = True
 
 
 class WorkflowSerializer(BaseModel):
-    id: UUID
+    id: UUIDB64
     name: str
     slug: str
     order: int
-    statuses: list[WorkflowStatusSerializer]
+    statuses: list[WorkflowStatusNestedSerializer]
 
     class Config:
         orm_mode = True

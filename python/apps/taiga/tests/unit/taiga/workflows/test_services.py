@@ -90,37 +90,6 @@ async def test_create_workflow_status_ok():
             filters={"workflow_id": workflow.id}, order_by=["-order"], offset=0, limit=1
         )
 
-        fake_workflows_repo.get_status.assert_awaited_once_with(
-            filters={
-                "workflow_id": workflow.id,
-                "slug": status.slug,
-            },
-            select_related=["workflow"],
-        )
-
         fake_workflow_events.emit_event_when_workflow_status_is_created.assert_awaited_once_with(
-            project=workflow.project, status=workflow_status
-        )
-
-
-#######################################################
-# get_status_detail
-#######################################################
-
-
-async def test_get_status_detail_ok():
-    workflow = f.build_workflow()
-    status = f.build_workflow_status(workflow=workflow)
-
-    with patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo:
-        fake_workflows_repo.get_status.return_value = status
-
-        await services.get_status_detail(workflow_id=workflow.id, status_slug=status.slug)
-
-        fake_workflows_repo.get_status.assert_awaited_once_with(
-            filters={
-                "workflow_id": workflow.id,
-                "slug": status.slug,
-            },
-            select_related=["workflow"],
+            project=workflow.project, workflow_status=workflow_status
         )

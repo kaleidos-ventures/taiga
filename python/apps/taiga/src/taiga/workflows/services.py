@@ -83,17 +83,20 @@ async def create_workflow_status(name: str, color: int, workflow: Workflow) -> W
     order = DEFAULT_ORDER_OFFSET + (latest_status[0].order if latest_status else 0)
 
     # Create workflow status
-    status = await workflows_repositories.create_workflow_status(
+    workflow_status = await workflows_repositories.create_workflow_status(
         name=name, slug=None, color=color, order=order, workflow=workflow
     )
 
-    # Get detailed status
-    detailed_status = await get_status_detail(workflow_id=workflow.id, status_slug=status.slug)
+    serialized_workflow_status = serializers_services.serialize_workflow_status(
+        workflow=workflow, workflow_status=workflow_status
+    )
 
     # Emit event
-    await workflow_events.emit_event_when_workflow_status_is_created(project=workflow.project, status=detailed_status)
+    await workflow_events.emit_event_when_workflow_status_is_created(
+        project=workflow.project, workflow_status=serialized_workflow_status
+    )
 
-    return detailed_status
+    return serialized_workflow_status
 
 
 ##########################################################
@@ -109,17 +112,3 @@ async def get_status(workflow_id: UUID, status_slug: str) -> WorkflowStatus | No
         },
         select_related=["workflow"],
     )
-
-
-async def get_status_detail(workflow_id: UUID, status_slug: str) -> WorkflowStatusSerializer:
-    status = cast(
-        WorkflowStatus,
-        await workflows_repositories.get_status(
-            filters={
-                "workflow_id": workflow_id,
-                "slug": status_slug,
-            },
-            select_related=["workflow"],
-        ),
-    )
-    return serializers_services.serialize_workflow_status(workflow_status=status)

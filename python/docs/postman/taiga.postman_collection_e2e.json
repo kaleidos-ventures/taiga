@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "bd646ee6-6731-43f7-8a22-a87c3f15f730",
+		"_postman_id": "763d91af-2ab5-4eef-b0a7-fae0ce8b2e6c",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15018493"
 	},
 	"item": [
 		{
@@ -3676,76 +3677,6 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.stories.{ref}.comments",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Tests",
-									"pm.test(\"HTTP status code is correct\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Response JSON is correct\", function () {",
-									"    // TODO: Add checks here when the POST endpoint exists",
-									"    var jsonRes = pm.response.json();",
-									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(0);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {}
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/comments?order=-createdAt&limit=100&offset=0",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"projects",
-								"{{pj-id}}",
-								"stories",
-								"{{story_ref}}",
-								"comments"
-							],
-							"query": [
-								{
-									"key": "order",
-									"value": "-createdAt"
-								},
-								{
-									"key": "limit",
-									"value": "100"
-								},
-								{
-									"key": "offset",
-									"value": "0"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "200.projects.{p}.stories.{ref}",
 					"event": [
 						{
@@ -4101,6 +4032,245 @@
 								"{{story_ref}}",
 								"assignments",
 								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "projects.{p}.stories.{ref}.comments",
+			"item": [
+				{
+					"name": "N/A 200.projects.{p}.workflows.{wf}.stories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    pm.environment.set(\"story_ref\", jsonRes.ref);",
+									"    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"story with a commernt\",\n    \"status\": \"new\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}",
+								"stories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{p}.stories.{ref}.comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API contract",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
+									"    pm.expect(jsonRes).to.have.property(\"text\");",
+									"    pm.expect(jsonRes).to.have.property(\"createdAt\");",
+									"    pm.expect(jsonRes).to.have.property(\"createdBy\");",
+									"    ",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"",
+									"    // Validate second-level entries",
+									"    pm.expect(jsonRes.createdBy).to.have.property(\"username\");",
+									"    pm.expect(jsonRes.createdBy).to.have.property(\"fullName\");",
+									"    pm.expect(jsonRes.createdBy).to.have.property(\"color\");",
+									"    numOfReturnedFields = Object.keys(jsonRes.createdBy).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"The comment message\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/comments",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"stories",
+								"{{story_ref}}",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{p}.stories.{ref}.comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.length).to.equal(1);",
+									"",
+									"    // Validate response API contract for each element",
+									"    pm.expect(jsonRes[0]).to.have.property(\"id\");",
+									"    pm.expect(jsonRes[0]).to.have.property(\"text\");",
+									"    pm.expect(jsonRes[0]).to.have.property(\"createdAt\");",
+									"    pm.expect(jsonRes[0]).to.have.property(\"createdBy\");",
+									"",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes[0]).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"",
+									"    // Validate second-level entries",
+									"    pm.expect(jsonRes[0].createdBy).to.have.property(\"username\");",
+									"    pm.expect(jsonRes[0].createdBy).to.have.property(\"fullName\");",
+									"    pm.expect(jsonRes[0].createdBy).to.have.property(\"color\");",
+									"    numOfReturnedFields = Object.keys(jsonRes[0].createdBy).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"",
+									"    // Validate headers",
+									"    pm.expect(pm.response.headers.get(\"pagination-offset\")).to.equal(\"0\");",
+									"    pm.expect(pm.response.headers.get(\"pagination-limit\")).to.equal(\"100\");",
+									"    pm.expect(pm.response.headers.get(\"pagination-total\")).to.equal(\"1\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/comments?order=-createdAt&limit=100&offset=0",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"stories",
+								"{{story_ref}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "order",
+									"value": "-createdAt"
+								},
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
 							]
 						}
 					},

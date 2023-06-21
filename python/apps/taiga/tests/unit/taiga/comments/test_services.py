@@ -15,34 +15,72 @@ pytestmark = pytest.mark.django_db
 
 
 #####################################################
+# create_comment
+#####################################################
+
+
+async def test_create_comment():
+    project = f.build_project()
+    story = f.build_story()
+    comment = f.build_comment()
+
+    with (
+        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
+        patch("taiga.comments.services.comments_serializers", autospec=True) as fake_comments_serializers,
+    ):
+        fake_comments_repositories.create_comment.return_value = comment
+
+        await services.create_comment(
+            project=project,
+            content_object=story,
+            text=comment.text,
+            created_by=comment.created_by,
+        )
+
+        fake_comments_repositories.create_comment.assert_awaited_once_with(
+            content_object=story,
+            text=comment.text,
+            created_by=comment.created_by,
+        )
+        fake_comments_serializers.serialize_comment.assert_called_once_with(comment=comment)
+
+
+#####################################################
 # list_comments
 #####################################################
 
 
 async def test_list_comments():
-    _story = await f.create_story()
-    _comment = await f.create_story_comment(content_object=_story)
+    story = f.build_story(id="")
+    comment = f.build_comment()
 
-    _filters = {"content_object": _story}
-    _select_related = ["created_by"]
-    _order_by = (["-created_at"],)
-    _offset = (0,)
-    _limit = 100
+    filters = {"content_object": story}
+    select_related = ["created_by"]
+    order_by = ["-created_at"]
+    offset = 0
+    limit = 100
+    total = 1
 
     with (
-        patch("taiga.comments.services.comment_repositories", autospec=True) as fake_comments_repository,
+        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
         patch("taiga.comments.services.comments_serializers", autospec=True) as fake_comments_serializers,
     ):
 
-        fake_comments_repository.list_comments.return_value = [_comment]
-        fake_comments_repository.get_total_comments.return_value = 1
-        await services.list_paginated_comments(content_object=_story, order_by=_order_by, offset=_offset, limit=_limit)
-        fake_comments_repository.list_comments.assert_awaited_once_with(
-            filters=_filters,
-            select_related=_select_related,
-            order_by=_order_by,
-            offset=_offset,
-            limit=_limit,
+        fake_comments_repositories.list_comments.return_value = [comment]
+        fake_comments_repositories.get_total_comments.return_value = total
+        pagination, comments_list = await services.list_paginated_comments(
+            content_object=story, order_by=order_by, offset=offset, limit=limit
         )
-        fake_comments_repository.get_total_comments.assert_awaited_once_with(filters=_filters)
-        fake_comments_serializers.serialize_comment.assert_called_once_with(comment=_comment)
+        fake_comments_repositories.list_comments.assert_awaited_once_with(
+            filters=filters,
+            select_related=select_related,
+            order_by=order_by,
+            offset=offset,
+            limit=limit,
+        )
+        fake_comments_repositories.get_total_comments.assert_awaited_once_with(filters=filters)
+        fake_comments_serializers.serialize_comment.assert_called_once_with(comment=comment)
+        assert len(comments_list) == 1
+        assert pagination.offset == offset
+        assert pagination.limit == limit
+        assert pagination.total == total

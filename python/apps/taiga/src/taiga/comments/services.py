@@ -4,12 +4,31 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
-from django.db.models import Model
+
 from taiga.base.api import Pagination
-from taiga.comments import repositories as comment_repositories
+from taiga.base.db.models import Model
+from taiga.comments import repositories as comments_repositories
 from taiga.comments.repositories import CommentOrderBy
-from taiga.comments.serializers import CommentDetailSerializer
+from taiga.comments.serializers import CommentSerializer
 from taiga.comments.serializers import services as comments_serializers
+from taiga.projects.projects.models import Project
+from taiga.users.models import User
+
+##########################################################
+# create comment
+##########################################################
+
+
+async def create_comment(project: Project, content_object: Model, text: str, created_by: User) -> CommentSerializer:
+    comment = await comments_repositories.create_comment(
+        content_object=content_object,
+        text=text,
+        created_by=created_by,
+    )
+    serialized_comment = comments_serializers.serialize_comment(comment)
+    # TODO emit event
+    return serialized_comment
+
 
 ##########################################################
 # list comments
@@ -21,9 +40,9 @@ async def list_paginated_comments(
     offset: int,
     limit: int,
     order_by: CommentOrderBy = [],
-) -> tuple[Pagination, list[CommentDetailSerializer]]:
+) -> tuple[Pagination, list[CommentSerializer]]:
     filters = {"content_object": content_object}
-    comments = await comment_repositories.list_comments(
+    comments = await comments_repositories.list_comments(
         filters=filters,
         select_related=["created_by"],
         order_by=order_by,
@@ -32,7 +51,7 @@ async def list_paginated_comments(
     )
     serialized_comments = [comments_serializers.serialize_comment(c) for c in comments]
 
-    total_comments = await comment_repositories.get_total_comments(filters=filters)
+    total_comments = await comments_repositories.get_total_comments(filters=filters)
     pagination = Pagination(offset=offset, limit=limit, total=total_comments)
 
     return pagination, serialized_comments

@@ -8,10 +8,9 @@
 from typing import Literal, TypedDict
 
 from asgiref.sync import sync_to_async
-from django.contrib.contenttypes.models import ContentType
-from django.db.models import Model
-from taiga.base.db.models import QuerySet
+from taiga.base.db.models import ContentType, Model, QuerySet
 from taiga.comments.models import Comment
+from taiga.users.models import User
 
 ##########################################################
 # filters and querysets
@@ -66,6 +65,19 @@ def _apply_order_by_to_queryset(
     order_by: CommentOrderBy,
 ) -> QuerySet[Comment]:
     return qs.order_by(*order_by)
+
+
+##########################################################
+# create comment
+##########################################################
+
+
+async def create_comment(content_object: Model, text: str, created_by: User) -> Comment:
+    return await Comment.objects.acreate(
+        text=text,
+        created_by=created_by,
+        content_object=content_object,
+    )
 
 
 ##########################################################

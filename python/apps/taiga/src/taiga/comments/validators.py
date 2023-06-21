@@ -6,6 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.base.api.ordering import OrderQuery
+from taiga.base.validators import BaseModel, StrNotEmpty
 
 CommentOrderQuery = OrderQuery(
     allowed=[
@@ -16,3 +17,11 @@ CommentOrderQuery = OrderQuery(
         "-created_at",
     ],
 )
+
+
+class CreateCommentValidator(BaseModel):
+    text: StrNotEmpty
+
+
+class UpdateCommentValidator(BaseModel):
+    text: StrNotEmpty

@@ -4,9 +4,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
+
 from taiga.comments.models import Comment
-from taiga.comments.serializers import CommentDetailSerializer
+from taiga.comments.serializers import CommentSerializer
 
 
-def serialize_comment(comment: Comment) -> CommentDetailSerializer:
-    return CommentDetailSerializer.from_orm(comment)
+def serialize_comment(comment: Comment) -> CommentSerializer:
+    return CommentSerializer.from_orm(comment)

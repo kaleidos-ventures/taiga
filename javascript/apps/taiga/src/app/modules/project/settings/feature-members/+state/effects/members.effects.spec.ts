@@ -33,6 +33,7 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 import { AppService } from '~/app/services/app.service';
 import { membersActions } from '../actions/members.actions';
 import {
+  selectInvitations,
   selectInvitationsOffset,
   selectMembersOffset,
   selectOpenRevokeInvitationDialog,
@@ -41,6 +42,7 @@ import {
 } from '../selectors/members.selectors';
 import { MembersEffects } from './members.effects';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 
 describe('MembersEffects', () => {
   let actions$: Observable<Action>;
@@ -92,7 +94,9 @@ describe('MembersEffects', () => {
       cold('-b|', { b: membershipResponse })
     );
 
-    actions$ = hot('-a', { a: membersActions.setMembersPage({ offset: 0 }) });
+    actions$ = hot('-a', {
+      a: membersActions.setMembersPage({ offset: 0, showLoading: true }),
+    });
 
     const expected = cold('--a', {
       a: membersActions.fetchMembersSuccess({
@@ -129,7 +133,9 @@ describe('MembersEffects', () => {
       cold('-b|', { b: invitationsResponse })
     );
 
-    actions$ = hot('-a', { a: membersActions.setPendingPage({ offset: 0 }) });
+    actions$ = hot('-a', {
+      a: membersActions.setPendingPage({ offset: 0, showLoading: true }),
+    });
 
     const expected = cold('--a', {
       a: membersActions.fetchInvitationsSuccess({
@@ -260,6 +266,32 @@ describe('MembersEffects', () => {
     });
 
     expect(effects.revokeInvitation$).toBeObservable(expected);
+  });
+
+  it('shoud go to the previous page if no invitations left in the current page', () => {
+    const effects = spectator.inject(MembersEffects);
+    const offset = 40;
+    const invitation = InvitationMockFactory();
+
+    actions$ = hot('-a', {
+      a: membersActions.revokeInvitationSuccess({ invitation }),
+    });
+
+    const store = spectator.inject(MockStore);
+    store.overrideSelector(selectInvitations, []);
+    store.overrideSelector(selectInvitationsOffset, offset);
+    store.refreshState();
+
+    const expected = cold('-a', {
+      a: membersActions.setPendingPage({
+        offset: offset - MEMBERS_PAGE_SIZE,
+        showLoading: false,
+      }),
+    });
+
+    expect(effects.revokeInvitationSuccessChangeReloadPage$).toBeObservable(
+      expected
+    );
   });
 
   it('show undo confirmation', () => {

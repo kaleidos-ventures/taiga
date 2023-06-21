@@ -35,6 +35,8 @@ import {
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { membersActions } from '~/app/modules/project/settings/feature-members/+state/actions/members.actions';
 import {
+  selectMembers,
+  selectInvitations,
   selectInvitationsOffset,
   selectMembersOffset,
   selectOpenRevokeInvitationDialog,
@@ -187,11 +189,35 @@ export class MembersEffects {
     );
   });
 
+  public revokeInvitationSuccessChangeReloadPage$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(membersActions.revokeInvitationSuccess),
+      concatLatestFrom(() => [
+        this.store.select(selectInvitations).pipe(filterNil()),
+        this.store.select(selectInvitationsOffset).pipe(filterNil()),
+      ]),
+      map(([, invitations, invitationsOffset]) => {
+        if (invitations.length) {
+          return membersActions.setPendingPage({
+            offset: invitationsOffset,
+            showLoading: false,
+          });
+        }
+
+        // if page is empty, go back one page
+        return membersActions.setPendingPage({
+          offset: invitationsOffset - MEMBERS_PAGE_SIZE,
+          showLoading: false,
+        });
+      })
+    );
+  });
+
   public initMembersTabPending$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(membersActions.initProjectMembers),
       map(() => {
-        return membersActions.setPendingPage({ offset: 0 });
+        return membersActions.setPendingPage({ offset: 0, showLoading: true });
       })
     );
   });
@@ -200,7 +226,7 @@ export class MembersEffects {
     return this.actions$.pipe(
       ofType(membersActions.initProjectMembers),
       map(() => {
-        return membersActions.setMembersPage({ offset: 0 });
+        return membersActions.setMembersPage({ offset: 0, showLoading: true });
       })
     );
   });
@@ -425,6 +451,30 @@ export class MembersEffects {
               return EMPTY;
             })
           );
+      })
+    );
+  });
+
+  public removeMemberSuccessChangeReloadPage$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(projectEventActions.userLostProjectMembership),
+      concatLatestFrom(() => [
+        this.store.select(selectMembers).pipe(filterNil()),
+        this.store.select(selectMembersOffset).pipe(filterNil()),
+      ]),
+      map(([, members, membersOffset]) => {
+        if (members.length) {
+          return membersActions.setMembersPage({
+            offset: membersOffset,
+            showLoading: false,
+          });
+        }
+
+        // if page is empty, go back one page
+        return membersActions.setMembersPage({
+          offset: membersOffset - MEMBERS_PAGE_SIZE,
+          showLoading: false,
+        });
       })
     );
   });

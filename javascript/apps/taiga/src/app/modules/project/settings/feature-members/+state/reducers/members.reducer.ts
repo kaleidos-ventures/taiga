@@ -81,14 +81,18 @@ export const reducer = createImmerReducer(
 
     return state;
   }),
-  on(membersActions.setMembersPage, (state): MembersState => {
-    state.membersLoading = true;
+  on(membersActions.setMembersPage, (state, { showLoading }): MembersState => {
+    if (showLoading) {
+      state.membersLoading = true;
+    }
     state.invitationUpdateAnimation = null;
 
     return state;
   }),
-  on(membersActions.setPendingPage, (state): MembersState => {
-    state.invitationsLoading = true;
+  on(membersActions.setPendingPage, (state, { showLoading }): MembersState => {
+    if (showLoading) {
+      state.invitationsLoading = true;
+    }
     state.invitationUpdateAnimation = null;
 
     return state;

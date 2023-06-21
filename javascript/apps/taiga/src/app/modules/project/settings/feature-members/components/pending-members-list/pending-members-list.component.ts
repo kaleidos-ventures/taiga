@@ -243,6 +243,7 @@ export class PendingMembersListComponent {
     this.store.dispatch(
       membersActions.setPendingPage({
         offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
+        showLoading: true,
       })
     );
   }
@@ -251,6 +252,7 @@ export class PendingMembersListComponent {
     this.store.dispatch(
       membersActions.setPendingPage({
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
+        showLoading: true,
       })
     );
   }

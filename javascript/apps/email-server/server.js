@@ -41,6 +41,7 @@ Preview URL: ${previewUrl}`);
             subject: parsed.subject,
             text: parsed.text,
             html: parsed.html,
+            date: new Date().getTime(),
             previewUrl,
           });
 
@@ -63,5 +64,5 @@ Preview URL: ${previewUrl}`);
 };
 
 module.exports.getEmails = () => {
-  return emails;
+  return [...emails];
 };

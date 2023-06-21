@@ -10,6 +10,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 
+const { formatDistance } = require('date-fns');
+
 const { getEmails } = require('./server');
 const { apiPort } = require('./config');
 
@@ -35,6 +37,21 @@ app.get('/emails-previews', function (req, res) {
   });
 
   res.json({ emails });
+});
+
+app.get('/emails-list', function (req, res) {
+  const emails = getEmails();
+
+  emails.reverse();
+
+  res.render('./email-list', {
+    emails: emails.map((it) => {
+      return {
+        ...it,
+        date: formatDistance(it.date, new Date(), { addSuffix: true }),
+      };
+    }),
+  });
 });
 
 app.get('/emails/:emailId', function (req, res) {

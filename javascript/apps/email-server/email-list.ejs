@@ -1,0 +1,54 @@
+<style>
+  .email-item {
+    display: block;
+    border: 1px solid #cccccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .email-item:hover {
+    background-color: #f5f5f5;
+  }
+
+  .email-item .subject {
+    font-weight: bold;
+    color: #000000;
+  }
+
+  .email-item .date {
+    color: #777777;
+    font-size: 0.9em;
+  }
+
+  .email-item .to {
+    color: #333333;
+    font-size: 0.9em;
+  }
+
+  .email-item .details {
+    color: #0066cc;
+  }
+
+  p {
+    margin: 0;
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+</style>
+
+<div class="emails">
+  <% emails.forEach(function(email){ %>
+  <a
+    class="email-item"
+    href="<%= email.previewUrl %>">
+    <p class="subject"><%= email.subject %></p>
+    <p class="date"><%= email.date %></p>
+    <p class="to"><%= email.to %></p>
+  </a>
+  <% }); %>
+</div>

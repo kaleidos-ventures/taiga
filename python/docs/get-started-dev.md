@@ -4,7 +4,7 @@
 >
 > - python >= 3.10. You can use [pyenv](https://github.com/pyenv/pyenv) tool to manage different python versions or install it in your OS.
 > - postgresql >= 13.x.
-> - [psycopg2](https://www.psycopg.org/docs/install.html). It also requires either python-dev o python-dev3, and libpq-dev packages.
+> - To install [psycopg2](https://www.psycopg.org/docs/install.html) in a later step, it's needed either python-dev or python3-dev, and libpq-dev packages.
 > - [Optional] redis >= 6.2. You can use `memory` PubSub backend instead.
 
 Create a virtualenv in `python/` directory and activate it
@@ -44,7 +44,7 @@ Go to `taiga` package and install dev dependencies
 ```bash
 $ cd apps/taiga
 (taiga)$ pip install -r requirements/devel.txt
-(taiga)$ pip install -e .
+(taiga)$ pip install -e .  # mind the dot!
 ```
 
 Create your local settings

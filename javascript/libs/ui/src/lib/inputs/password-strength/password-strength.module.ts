@@ -9,12 +9,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { PasswordStrengthComponent } from './password-strength.component';
-import { LetModule } from '@rx-angular/template/let';
+import { RxLet } from '@rx-angular/template/let';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiSvgModule } from '@taiga-ui/core';
 
 @NgModule({
-  imports: [CommonModule, LetModule, TranslocoModule, TuiSvgModule],
+  imports: [CommonModule, RxLet, TranslocoModule, TuiSvgModule],
   declarations: [PasswordStrengthComponent],
   exports: [PasswordStrengthComponent],
 })

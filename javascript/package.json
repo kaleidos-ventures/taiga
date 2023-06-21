@@ -51,24 +51,24 @@
     "@angular/platform-browser-dynamic": "16.0.0",
     "@angular/platform-server": "16.0.0",
     "@angular/router": "16.0.0",
-    "@ngneat/transloco": "^4.2.2",
-    "@ngneat/transloco-locale": "^4.0.0",
-    "@ngneat/transloco-messageformat": "^4.0.0",
+    "@ngneat/transloco": "^4.3.0",
+    "@ngneat/transloco-locale": "^4.1.0",
+    "@ngneat/transloco-messageformat": "^4.1.0",
     "@ngneat/until-destroy": "^9.2.2",
     "@ngrx/effects": "16.0.0",
     "@ngrx/router-store": "16.0.0",
     "@ngrx/store": "16.0.0",
     "@ngrx/store-devtools": "16.0.0",
-    "@rx-angular/cdk": "^15.0.0",
-    "@rx-angular/state": "^15.0.0",
-    "@rx-angular/template": "^15.2.0",
-    "@taiga-ui/addon-table": "^3.28.0",
-    "@taiga-ui/addon-tablebars": "^3.28.0",
-    "@taiga-ui/cdk": "^3.28.0",
-    "@taiga-ui/core": "^3.28.0",
-    "@taiga-ui/icons": "^3.28.0",
-    "@taiga-ui/kit": "^3.28.0",
-    "@taiga-ui/styles": "^3.28.0",
+    "@rx-angular/cdk": "^16.0.0",
+    "@rx-angular/state": "^16.0.0",
+    "@rx-angular/template": "^16.0.0",
+    "@taiga-ui/addon-table": "3.29.2",
+    "@taiga-ui/addon-tablebars": "3.29.2",
+    "@taiga-ui/cdk": "3.29.2",
+    "@taiga-ui/core": "3.29.2",
+    "@taiga-ui/icons": "3.29.2",
+    "@taiga-ui/kit": "3.29.2",
+    "@taiga-ui/styles": "3.29.2",
     "@tinkoff/ng-dompurify": "^4.0.0",
     "@tinkoff/ng-event-plugins": "^3.0.0",
     "@tinkoff/ng-polymorpheus": "^4.1.0",
@@ -89,7 +89,7 @@
     "tslib": "^2.4.0",
     "uuid": "^9.0.0",
     "zone.js": "0.13.0",
-    "@nx/angular": "16.2.1"
+    "@nx/angular": "16.3.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "16.0.0",
@@ -106,7 +106,7 @@
     "@google-cloud/translate": "^7.0.4",
     "@ng-web-apis/universal": "^1.13.0",
     "@ngneat/falso": "^6.4.0",
-    "@ngneat/spectator": "^14.0.0",
+    "@ngneat/spectator": "^15.0.1",
     "@ngneat/transloco-optimize": "^3.0.2",
     "@ngrx/schematics": "16.0.0",
     "@ngrx/store-devtools": "16.0.0",
@@ -156,7 +156,7 @@
     "ng-packagr": "16.0.0",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.7",
-    "nx": "16.2.1",
+    "nx": "16.3.2",
     "postcss": "^8.4.14",
     "postcss-color-mod-function": "^3.0.3",
     "postcss-import": "15.1.0",
@@ -175,23 +175,12 @@
     "type-fest": "^3.5.1",
     "typescript": "5.0.4",
     "ws": "^8.8.1",
-    "@nx/devkit": "16.2.1",
-    "@nx/workspace": "16.2.1",
-    "@nx/linter": "16.2.1",
-    "@nx/cypress": "16.2.1",
-    "@nx/storybook": "16.2.1",
-    "@nx/eslint-plugin": "16.2.1",
-    "@nx/jest": "16.2.1"
-  },
-  "overrides": {
-    "@rx-angular/cdk": {
-      "@angular/core": "^16.0.0"
-    },
-    "@rx-angular/state": {
-      "@angular/core": "^16.0.0"
-    },
-    "@rx-angular/template": {
-      "@angular/core": "^16.0.0"
-    }
+    "@nx/devkit": "16.3.2",
+    "@nx/workspace": "16.3.2",
+    "@nx/linter": "16.3.2",
+    "@nx/cypress": "16.3.2",
+    "@nx/storybook": "16.3.2",
+    "@nx/eslint-plugin": "16.3.2",
+    "@nx/jest": "16.3.2"
   }
 }

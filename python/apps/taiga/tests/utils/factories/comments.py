@@ -15,9 +15,8 @@ from .base import Factory, factory
 ####################################################
 
 
-class StoryCommentFactory(Factory):
+class CommentFactory(Factory):
     text = factory.Sequence(lambda n: f"Comment {n}")
-    content_object = factory.SubFactory("tests.utils.factories.StoryFactory")
     created_by = factory.SubFactory("tests.utils.factories.UserFactory")
 
     class Meta:
@@ -25,9 +24,9 @@ class StoryCommentFactory(Factory):
 
 
 @sync_to_async
-def create_story_comment(**kwargs):
-    return StoryCommentFactory.create(**kwargs)
+def create_comment(content_object, **kwargs):
+    return CommentFactory.create(content_object=content_object, **kwargs)
 
 
-def build_story_comment(**kwargs):
-    return StoryCommentFactory.build(**kwargs)
+def build_comment(**kwargs):
+    return CommentFactory.build(**kwargs)

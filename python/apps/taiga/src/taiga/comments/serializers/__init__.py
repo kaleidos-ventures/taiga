@@ -5,12 +5,14 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from pydantic.schema import datetime
-from taiga.base.serializers import BaseModel
+from datetime import datetime
+
+from taiga.base.serializers import UUIDB64, BaseModel
 from taiga.users.serializers.nested import UserNestedSerializer
 
 
-class CommentDetailSerializer(BaseModel):
+class CommentSerializer(BaseModel):
+    id: UUIDB64
     text: str
     created_at: datetime
     created_by: UserNestedSerializer

@@ -5,16 +5,18 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+
+import functools
+
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin
-from taiga.mediafiles.mixins import RelatedMediafilesMixin
+from taiga.base.utils.uuid import encode_uuid_to_b64str
 
 
 class Comment(
     models.BaseModel,
     CreatedMetaInfoMixin,
     ModifiedAtMetaInfoMixin,
-    RelatedMediafilesMixin,
 ):
     text = models.TextField(null=False, blank=False, verbose_name="text")
     object_content_type = models.ForeignKey(
@@ -42,7 +44,11 @@ class Comment(
         ordering = ["object_content_type", "-created_at"]
 
     def __str__(self) -> str:
-        return f"Comment to {self.object_content_type} #{self.object_id} (by {self.created_by}) {self.text}"
+        return f'"{self.text}" (by {self.created_by} on {self.content_object})'
 
     def __repr__(self) -> str:
-        return f"<Comment to #{self.object_id} #{self.text}>"
+        return f"<Comment {self.id} [{self.content_object}]>"
+
+    @functools.cached_property
+    def b64id(self) -> str:
+        return encode_uuid_to_b64str(self.id)

@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "npm run i18n:cache-busting",
     "start": "npm run i18n:cache-busting && nx serve taiga",
-    "build": "npm run i18n:cache-busting && ng build && npm run transloco:optimize",
+    "build": "npm run i18n:cache-busting && nx build taiga && npm run transloco:optimize",
     "default-config": "cp config.example.json apps/taiga/src/assets/config.json",
     "test": "nx run-many --all --target=test",
     "translate": "node ./scripts/translate.js",
@@ -21,7 +21,7 @@
     "storybook:build": "nx build-storybook ui",
     "transloco:optimize": "transloco-optimize dist/taiga/browser/assets/i18n",
     "i18n:cache-busting": "node ./scripts/i18n-cache-busting.js",
-    "build:prod": "ng build --prod && npm run transloco:optimize",
+    "build:prod": "nx build taiga --prod && npm run transloco:optimize",
     "translations:split": "ng g @ngneat/transloco:split --translation-path 'apps/taiga/src/assets/i18n/'",
     "translations:join": "ng g @ngneat/transloco:join --translation-path 'apps/taiga/src/assets/i18n/'",
     "install:hooks": "cd .. && husky install javascript/.husky",

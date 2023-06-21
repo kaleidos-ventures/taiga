@@ -31,6 +31,8 @@ import {
 import { WorkspaceDetailEffects } from './workspace-detail.effects';
 import {
   selectMembersList,
+  selectInvitationsList,
+  selectNonMembersList,
   selectMembersOffset,
   selectInvitationsOffset,
   selectNonMembersOffset,
@@ -332,6 +334,7 @@ describe('WorkspaceEffects', () => {
     });
 
     const store = spectator.inject(MockStore);
+    store.overrideSelector(selectInvitationsList, invitations.members);
     store.overrideSelector(selectInvitationsOffset, 0);
     store.overrideSelector(selectMembersOffset, 0);
     store.refreshState();
@@ -387,6 +390,7 @@ describe('WorkspaceEffects', () => {
     });
 
     const store = spectator.inject(MockStore);
+    store.overrideSelector(selectNonMembersList, nonMembersResponse.members);
     store.overrideSelector(selectInvitationsOffset, 0);
     store.overrideSelector(selectNonMembersOffset, 0);
     store.refreshState();

@@ -69,9 +69,8 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
       )
       .subscribe(() => {
         this.store.dispatch(
-          workspaceDetailApiActions.getWorkspaceMemberInvitations({
+          workspaceDetailEventActions.updateNonMembersInvitationsList({
             id: this.id,
-            offset: 0,
           })
         );
       });

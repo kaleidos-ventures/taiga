@@ -29,6 +29,8 @@ import {
 } from '../actions/workspace-detail.actions';
 import {
   selectMembersList,
+  selectInvitationsList,
+  selectNonMembersList,
   selectMembersOffset,
   selectInvitationsOffset,
   selectNonMembersOffset,
@@ -493,10 +495,14 @@ export class WorkspaceDetailEffects {
     return this.actions$.pipe(
       ofType(workspaceDetailEventActions.updateMembersInvitationsList),
       concatLatestFrom(() => [
+        this.store.select(selectInvitationsList).pipe(filterNil()),
         this.store.select(selectInvitationsOffset).pipe(filterNil()),
         this.store.select(selectMembersOffset).pipe(filterNil()),
       ]),
-      exhaustMap(([action, invitationsOffset, membersOffset]) => {
+      exhaustMap(([action, invitations, invitationsOffset, membersOffset]) => {
+        const invitationsOffsetUpdated = invitations.length
+          ? invitationsOffset
+          : invitationsOffset - MEMBERS_PAGE_SIZE;
         return zip(
           this.workspaceApiService.getWorkspaceMembers(
             action.id,
@@ -505,7 +511,7 @@ export class WorkspaceDetailEffects {
           ),
           this.workspaceApiService.getWorkspaceInvitationMembers(
             action.id,
-            invitationsOffset,
+            invitationsOffsetUpdated,
             MEMBERS_PAGE_SIZE
           )
         ).pipe(
@@ -520,7 +526,7 @@ export class WorkspaceDetailEffects {
                 invitations: {
                   members: response[1].members,
                   totalMembers: response[1].totalMembers,
-                  offset: invitationsOffset,
+                  offset: invitationsOffsetUpdated,
                 },
               }
             );
@@ -538,44 +544,50 @@ export class WorkspaceDetailEffects {
     return this.actions$.pipe(
       ofType(workspaceDetailEventActions.updateNonMembersInvitationsList),
       concatLatestFrom(() => [
+        this.store.select(selectNonMembersList).pipe(filterNil()),
         this.store.select(selectInvitationsOffset).pipe(filterNil()),
         this.store.select(selectNonMembersOffset).pipe(filterNil()),
       ]),
-      exhaustMap(([action, invitationsOffset, nonMembersOffset]) => {
-        return zip(
-          this.workspaceApiService.getWorkspaceNonMembers(
-            action.id,
-            nonMembersOffset,
-            MEMBERS_PAGE_SIZE
-          ),
-          this.workspaceApiService.getWorkspaceInvitationMembers(
-            action.id,
-            invitationsOffset,
-            MEMBERS_PAGE_SIZE
-          )
-        ).pipe(
-          map((response) => {
-            return workspaceDetailEventActions.updateNonMembersInvitationsListSuccess(
-              {
-                nonMembers: {
-                  members: response[0].members,
-                  totalMembers: response[0].totalMembers,
-                  offset: nonMembersOffset,
-                },
-                invitations: {
-                  members: response[1].members,
-                  totalMembers: response[1].totalMembers,
-                  offset: invitationsOffset,
-                },
-              }
-            );
-          }),
-          catchError((httpResponse: HttpErrorResponse) => {
-            this.appService.errorManagement(httpResponse);
-            return EMPTY;
-          })
-        );
-      })
+      exhaustMap(
+        ([action, nonMembers, invitationsOffset, nonMembersOffset]) => {
+          const nonMembersOffsetUpdated = nonMembers.length
+            ? nonMembersOffset
+            : nonMembersOffset - MEMBERS_PAGE_SIZE;
+          return zip(
+            this.workspaceApiService.getWorkspaceNonMembers(
+              action.id,
+              nonMembersOffsetUpdated,
+              MEMBERS_PAGE_SIZE
+            ),
+            this.workspaceApiService.getWorkspaceInvitationMembers(
+              action.id,
+              invitationsOffset,
+              MEMBERS_PAGE_SIZE
+            )
+          ).pipe(
+            map((response) => {
+              return workspaceDetailEventActions.updateNonMembersInvitationsListSuccess(
+                {
+                  nonMembers: {
+                    members: response[0].members,
+                    totalMembers: response[0].totalMembers,
+                    offset: nonMembersOffsetUpdated,
+                  },
+                  invitations: {
+                    members: response[1].members,
+                    totalMembers: response[1].totalMembers,
+                    offset: invitationsOffset,
+                  },
+                }
+              );
+            }),
+            catchError((httpResponse: HttpErrorResponse) => {
+              this.appService.errorManagement(httpResponse);
+              return EMPTY;
+            })
+          );
+        }
+      )
     );
   });
 

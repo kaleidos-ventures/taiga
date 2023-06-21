@@ -151,6 +151,7 @@ export class MembersListComponent implements AfterContentInit {
     this.store.dispatch(
       membersActions.setMembersPage({
         offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
+        showLoading: true,
       })
     );
   }
@@ -159,6 +160,7 @@ export class MembersListComponent implements AfterContentInit {
     this.store.dispatch(
       membersActions.setMembersPage({
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
+        showLoading: true,
       })
     );
   }

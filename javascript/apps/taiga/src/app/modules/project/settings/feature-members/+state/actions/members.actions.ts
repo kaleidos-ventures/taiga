@@ -25,9 +25,11 @@ export const membersActions = createActionGroup({
     }>(),
     'Set members page': props<{
       offset: number;
+      showLoading: boolean;
     }>(),
     'Set pending page': props<{
       offset: number;
+      showLoading: boolean;
     }>(),
     'Update members list': props<{
       eventType: 'create' | 'update';

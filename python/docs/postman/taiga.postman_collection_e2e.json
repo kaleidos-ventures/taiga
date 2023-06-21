@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "cfe1c7e6-1bd8-442f-a5bb-5b8c72f1249f",
+		"_postman_id": "bd646ee6-6731-43f7-8a22-a87c3f15f730",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -2653,11 +2652,9 @@
 									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"",
 									"    // Validate second-level entries",
-									"    pm.expect(jsonRes[0].statuses[0]).to.have.property(\"id\");",
 									"    pm.expect(jsonRes[0].statuses[0]).to.have.property(\"name\");",
 									"    pm.expect(jsonRes[0].statuses[0]).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes[0].statuses[0]).to.have.property(\"color\");",
-									"    pm.expect(jsonRes[0].statuses[0]).to.have.property(\"order\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes[0].statuses[0]).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"});"
@@ -3051,7 +3048,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"order\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);    ",
+									"    pm.expect(numOfReturnedFields).to.equal(6);    ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3273,7 +3270,7 @@
 									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"    ",
 									"});"
 								],
@@ -3353,7 +3350,7 @@
 									"    pm.expect(jsonRes[0].status).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes[0].status).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes[0].status).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3630,7 +3627,7 @@
 									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"",
 									"    pm.expect(jsonRes.workflow).to.have.property(\"name\");",
 									"    pm.expect(jsonRes.workflow).to.have.property(\"slug\");",
@@ -3788,7 +3785,7 @@
 									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(3);",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
 									"",
 									"    pm.expect(jsonRes.workflow).to.have.property(\"name\");",
 									"    pm.expect(jsonRes.workflow).to.have.property(\"slug\");",

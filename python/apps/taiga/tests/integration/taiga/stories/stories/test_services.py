@@ -10,7 +10,6 @@ from decimal import Decimal
 import pytest
 from asgiref.sync import sync_to_async
 from taiga.stories.stories import repositories, services
-from taiga.workflows import services as workflows_services
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -24,7 +23,6 @@ pytestmark = pytest.mark.django_db
 async def test_not_reorder_in_empty_status() -> None:
     project = await f.create_project()
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -40,7 +38,7 @@ async def test_not_reorder_in_empty_status() -> None:
 
     await services.reorder_stories(
         project=project,
-        workflow=detailed_workflow,
+        workflow=workflow,
         target_status_slug=status_2.slug,
         stories_refs=[story2.ref, story3.ref],
     )
@@ -61,7 +59,6 @@ async def test_not_reorder_in_empty_status() -> None:
 async def test_not_reorder_in_populated_status() -> None:
     project = await f.create_project()
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -75,7 +72,7 @@ async def test_not_reorder_in_populated_status() -> None:
     # | story2   |          |
 
     await services.reorder_stories(
-        project=project, workflow=detailed_workflow, target_status_slug=status_2.slug, stories_refs=[story2.ref]
+        project=project, workflow=workflow, target_status_slug=status_2.slug, stories_refs=[story2.ref]
     )
     # Now should be
     # | status_1 | status_2 |
@@ -93,7 +90,6 @@ async def test_not_reorder_in_populated_status() -> None:
 async def test_after_in_the_end() -> None:
     project = await f.create_project()
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -108,7 +104,7 @@ async def test_after_in_the_end() -> None:
 
     await services.reorder_stories(
         project=project,
-        workflow=detailed_workflow,
+        workflow=workflow,
         target_status_slug=status_2.slug,
         stories_refs=[story2.ref],
         reorder={"place": "after", "ref": story3.ref},
@@ -129,7 +125,6 @@ async def test_after_in_the_end() -> None:
 async def test_after_in_the_middle() -> None:
     project = await f.create_project()
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -144,7 +139,7 @@ async def test_after_in_the_middle() -> None:
 
     await services.reorder_stories(
         project=project,
-        workflow=detailed_workflow,
+        workflow=workflow,
         target_status_slug=status_2.slug,
         stories_refs=[story1.ref],
         reorder={"place": "after", "ref": story2.ref},
@@ -167,7 +162,6 @@ async def test_after_in_the_middle() -> None:
 async def test_before_in_the_beginning() -> None:
     project = await f.create_project()
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -182,7 +176,7 @@ async def test_before_in_the_beginning() -> None:
 
     await services.reorder_stories(
         project=project,
-        workflow=detailed_workflow,
+        workflow=workflow,
         target_status_slug=status_2.slug,
         stories_refs=[story1.ref],
         reorder={"place": "before", "ref": story2.ref},
@@ -205,7 +199,6 @@ async def test_before_in_the_beginning() -> None:
 async def test_before_in_the_middle() -> None:
     project = await f.create_project()
     workflow = await sync_to_async(project.workflows.first)()
-    detailed_workflow = await workflows_services.get_workflow_detail(project_id=project.id, workflow_slug=workflow.slug)
     status_1 = await sync_to_async(workflow.statuses.first)()
     status_2 = await sync_to_async(workflow.statuses.last)()
 
@@ -220,7 +213,7 @@ async def test_before_in_the_middle() -> None:
 
     await services.reorder_stories(
         project=project,
-        workflow=detailed_workflow,
+        workflow=workflow,
         target_status_slug=status_2.slug,
         stories_refs=[story1.ref],
         reorder={"place": "before", "ref": story3.ref},

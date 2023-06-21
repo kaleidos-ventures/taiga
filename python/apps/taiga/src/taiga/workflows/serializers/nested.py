@@ -5,13 +5,15 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from taiga.base.serializers import BaseModel
+from taiga.base.serializers import UUIDB64, BaseModel
 
 
 class WorkflowStatusNestedSerializer(BaseModel):
+    id: UUIDB64
     name: str
     slug: str
     color: int
+    order: int
 
     class Config:
         orm_mode = True

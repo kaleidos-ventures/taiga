@@ -13,9 +13,11 @@ from taiga.workflows.serializers import WorkflowStatusSerializer
 CREATE_WORKFLOW_STATUS = "workflowstatuses.create"
 
 
-async def emit_event_when_workflow_status_is_created(project: Project, status: WorkflowStatusSerializer) -> None:
+async def emit_event_when_workflow_status_is_created(
+    project: Project, workflow_status: WorkflowStatusSerializer
+) -> None:
     await events_manager.publish_on_project_channel(
         project=project,
         type=CREATE_WORKFLOW_STATUS,
-        content=CreateWorkflowStatusContent(status=status),
+        content=CreateWorkflowStatusContent(workflow_status=workflow_status),
     )

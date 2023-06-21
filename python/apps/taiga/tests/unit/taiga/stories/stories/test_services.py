@@ -12,7 +12,8 @@ import pytest
 from taiga.base.repositories.neighbors import Neighbor
 from taiga.stories.stories import services
 from taiga.stories.stories.services import exceptions as ex
-from taiga.workflows.serializers import WorkflowSerializer, WorkflowStatusSerializer
+from taiga.workflows.serializers import WorkflowSerializer
+from taiga.workflows.serializers.nested import WorkflowStatusNestedSerializer
 from tests.utils import factories as f
 
 #######################################################
@@ -599,11 +600,15 @@ def build_workflow_serializer(story):
         name=story.workflow.name,
         slug=story.workflow.slug,
         order=story.workflow.order,
-        statuses=[build_status_serializer(story.status)],
+        statuses=[build_nested_status_serializer(story.status)],
     )
 
 
-def build_status_serializer(status):
-    return WorkflowStatusSerializer(
-        id=status.id, name=status.name, slug=status.slug, color=status.color, order=status.order
+def build_nested_status_serializer(status):
+    return WorkflowStatusNestedSerializer(
+        id=status.id,
+        name=status.name,
+        slug=status.slug,
+        color=status.color,
+        order=status.order,
     )

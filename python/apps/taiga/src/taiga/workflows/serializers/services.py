@@ -20,11 +20,12 @@ def serialize_workflow(workflow: Workflow, workflow_statuses: list[WorkflowStatu
     )
 
 
-def serialize_workflow_status(workflow_status: WorkflowStatus) -> WorkflowStatusSerializer:
+def serialize_workflow_status(workflow_status: WorkflowStatus, workflow: Workflow) -> WorkflowStatusSerializer:
     return WorkflowStatusSerializer(
         id=workflow_status.id,
         name=workflow_status.name,
         slug=workflow_status.slug,
         color=workflow_status.color,
         order=workflow_status.order,
+        workflow=workflow,
     )

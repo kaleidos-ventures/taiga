@@ -47,7 +47,6 @@ async def test_create_user_ok_accept_invitation(
     with (
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.users.services._generate_verify_user_token", return_value="verify_token") as fake_user_token,
-        patch("taiga.users.services.generate_username", return_value=username),
     ):
         fake_users_repo.get_user.return_value = None
         fake_users_repo.create_user.return_value = user
@@ -65,7 +64,7 @@ async def test_create_user_ok_accept_invitation(
         )
 
         fake_users_repo.create_user.assert_awaited_once_with(
-            email=email, username=username, full_name=full_name, color=color, password=password, lang=lang
+            email=email, full_name=full_name, color=color, password=password, lang=lang
         )
         assert len(tqmanager.pending_jobs) == 1
         job = tqmanager.pending_jobs[0]
@@ -104,7 +103,6 @@ async def test_create_user_default_instance_lang(tqmanager):
     with (
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.users.services._generate_verify_user_token", return_value="verify_token") as fake_user_token,
-        patch("taiga.users.services.generate_username", return_value=username),
     ):
         fake_users_repo.get_user.return_value = None
         fake_users_repo.create_user.return_value = user
@@ -121,7 +119,6 @@ async def test_create_user_default_instance_lang(tqmanager):
 
         fake_users_repo.create_user.assert_awaited_once_with(
             email=email,
-            username=username,
             full_name=full_name,
             color=color,
             password=password,

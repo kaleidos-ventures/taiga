@@ -33,9 +33,8 @@ async def social_login(
         if not user:
             # create a new user with social login data and verify it
             color = generate_random_color()
-            username = await users_services.generate_username(email=email)
             user = await users_repositories.create_user(
-                email=email, username=username, full_name=full_name, password=None, lang=lang, color=color
+                email=email, full_name=full_name, password=None, lang=lang, color=color
             )
             await users_services.verify_user(user)
             await project_invitations_services.update_user_projects_invitations(user=user)

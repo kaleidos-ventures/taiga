@@ -9,7 +9,7 @@ from typing import Any
 
 from taiga.base.db import models
 from taiga.base.utils.datetime import timestamp_mics
-from taiga.base.utils.slug import slugify_uniquely_for_queryset
+from taiga.base.utils.slug import generate_incremental_int_suffix, slugify_uniquely_for_queryset
 
 
 class Workflow(models.BaseModel):
@@ -79,6 +79,11 @@ class WorkflowStatus(models.BaseModel):
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:
-            self.slug = slugify_uniquely_for_queryset(value=self.name, queryset=self.workflow.statuses.all())
+            self.slug = slugify_uniquely_for_queryset(
+                value=self.name,
+                queryset=self.workflow.statuses.all(),
+                generate_suffix=generate_incremental_int_suffix(),
+                use_always_suffix=False,
+            )
 
         super().save(*args, **kwargs)

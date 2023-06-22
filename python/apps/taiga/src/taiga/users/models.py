@@ -6,11 +6,12 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 import re
-from typing import Iterable, TypeAlias, Union
+from typing import Any, Iterable, TypeAlias, Union
 
 from taiga.base.db import models, validators
 from taiga.base.db.users import AbstractBaseUser, AnonymousUser, UserManager
 from taiga.base.utils.colors import generate_random_color
+from taiga.base.utils.slug import generate_int_suffix, slugify_uniquely
 from taiga.conf import settings
 
 AnyUser: TypeAlias = Union[AnonymousUser, "User"]
@@ -71,6 +72,19 @@ class User(models.BaseModel, AbstractBaseUser):
 
     def __repr__(self) -> str:
         return f"<User {self.username}>"
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if not self.username:
+            self.username = slugify_uniquely(
+                value=self.email.split("@")[0],
+                slugfield="username",
+                model=self.__class__,
+                generate_suffix=generate_int_suffix(),
+                use_always_suffix=False,
+                template="{base}{suffix}",
+            )
+
+        super().save(*args, **kwargs)
 
     def get_short_name(self) -> str:
         return self.username

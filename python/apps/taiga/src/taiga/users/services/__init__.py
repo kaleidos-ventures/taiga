@@ -11,7 +11,6 @@ from taiga.auth import services as auth_services
 from taiga.base.api.pagination import Pagination
 from taiga.base.utils.colors import generate_random_color
 from taiga.base.utils.datetime import aware_utcnow
-from taiga.base.utils.slug import generate_int_suffix, slugify
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
@@ -55,9 +54,8 @@ async def create_user(
         # new user
         if not color:
             color = generate_random_color()
-        username = await generate_username(email=email)
         user = await users_repositories.create_user(
-            email=email, username=username, full_name=full_name, color=color, password=password, lang=lang
+            email=email, full_name=full_name, color=color, password=password, lang=lang
         )
     else:
         # the user (is_active=False) tries to sign-up again before verifying the previous attempt
@@ -284,16 +282,6 @@ async def reset_password(token: str, password: str) -> User | None:
 #####################################################################
 # misc
 #####################################################################
-
-
-async def generate_username(email: str) -> str:
-    username = slugify(email.split("@")[0])
-    suffix = ""
-    while True:
-        potential = f"{username}{suffix}"
-        if not await users_repositories.user_exists(filters={"username": potential}):
-            return potential
-        suffix = generate_int_suffix()
 
 
 async def clean_expired_users() -> None:

@@ -121,5 +121,5 @@ class ProjectTemplate(models.BaseModel, CreatedAtMetaInfoMixin, ModifiedAtMetaIn
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:
-            self.slug = slugify_uniquely(self.name, self.__class__)
+            self.slug = slugify_uniquely(value=self.name, model=self.__class__)
         super().save(*args, **kwargs)

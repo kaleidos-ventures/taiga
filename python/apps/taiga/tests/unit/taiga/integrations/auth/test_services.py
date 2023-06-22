@@ -32,7 +32,6 @@ async def test_social_login_user_has_authdata():
 async def test_social_login_user_no_auth_data():
     with (
         patch("taiga.integrations.auth.services.users_repositories", autospec=True) as fake_users_repositories,
-        patch("taiga.integrations.auth.services.users_services", autospec=True) as fake_users_services,
         patch("taiga.integrations.auth.services.auth_services", autospec=True) as fake_auth_services,
     ):
         user = f.build_user()
@@ -41,7 +40,6 @@ async def test_social_login_user_no_auth_data():
 
         await services.social_login(email="", full_name="", social_key="", social_id="", bio="")
 
-        fake_users_services.generate_username.assert_not_awaited()
         fake_auth_services.create_auth_credentials.assert_awaited_once()
         fake_users_repositories.create_auth_data.assert_awaited_once()
 
@@ -49,7 +47,6 @@ async def test_social_login_user_no_auth_data():
 async def test_social_login_no_user():
     with (
         patch("taiga.integrations.auth.services.users_repositories", autospec=True) as fake_users_repositories,
-        patch("taiga.integrations.auth.services.users_services", autospec=True) as fake_users_services,
         patch("taiga.integrations.auth.services.auth_services", autospec=True) as fake_auth_services,
         patch(
             "taiga.integrations.auth.services.project_invitations_services", autospec=True
@@ -63,7 +60,6 @@ async def test_social_login_no_user():
 
         await services.social_login(email="", full_name="", social_key="", social_id="", bio="")
 
-        fake_users_services.generate_username.assert_awaited_once()
         fake_auth_services.create_auth_credentials.assert_awaited_once()
         fake_users_repositories.create_auth_data.assert_awaited_once()
         fake_users_repositories.create_user.assert_awaited_once()

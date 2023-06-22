@@ -21,7 +21,7 @@ NUM_PROJECT_COLORS = 8
 PROB_PROJECT_WITH_LOGO = 70  # 0-100
 
 # Stories
-STORY_TITLE_MAX_SIZE = ((7,) * 3) + ((15,) * 6) + (50,)  # 7 words (30%), 15 words (60%), 50 words (10%)
+STORY_TITLE_MAX_SIZE = ((75,) * 3) + ((200,) * 6) + (400,)  # 75 chars (30%), 200 chars (60%), 400 chars (10%)
 NUM_STORIES_PER_WORKFLOW = (0, 30)  # (min, max) by default
 PROB_STORY_ASSIGNMENTS = {  # 0-99 prob of a story to be assigned by its workflow status
     "new": 10,

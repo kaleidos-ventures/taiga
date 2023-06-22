@@ -230,7 +230,7 @@ async def create_stories(
                     save=False,
                 )
             )
-    await Story.objects.abulk_create(stories)
+        await Story.objects.abulk_create(stories)
 
     # Create story assignments and comments
     story_assignments = []
@@ -272,7 +272,7 @@ async def _create_story(
     save: bool = True,
 ) -> Story:
     _ref = await sync_to_async(get_new_project_reference_id)(status.workflow.project_id)
-    _title = title or fake.sentence(nb_words=random.choice(constants.STORY_TITLE_MAX_SIZE))
+    _title = title or fake.text(max_nb_chars=random.choice(constants.STORY_TITLE_MAX_SIZE))[:500]
     _description = description or f"<p>{fake.paragraph(nb_sentences=2)}</p>"
     _created_at = fake.date_time_between(start_date="-2y", tzinfo=timezone.utc)
 
@@ -288,7 +288,7 @@ async def _create_story(
         status_id=status.id,
     )
     if save:
-        sync_to_async(story.save)()
+        await sync_to_async(story.save)()
     return story
 
 

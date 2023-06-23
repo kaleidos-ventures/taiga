@@ -154,6 +154,7 @@ export class KanbanStatusComponent
   }
 
   public cdkScrollable!: CdkVirtualScrollViewport;
+  public projectActionsDropdownState = false;
 
   public model$ = this.state.select().pipe(
     map((state) => {
@@ -301,6 +302,10 @@ export class KanbanStatusComponent
       : this.state.get('initialCanEdit');
 
     return story._shadow || !story.ref || !canEdit;
+  }
+
+  public displayEditStatus() {
+    console.log('displayEditStatus');
   }
 
   private fillColor() {

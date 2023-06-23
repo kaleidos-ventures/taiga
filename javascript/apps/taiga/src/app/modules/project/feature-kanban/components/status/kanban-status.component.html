@@ -22,6 +22,24 @@ Copyright (c) 2023-present Kaleidos INC
           class="color"
           [style.border-color]="color"></div>
         <div class="name">{{ status.name }}</div>
+        <tui-hosted-dropdown
+          *ngIf="vm.canEdit"
+          class="status-options-menu"
+          [tuiDropdownAlign]="'right'"
+          [content]="projectActionsDropdown"
+          [(open)]="projectActionsDropdownState">
+          <button
+            [attr.aria-label]=""
+            role="menu"
+            aria-haspopup="true"
+            [attr.aria-expanded]="projectActionsDropdownState"
+            icon="more-vertical"
+            data-test="status-options"
+            class="status-options-menu-button"
+            appearance="action-button-2"
+            tuiIconButton
+            type="button"></button>
+        </tui-hosted-dropdown>
       </div>
       <ng-container *ngIf="vm.visible">
         <div
@@ -104,5 +122,36 @@ Copyright (c) 2023-present Kaleidos INC
         </ng-template>
       </ng-container>
     </div>
+    <ng-template #projectActionsDropdown>
+      <tui-data-list class="view-options-list">
+        <button
+          class="option-bt"
+          tuiOption
+          type="button"
+          (click)="displayEditStatus()">
+          <div class="option-container">
+            <tui-svg
+              aria-hidden="true"
+              class="option-icon"
+              src="pen"></tui-svg>
+            <span class="option-name">{{ t('kanban.edit_status_name') }}</span>
+          </div>
+        </button>
+        <hr class="separator" />
+        <button
+          class="option-btn option-delete"
+          tuiOption
+          type="button"
+          (click)="displayEditStatus()">
+          <div class="option-container">
+            <tui-svg
+              aria-hidden="true"
+              class="option-icon"
+              src="trash"></tui-svg>
+            <span class="option-name">{{ t('kanban.delete_status') }}</span>
+          </div>
+        </button>
+      </tui-data-list>
+    </ng-template>
   </ng-container>
 </ng-container>

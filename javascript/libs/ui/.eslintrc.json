@@ -19,7 +19,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "tg-ui",
+            "prefix": "tgUi",
             "style": "camelCase"
           }
         ],

@@ -7,23 +7,27 @@
  */
 
 import { Directive, ElementRef, Input, OnDestroy } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { DragService } from '../services/drag.service';
-import { DraggableDirective } from './draggable.directive';
+import { Draggable, DropZone } from '../drag.model';
 
-@UntilDestroy()
 @Directive({
-  selector: '[tgDropZone]',
+  selector: '[tgUiDropZone]',
 })
-export class DropZoneDirective implements OnDestroy {
+export class DropZoneDirective implements OnDestroy, DropZone {
   @Input()
-  public set tgDropZone(id: unknown) {
+  public dropCategory?: string;
+
+  @Input()
+  public overlapStrategy: DropZone['overlapStrategy'] = 'all';
+
+  @Input()
+  public set tgUiDropZone(id: unknown) {
     this.id = id;
   }
 
   public id!: unknown;
 
-  private candidates: DraggableDirective[] = [];
+  private candidates: Draggable[] = [];
 
   public get nativeElement() {
     return this.el.nativeElement as HTMLElement;
@@ -33,13 +37,13 @@ export class DropZoneDirective implements OnDestroy {
     this.dragService.addDropZone(this);
   }
 
-  public removeCandidate(candidate: DraggableDirective) {
+  public removeCandidate(candidate: Draggable) {
     this.candidates = this.candidates.filter((it) => {
       return it !== candidate;
     });
   }
 
-  public addCandidate(candidate: DraggableDirective) {
+  public addCandidate(candidate: Draggable) {
     this.candidates.push(candidate);
   }
 

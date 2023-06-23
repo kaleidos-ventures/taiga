@@ -10,11 +10,13 @@ import { createAction, createActionGroup, props } from '@ngrx/store';
 import {
   Membership,
   Project,
+  Status,
   Story,
   StoryDetail,
   User,
   UserComment,
 } from '@taiga/data';
+import { DropCandidate } from '@taiga/ui/drag/drag.model';
 
 export const fetchProjectSuccess = createAction(
   '[Project] fetch success',
@@ -131,5 +133,12 @@ export const projectEventActions = createActionGroup({
     'Remove Member': props<{ membership: Membership; workspace: string }>(),
     'Update Member': props<{ membership: Membership }>(),
     'Create comment': props<{ storyRef: Story['ref']; comment: UserComment }>(),
+    'Status reorder': props<{
+      slug: Status['slug'];
+      candidate?: {
+        slug: Status['slug'];
+        position: DropCandidate['hPosition'];
+      };
+    }>(),
   },
 });

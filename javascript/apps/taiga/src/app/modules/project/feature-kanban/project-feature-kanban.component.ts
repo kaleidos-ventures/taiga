@@ -60,7 +60,10 @@ import {
   KanbanActions,
   KanbanEventsActions,
 } from './data-access/+state/actions/kanban.actions';
-import { KanbanState } from './data-access/+state/reducers/kanban.reducer';
+import {
+  KanbanState,
+  kanbanFeature,
+} from './data-access/+state/reducers/kanban.reducer';
 import {
   selectLoadingWorkflows,
   selectWorkflows,
@@ -76,6 +79,7 @@ interface ComponentState {
   project: Project;
   selectedStory: StoryDetail;
   members: Membership[];
+  columns: ReturnType<typeof kanbanFeature.selectColums>;
 }
 
 @UntilDestroy()
@@ -175,6 +179,10 @@ export class ProjectFeatureKanbanComponent {
     );
     this.state.connect('storyView', this.store.select(selectStoryView));
     this.state.connect('workflows', this.store.select(selectWorkflows));
+    this.state.connect(
+      'columns',
+      this.store.select(kanbanFeature.selectColums)
+    );
     this.events();
 
     this.permissionService

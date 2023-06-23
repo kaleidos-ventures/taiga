@@ -9,15 +9,13 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div
-      [tgDropZone]="status.slug"
+      [tgUiDropZone]="status.slug"
+      dropCategory="story"
       class="wrapper"
-      inViewport
-      [rootMargin]="columnSize"
-      [threshold]="0"
-      root="cdk-virtual-scroll-viewport"
-      (visible)="onVisible()"
-      (notVisible)="onNotVisible()">
-      <div class="header">
+      root="cdk-virtual-scroll-viewport">
+      <div
+        class="header"
+        tgUiDragHandle>
         <div
           class="color"
           [style.border-color]="color"></div>
@@ -54,47 +52,47 @@ Copyright (c) 2023-present Kaleidos INC
           (cancel)="cancelEditStatus()"
           (leave)="leaveEditStatus($event)"></tg-edit-status>
       </div>
-      <ng-container *ngIf="vm.visible">
-        <div
-          *ngIf="vm.stories.length"
-          tgKanbanStoryKeyboardNavigation
-          class="stories"
-          [tgScrollDynamicHeight]="vm.stories">
-          <tui-scrollbar>
-            <cdk-virtual-scroll-viewport
-              appendOnly
-              tabindex="-1"
-              tuiScrollable
-              kanbanVirtualScrollStrategy
-              [itemHeights]="vm.itemHeights"
-              class="tui-zero-scrollbar">
-              <ng-container
-                *cdkVirtualFor="
-                  let story of vm.stories;
-                  let i = index;
-                  trackBy: trackByRef
-                ">
-                <tg-kanban-story
-                  [class.drag-a11y]="
-                    story.ref === vm.activeA11yDragDropStory.ref
-                  "
-                  [class.small-drag-shadow]="showSmallDragShadowClass(story)"
-                  [tgDraggable]="story.ref"
-                  [dragData]="story"
-                  [dragDisabled]="disableScroll(story)"
-                  [class.selected-story]="vm.currentStory?.ref === story.ref"
-                  [@slideIn]="
-                    vm.newEventStories.includes(story.ref) ? 'on' : 'off'
-                  "
-                  [story]="story"
-                  [index]="i"
-                  [total]="vm.stories.length"
-                  [attr.data-tmp-id]="story.tmpId">
-                </tg-kanban-story>
-              </ng-container>
-            </cdk-virtual-scroll-viewport>
-          </tui-scrollbar>
-        </div>
+      <div
+        *ngIf="vm.stories.length"
+        tgKanbanStoryKeyboardNavigation
+        class="stories"
+        [tgScrollDynamicHeight]="vm.stories"
+        (dynamicHeightChanged)="onDynamicHeightChange()">
+        <tui-scrollbar>
+          <cdk-virtual-scroll-viewport
+            appendOnly
+            tabindex="-1"
+            tuiScrollable
+            kanbanVirtualScrollStrategy
+            [itemHeights]="vm.itemHeights"
+            class="tui-zero-scrollbar">
+            <ng-container
+              *cdkVirtualFor="
+                let story of vm.stories;
+                let i = index;
+                trackBy: trackByRef
+              ">
+              <tg-kanban-story
+                [class.drag-a11y]="story.ref === vm.activeA11yDragDropStory.ref"
+                [class.small-drag-shadow]="showSmallDragShadowClass(story)"
+                [tgUiDraggable]="story.ref"
+                [dragData]="story"
+                [dragDisabled]="disableDragAndDrop(story)"
+                dropCategory="story"
+                [class.selected-story]="vm.currentStory?.ref === story.ref"
+                [@slideIn]="
+                  vm.newEventStories.includes(story.ref) ? 'on' : 'off'
+                "
+                [story]="story"
+                [index]="i"
+                [total]="vm.stories.length"
+                [attr.data-tmp-id]="story.tmpId">
+              </tg-kanban-story>
+            </ng-container>
+          </cdk-virtual-scroll-viewport>
+        </tui-scrollbar>
+      </div>
+      <ng-container *ngIf="vm.calculatedHeight || vm.empty">
         <div
           class="create-story"
           #createStoryWrapper

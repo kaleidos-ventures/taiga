@@ -20,11 +20,13 @@ import { RxState } from '@rx-angular/state';
 import {
   Membership,
   Project,
+  Status,
   Story,
   StoryAssignEvent,
   StoryDetail,
   User,
   UserComment,
+  Workflow,
   WorkspaceMembership,
 } from '@taiga/data';
 import { distinctUntilChanged, filter, merge } from 'rxjs';
@@ -280,6 +282,30 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
           projectEventActions.createComment({
             storyRef: eventResponse.event.content.ref,
             comment: eventResponse.event.content.comment,
+          })
+        );
+      });
+
+    this.wsService
+      .projectEvents<{
+        reorder: {
+          reorder: { place: 'before' | 'after'; status: Status['slug'] };
+          statuses: Status['slug'][];
+          workflow: Pick<Workflow, 'name' | 'slug'>;
+        };
+      }>('workflowstatuses.reorder')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          projectEventActions.statusReorder({
+            slug: eventResponse.event.content.reorder.statuses[0],
+            candidate: {
+              position:
+                eventResponse.event.content.reorder.reorder.place === 'after'
+                  ? 'right'
+                  : 'left',
+              slug: eventResponse.event.content.reorder.reorder.status,
+            },
           })
         );
       });

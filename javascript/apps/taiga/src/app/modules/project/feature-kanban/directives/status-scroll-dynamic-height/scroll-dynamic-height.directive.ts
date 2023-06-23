@@ -11,9 +11,11 @@ import {
   AfterViewInit,
   Directive,
   ElementRef,
+  EventEmitter,
   HostListener,
   Input,
   OnDestroy,
+  Output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
@@ -25,6 +27,7 @@ export interface StatusScrollDynamicHeight {
 @UntilDestroy()
 @Directive({
   selector: '[tgScrollDynamicHeight]',
+  exportAs: 'tgScrollDynamicHeight',
 })
 export class StatusScrollDynamicHeightDirective
   implements AfterViewInit, OnDestroy
@@ -34,6 +37,9 @@ export class StatusScrollDynamicHeightDirective
 
   @Input()
   public tgScrollDynamicHeight!: unknown[];
+
+  @Output()
+  public dynamicHeightChanged = new EventEmitter<number>();
 
   @HostListener('window:resize')
   public onResize() {
@@ -155,6 +161,8 @@ export class StatusScrollDynamicHeightDirective
         });
       }
     }
+
+    this.dynamicHeightChanged.emit(blockSize);
   }
 
   private getMaxHeight() {

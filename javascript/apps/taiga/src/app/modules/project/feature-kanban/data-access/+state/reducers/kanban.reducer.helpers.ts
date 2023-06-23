@@ -7,7 +7,7 @@
  */
 
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
-import { DropCandidate } from '~/app/shared/drag/drag.model';
+import { DropCandidate } from '@taiga/ui/drag/drag.model';
 import { KanbanState } from './kanban.reducer';
 
 export function findStory(

@@ -5,7 +5,7 @@
 Add the module.
 
 ```ts
-import { DragModule } from '~/app/shared/drag/drag.module';
+import { DragModule } from '@taiga/ui/drag';
 
 @NgModule({
   imports: [
@@ -15,14 +15,14 @@ import { DragModule } from '~/app/shared/drag/drag.module';
 Define where is valid to drop an element. An ID is required to identify different drop zones.
 
 ```html
-<div [tgDropZone]="id"></div>
+<div [tgUiDropZone]="id"></div>
 ```
 
 Define draggable elements.
 
 ```html
 <div
-  [tgDraggable]="id"
+  [tgUiDraggable]="id"
   [dragData]="data"
   [dragDisabled]="isScrollDisabled()"></div>
 ```
@@ -30,11 +30,11 @@ Define draggable elements.
 The html that is going to follow the cursor on drag.
 
 ```html
-<tg-drag-in-progress *ngIf="moving$ | async as movingElements">
+<tg-ui-drag-in-progress *ngIf="moving$ | async as movingElements">
   <div *ngFor="let element of movingElements; trackBy: trackBy">
     <tg-example-component [el]="element"></tg-example-component>
   </div>
-</tg-drag-in-progress>
+</tg-ui-drag-in-progress>
 ```
 
 ## Events
@@ -79,4 +79,30 @@ class Test {
       .subscribe();
   }
 }
+```
+
+## Drop category
+
+You can define different drop categories so multiples drags & drops don't interfer with each other.
+
+```html
+<div
+  [tgUiDropZone]="id"
+  [dropCategory]="category-1"></div>
+
+<div
+  [tgUiDraggable]="id"
+  [dropCategory]="category-1"></div>
+```
+
+## Drag Handle
+
+You can select which part of the draggable element can be used to initiate the drag and drop.
+
+```html
+<div
+  [tgUiDraggable]="id"></div>
+
+  <div tgUiDragHandle>Init drag</div>
+</div>
 ```

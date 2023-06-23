@@ -12,7 +12,7 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        "ngrx/avoid-mapping-selectors": ["off"],
+        "@ngrx/avoid-mapping-selectors": ["off"],
         "@nx/enforce-module-boundaries": ["off"],
         "@angular-eslint/directive-selector": [
           "error",

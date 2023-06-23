@@ -50,7 +50,7 @@ import {
 import { EditStatus } from '~/app/modules/project/feature-kanban/models/edit-status.model';
 import { selectStory } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 import { PermissionsService } from '~/app/services/permissions.service';
-import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service';
+import { AutoScrollService } from '@taiga/ui/drag';
 import { filterNil } from '~/app/shared/utils/operators';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
@@ -73,6 +73,7 @@ export interface KanbanComponentState {
   activeA11yDragDropStory: KanbanStoryA11y;
   hasDropCandidate: KanbanState['hasDropCandidate'];
   currentStory: StoryDetail | null;
+  calculatedHeight: boolean;
 }
 
 @UntilDestroy()
@@ -199,7 +200,7 @@ export class KanbanStatusComponent
     private permissionService: PermissionsService,
     private kanbanScrollManagerService: KanbanScrollManagerService
   ) {
-    this.state.set({ visible: false, stories: [] });
+    this.state.set({ visible: false, stories: [], calculatedHeight: false });
     this.kanbanScrollManagerService.registerKanbanStatus(this);
   }
 
@@ -317,7 +318,7 @@ export class KanbanStatusComponent
     );
   }
 
-  public disableScroll(story: KanbanStory) {
+  public disableDragAndDrop(story: KanbanStory) {
     const canEdit = this.state.get('canEdit')
       ? true
       : this.state.get('initialCanEdit');
@@ -381,6 +382,10 @@ export class KanbanStatusComponent
         moveToStatus,
       })
     );
+  }
+
+  public onDynamicHeightChange() {
+    this.state.set({ calculatedHeight: true });
   }
 
   private fillColor() {

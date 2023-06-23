@@ -10,7 +10,7 @@ import { Directive, HostListener } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { filter, switchMap, take } from 'rxjs';
 import { PermissionsService } from '~/app/services/permissions.service';
-import { A11yDragService } from '~/app/shared/drag/services/a11yDrag.service';
+import { A11yDragService } from '~/app/modules/project/feature-kanban/services/a11yDrag.service';
 import { KanbanStoryComponent } from './kanban-story.component';
 
 @UntilDestroy()

@@ -23,6 +23,7 @@ import {
   KanbanEventsActions,
 } from '../actions/kanban.actions';
 import * as kanbanReducer from './kanban.reducer';
+import { KanbanState } from './kanban.reducer';
 
 describe('Kanban reducer', () => {
   it('load a workflow with no stories', () => {
@@ -731,5 +732,137 @@ describe('Kanban reducer', () => {
     );
     expect(state.stories[status.slug]).toBeUndefined();
     expect(state.workflows![0].statuses.length).toEqual(10);
+  });
+
+  describe('status dropped', () => {
+    it('right', () => {
+      const { initialKanbanState } = kanbanReducer;
+      const workflow = WorkflowMockFactory(3);
+
+      const state = kanbanReducer.kanbanFeature.reducer(
+        {
+          ...initialKanbanState,
+          workflows: [workflow],
+        },
+
+        KanbanActions.statusDropped({
+          slug: workflow.statuses[0].slug,
+          candidate: {
+            slug: workflow.statuses[2].slug,
+            position: 'right',
+          },
+        })
+      );
+
+      expect(state.workflows![0].statuses[0].slug).toEqual(
+        workflow.statuses[1].slug
+      );
+      expect(state.workflows![0].statuses[1].slug).toEqual(
+        workflow.statuses[2].slug
+      );
+      expect(state.workflows![0].statuses[2].slug).toEqual(
+        workflow.statuses[0].slug
+      );
+    });
+
+    it('sleft', () => {
+      const { initialKanbanState } = kanbanReducer;
+      const workflow = WorkflowMockFactory(3);
+
+      const state = kanbanReducer.kanbanFeature.reducer(
+        {
+          ...initialKanbanState,
+          workflows: [workflow],
+        },
+
+        KanbanActions.statusDropped({
+          slug: workflow.statuses[0].slug,
+          candidate: {
+            slug: workflow.statuses[2].slug,
+            position: 'left',
+          },
+        })
+      );
+
+      expect(state.workflows![0].statuses[0].slug).toEqual(
+        workflow.statuses[1].slug
+      );
+      expect(state.workflows![0].statuses[1].slug).toEqual(
+        workflow.statuses[0].slug
+      );
+      expect(state.workflows![0].statuses[2].slug).toEqual(
+        workflow.statuses[2].slug
+      );
+    });
+  });
+
+  describe('select columns', () => {
+    it('drag right', () => {
+      const workflows = [WorkflowMockFactory(3)];
+      const statuses = workflows[0].statuses;
+      const draggingStatus = statuses[0];
+      const statusDropCandidate = {
+        slug: draggingStatus.slug,
+        candidate: {
+          position: 'right',
+          slug: statuses[1].slug,
+        },
+      } as KanbanState['statusDropCandidate'];
+
+      const columns = kanbanReducer.kanbanFeature.selectColums.projector(
+        workflows,
+        draggingStatus,
+        statusDropCandidate
+      );
+
+      expect(columns).toEqual([
+        {
+          status: statuses[1],
+          isPlaceholder: false,
+        },
+        {
+          status: statuses[0],
+          isPlaceholder: true,
+        },
+        {
+          status: statuses[2],
+          isPlaceholder: false,
+        },
+      ]);
+    });
+
+    it('drag left', () => {
+      const workflows = [WorkflowMockFactory(3)];
+      const statuses = workflows[0].statuses;
+      const draggingStatus = statuses[1];
+      const statusDropCandidate = {
+        slug: draggingStatus.slug,
+        candidate: {
+          position: 'left',
+          slug: statuses[0].slug,
+        },
+      } as KanbanState['statusDropCandidate'];
+
+      const columns = kanbanReducer.kanbanFeature.selectColums.projector(
+        workflows,
+        draggingStatus,
+        statusDropCandidate
+      );
+
+      expect(columns).toEqual([
+        {
+          status: statuses[1],
+          isPlaceholder: true,
+        },
+        {
+          status: statuses[0],
+          isPlaceholder: false,
+        },
+        {
+          status: statuses[2],
+          isPlaceholder: false,
+        },
+      ]);
+    });
   });
 });

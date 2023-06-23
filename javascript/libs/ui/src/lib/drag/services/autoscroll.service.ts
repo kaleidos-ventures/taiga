@@ -133,7 +133,13 @@ export class AutoScrollService {
       const isDragAndDropInProgress = !!this.dragService.elementsValue().length;
 
       if (isDragAndDropInProgress) {
-        obs.push(of(true));
+        // force init subscription
+        obs.push(
+          of({
+            data: {},
+            el: this.dragService.elementsValue()[0].nativeElement,
+          })
+        );
       }
 
       const subscription = merge(...obs)

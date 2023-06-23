@@ -7,7 +7,6 @@
  */
 
 import { A11yModule } from '@angular/cdk/a11y';
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -31,7 +30,7 @@ import { InViewportDirective } from '~/app/shared/directives/in-viewport.directi
 import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
 import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
 import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
-import { DragModule } from '~/app/shared/drag/drag.module';
+import { DragModule } from '@taiga/ui/drag';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
@@ -91,7 +90,6 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     DragModule,
     ProjectFeatureStoryWrapperSideViewModule,
     ProjectFeatureStoryWrapperModalViewModule,
-    DragDropModule,
     ResizedDirective,
     RouterModule,
     DropdownModule,

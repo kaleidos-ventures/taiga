@@ -593,4 +593,25 @@ export class ProjectApiService {
       }`
     );
   }
+
+  public moveStatus(
+    statuses: Status['id'][],
+    project: Project['id'],
+    workflow: Workflow['slug'],
+    reorder?: {
+      place: 'after' | 'before';
+      status: Status['id'];
+    }
+  ) {
+    return this.http.post<{
+      status: Status;
+      stories: Story['ref'][];
+    }>(
+      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/statuses/reorder`,
+      {
+        statuses,
+        reorder,
+      }
+    );
+  }
 }

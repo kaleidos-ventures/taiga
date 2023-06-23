@@ -36,6 +36,7 @@ import {
   KanbanEventsActions,
 } from '../actions/kanban.actions';
 import {
+  selectCurrentWorkflow,
   selectCurrentWorkflowSlug,
   selectWorkflows,
 } from '../selectors/kanban.selectors';
@@ -419,6 +420,47 @@ export class KanbanEffects {
                   status,
                   workflow,
                   moveToStatus,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastGenericError(httpResponse);
+        },
+      })
+    );
+  });
+
+  public moveStatus$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.statusDropped),
+      filter(({ candidate }) => !!candidate),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProjectId).pipe(filterNil()),
+        this.store.select(selectCurrentWorkflow).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: (action, project, workflow) => {
+          let reorder:
+            | {
+                place: 'before' | 'after';
+                status: Status['id'];
+              }
+            | undefined;
+
+          if (action.candidate) {
+            reorder = {
+              place: action.candidate.position === 'left' ? 'before' : 'after',
+              status: action.candidate.slug,
+            };
+          }
+
+          return this.projectApiService
+            .moveStatus([action.slug], project, workflow?.slug, reorder)
+            .pipe(
+              map(() => {
+                return KanbanApiActions.moveStatusSuccess({
+                  ...action,
                 });
               })
             );

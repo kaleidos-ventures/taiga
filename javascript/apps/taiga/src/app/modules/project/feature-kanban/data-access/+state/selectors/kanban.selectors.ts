@@ -27,6 +27,7 @@ export const {
   selectHasDropCandidate,
   selectCurrentWorkflowSlug,
   selectLoadingStatus,
+  selectDraggingStatus,
 } = kanbanFeature;
 
 export const selectStatusNewStories = (statusSlug: Status['slug']) => {

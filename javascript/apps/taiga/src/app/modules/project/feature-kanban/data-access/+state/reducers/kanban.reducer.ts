@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, on } from '@ngrx/store';
+import { createFeature, createSelector, on } from '@ngrx/store';
 import { Status, Story, Workflow } from '@taiga/data';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
@@ -15,7 +15,7 @@ import {
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
-import { DropCandidate } from '~/app/shared/drag/drag.model';
+import { DropCandidate } from '@taiga/ui/drag/drag.model';
 import { pick } from '~/app/shared/utils/pick';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import {
@@ -31,6 +31,7 @@ import {
   replaceStory,
   setIntialPosition,
 } from './kanban.reducer.helpers';
+import { moveItemArray } from '~/app/shared/utils/move-item-array';
 
 export interface KanbanState {
   loadingWorkflows: boolean;
@@ -54,6 +55,15 @@ export interface KanbanState {
   dragging: KanbanStory[];
   hasDropCandidate: boolean;
   loadingStatus: boolean;
+  draggingStatus: Status | null;
+  dragType: 'story' | 'status' | null;
+  statusDropCandidate: {
+    slug: Status['slug'];
+    candidate?: {
+      slug: Status['slug'];
+      position: DropCandidate['hPosition'];
+    };
+  } | null;
 }
 
 export const initialKanbanState: KanbanState = {
@@ -84,35 +94,17 @@ export const initialKanbanState: KanbanState = {
     },
   },
   dragging: [],
+  draggingStatus: null,
   hasDropCandidate: false,
   loadingStatus: false,
+  dragType: null,
+  statusDropCandidate: null,
 };
 
 export const reducer = createImmerReducer(
   initialKanbanState,
   on(KanbanActions.initKanban, (state): KanbanState => {
-    state.workflows = null;
-    state.stories = {};
-    state.loadingWorkflows = true;
-    state.loadingStories = true;
-    state.scrollToStory = [];
-    state.createStoryForm = '';
-    state.empty = null;
-    state.activeA11yDragDropStory = {
-      ref: null,
-      initialPosition: {
-        index: null,
-        status: '',
-      },
-      prevPosition: {
-        index: null,
-        status: '',
-      },
-      currentPosition: {
-        index: null,
-        status: '',
-      },
-    };
+    state = { ...initialKanbanState };
 
     return state;
   }),
@@ -386,6 +378,8 @@ export const reducer = createImmerReducer(
     const story = findStory(state, (it) => it.ref === ref);
 
     if (story) {
+      state.dragType = 'story';
+
       state.dragging.push(story);
       story._dragging = true;
 
@@ -737,10 +731,157 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(KanbanActions.statusDragStart, (state, { slug }): KanbanState => {
+    const currentWorkflow = state.workflows ? state.workflows[0] : undefined;
+
+    if (currentWorkflow) {
+      state.dragType = 'status';
+
+      state.draggingStatus =
+        currentWorkflow.statuses.find((it) => it.slug === slug) ?? null;
+    }
+
+    return state;
+  }),
+  on(
+    KanbanActions.statusDropCandidate,
+    (state, { candidate, slug }): KanbanState => {
+      state.statusDropCandidate = {
+        candidate,
+        slug,
+      };
+
+      return state;
+    }
+  ),
+  on(
+    KanbanActions.statusDropped,
+    projectEventActions.statusReorder,
+    (state, { slug, candidate }): KanbanState => {
+      const currentWorkflow = state.workflows ? state.workflows[0] : undefined;
+
+      if (!currentWorkflow) {
+        return state;
+      }
+      const currentStatus = currentWorkflow.statuses.find(
+        (it) => it.slug === slug
+      );
+
+      if (candidate && currentStatus) {
+        const currentStatusIndex = currentWorkflow.statuses.findIndex(
+          (it) => it.slug === slug
+        );
+
+        let statusIndex = currentWorkflow.statuses.findIndex(
+          (it) => it.slug === candidate.slug
+        );
+
+        let statusInNextPosition: null | Status = null;
+
+        if (candidate.position === 'right') {
+          statusIndex++;
+
+          statusInNextPosition = currentWorkflow.statuses[statusIndex] ?? null;
+        } else {
+          statusInNextPosition =
+            currentWorkflow.statuses[statusIndex - 1] ?? null;
+        }
+
+        if (statusIndex > currentStatusIndex) {
+          statusIndex--;
+        }
+
+        if (!statusInNextPosition || statusInNextPosition.slug !== slug) {
+          currentWorkflow.statuses = moveItemArray(
+            currentWorkflow.statuses,
+            currentStatusIndex,
+            statusIndex
+          );
+        }
+      }
+
+      state.draggingStatus = null;
+      state.statusDropCandidate = null;
+
+      return state;
+    }
   )
 );
 
 export const kanbanFeature = createFeature({
   name: 'kanban',
   reducer,
+  extraSelectors: ({
+    selectWorkflows,
+    selectDraggingStatus,
+    selectStatusDropCandidate,
+  }) => ({
+    selectColums: createSelector(
+      selectWorkflows,
+      selectDraggingStatus,
+      selectStatusDropCandidate,
+      (workflows, currentStatus, statusDropCandidate) => {
+        if (!workflows || !workflows.length) {
+          return [];
+        }
+        const workflow = workflows[0];
+
+        if (!statusDropCandidate) {
+          return workflow.statuses.map((it) => {
+            return {
+              status: it,
+              isPlaceholder: it.slug === currentStatus?.slug,
+            };
+          });
+        }
+
+        let columns: {
+          status: Status;
+          isPlaceholder: boolean;
+        }[] = workflow.statuses.map((it) => {
+          return {
+            status: it,
+            isPlaceholder: false,
+          };
+        });
+
+        const { candidate, slug } = statusDropCandidate;
+
+        if (candidate && currentStatus) {
+          let statusIndex = columns.findIndex(
+            (it) => it.status.slug === candidate.slug
+          );
+
+          let statusInNextPosition: null | Status = null;
+
+          if (candidate.position === 'right') {
+            statusIndex++;
+
+            statusInNextPosition = columns[statusIndex]?.status ?? null;
+          } else {
+            statusInNextPosition = columns[statusIndex - 1]?.status ?? null;
+          }
+
+          if (!statusInNextPosition || statusInNextPosition.id !== slug) {
+            columns.splice(statusIndex, 0, {
+              isPlaceholder: true,
+              status: currentStatus,
+            });
+
+            columns = columns.filter(
+              (it) => it.status.slug !== slug || it.isPlaceholder
+            );
+          }
+        }
+
+        return columns.map((it) => {
+          return {
+            ...it,
+            isPlaceholder: it.status.slug === slug,
+          };
+        });
+      }
+    ),
+  }),
 });

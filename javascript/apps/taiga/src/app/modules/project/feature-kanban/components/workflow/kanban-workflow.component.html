@@ -9,7 +9,10 @@ Copyright (c) 2023-present Kaleidos INC
   *ngIf="
     workflow.statuses.length || openCreateStatusForm || statusIsBeingCreated()
   ">
-  <tui-scrollbar>
+  <tui-scrollbar
+    [tgUiDropZone]="workflow.slug"
+    dropCategory="status"
+    overlapStrategy="horizontal">
     <cdk-virtual-scroll-viewport
       appendOnly
       [maxBufferPx]="300"
@@ -19,12 +22,20 @@ Copyright (c) 2023-present Kaleidos INC
       class="tui-zero-scrollbar"
       role="row">
       <ng-container
-        *cdkVirtualFor="let status of workflow.statuses; trackBy: trackBySlug">
+        *cdkVirtualFor="let column of columns; trackBy: trackBySlug">
+        <div
+          *ngIf="column.isPlaceholder"
+          class="placeholder-status drop-target"></div>
         <tg-kanban-status
+          *ngIf="!column.isPlaceholder"
+          [tgUiDraggable]="column.status.slug"
+          [dragData]="column.status"
+          [dragDisabled]="columns.length === 1 || !userIsAdmin"
+          dropCategory="status"
           role="gridcell"
           tgKanbanStatusKeyboardNavigation
-          [attr.data-test]="status.slug"
-          [status]="status"
+          [attr.data-test]="column.status.slug"
+          [status]="column.status"
           [workflow]="workflow"></tg-kanban-status>
       </ng-container>
       <tg-kanban-create-status
@@ -36,13 +47,21 @@ Copyright (c) 2023-present Kaleidos INC
     </cdk-virtual-scroll-viewport>
   </tui-scrollbar>
 
-  <tg-drag-in-progress *ngIf="movingStories$ | async as stories">
-    <div *ngFor="let story of stories; trackBy: trackByStorySlug">
+  <tg-ui-drag-in-progress>
+    <div *ngFor="let story of movingStories(); trackBy: trackByStorySlug">
       <tg-kanban-story
         class="dragging"
         [story]="story"></tg-kanban-story>
     </div>
-  </tg-drag-in-progress>
+
+    <tg-kanban-status
+      *ngIf="movingStatus() as status"
+      role="gridcell"
+      tgKanbanStatusKeyboardNavigation
+      [attr.data-test]="status.slug"
+      [status]="status"
+      [workflow]="workflow"></tg-kanban-status>
+  </tg-ui-drag-in-progress>
 </ng-container>
 <ng-container *ngIf="!workflow.statuses.length && !openCreateStatusForm">
   <tg-kanban-empty

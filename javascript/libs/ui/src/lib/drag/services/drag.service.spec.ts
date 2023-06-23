@@ -24,10 +24,13 @@ interface FakeRect {
 const createFakeDropZone = (
   id: number,
   rect: FakeRect,
-  candidates: any[] = []
+  candidates: any[] = [],
+  dropCategory?: string,
+  overlapStrategy = 'all'
 ): any => {
   return {
     id,
+    dropCategory,
     getCandidates: () => {
       return candidates;
     },
@@ -46,6 +49,7 @@ const createFakeDropZone = (
         };
       },
     },
+    overlapStrategy,
   };
 };
 
@@ -110,6 +114,8 @@ describe('DragService', () => {
       createFakeDraggableDirective(4, false, createRectByIndex(3)),
     ];
 
+    const dropCategory = 'test-category';
+
     spectator.service.addDropZone(
       createFakeDropZone(
         1,
@@ -119,7 +125,8 @@ describe('DragService', () => {
           y: 0,
           bottom: 1000,
         },
-        candidates
+        candidates,
+        dropCategory
       )
     );
 
@@ -138,7 +145,12 @@ describe('DragService', () => {
 
         expect(over).toEqual({
           dropZone: 1,
-          over: { position: 'bottom', result: { id: 2 } },
+          dropCategory,
+          over: {
+            hPosition: 'right',
+            position: 'bottom',
+            result: { id: 2 },
+          },
           source: [], // filled dragStart
         });
         done();
@@ -181,7 +193,7 @@ describe('DragService', () => {
 
         expect(over).toEqual({
           dropZone: 1,
-          over: { position: 'top', result: { id: 3 } },
+          over: { hPosition: 'right', position: 'top', result: { id: 3 } },
           source: [], // filled dragStart
         });
         done();
@@ -341,6 +353,7 @@ describe('DragService', () => {
     spectator.service.addDropZone(zone);
 
     spectator.service['initialZone'] = zone;
+    spectator.service['source'] = [{ id: 1, data: {} }];
 
     spectator.service.newDragPosition({
       x: 10,
@@ -353,7 +366,7 @@ describe('DragService', () => {
       .over()
       .pipe(take(1))
       .subscribe((over) => {
-        expect(over).toEqual({ dropZone: 1, over: undefined, source: [] });
+        expect(over).toEqual({ dropZone: 1, over: undefined, source: [{}] });
         done();
       });
   });

@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nx", "ngrx", "taiga"],
+  "plugins": ["@nx", "@ngrx", "taiga"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -38,7 +38,7 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "plugin:@nx/typescript",
-        "plugin:ngrx/recommended",
+        "plugin:@ngrx/recommended",
         "prettier"
       ],
       "plugins": ["deprecation"],
@@ -62,7 +62,7 @@
             "avoidEscape": true
           }
         ],
-        "ngrx/no-store-subscription": "off",
+        "@ngrx/no-store-subscription": "off",
         "deprecation/deprecation": "warn"
       }
     },
@@ -72,7 +72,7 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "plugin:@nx/typescript",
-        "plugin:ngrx/recommended"
+        "plugin:@ngrx/recommended"
       ],
       "rules": {
         "semi": "off",
@@ -92,7 +92,7 @@
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/no-unsafe-return": "off",
-        "ngrx/prefix-selectors-with-select": "off"
+        "@ngrx/prefix-selectors-with-select": "off"
       }
     },
     {

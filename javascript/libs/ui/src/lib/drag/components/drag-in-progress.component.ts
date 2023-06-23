@@ -8,12 +8,12 @@
 
 import { Component, ElementRef } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filterNil } from '~/app/shared/utils/operators/filter-nil';
 import { DragService } from '../services/drag.service';
+import { filter } from 'rxjs';
 
 @UntilDestroy()
 @Component({
-  selector: 'tg-drag-in-progress',
+  selector: 'tg-ui-drag-in-progress',
   templateUrl: './drag-in-progress.component.html',
   styleUrls: ['./drag-in-progress.component.css'],
 })
@@ -27,7 +27,13 @@ export class DragInProgressComponent {
 
     this.dragService
       .position()
-      .pipe(untilDestroyed(this), filterNil())
+      .pipe(
+        untilDestroyed(this),
+        filter(
+          <T>(value: T): value is NonNullable<T> =>
+            value !== undefined && value !== null
+        )
+      )
       .subscribe((position) => {
         this.nativeElement.style.transform = `translate(${position.x}px, ${position.y}px)`;
 

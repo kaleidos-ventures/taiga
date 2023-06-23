@@ -46,7 +46,12 @@ module.exports = {
       '/^animation/': ['s'],
     },
     'order/properties-alphabetical-order': true,
-    'selector-max-type': 1,
+    'selector-max-type': [
+      1,
+      {
+        ignore: ['custom-elements'],
+      },
+    ],
 
     'selector-type-no-unknown': [
       true,

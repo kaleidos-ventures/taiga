@@ -14,7 +14,7 @@ import {
   KanbanStoryA11y,
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
-import { DropCandidate } from '~/app/shared/drag/drag.model';
+import { DropCandidate } from '@taiga/ui/drag/drag.model';
 
 export const KanbanActions = createActionGroup({
   source: 'Kanban',
@@ -97,6 +97,23 @@ export const KanbanActions = createActionGroup({
       workflow: Workflow['slug'];
       moveToStatus?: Status['slug'];
     }>(),
+    'Status drag start': props<{
+      slug: Status['slug'];
+    }>(),
+    'Status drop candidate': props<{
+      slug: Status['slug'];
+      candidate?: {
+        slug: Status['slug'];
+        position: DropCandidate['hPosition'];
+      };
+    }>(),
+    'Status dropped': props<{
+      slug: Status['slug'];
+      candidate?: {
+        slug: Status['slug'];
+        position: DropCandidate['hPosition'];
+      };
+    }>(),
   },
 });
 
@@ -147,6 +164,13 @@ export const KanbanApiActions = createActionGroup({
       status: Status['slug'];
       workflow: Workflow['slug'];
       moveToStatus?: Status['slug'];
+    }>(),
+    'Move Status Success': props<{
+      slug: Status['slug'];
+      candidate?: {
+        slug: Status['slug'];
+        position: DropCandidate['hPosition'];
+      };
     }>(),
   },
 });

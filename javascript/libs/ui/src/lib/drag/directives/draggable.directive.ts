@@ -14,20 +14,23 @@ import {
   Input,
   OnDestroy,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { DragService } from '../services/drag.service';
 import { DropZoneDirective } from './drop-zone.directive';
+import { Draggable } from '../drag.model';
+import { DragHandleDirective } from './drag-handle.directive';
 
-@UntilDestroy()
 @Directive({
-  selector: '[tgDraggable]',
+  selector: '[tgUiDraggable]',
 })
-export class DraggableDirective implements OnDestroy {
+export class DraggableDirective implements OnDestroy, Draggable {
   @Input()
   public dragDisabled = false;
 
   @Input()
   public dragData: unknown;
+
+  @Input()
+  public dropCategory?: string;
 
   @HostBinding('class.draggable')
   public get draggable() {
@@ -35,18 +38,21 @@ export class DraggableDirective implements OnDestroy {
   }
 
   @Input()
-  public set tgDraggable(id: unknown) {
+  public set tgUiDraggable(id: unknown) {
     this.id = id;
   }
 
-  @HostListener('mousedown.prevent', ['$event'])
+  @HostListener('mousedown', ['$event'])
   public dragStart(event: MouseEvent) {
-    if (!this.dragDisabled && event.button === 0) {
+    if (!this.dragHandle && !this.dragDisabled && event.button === 0) {
+      event.preventDefault();
       this.dragService.dragStart(this);
     }
   }
 
   public id!: unknown;
+
+  private dragHandle?: DragHandleDirective;
 
   public get nativeElement() {
     return this.el.nativeElement as HTMLElement;
@@ -62,5 +68,15 @@ export class DraggableDirective implements OnDestroy {
 
   public ngOnDestroy(): void {
     this.dropZone.removeCandidate(this);
+  }
+
+  public dragByHandle() {
+    if (!this.dragDisabled) {
+      this.dragService.dragStart(this);
+    }
+  }
+
+  public registerDragHandle(dragHandle: DragHandleDirective) {
+    this.dragHandle = dragHandle;
   }
 }

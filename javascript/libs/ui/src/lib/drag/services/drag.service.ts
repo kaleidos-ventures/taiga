@@ -25,9 +25,13 @@ import {
   tap,
   throttleTime,
 } from 'rxjs';
-import { DraggableDirective } from '../directives/draggable.directive';
-import { DropZoneDirective } from '../directives/drop-zone.directive';
-import { DropCandidate, DroppedEvent, OverEvent } from '../drag.model';
+import {
+  Draggable,
+  DropCandidate,
+  DroppedEvent,
+  DropZone,
+  OverEvent,
+} from '../drag.model';
 import { DragInProgressComponent } from '../components/drag-in-progress.component';
 
 interface Point {
@@ -40,29 +44,35 @@ interface Point {
 })
 export class DragService {
   private over$ = new BehaviorSubject(undefined) as BehaviorSubject<OverEvent>;
-  private elements$ = new BehaviorSubject([] as DraggableDirective[]);
+  private elements$ = new BehaviorSubject([] as Draggable[]);
   private position$ = new BehaviorSubject<Point | null>(null);
   private dropZone$ = new BehaviorSubject(undefined) as BehaviorSubject<
-    DropZoneDirective | undefined
+    DropZone | undefined
   >;
 
-  private dropZones: DropZoneDirective[] = [];
+  private dropZones: DropZone[] = [];
   private dropped$ = new Subject<DroppedEvent>();
-  private started$ = new Subject<unknown>();
+  private started$ = new Subject<{
+    el: HTMLElement;
+    data: unknown;
+  }>();
   private source: { data: unknown; id: unknown }[] = [];
   private dragInProgress!: DragInProgressComponent;
-  private initialZone?: DropZoneDirective;
+  private initialZone?: DropZone;
 
-  public over() {
-    return this.over$.asObservable();
+  public over<T, U>() {
+    return this.over$.asObservable() as Observable<OverEvent<T, U>>;
   }
 
-  public dropped() {
-    return this.dropped$.asObservable();
+  public dropped<T, U>() {
+    return this.dropped$.asObservable() as Observable<DroppedEvent<T, U>>;
   }
 
   public started<T>() {
-    return this.started$.asObservable() as Observable<T>;
+    return this.started$.asObservable() as Observable<{
+      el: HTMLElement;
+      data: T;
+    }>;
   }
 
   public elements() {
@@ -81,11 +91,11 @@ export class DragService {
     return this.dropZone$.value;
   }
 
-  public addDropZone(dropZone: DropZoneDirective) {
+  public addDropZone(dropZone: DropZone) {
     this.dropZones.push(dropZone);
   }
 
-  public deleteDropZone(dropZone: DropZoneDirective) {
+  public deleteDropZone(dropZone: DropZone) {
     this.dropZones = this.dropZones.filter((it) => it !== dropZone);
   }
 
@@ -96,7 +106,7 @@ export class DragService {
     } | null>;
   }
 
-  public add(el: DraggableDirective) {
+  public add(el: Draggable) {
     this.elements$.next([...this.elements$.value, el]);
   }
 
@@ -109,7 +119,7 @@ export class DragService {
     this.newOver(undefined);
   }
 
-  public setCurrentDropZone(zone: DropZoneDirective) {
+  public setCurrentDropZone(zone: DropZone) {
     this.dropZone$.next(zone);
   }
 
@@ -126,6 +136,7 @@ export class DragService {
     if (
       last?.dropZone !== event?.dropZone ||
       last?.over?.position !== event?.over?.position ||
+      last?.over?.hPosition !== event?.over?.hPosition ||
       last?.over?.result !== event?.over?.result
     ) {
       this.over$.next(event);
@@ -136,6 +147,7 @@ export class DragService {
     this.elements$.next([]);
     this.dropZone$.next(undefined);
     this.over$.next(undefined);
+    this.position$.next(null);
   }
 
   public newDragPosition(rect: DOMRect) {
@@ -154,6 +166,7 @@ export class DragService {
     if (candidate) {
       this.newOver({
         dropZone: this.dropZone$.value.id,
+        dropCategory: this.dropZone$.value.dropCategory,
         over: candidate,
         source: this.source.map((it) => it.data),
       });
@@ -164,23 +177,28 @@ export class DragService {
       // empty column
       this.newOver({
         dropZone: this.dropZone$.value.id,
+        dropCategory: this.dropZone$.value.dropCategory,
         over: undefined,
         source: this.source.map((it) => it.data),
       });
     } else if (
       this.initialZone === this.dropZone$.value &&
-      candidates.length === 1
+      this.source.length &&
+      candidates.length &&
+      candidates[0].id === this.source[0].id
     ) {
-      // the only item in the column is the dragging element
+      // the only item in the zone is the dragging element
+      // the user come back to the initial position
       this.newOver({
         dropZone: this.dropZone$.value.id,
+        dropCategory: this.dropZone$.value.dropCategory,
         over: undefined,
         source: this.source.map((it) => it.data),
       });
     }
   }
 
-  public dragStart(draggableDirective: DraggableDirective) {
+  public dragStart(draggableDirective: Draggable) {
     this.initialZone = draggableDirective.dropZone;
 
     this.dragInProgress.nativeElement.style.width = `${
@@ -241,6 +259,7 @@ export class DragService {
         map(() => {
           return {
             dropZone: undefined,
+            dropCategory: this.dropZone$.value?.dropCategory,
             source: this.source.map((it) => it.data),
             candidate: undefined,
           };
@@ -252,6 +271,7 @@ export class DragService {
 
           return {
             dropZone: this.dropZone$.value?.id,
+            dropCategory: this.dropZone$.value?.dropCategory,
             source: this.source.map((it) => it.data),
             candidate: lastOverEvent?.over,
           };
@@ -292,21 +312,44 @@ export class DragService {
         });
 
         this.setPosition(initialPosition.x, initialPosition.y);
-        this.started$.next(draggableDirective.dragData);
+        this.started$.next({
+          el: draggableDirective.nativeElement,
+          data: draggableDirective.dragData,
+        });
       });
   }
 
-  private findDropZone(point: Point) {
-    return this.dropZones.find((dropZone) => {
-      const rect = dropZone.nativeElement.getBoundingClientRect();
-
-      return (
-        point.x > rect.x &&
-        point.x < rect.right &&
-        point.y > rect.y &&
-        point.y < rect.bottom
-      );
+  public cancelDrag() {
+    this.dropped$.next({
+      dropZone: undefined,
+      dropCategory: this.dropZone$.value?.dropCategory,
+      source: this.source.map((it) => it.data),
+      candidate: undefined,
     });
+
+    this.dragEnded();
+  }
+
+  private findDropZone(point: Point) {
+    const dropCategory = this.elementsValue()[0]?.dropCategory;
+    return this.dropZones
+      .filter((dropZone) => {
+        if (!dropCategory) {
+          return true;
+        }
+
+        return dropZone.dropCategory === dropCategory;
+      })
+      .find((dropZone) => {
+        const rect = dropZone.nativeElement.getBoundingClientRect();
+
+        return (
+          point.x > rect.x &&
+          point.x < rect.right &&
+          point.y > rect.y &&
+          point.y < rect.bottom
+        );
+      });
   }
 
   private updateDropZone(point: Point) {
@@ -345,6 +388,7 @@ export class DragService {
 
       return {
         position: this.overlappingPosition(point, candidateRect),
+        hPosition: this.overlappingHorizontalPosition(point, candidateRect),
         result: candidate.dragData,
       };
     }
@@ -360,6 +404,14 @@ export class DragService {
     return 'bottom';
   }
 
+  private overlappingHorizontalPosition(point: Point, rect: DOMRect) {
+    if (point.x - rect.left < rect.right - point.x) {
+      return 'left';
+    }
+
+    return 'right';
+  }
+
   private isOverlapping(point: Point, rect: DOMRect) {
     const size = 15;
     const target = [
@@ -369,14 +421,20 @@ export class DragService {
       { x: point.x + size, y: point.y + size },
     ];
 
-    return !!target.find((it) => {
-      return (
-        it.x < rect.right &&
-        it.x > rect.x &&
-        it.y < rect.bottom &&
-        it.y > rect.y
-      );
-    });
+    if (this.dropZone$.value?.overlapStrategy === 'all') {
+      return !!target.find((it) => {
+        return (
+          it.x < rect.right &&
+          it.x > rect.x &&
+          it.y < rect.bottom &&
+          it.y > rect.y
+        );
+      });
+    } else {
+      return !!target.find((it) => {
+        return it.x < rect.right && it.x > rect.x;
+      });
+    }
   }
 
   private getCenter(rect: DOMRect) {

@@ -6,6 +6,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 
+@import url("tools/typography.css");
+@import url("shared/option-list.css");
+
 :host {
   --wrapper-padding-inline-end: var(--spacing-8);
 
@@ -28,6 +31,18 @@ Copyright (c) 2023-present Kaleidos INC
   display: flex;
   margin-block-end: var(--spacing-16);
   padding: var(--spacing-8);
+}
+
+.status-options-menu {
+  margin-inline-start: auto;
+}
+
+.view-options-list {
+  @mixin option-list;
+}
+
+.separator {
+  @mixin separator;
 }
 
 .color {

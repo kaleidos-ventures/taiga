@@ -85,3 +85,9 @@ Copyright (c) 2021-present Kaleidos Ventures SL
 
   color: var(--color-gray100);
 }
+
+@define-mixin separator {
+  background: var(--color-gray30);
+  margin-block: var(--spacing-8);
+  margin-inline: var(--spacing-8);
+}

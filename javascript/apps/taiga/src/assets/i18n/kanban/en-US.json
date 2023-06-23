@@ -22,5 +22,7 @@
   "add_status": "Add status",
   "create_status": "Create status",
   "write_status": "Write a status name",
-  "status_empty": "Status name can’t be empty."
+  "status_empty": "Status name can’t be empty.",
+  "edit_status_name": "Edit status name",
+  "delete_status": "Delete status"
 }

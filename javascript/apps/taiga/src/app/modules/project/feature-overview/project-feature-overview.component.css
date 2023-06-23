@@ -141,9 +141,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .separator {
-  background: var(--color-gray30);
-  margin-block: var(--spacing-8);
-  margin-inline: var(--spacing-8);
+  @mixin separator;
 }
 
 .view-options-list {

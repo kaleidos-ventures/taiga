@@ -63,29 +63,34 @@ Copyright (c) 2023-present Kaleidos INC
       <div
         *ngFor="let comment of comments; trackBy: trackIndex"
         class="comment">
-        <div class="creation-info">
-          <tg-user-avatar
-            size="m"
-            class="no-border"
-            [user]="comment.createdBy"
-            [color]="comment.createdBy.color"
-            type="light"
-            [rounded]="true"
-            aria-hidden="true"></tg-user-avatar>
-          <div>
-            <span class="creation-info-fullname">
-              {{ comment.createdBy.fullName }}
-            </span>
-            <span class="creation-info-username">
-              @{{ comment.createdBy.username }}
-            </span>
-            <span>∙</span>
-            <span
-              *ngIf="comment.createdAt"
-              [title]="comment.createdAt | date: 'medium'"
-              class="creation-info-date">
-              {{ comment.createdAt | dateDistance }}
-            </span>
+        <div class="comment-top">
+          <div class="creation-info">
+            <tg-user-avatar
+              size="m"
+              class="no-border"
+              [user]="comment.createdBy"
+              [color]="comment.createdBy.color"
+              type="light"
+              [rounded]="true"
+              aria-hidden="true"></tg-user-avatar>
+            <div>
+              <span class="creation-info-fullname">
+                {{ comment.createdBy.fullName }}
+              </span>
+              <span class="creation-info-username">
+                @{{ comment.createdBy.username }}
+              </span>
+              <span>∙</span>
+              <span
+                *ngIf="comment.createdAt"
+                [title]="comment.createdAt | date: 'medium'"
+                class="creation-info-date">
+                {{ comment.createdAt | dateDistance }}
+              </span>
+            </div>
+          </div>
+          <div class="comment-options">
+            <tg-comment-detail></tg-comment-detail>
           </div>
         </div>
 

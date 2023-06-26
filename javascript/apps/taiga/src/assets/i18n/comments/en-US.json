@@ -6,5 +6,13 @@
     "new": "Newest first",
     "old": "Oldest first",
     "reverse": "Reverse order"
+  },
+  "comment_options": "Comment Options",
+  "delete": {
+    "delete_comment": "Delete Comment",
+    "confirm": "Delete this comment?",
+    "confirm_info": "This action can not be undone.",
+    "cancel": "No, cancel",
+    "confirm_action": "Yes, delete"
   }
 }

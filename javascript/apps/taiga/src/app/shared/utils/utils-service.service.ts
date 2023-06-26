@@ -85,13 +85,40 @@ export class UtilsService {
 
   public static statusColor(colorNumber: number, type = 60) {
     const colors: Record<Status['color'], string> = {
-      1: `gray${type}`,
-      2: `ok${type}`,
-      3: `notice${type}`,
-      4: `info${type}`,
+      1: `warning${type}`,
+      2: `secondary${type}`,
+      3: `ok${type}`,
+      4: `notice${type}`,
+      5: `yellow${type}`,
+      6: `info${type}`,
+      7: `red${type}`,
+      8: `green${type}`,
     };
 
     return colors[colorNumber];
+  }
+
+  public static getNextStatusColor(statusColors: number[]) {
+    const colors: Record<number, number> = {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+      6: 0,
+      7: 0,
+      8: 0,
+    };
+
+    statusColors.forEach((color: number) => {
+      colors[color] = colors[color] + 1;
+    });
+    const colorsOrdered = Object.keys(colors).sort(
+      (a, b) => colors[+a] - colors[+b]
+    );
+
+    // returns the next available color in the order setted
+    return +colorsOrdered[0];
   }
 
   public static normalizeText(text: string) {

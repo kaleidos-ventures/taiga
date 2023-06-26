@@ -46,4 +46,14 @@ describe('UtilsService', () => {
       'jablonski meissner aebeltoft cerny dordic lapinski internationalization a c e l n o s z z a o u ss'
     );
   });
+
+  it('get next status color', () => {
+    const statusColor = UtilsService.getNextStatusColor([1, 2, 3, 4]);
+    expect(statusColor).toEqual(5);
+
+    const statusColorRepeat = UtilsService.getNextStatusColor([
+      1, 2, 3, 4, 5, 6, 7, 8, 1,
+    ]);
+    expect(statusColorRepeat).toEqual(2);
+  });
 });

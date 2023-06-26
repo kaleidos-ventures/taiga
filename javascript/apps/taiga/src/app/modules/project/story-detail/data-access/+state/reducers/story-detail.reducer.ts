@@ -290,6 +290,26 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    StoryDetailApiActions.deleteCommentSuccess,
+    (state, { commentId, deletedBy, deletedAt }): StoryDetailState => {
+      state.comments = state.comments.map((comment) =>
+        comment.id === commentId
+          ? {
+              ...comment,
+              deletedBy,
+              deletedAt: deletedAt || new Date().toISOString(),
+            }
+          : comment
+      );
+
+      if (state.totalComments) {
+        state.totalComments = state.totalComments - 1;
+      }
+
+      return state;
+    }
   )
 );
 

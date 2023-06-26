@@ -6,6 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { User } from './user.model';
+
 export interface UserComment {
   id: string;
   text: string;
@@ -15,4 +17,6 @@ export interface UserComment {
     fullName: string;
     color: number;
   };
+  deletedBy?: Partial<User>;
+  deletedAt?: string;
 }

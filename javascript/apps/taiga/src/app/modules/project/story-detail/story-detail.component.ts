@@ -51,7 +51,10 @@ import { WsService } from '~/app/services/ws';
 import { PermissionUpdateNotificationService } from '~/app/shared/permission-update-notification/permission-update-notification.service';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { filterNil } from '~/app/shared/utils/operators';
-import { StoryDetailActions } from './data-access/+state/actions/story-detail.actions';
+import {
+  StoryDetailActions,
+  StoryDetailApiActions,
+} from './data-access/+state/actions/story-detail.actions';
 import {
   selectLoadingWorkflow,
   selectStory,
@@ -83,6 +86,7 @@ export interface StoryDetailState {
   totalComments: number | null;
   commentsOrder: OrderComments;
   commentsLoading: boolean;
+  user: User;
 }
 
 export interface StoryDetailForm {
@@ -169,6 +173,7 @@ export class StoryDetailComponent {
   public resetCopyLinkTimeout?: ReturnType<typeof setTimeout>;
   public showCopyLinkHintTimeout?: ReturnType<typeof setTimeout>;
   public form: FormGroup<StoryDetailForm> | null = null;
+  public highlightedCommentId!: string;
 
   public model$ = this.state.select();
   public project$ = this.store.select(selectCurrentProject);
@@ -260,6 +265,8 @@ export class StoryDetailComponent {
       .subscribe(() => {
         this.initStory();
       });
+
+    this.state.connect('user', this.store.select(selectUser).pipe(filterNil()));
 
     this.events();
   }
@@ -557,6 +564,24 @@ export class StoryDetailComponent {
       });
   }
 
+  public highlightComment(commentId: string): void {
+    this.highlightedCommentId = commentId;
+  }
+
+  public deleteComment(commentId: string): void {
+    this.store.dispatch(
+      StoryDetailActions.deleteComment({
+        commentId: commentId,
+        projectId: this.state.get('project').id,
+        storyRef: this.state.get('story').ref,
+        deletedBy: {
+          username: this.state.get('user').username,
+          fullName: this.state.get('user').fullName,
+        },
+      })
+    );
+  }
+
   private events() {
     this.wsService
       .projectEvents<{ ref: Story['ref']; deletedBy: Partial<User> }>(
@@ -619,6 +644,33 @@ export class StoryDetailComponent {
               );
             });
         }
+      });
+
+    this.wsService
+      .projectEvents<{
+        id: string;
+        ref: string;
+        deletedBy: Partial<User>;
+        deletedAt: string;
+      }>('stories.comments.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        if (msg.event.content.id === this.highlightedCommentId) {
+          this.appService.toastNotification({
+            message: 'deleted.already_deleted_message',
+            status: TuiNotification.Info,
+            scope: 'comments',
+            autoClose: true,
+          });
+        }
+
+        this.store.dispatch(
+          StoryDetailApiActions.deleteCommentSuccess({
+            commentId: msg.event.content.id,
+            deletedBy: msg.event.content.deletedBy,
+            deletedAt: msg.event.content.deletedAt,
+          })
+        );
       });
   }
 }

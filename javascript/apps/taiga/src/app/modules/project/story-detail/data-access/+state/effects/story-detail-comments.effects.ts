@@ -10,7 +10,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { fetch, optimisticUpdate } from '@ngrx/router-store/data-persistence';
+import {
+  fetch,
+  optimisticUpdate,
+  pessimisticUpdate,
+} from '@ngrx/router-store/data-persistence';
 import { ProjectApiService } from '@taiga/api';
 import { map } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
@@ -21,6 +25,8 @@ import {
 import { storyDetailFeature } from '../reducers/story-detail.reducer';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
+import { ErrorManagementOptions } from '@taiga/data';
+import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
 export class StoryDetailCommentsEffects {
@@ -109,6 +115,42 @@ export class StoryDetailCommentsEffects {
           this.appService.toastGenericError(httpResponse);
 
           return StoryDetailApiActions.newCommentError(action);
+        },
+      })
+    );
+  });
+
+  public deleteComment$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailActions.deleteComment),
+      pessimisticUpdate({
+        run: ({ commentId, projectId, storyRef, deletedBy }) => {
+          return this.projectApiService
+            .deleteComment(projectId, commentId, storyRef)
+            .pipe(
+              map(() => {
+                return StoryDetailApiActions.deleteCommentSuccess({
+                  commentId,
+                  deletedBy,
+                });
+              })
+            );
+        },
+        onError: ({ commentId }, httpResponse: HttpErrorResponse) => {
+          const status = httpResponse.status as keyof ErrorManagementOptions;
+          if (status === 404) {
+            this.appService.toastNotification({
+              message: 'deleted.already_deleted_message',
+              status: TuiNotification.Info,
+              scope: 'comments',
+              autoClose: true,
+            });
+            return StoryDetailApiActions.deleteCommentSuccess({
+              commentId,
+              deletedBy: {},
+            });
+          }
+          return this.appService.toastGenericError(httpResponse);
         },
       })
     );

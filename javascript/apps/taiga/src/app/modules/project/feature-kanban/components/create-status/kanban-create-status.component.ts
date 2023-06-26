@@ -11,7 +11,6 @@ import {
   Component,
   ElementRef,
   HostListener,
-  Input,
   Output,
   ViewChild,
   EventEmitter,
@@ -19,11 +18,10 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Workflow } from '@taiga/data';
 import { Validators } from '@angular/forms';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
-import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
+import { selectCurrentWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 
 @Component({
   selector: 'tg-kanban-create-status',
@@ -38,9 +36,6 @@ export class KanbanCreateStatusComponent {
   @ViewChild('statusInput')
   public statusInput?: ElementRef;
 
-  @Input()
-  public workflow!: Workflow;
-
   @Output()
   public navigateLeft = new EventEmitter();
 
@@ -53,6 +48,7 @@ export class KanbanCreateStatusComponent {
     this.cancelStatusCreate();
   }
 
+  public workflow = this.store.selectSignal(selectCurrentWorkflow);
   public color = 0;
   public textColor = '';
   public showAddForm = false;
@@ -85,21 +81,20 @@ export class KanbanCreateStatusComponent {
       '--column-width',
       `${this.columnSize}px`
     );
-    this.color = RandomColorService.randomColorPicker();
-    this.textColor = `var(--color-${UtilsService.statusColor(this.color)})`;
   }
 
   public submit() {
+    const workflow = this.workflow();
     this.form.markAllAsTouched();
 
-    if (this.form.valid) {
+    if (this.form.valid && workflow) {
       this.store.dispatch(
         KanbanActions.createStatus({
           status: {
             name: this.form.get('status')!.value!,
             color: this.color,
           },
-          workflow: this.workflow.slug,
+          workflow: workflow.slug,
         })
       );
       this.reset();
@@ -124,11 +119,22 @@ export class KanbanCreateStatusComponent {
 
   public showForm() {
     this.form.reset();
+    this.setStatusColor();
     this.showAddForm = true;
     requestAnimationFrame(() => {
       this.navigateLeft.emit();
       (this.statusInput?.nativeElement as HTMLElement)?.focus();
     });
+  }
+
+  public setStatusColor() {
+    const workflow = this.workflow();
+    if (workflow) {
+      this.color = UtilsService.getNextStatusColor(
+        workflow.statuses.map((it) => it.color)
+      );
+      this.textColor = `var(--color-${UtilsService.statusColor(this.color)})`;
+    }
   }
 
   private reset() {

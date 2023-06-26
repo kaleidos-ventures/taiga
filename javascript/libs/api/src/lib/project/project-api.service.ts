@@ -536,6 +536,16 @@ export class ProjectApiService {
       );
   }
 
+  public deleteComment(
+    projectId: Project['id'],
+    commentId: UserComment['id'],
+    storyRef: Story['ref']
+  ) {
+    return this.http.delete<void>(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}/comments/${commentId}`
+    );
+  }
+
   public createStatus(
     project: Project['id'],
     status: Pick<Status, 'name' | 'color'>,

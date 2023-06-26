@@ -15,7 +15,7 @@ import {
   Output,
   inject,
 } from '@angular/core';
-import { UserComment } from '@taiga/data';
+import { User, UserComment } from '@taiga/data';
 import { RxFor } from '@rx-angular/template/for';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 import { DateDistancePipe } from '../pipes/date-distance/date-distance.pipe';
@@ -27,6 +27,12 @@ import { CommentUserInputComponent } from './components/comment-user-input/comme
 import { CommentSkeletonComponent } from './components/comment skeleton/comment-skeleton.component';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { RealTimeDateDistanceComponent } from '../real-time-date-distance/real-time-date-distance.component';
+import { CommentDetailComponent } from './components/comment-detail/comment-detail.component';
+import { DeletedCommentComponent } from './components/deleted-comment/deleted-comment.component';
+import { WsService } from '~/app/services/ws';
+import { Store } from '@ngrx/store';
+import { fadeIntOutAnimation } from '../utils/animations';
+import { AppService } from '~/app/services/app.service';
 
 export type OrderComments = '-createdAt' | 'createdAt';
 
@@ -48,6 +54,8 @@ export type OrderComments = '-createdAt' | 'createdAt';
     CommentUserInputComponent,
     CommentSkeletonComponent,
     RealTimeDateDistanceComponent,
+    CommentDetailComponent,
+    DeletedCommentComponent,
   ],
   providers: [
     {
@@ -57,6 +65,7 @@ export type OrderComments = '-createdAt' | 'createdAt';
       },
     },
   ],
+  animations: [fadeIntOutAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentsComponent {
@@ -64,11 +73,20 @@ export class CommentsComponent {
   @Input({ required: true }) public total!: number | null;
   @Input({ required: true }) public order!: OrderComments;
   @Input({ required: true }) public loading!: boolean;
+  @Input({ required: true }) public user!: User;
   @Input() public canComment = false;
   @Output() public changeOrder = new EventEmitter<OrderComments>();
   @Output() public comment = new EventEmitter<string>();
+  @Output() public deleteComment = new EventEmitter<string>();
+  @Output() public highlightComment = new EventEmitter<string>();
 
   public localStorageService = inject(LocalStorageService);
+  public wsService = inject(WsService);
+  public store = inject(Store);
+  public appService = inject(AppService);
+
+  public highlightedCommentId?: string;
+  public deletedCommentId?: string;
 
   public toggleOrder(): void {
     const newOrder = this.order === 'createdAt' ? '-createdAt' : 'createdAt';
@@ -80,5 +98,15 @@ export class CommentsComponent {
 
   public trackById(_index: number, comment: UserComment): string {
     return comment.id;
+  }
+
+  public onHighlightComment(id: string | undefined): void {
+    this.highlightedCommentId = id;
+    this.highlightComment.emit(id);
+  }
+
+  public onDeleteComment(commentId: string): void {
+    this.deletedCommentId = commentId;
+    this.deleteComment.emit(commentId);
   }
 }

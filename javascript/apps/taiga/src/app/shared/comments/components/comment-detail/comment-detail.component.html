@@ -1,0 +1,101 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container
+  *ngIf="
+    project()?.userIsAdmin ||
+    (user.username === comment.createdBy.username && canComment)
+  ">
+  <ng-container *transloco="let t">
+    <tui-hosted-dropdown
+      [tuiDropdownAlign]="'right'"
+      [content]="showDeleteCommentConfirm ? confirmDelete : commentOptions"
+      (openChange)="changeCommentOptionsState($event)"
+      [(open)]="commentOptionsState">
+      <button
+        role="menu"
+        class="comment-options-button"
+        appearance="action-button-2"
+        aria-haspopup="true"
+        [attr.aria-expanded]="commentOptionsState"
+        tabindex="0"
+        [attr.aria-label]="t('comments.comment_options')"
+        icon="more-vertical"
+        data-test="comment-options"
+        tuiIconButton
+        type="button"
+        tuiHintDirection="top-right"></button>
+    </tui-hosted-dropdown>
+
+    <ng-template #commentOptions>
+      <tui-data-list
+        class="comment-options-list"
+        data-test="comment-options-list"
+        [attr.aria-label]="t('comments.comment_options')">
+        <button
+          role="menuitem"
+          class="option-btn option-delete"
+          tuiOption
+          type="button"
+          (click)="deleteConfirm()">
+          <div class="option-container">
+            <tui-svg
+              aria-hidden="true"
+              class="option-icon"
+              src="trash"></tui-svg>
+            <span class="option-name">{{
+              t('comments.delete.delete_comment')
+            }}</span>
+          </div>
+          <span class="shortcut">{{ t('story.ctrl_x') }}</span>
+        </button>
+      </tui-data-list>
+    </ng-template>
+
+    <ng-template #confirmDelete>
+      <div
+        aria-labelledby="delete-comment-confirm"
+        aria-describedby="delete-comment-description"
+        aria-modal="true"
+        class="delete-comment-confirm">
+        <div class="confirm-container">
+          <h3
+            id="delete-comment-confirm"
+            class="delete-comment-confirm-title"
+            data-test="delete-comment-confirm-title">
+            {{ t('comments.delete.confirm') }}
+          </h3>
+          <p
+            class="delete-comment-description"
+            id="delete-comment-description">
+            {{ t('comments.delete.confirm_info') }}
+          </p>
+        </div>
+        <div class="delete-comment-confirm-actions-area">
+          <button
+            appearance="button-form"
+            tuiButton
+            tuiAutoFocus
+            (click)="changeCommentOptionsState(false)"
+            type="button">
+            {{ t('comments.delete.cancel') }}
+          </button>
+          <button
+            data-test="delete-comment-confirm-button"
+            appearance="destructive"
+            tuiButton
+            icon="trash"
+            (click)="confirmedDeleteComment()"
+            type="button">
+            {{ t('comments.delete.confirm_action') }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </ng-container>
+</ng-container>

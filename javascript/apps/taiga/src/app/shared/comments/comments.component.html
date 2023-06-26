@@ -63,44 +63,69 @@ Copyright (c) 2023-present Kaleidos INC
 
   <ng-container *ngIf="total">
     <div class="comment-list">
-      <div
-        *ngFor="let comment of comments; trackBy: trackById"
-        data-test="comment"
-        class="comment">
-        <div class="creation-info">
-          <tg-user-avatar
-            size="m"
-            class="no-border"
-            [user]="comment.createdBy"
-            [color]="comment.createdBy.color"
-            type="light"
-            [rounded]="true"
-            aria-hidden="true"></tg-user-avatar>
-          <div>
-            <span class="creation-info-fullname">
-              {{ comment.createdBy.fullName }}
-            </span>
-            <span class="creation-info-username">
-              @{{ comment.createdBy.username }}
-            </span>
-            <span>∙</span>
-            <span
-              *ngIf="comment.createdAt"
-              [title]="comment.createdAt | date: 'medium'"
-              class="creation-info-date">
-              <tg-real-time-date-distance
-                [date]="comment.createdAt"></tg-real-time-date-distance>
-            </span>
+      <ng-container *ngFor="let comment of comments; trackBy: trackById">
+        <div
+          class="comment"
+          [@fadeInOut]
+          [@.disabled]="!deletedCommentId || deletedCommentId !== comment.id"
+          data-test="comment"
+          *ngIf="!comment.deletedBy; else commentIsDeleted"
+          [ngClass]="{
+            highlighted:
+              !!highlightedCommentId && highlightedCommentId === comment.id
+          }">
+          <div class="comment-top">
+            <div class="creation-info">
+              <tg-user-avatar
+                size="m"
+                class="no-border"
+                [user]="comment.createdBy"
+                [color]="comment.createdBy.color"
+                type="light"
+                [rounded]="true"
+                aria-hidden="true"></tg-user-avatar>
+              <div>
+                <span class="creation-info-fullname">
+                  {{ comment.createdBy.fullName }}
+                </span>
+                <span class="creation-info-username">
+                  @{{ comment.createdBy.username }}
+                </span>
+                <span>∙</span>
+                <span
+                  *ngIf="comment.createdAt"
+                  [title]="comment.createdAt | date: 'medium'"
+                  class="creation-info-date">
+                  <tg-real-time-date-distance
+                    [date]="comment.createdAt"></tg-real-time-date-distance>
+                </span>
+              </div>
+            </div>
+            <div class="comment-options">
+              <tg-comment-detail
+                [comment]="comment"
+                [canComment]="canComment"
+                [user]="user"
+                (deleteComment)="onDeleteComment($event)"
+                (highlightComment)="
+                  onHighlightComment($event)
+                "></tg-comment-detail>
+            </div>
+          </div>
+
+          <div class="comment-content">
+            <div
+              tgCodeHightlight
+              class="description-content"
+              [innerHTML]="comment.text | safeHtml"></div>
           </div>
         </div>
-
-        <div class="comment-content">
-          <div
-            tgCodeHightlight
-            class="description-content"
-            [innerHTML]="comment.text | safeHtml"></div>
-        </div>
-      </div>
+        <ng-template #commentIsDeleted>
+          <tg-deleted-comment
+            [comment]="comment"
+            [user]="user"></tg-deleted-comment>
+        </ng-template>
+      </ng-container>
     </div>
 
     <ng-container *ngIf="loading && comments?.length">

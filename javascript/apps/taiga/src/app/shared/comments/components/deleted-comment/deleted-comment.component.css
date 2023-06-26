@@ -1,0 +1,16 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+.deleted-message {
+  background-color: var(--color-gray10);
+  color: var(--color-gray70);
+  font-style: italic;
+  margin-block-end: var(--spacing-16);
+  padding-block: var(--spacing-8);
+  padding-inline: var(--spacing-16);
+}

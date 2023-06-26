@@ -1,0 +1,41 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import url("tools/typography.css");
+@import url("shared/option-list.css");
+
+.comment-options-list {
+  @mixin option-list;
+}
+
+.comment-options-button {
+  border-radius: 2px;
+}
+
+.delete-comment-confirm {
+  inline-size: 398px;
+  padding: var(--spacing-12);
+}
+
+.confirm-container {
+  padding: var(--spacing-8);
+}
+
+.delete-comment-confirm-title {
+  font-size: var(--font-size-medium);
+  margin-block-start: 0;
+}
+
+.delete-comment-description {
+  margin-block: var(--spacing-12);
+}
+
+.delete-comment-confirm-actions-area {
+  display: flex;
+  justify-content: space-between;
+}

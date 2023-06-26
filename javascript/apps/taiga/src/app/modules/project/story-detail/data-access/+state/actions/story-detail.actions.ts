@@ -69,6 +69,12 @@ export const StoryDetailActions = createActionGroup({
       projectId: Project['id'];
       user: User;
     }>(),
+    'Delete comment': props<{
+      commentId: UserComment['id'];
+      storyRef: Story['ref'];
+      projectId: Project['id'];
+      deletedBy: Partial<User>;
+    }>(),
   },
 });
 
@@ -107,6 +113,11 @@ export const StoryDetailApiActions = createActionGroup({
       comment: string;
       storyRef: Story['ref'];
       projectId: Project['id'];
+    }>(),
+    'Delete comment Success': props<{
+      commentId: string;
+      deletedBy: Partial<User>;
+      deletedAt?: string;
     }>(),
   },
 });

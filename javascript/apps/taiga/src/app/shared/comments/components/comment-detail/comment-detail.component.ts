@@ -7,20 +7,38 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject,
+} from '@angular/core';
 import { TRANSLOCO_SCOPE, TranslocoModule } from '@ngneat/transloco';
+import { Store } from '@ngrx/store';
+import { RxState } from '@rx-angular/state';
 import {
   TuiButtonModule,
   TuiDataListModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
+import { Project, User, UserComment } from '@taiga/data';
+import { map } from 'rxjs';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
+import { filterNil } from '~/app/shared/utils/operators';
+
+interface CommentDetailComponentState {
+  user: User;
+  userIsAdmin: boolean;
+}
 
 @Component({
   selector: 'tg-comment-detail',
   standalone: true,
   templateUrl: './comment-detail.component.html',
   styleUrls: ['./comment-detail.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     DropdownModule,
@@ -30,6 +48,7 @@ import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
     TuiButtonModule,
   ],
   providers: [
+    RxState,
     {
       provide: TRANSLOCO_SCOPE,
       useValue: 'comments',
@@ -37,8 +56,25 @@ import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
   ],
 })
 export class CommentDetailComponent {
+  @Input() public comment!: UserComment;
+
+  public store = inject(Store);
+  public state = inject(RxState<CommentDetailComponentState>);
+  public model$ = this.state.select();
+
   public commentOptionsState = false;
   public showDeleteCommentConfirm = false;
+
+  constructor() {
+    this.state.connect('user', this.store.select(selectUser).pipe(filterNil()));
+    this.state.connect(
+      'userIsAdmin',
+      this.store.select(selectCurrentProject).pipe(
+        filterNil(),
+        map((project: Project) => project.userIsAdmin)
+      )
+    );
+  }
 
   public deleteCommentConfirm(): void {
     this.showDeleteCommentConfirm = true;

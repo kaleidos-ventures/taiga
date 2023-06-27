@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from taiga.comments import services
@@ -43,6 +43,35 @@ async def test_create_comment():
             created_by=comment.created_by,
         )
         fake_comments_serializers.serialize_comment.assert_called_once_with(comment=comment)
+
+
+async def test_create_comment_and_emit_event_on_create():
+    project = f.build_project()
+    story = f.build_story()
+    comment = f.build_comment()
+    fake_event_on_create = AsyncMock()
+
+    with (
+        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
+        patch("taiga.comments.services.comments_serializers", autospec=True) as fake_comments_serializers,
+    ):
+        fake_comments_repositories.create_comment.return_value = comment
+
+        await services.create_comment(
+            project=project,
+            content_object=story,
+            text=comment.text,
+            created_by=comment.created_by,
+            event_on_create=fake_event_on_create,
+        )
+
+        fake_comments_repositories.create_comment.assert_awaited_once_with(
+            content_object=story,
+            text=comment.text,
+            created_by=comment.created_by,
+        )
+        fake_comments_serializers.serialize_comment.assert_called_once_with(comment=comment)
+        fake_event_on_create.assert_called_once_with(project=project, comment=comment, content_object=story)
 
 
 #####################################################

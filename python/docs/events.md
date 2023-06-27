@@ -363,28 +363,29 @@ wss://taiga.domain.com/events/     # Example for a taiga api instance with SSL
 
 ### Types and content schemas
 
-We have common events types for C/U/D actions over the objets, the schema is:
-
-```
-<object_in_plural>.["create" | "update" |"delete"]
-```
+- We have common events types for C/U/D actions over the objets, the schema is:
+  ```
+  <object_in_plural>.["create" | "update" |"delete"]
+  ```
+- And for generic objets, like comments or attachments, we use:
+  ```
+  <module>.<object_in_plural>.["create" | "update" |"delete"]
+  ```
+- We may have other actions if required; for example: `projectinvitations.revoke`.
+- We may also have events that affect only a subset of atributes of an object; for example `projects.permissions.update`.
+- We can send actions inside an event. The type must be `action` and the content should be an action described above.
 
 For example:
 
 ```
 projects.create
-projectinvitations.update
-userstories.delete
+projects.permissions.update
+projectinvitations.revoke
+stories.delete
+stories.comments.delete
 ```
 
-We may have other actions if required; for example: `projectinvitations.revoke`.
-
-We may also have events that affect only a subset of atributes of an object; for example `projects.permissions.update`.
-
-We can send actions inside an event. The type must be `action` and the content should be an action described above.
-
-
-#### **workspaces.delete**
+#### `workspaces.delete`
 
 It happens when a workspace is deleted
 
@@ -394,7 +395,7 @@ Content for:
   {
       "workspace": "workspace_id",
       "name": "workspace name (str)",
-      "deleted_by": {... basic user info ...}
+      "deletedBy": {... basic user info ...}
   }
   ```
 
@@ -415,7 +416,7 @@ Content for:
   null
   ```
 
-#### **workspacesmemberships.delete**
+#### `workspacesmemberships.delete`
 
 It happens when a workspace membership is deleted
 
@@ -451,7 +452,7 @@ Content for:
   null
   ```
 
-#### **projects.delete**
+#### `projects.delete`
 
 It happens when a project is deleted
 
@@ -462,7 +463,7 @@ Content for:
       "project": "project_id",
       "workspace": "workspace_id",
       "name": "project name (str)",
-      "deleted_by": {... basic user info ...}
+      "deletedBy": {... basic user info ...}
   }
   ```
 
@@ -681,7 +682,7 @@ Content for:
   ```
   {
       "ref": "story ref (int)"
-      "deleted_by": {... basic user info ...}
+      "deletedBy": {... basic user info ...}
   }
   ```
 
@@ -694,13 +695,13 @@ Content for:
 - user channel:
   ```
   {
-      "story_assignment": {... "story_assignment object" ...}
+      "storyAassignment": {... "story_assignment object" ...}
   }
   ```
 - project channel:
   ```
   {
-      "story_assignment": {... "story_assignment object" ...}
+      "storyAssignment": {... "story_assignment object" ...}
   }
   ```
 
@@ -722,3 +723,17 @@ Content for:
   }
   ```
 
+
+#### `stories.comments.create`
+
+It happens when a new comment associated to an story is created.
+
+Content for:
+- project channel:
+  ```
+
+  {
+      "ref": "story ref (int)"
+      "comment": {... "comment object" ...}
+  }
+  ```

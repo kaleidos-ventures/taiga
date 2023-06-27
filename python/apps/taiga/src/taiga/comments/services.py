@@ -5,29 +5,46 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from typing import Awaitable, Protocol
+
 from taiga.base.api import Pagination
 from taiga.base.db.models import Model
 from taiga.comments import repositories as comments_repositories
+from taiga.comments.models import Comment
 from taiga.comments.repositories import CommentOrderBy
 from taiga.comments.serializers import CommentSerializer
 from taiga.comments.serializers import services as comments_serializers
 from taiga.projects.projects.models import Project
 from taiga.users.models import User
 
+
+class EventOnCreateCallable(Protocol):
+    def __call__(self, project: Project, comment: Comment, content_object: Model) -> Awaitable[None]:
+        ...
+
+
 ##########################################################
 # create comment
 ##########################################################
 
 
-async def create_comment(project: Project, content_object: Model, text: str, created_by: User) -> CommentSerializer:
+async def create_comment(
+    project: Project,
+    content_object: Model,
+    text: str,
+    created_by: User,
+    event_on_create: EventOnCreateCallable | None = None,
+) -> CommentSerializer:
     comment = await comments_repositories.create_comment(
         content_object=content_object,
         text=text,
         created_by=created_by,
     )
-    serialized_comment = comments_serializers.serialize_comment(comment)
-    # TODO emit event
-    return serialized_comment
+
+    if event_on_create:
+        await event_on_create(project=project, comment=comment, content_object=content_object)
+
+    return comments_serializers.serialize_comment(comment)
 
 
 ##########################################################

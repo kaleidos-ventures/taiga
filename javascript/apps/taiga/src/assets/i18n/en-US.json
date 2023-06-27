@@ -110,7 +110,7 @@
       "format_error": "The file format is not allowed. Allowed formats: gif, png, jpg, svg or webp"
     },
     "delete_modal_title": "Delete {{projectTitle}}?",
-    "delete_modal_warning": "<strong class='bold'>Warning;</strong> This action cannot be undone.",
+    "delete_modal_warning": "<strong class='bold'>Warning:</strong> This action cannot be undone.",
     "delete_modal_text": "This action will delete the project, along with all the stories and attachments in it.",
     "delete_modal_delete": "Yes, delete project",
     "delete_modal_refuse": "No, keep project",

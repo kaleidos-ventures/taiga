@@ -1,0 +1,27 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<div
+  class="radio-container"
+  #radioContainer>
+  <input
+    class="radio-input"
+    type="radio"
+    [id]="'radio-' + id"
+    [attr.name]="name"
+    [value]="value"
+    [formControl]="control" />
+  <label
+    *ngIf="label"
+    [attr.for]="'radio-' + id"
+    class="radio-label"
+    [class.selected]="control.value === value"
+    >{{ label }}</label
+  >
+</div>
+<ng-content select="[inputError]"></ng-content>

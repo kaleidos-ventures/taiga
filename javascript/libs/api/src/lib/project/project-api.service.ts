@@ -568,4 +568,19 @@ export class ProjectApiService {
       }
     );
   }
+
+  public deleteStatus(
+    project: Project['id'],
+    workflow: Workflow['slug'],
+    status: Status['slug'],
+    moveToStatus?: Status['slug']
+  ) {
+    return this.http.delete(
+      `${
+        this.config.apiUrl
+      }/projects/${project}/workflows/${workflow}/statuses/${status}${
+        moveToStatus ? `?moveTo=${moveToStatus}` : ''
+      }`
+    );
+  }
 }

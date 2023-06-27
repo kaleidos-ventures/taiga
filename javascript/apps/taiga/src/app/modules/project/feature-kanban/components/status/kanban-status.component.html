@@ -156,7 +156,7 @@ Copyright (c) 2023-present Kaleidos INC
           class="option-btn option-delete"
           tuiOption
           type="button"
-          (click)="displayEditStatus()">
+          (click)="handleDeleteStatus()">
           <div class="option-container">
             <tui-svg
               aria-hidden="true"
@@ -167,5 +167,15 @@ Copyright (c) 2023-present Kaleidos INC
         </button>
       </tui-data-list>
     </ng-template>
+
+    <tg-delete-status
+      *ngIf="deleteStatusModal"
+      [show]="deleteStatusModal"
+      (submitDelete)="submitDeleteStatus($event)"
+      (closeModal)="deleteStatusModal = false"
+      [currentStatus]="status"
+      [statuses]="workflow.statuses"
+      [isLastStatus]="isLastStatus">
+    </tg-delete-status>
   </ng-container>
 </ng-container>

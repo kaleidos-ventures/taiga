@@ -29,6 +29,7 @@ import { InputComponent } from './input/input.component';
 import { UiPasswordStrengthModule } from './password-strength/password-strength.module';
 import { SelectComponent } from './select/select.component';
 import { TextareaComponent } from './textarea/textarea.component';
+import { RadioComponent } from './radio/radio.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -51,6 +52,7 @@ import { TextareaComponent } from './textarea/textarea.component';
     InputComponent,
     SelectComponent,
     TextareaComponent,
+    RadioComponent,
   ],
   providers: [],
   exports: [
@@ -59,6 +61,7 @@ import { TextareaComponent } from './textarea/textarea.component';
     InputComponent,
     SelectComponent,
     TextareaComponent,
+    RadioComponent,
     ReactiveFormsModule,
     TuiSelectModule,
     TuiDataListModule,

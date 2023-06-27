@@ -89,6 +89,11 @@ export const KanbanActions = createActionGroup({
       status: Pick<Status, 'name' | 'slug'>;
       workflow: Workflow['slug'];
     }>(),
+    'Delete status': props<{
+      status: Status['slug'];
+      workflow: Workflow['slug'];
+      moveToStatus?: Status['slug'];
+    }>(),
   },
 });
 
@@ -133,6 +138,11 @@ export const KanbanApiActions = createActionGroup({
       slug: Status['slug'];
       workflow: Workflow['slug'];
     }>(),
+    'Delete status success': props<{
+      status: Status['slug'];
+      workflow: Workflow['slug'];
+      moveToStatus?: Status['slug'];
+    }>(),
   },
 });
 
@@ -149,6 +159,11 @@ export const KanbanEventsActions = createActionGroup({
     'Edit status': props<{
       status: Status;
       workflow: Workflow['slug'];
+    }>(),
+    'Status deleted': props<{
+      status: Status['slug'];
+      workflow: Workflow['slug'];
+      moveToStatus?: Status['slug'];
     }>(),
   },
 });

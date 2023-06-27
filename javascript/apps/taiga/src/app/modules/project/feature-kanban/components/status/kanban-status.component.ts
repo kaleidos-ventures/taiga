@@ -33,11 +33,11 @@ import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/
 import { KanbanState } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
 import {
   selectActiveA11yDragDropStory,
+  selectCreateStoryForm,
   selectHasDropCandidate,
   selectLoadingStories,
   selectNewEventStories,
   selectPermissionsError,
-  selectStatusFormOpen,
   selectStatusNewStories,
   selectStories,
 } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
@@ -163,6 +163,7 @@ export class KanbanStatusComponent
   public cdkScrollable!: CdkVirtualScrollViewport;
   public projectActionsDropdownState = false;
   public editStatusActive = false;
+  public deleteStatusModal = false;
 
   public model$ = this.state.select().pipe(
     map((state) => {
@@ -178,6 +179,7 @@ export class KanbanStatusComponent
   );
 
   public color = '';
+  public isLastStatus = false;
 
   public get columnSize() {
     return this.kanbanWorkflowComponent.statusColumnSize;
@@ -211,7 +213,7 @@ export class KanbanStatusComponent
       'stories',
       this.store.select(selectStories).pipe(
         map((stories) => {
-          return stories[this.status.slug];
+          return stories[this.status.slug] ?? [];
         }),
         distinctUntilChanged()
       )
@@ -224,7 +226,11 @@ export class KanbanStatusComponent
 
     this.state.connect(
       'showAddForm',
-      this.store.select(selectStatusFormOpen(this.status.slug))
+      this.store.select(selectCreateStoryForm).pipe(
+        map((openForm) => {
+          return this.status.slug === openForm;
+        })
+      )
     );
 
     this.state.connect(
@@ -337,6 +343,31 @@ export class KanbanStatusComponent
       );
     }
     this.cancelEditStatus();
+  }
+
+  public handleDeleteStatus() {
+    const stories = this.state.get('stories');
+    if (!stories.length) {
+      this.submitDeleteStatus();
+    } else if (stories.length && this.workflow.statuses.length === 1) {
+      this.deleteStatusModal = true;
+      this.isLastStatus = true;
+    } else {
+      this.deleteStatusModal = true;
+      this.isLastStatus = false;
+    }
+  }
+
+  public submitDeleteStatus(moveToStatus?: Status['slug']) {
+    this.projectActionsDropdownState = false;
+
+    this.store.dispatch(
+      KanbanActions.deleteStatus({
+        status: this.status.slug,
+        workflow: this.workflow.slug,
+        moveToStatus,
+      })
+    );
   }
 
   private fillColor() {

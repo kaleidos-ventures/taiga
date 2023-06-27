@@ -27,5 +27,19 @@
   "edit_status_name": "Edit status name",
   "status_name": "Status name",
   "delete_status": "Delete status",
-  "empty_error": "Status name can’t be empty."
+  "empty_error": "Status name can’t be empty.",
+  "empty_kanban": "This kanban is empty",
+  "create_status_explanation_admin": "Create statuses to organize your stories and visualize the progress of your project.",
+  "create_status_explanation": "Once the admins of this project set up the kanban, you can start creating stories",
+  "delete_status_modal": {
+    "title": "Delete {{ statusName }} status?",
+    "what_to_do_stories": "What do you want to do with the stories in this status?",
+    "stories_will_be_deleted": "The stories from this status will be automatically deleted.",
+    "cancel": "Never mind, keep status",
+    "confirm": "Yes, delete status",
+    "move_stories_another_status": "Move them to another status",
+    "delete_stories": "Delete the stories too",
+    "stories_placed_below": "The stories will be placed below the existing ones.",
+    "status": "Status"
+  }
 }

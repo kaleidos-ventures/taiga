@@ -53,6 +53,7 @@ export interface KanbanState {
   activeA11yDragDropStory: KanbanStoryA11y;
   dragging: KanbanStory[];
   hasDropCandidate: boolean;
+  loadingStatus: boolean;
 }
 
 export const initialKanbanState: KanbanState = {
@@ -84,6 +85,7 @@ export const initialKanbanState: KanbanState = {
   },
   dragging: [],
   hasDropCandidate: false,
+  loadingStatus: false,
 };
 
 export const reducer = createImmerReducer(
@@ -292,8 +294,8 @@ export const reducer = createImmerReducer(
       });
 
       if (state.empty !== null && state.empty) {
-        // open the first form if the kanban is empty
-        state.createStoryForm = state.workflows[0].statuses[0].slug;
+        // open the first form if the kanban is empty and there is at least one status
+        state.createStoryForm = state.workflows[0].statuses?.[0]?.slug;
       }
 
       return state;
@@ -317,8 +319,8 @@ export const reducer = createImmerReducer(
       }
 
       if (state.empty && state.workflows) {
-        // open the first form if the kanban is empty
-        state.createStoryForm = state.workflows[0].statuses[0].slug;
+        // open the first form if the kanban is empty and there is at least one status
+        state.createStoryForm = state.workflows[0].statuses?.[0]?.slug;
       }
 
       return state;
@@ -665,10 +667,16 @@ export const reducer = createImmerReducer(
 
     return state;
   }),
+  on(KanbanActions.createStatus, (state): KanbanState => {
+    state.loadingStatus = true;
+
+    return state;
+  }),
   on(
     KanbanApiActions.createStatusSuccess,
     KanbanEventsActions.updateStatus,
     (state, { status, workflow }): KanbanState => {
+      state.loadingStatus = false;
       const workflowIndex = state.workflows!.findIndex(
         (it) => it.slug === workflow
       );
@@ -689,6 +697,28 @@ export const reducer = createImmerReducer(
         (it) => it.slug === status.slug
       );
       state.workflows![workflowIndex].statuses[statusIndex].name = status.name;
+
+      return state;
+    }
+  ),
+  on(
+    KanbanApiActions.deleteStatusSuccess,
+    KanbanEventsActions.statusDeleted,
+    (state, { status, workflow, moveToStatus }): KanbanState => {
+      const workflowIndex = state.workflows!.findIndex(
+        (it) => it.slug === workflow
+      );
+      const statuses = state.workflows![workflowIndex].statuses;
+      const statusIndex = statuses.findIndex((it) => it.slug === status);
+      if (moveToStatus) {
+        const storiesToMove = state.stories[status];
+        state.stories[moveToStatus] = [
+          ...state.stories[moveToStatus],
+          ...storiesToMove,
+        ];
+      }
+      statuses.splice(statusIndex, 1);
+      delete state.stories[status];
 
       return state;
     }

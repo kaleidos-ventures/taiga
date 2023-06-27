@@ -12,6 +12,8 @@ import {
   ElementRef,
   EventEmitter,
   Output,
+  Input,
+  OnInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
@@ -24,14 +26,19 @@ import { EditStatus } from '~/app/modules/project/feature-kanban/models/edit-sta
   styleUrls: ['./kanban-create-status.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KanbanCreateStatusComponent {
+export class KanbanCreateStatusComponent implements OnInit {
+  @Input({ required: true })
+  public openCreateStatusForm!: boolean;
+
   @Output()
   public navigateLeft = new EventEmitter();
+
+  @Output()
+  public closeForm = new EventEmitter<void>();
 
   public workflow = this.store.selectSignal(selectCurrentWorkflow);
 
   public showAddForm = false;
-  public submitted = false;
   public columnSize = 292;
   public statusMaxLength = 30;
 
@@ -44,6 +51,10 @@ export class KanbanCreateStatusComponent {
       '--column-width',
       `${this.columnSize}px`
     );
+  }
+
+  public ngOnInit() {
+    this.showAddForm = this.openCreateStatusForm;
   }
 
   public generateStatus(status: EditStatus) {
@@ -77,5 +88,6 @@ export class KanbanCreateStatusComponent {
 
   private reset() {
     this.showAddForm = false;
+    this.closeForm.next();
   }
 }

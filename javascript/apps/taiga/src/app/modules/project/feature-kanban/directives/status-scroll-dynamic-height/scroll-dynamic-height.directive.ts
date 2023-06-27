@@ -171,9 +171,9 @@ export class StatusScrollDynamicHeightDirective
         ).borderWidth.replace('px', '')
       ) * 2;
 
-    const columnHeight = this.nativeElement
-      .closest('tg-kanban-workflow')!
-      .getBoundingClientRect().height;
+    const columnHeight =
+      this.nativeElement.closest('tg-kanban-workflow')?.getBoundingClientRect()
+        .height ?? 0;
 
     return (
       columnHeight -

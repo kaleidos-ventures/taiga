@@ -25,6 +25,8 @@ import {
   StoryDetail,
   StoryView,
   WorkflowStatus,
+  Status,
+  Workflow,
 } from '@taiga/data';
 import {
   combineLatest,
@@ -310,6 +312,23 @@ export class ProjectFeatureKanbanComponent {
           KanbanEventsActions.editStatus({
             status,
             workflow: workflowStatusResponse.workflow.slug,
+          })
+        );
+      });
+
+    this.wsService
+      .projectEvents<{
+        workflowStatus: Status & { workflow: Workflow };
+        moveToSlug: Status['slug'];
+      }>('workflowstatuses.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const content = eventResponse.event.content;
+        this.store.dispatch(
+          KanbanEventsActions.statusDeleted({
+            status: content.workflowStatus.slug,
+            workflow: content.workflowStatus.workflow.slug,
+            moveToStatus: content.moveToSlug,
           })
         );
       });

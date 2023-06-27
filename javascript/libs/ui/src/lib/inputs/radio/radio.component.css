@@ -1,0 +1,49 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+.radio-container {
+  align-items: center;
+  display: flex;
+}
+
+.radio-label {
+  margin: 0;
+  margin-inline-start: var(--spacing-8);
+
+  &.selected {
+    color: var(--color-secondary);
+  }
+}
+
+.radio-input {
+  align-items: center;
+  appearance: none;
+  block-size: 19px;
+  border: 2px solid var(--color-gray40);
+  border-radius: 50%;
+  color: var(--color-secondary);
+  display: grid;
+  inline-size: 19px;
+  justify-content: center;
+  margin: 0;
+  transform: translateY(-0.075em);
+}
+
+.radio-input::before {
+  background-color: var(--color-secondary);
+  block-size: 9px;
+  border-radius: 50%;
+  content: "";
+  inline-size: 9px;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+}
+
+.radio-input:checked::before {
+  transform: scale(1);
+}

@@ -126,7 +126,7 @@ export class EditStatusComponent implements OnInit {
   }
 
   public hasChanges() {
-    return this.statusForm.get('status')?.value !== this.status?.name;
+    return this.statusForm.get('name')?.value !== this.status?.name;
   }
 
   public cancelEdit() {

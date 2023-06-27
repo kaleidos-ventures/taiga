@@ -45,6 +45,8 @@ import { KanbanStatusComponent } from './components/status/kanban-status.compone
 import { A11yDragStoryDirective } from './components/story/kanban-story-a11y-drag.directive';
 import { KanbanStoryComponent } from './components/story/kanban-story.component';
 import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
+import { DeleteStatusComponent } from './components/delete-status/delete-status.component';
+import { KanbanEmptyComponent } from './components/empty/kanban-empty.component';
 import { KanbanVirtualScrollDirective } from './custom-scroll-strategy/kanban-scroll-strategy';
 import { DataAccessKanbanModule } from './data-access/kanban-data-access.module';
 import { KanbanStatusKeyboardNavigationDirective } from './directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
@@ -98,6 +100,8 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     RestoreFocusTargetDirective,
     RestoreFocusDirective,
     AutoFocusDirective,
+    DeleteStatusComponent,
+    KanbanEmptyComponent,
   ],
   providers: [
     {

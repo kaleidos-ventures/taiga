@@ -403,6 +403,33 @@ export class KanbanEffects {
     );
   });
 
+  public deleteStatus$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.deleteStatus),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: ({ status, workflow, moveToStatus }, project) => {
+          return this.projectApiService
+            .deleteStatus(project.id, workflow, status, moveToStatus)
+            .pipe(
+              map(() => {
+                return KanbanApiActions.deleteStatusSuccess({
+                  status,
+                  workflow,
+                  moveToStatus,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastGenericError(httpResponse);
+        },
+      })
+    );
+  });
+
   constructor(
     private appService: AppService,
     private actions$: Actions,

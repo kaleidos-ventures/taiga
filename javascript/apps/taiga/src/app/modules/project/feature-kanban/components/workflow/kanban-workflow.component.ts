@@ -33,6 +33,7 @@ import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service
 import { DragService } from '~/app/shared/drag/services/drag.service';
 import { KineticScrollService } from '~/app/shared/scroll/kinetic-scroll.service';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
+import { selectLoadingStatus } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 
 @UntilDestroy()
 @Component({
@@ -59,6 +60,8 @@ export class KanbanWorkflowComponent
 
   public activeStatusIndex = 0;
   public statusColumnSize = 292;
+  public openCreateStatusForm = false;
+  public statusIsBeingCreated = this.store.selectSignal(selectLoadingStatus);
 
   public movingStories$!: Observable<KanbanStory[]>;
 

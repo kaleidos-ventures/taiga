@@ -1,0 +1,108 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <tg-ui-modal
+    class="delete-status-modal"
+    [open]="show"
+    [width]="500"
+    (requestClose)="close()">
+    <div
+      role="dialog"
+      aria-labelledby="delete-status"
+      aria-modal="true">
+      <h1
+        class="title"
+        id="delete-status">
+        {{
+          t('kanban.delete_status_modal.title', {
+            statusName: currentStatus.name
+          })
+        }}
+      </h1>
+      <tg-ui-context-notification
+        class="warning-notification"
+        alertLevel="polite"
+        status="error">
+        <span [innerHtml]="t('common_project.delete_modal_warning')"></span>
+      </tg-ui-context-notification>
+      <p
+        class="text"
+        [class.is-last-status]="isLastStatus">
+        {{
+          isLastStatus
+            ? t('kanban.delete_status_modal.stories_will_be_deleted')
+            : t('kanban.delete_status_modal.what_to_do_stories')
+        }}
+      </p>
+      <form
+        *ngIf="form && !isLastStatus"
+        [formGroup]="form">
+        <tg-ui-radio
+          id="1"
+          name="stories"
+          value="move"
+          [label]="t('kanban.delete_status_modal.move_stories_another_status')"
+          [control]="storiesFormControl"></tg-ui-radio>
+
+        <tg-ui-select
+          *ngIf="statusesList()"
+          [label]="t('kanban.delete_status_modal.status')"
+          labelVisuallyHidden>
+          <tui-select
+            class="select-status"
+            tuiTextfieldSize="l"
+            [valueContent]="valueContent()"
+            formControlName="status"
+            (keydown.enter)="$event.preventDefault()"
+            data-test="select-status">
+            <tui-data-list *tuiDataList>
+              <button
+                *ngFor="let status of filteredStatus(); trackBy: trackById"
+                tuiOption
+                [attr.data-test]="status.name.toLowerCase()"
+                size="s"
+                [class.selected]="status.slug === form.get('status')?.value"
+                [value]="status.slug">
+                {{ status.name }}
+              </button>
+            </tui-data-list>
+          </tui-select>
+        </tg-ui-select>
+        <span class="select-info">
+          {{ t('kanban.delete_status_modal.stories_placed_below') }}
+        </span>
+
+        <tg-ui-radio
+          id="2"
+          name="stories"
+          value="delete"
+          [label]="t('kanban.delete_status_modal.delete_stories')"
+          [control]="storiesFormControl"></tg-ui-radio>
+      </form>
+
+      <div class="actions">
+        <button
+          type="button"
+          (click)="close()"
+          data-test="cancel-delete-status"
+          tuiLink>
+          {{ t('kanban.delete_status_modal.cancel') }}
+        </button>
+        <button
+          data-test="submit-delete-status"
+          tuiButton
+          icon="trash"
+          (click)="submit()"
+          appearance="destructive">
+          {{ t('kanban.delete_status_modal.confirm') }}
+        </button>
+      </div>
+    </div>
+  </tg-ui-modal>
+</ng-container>

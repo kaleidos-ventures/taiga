@@ -26,13 +26,8 @@ export const {
   selectDragging,
   selectHasDropCandidate,
   selectCurrentWorkflowSlug,
+  selectLoadingStatus,
 } = kanbanFeature;
-
-export const selectStatusFormOpen = (statusSlug: Status['slug']) => {
-  return createSelector(selectCreateStoryForm, (openForm) => {
-    return statusSlug === openForm;
-  });
-};
 
 export const selectStatusNewStories = (statusSlug: Status['slug']) => {
   return createSelector(

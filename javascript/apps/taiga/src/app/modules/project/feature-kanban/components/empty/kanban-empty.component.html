@@ -1,0 +1,35 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+<ng-container *transloco="let t">
+  <div class="empty-container">
+    <img
+      class="kanban-mock"
+      ngSrc="/assets/images/kanban-empty.svg"
+      width="405"
+      height="220"
+      alt="" />
+    <h2 class="kanban-title">{{ t('kanban.empty_kanban') }}</h2>
+    <p class="kanban-text">
+      {{
+        userIsAdmin
+          ? t('kanban.create_status_explanation_admin')
+          : t('kanban.create_status_explanation')
+      }}
+    </p>
+    <button
+      *ngIf="userIsAdmin"
+      tuiButton
+      type="button"
+      icon="plus"
+      iconAlign="left"
+      appearance="primary"
+      (click)="add()">
+      {{ t('kanban.add_status') }}
+    </button>
+  </div>
+</ng-container>

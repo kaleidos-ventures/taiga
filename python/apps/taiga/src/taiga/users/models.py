@@ -68,7 +68,7 @@ class User(models.BaseModel, AbstractBaseUser):
         ordering = ["username"]
 
     def __str__(self) -> str:
-        return self.get_full_name()
+        return self.username
 
     def __repr__(self) -> str:
         return f"<User {self.username}>"

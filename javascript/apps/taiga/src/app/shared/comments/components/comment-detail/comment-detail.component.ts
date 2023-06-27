@@ -10,7 +10,9 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
+  Output,
   inject,
 } from '@angular/core';
 import { TRANSLOCO_SCOPE, TranslocoModule } from '@ngneat/transloco';
@@ -57,6 +59,7 @@ interface CommentDetailComponentState {
 })
 export class CommentDetailComponent {
   @Input() public comment!: UserComment;
+  @Output() public highlightComment = new EventEmitter<string | undefined>();
 
   public store = inject(Store);
   public state = inject(RxState<CommentDetailComponentState>);
@@ -72,6 +75,7 @@ export class CommentDetailComponent {
     this.#commentOptionsState = value;
     if (!value) {
       this.showDeleteCommentConfirm = false;
+      this.highlightComment.next(undefined);
     }
   }
 
@@ -88,7 +92,13 @@ export class CommentDetailComponent {
     );
   }
 
+  public deleteConfirm() {
+    this.showDeleteCommentConfirm = true;
+    this.highlightComment.next(this.comment.id);
+  }
+
   public deleteComment() {
+    this.commentOptionsState = false;
     // Dispatch deletion
   }
 }

@@ -68,6 +68,7 @@ export class CommentsComponent {
   @Output() public changeOrder = new EventEmitter<OrderComments>();
 
   public localStorageService = inject(LocalStorageService);
+  public highlightedCommentId: string | undefined = undefined;
 
   public toggleOrder(): void {
     const newOrder = this.order === 'createdAt' ? '-createdAt' : 'createdAt';
@@ -89,5 +90,9 @@ export class CommentsComponent {
 
   public trackIndex(index: number): number {
     return index;
+  }
+
+  public highlightComment(id: string | undefined): void {
+    this.highlightedCommentId = id;
   }
 }

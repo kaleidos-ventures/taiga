@@ -62,7 +62,11 @@ Copyright (c) 2023-present Kaleidos INC
     <div class="comment-list">
       <div
         *ngFor="let comment of comments; trackBy: trackIndex"
-        class="comment">
+        class="comment"
+        [ngClass]="{
+          highlighted:
+            !!highlightedCommentId && highlightedCommentId === comment.id
+        }">
         <div class="comment-top">
           <div class="creation-info">
             <tg-user-avatar
@@ -90,7 +94,9 @@ Copyright (c) 2023-present Kaleidos INC
             </div>
           </div>
           <div class="comment-options">
-            <tg-comment-detail [comment]="comment"></tg-comment-detail>
+            <tg-comment-detail
+              [comment]="comment"
+              (highlightComment)="highlightComment($event)"></tg-comment-detail>
           </div>
         </div>
 

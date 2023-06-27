@@ -18,6 +18,7 @@ from taiga.comments.validators import CommentOrderQuery, CreateCommentValidator
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm
 from taiga.routers import routes
+from taiga.stories.comments import events
 from taiga.stories.stories.api import get_story_or_404
 
 # PERMISSIONS
@@ -57,6 +58,7 @@ async def create_story_comments(
         project=story.project,
         content_object=story,
         created_by=request.user,
+        event_on_create=events.emit_event_when_story_comment_is_created,
     )
 
 

@@ -19,11 +19,13 @@ from taiga.projects.roles.models import ProjectRole
 
 class ProjectRoleInline(admin.TabularInline[ProjectRole, Project]):
     model = ProjectRole
+    fields = ("project", "name", "slug", "order", "is_admin", "permissions")
     extra = 0
 
 
 class ProjectMembershipInline(admin.TabularInline[ProjectMembership, Project]):
     model = ProjectMembership
+    fields = ("project", "role", "user")
     extra = 0
 
     def get_formset(self, request: HttpRequest, obj: Project | None = None, **kwargs: Any) -> Any:

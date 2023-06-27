@@ -6,6 +6,8 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.base.db import admin
+from taiga.base.db.admin.http import HttpRequest
+from taiga.base.db.models import Count, QuerySet
 from taiga.comments.admin import CommentInline
 from taiga.mediafiles.admin import MediafileInline
 from taiga.stories.stories.models import Story
@@ -23,16 +25,24 @@ class StoryAdmin(admin.ModelAdmin[Story]):
                     "title",
                     "description",
                     "order",
-                    "created_by",
-                    "created_at",
                     "project",
                     "workflow",
                     "status",
+                )
+            },
+        ),
+        (
+            "Extra info",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "created_by",
+                    "created_at",
                     "title_updated_by",
                     "title_updated_at",
                     "description_updated_by",
                     "description_updated_at",
-                )
+                ),
             },
         ),
     )
@@ -46,8 +56,8 @@ class StoryAdmin(admin.ModelAdmin[Story]):
         "description_updated_by",
         "description_updated_at",
     )
-    list_display = ["ref", "title", "description", "project", "workflow", "status", "order"]
-    list_filter = ("project", "created_by", "workflow", "status", "title_updated_by", "description_updated_by")
+    list_display = ["ref", "title", "project", "workflow", "status", "order", "total_mediafiles", "total_comments"]
+    list_filter = ("project", "created_by")
     search_fields = [
         "id",
         "ref",
@@ -55,18 +65,25 @@ class StoryAdmin(admin.ModelAdmin[Story]):
         "description",
         "project__name",
         "workflow__name",
-        "workflow__slug",
-        "status__name",
-        "status__slug",
-        "created_by__username",
-        "created_by__email",
-        "created_by__full_name",
-        "title_updated_by__username",
-        "title_updated_by__email",
-        "title_updated_by__full_name",
-        "description_updated_by__username",
-        "description_updated_by__email",
-        "description_updated_by__full_name",
     ]
     ordering = ("project__name", "workflow__order", "status__order", "order")
-    inlines = [MediafileInline, CommentInline]
+    inlines = [
+        MediafileInline,
+        CommentInline,
+    ]
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Story]:
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(
+            comments_count=Count("comments"),
+            mediafiles_count=Count("mediafiles"),
+        )
+        return queryset
+
+    @admin.display(description="# comments", ordering="comments_count")
+    def total_comments(self, obj: Story) -> int:
+        return obj.comments_count  # type: ignore[attr-defined]
+
+    @admin.display(description="# mediafiles", ordering="mediafiles_count")
+    def total_mediafiles(self, obj: Story) -> int:
+        return obj.mediafiles_count  # type: ignore[attr-defined]

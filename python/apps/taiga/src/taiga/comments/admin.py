@@ -5,10 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import Any
-
 from taiga.base.db import admin
-from taiga.base.db.admin.http import HttpRequest
 from taiga.comments.models import Comment
 
 
@@ -16,29 +13,30 @@ class CommentInline(admin.GenericTabularInline):
     model = Comment
     ct_field = "object_content_type"
     ct_fk_field = "object_id"
-    fields = ("text",)
+    fields = ("b64id", "text", "created_by", "created_at")
+    readonly_fields = ("b64id",)
     show_change_link = True
-
-    def has_change_permission(self, request: HttpRequest, obj: Any = None) -> bool:
-        return False
-
-    def has_add_permission(self, request: HttpRequest, obj: Any = None) -> bool:
-        return False
 
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin[Comment]):
-    list_filter = ("object_content_type", "object_id")
+    fieldsets = (
+        (None, {"fields": (("id", "b64id"), "text", "created_by", "created_at", ("object_content_type", "object_id"))}),
+    )
+    readonly_fields = (
+        "id",
+        "b64id",
+    )
     list_display = (
+        "b64id",
         "text",
         "created_by",
-        "object_id",
         "content_object",
     )
-    list_display_links = ("text",)
+    list_filter = ("created_by",)
     search_fields = (
         "id",
         "text",
         "object_id",
     )
-    ordering = ("-created_at", "-modified_at")
+    ordering = ("-created_at",)

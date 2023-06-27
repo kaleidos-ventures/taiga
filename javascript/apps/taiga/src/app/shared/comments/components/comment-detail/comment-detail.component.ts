@@ -62,8 +62,20 @@ export class CommentDetailComponent {
   public state = inject(RxState<CommentDetailComponentState>);
   public model$ = this.state.select();
 
-  public commentOptionsState = false;
   public showDeleteCommentConfirm = false;
+
+  public get commentOptionsState() {
+    return this.#commentOptionsState;
+  }
+
+  public set commentOptionsState(value: boolean) {
+    this.#commentOptionsState = value;
+    if (!value) {
+      this.showDeleteCommentConfirm = false;
+    }
+  }
+
+  #commentOptionsState = false;
 
   constructor() {
     this.state.connect('user', this.store.select(selectUser).pipe(filterNil()));
@@ -74,15 +86,6 @@ export class CommentDetailComponent {
         map((project: Project) => project.userIsAdmin)
       )
     );
-  }
-
-  public deleteCommentConfirm(): void {
-    this.showDeleteCommentConfirm = true;
-  }
-
-  public closeDeleteCommentConfirm(): void {
-    this.commentOptionsState = false;
-    this.showDeleteCommentConfirm = false;
   }
 
   public deleteComment() {

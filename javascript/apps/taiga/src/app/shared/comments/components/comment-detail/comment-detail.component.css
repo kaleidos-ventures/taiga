@@ -15,7 +15,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 .delete-comment-confirm {
   inline-size: 300px;
-  padding: var(--spacing-8);
+  padding: var(--spacing-12);
 }
 
 .delete-comment-confirm-title {

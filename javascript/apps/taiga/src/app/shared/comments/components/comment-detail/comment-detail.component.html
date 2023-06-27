@@ -39,7 +39,7 @@ Copyright (c) 2023-present Kaleidos INC
             class="option-btn option-delete"
             tuiOption
             type="button"
-            (click)="deleteCommentConfirm()">
+            (click)="showDeleteCommentConfirm = true">
             <div class="option-container">
               <tui-svg
                 aria-hidden="true"
@@ -71,7 +71,7 @@ Copyright (c) 2023-present Kaleidos INC
             <button
               appearance="button-form"
               tuiButton
-              (click)="closeDeleteCommentConfirm()"
+              (click)="commentOptionsState = false"
               type="button">
               {{ t('comments.delete.cancel') }}
             </button>

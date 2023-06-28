@@ -25,8 +25,12 @@ import { ProjectFeatureStoryWrapperModalViewModule } from '~/app/modules/project
 import { StatusScrollDynamicHeightDirective } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
 import { ProjectFeatureStoryWrapperSideViewModule } from '~/app/modules/project/feature-story-wrapper-side-view/project-feature-story-wrapper-side-view.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { InViewportDirective } from '~/app/shared/directives/in-viewport.directive';
+import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
+import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
 import { DragModule } from '~/app/shared/drag/drag.module';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
@@ -34,9 +38,10 @@ import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { AssignUserComponent } from '../components/assign-user/assign-user.component';
-import { KanbanCreateStoryInlineComponent } from './components/create-story-inline/kanban-create-story-inline.component';
-import { KanbanStatusComponent } from './components/status/kanban-status.component';
 import { KanbanCreateStatusComponent } from './components/create-status/kanban-create-status.component';
+import { KanbanCreateStoryInlineComponent } from './components/create-story-inline/kanban-create-story-inline.component';
+import { EditStatusComponent } from './components/edit-status/edit-status.component';
+import { KanbanStatusComponent } from './components/status/kanban-status.component';
 import { A11yDragStoryDirective } from './components/story/kanban-story-a11y-drag.directive';
 import { KanbanStoryComponent } from './components/story/kanban-story.component';
 import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
@@ -44,10 +49,7 @@ import { KanbanVirtualScrollDirective } from './custom-scroll-strategy/kanban-sc
 import { DataAccessKanbanModule } from './data-access/kanban-data-access.module';
 import { KanbanStatusKeyboardNavigationDirective } from './directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
 import { KanbanStoryKeyboardNavigationDirective } from './directives/kanban-story-keyboard-navigation/kanban-story-keyboard-navigation.directive';
-import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
-import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
-import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
 
 @NgModule({
   declarations: [
@@ -62,6 +64,7 @@ import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/res
     StatusScrollDynamicHeightDirective,
     KanbanVirtualScrollDirective,
     A11yDragStoryDirective,
+    EditStatusComponent,
   ],
   exports: [ProjectFeatureKanbanComponent],
 
@@ -94,6 +97,7 @@ import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/res
     OutsideClickDirective,
     RestoreFocusTargetDirective,
     RestoreFocusDirective,
+    AutoFocusDirective,
   ],
   providers: [
     {

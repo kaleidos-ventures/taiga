@@ -24,8 +24,8 @@ import {
   StoryDetail,
   StoryUpdate,
   User,
-  Workflow,
   UserComment,
+  Workflow,
 } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -552,6 +552,19 @@ export class ProjectApiService {
       `${this.config.apiUrl}/projects/${projectId}/stories/${ref}/comments`,
       {
         text,
+      }
+    );
+  }
+
+  public editStatus(
+    project: Project['id'],
+    status: Pick<Status, 'name' | 'slug'>,
+    workflow: Workflow['slug']
+  ) {
+    return this.http.patch<Status>(
+      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/statuses/${status.slug}`,
+      {
+        name: status.name,
       }
     );
   }

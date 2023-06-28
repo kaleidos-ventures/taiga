@@ -219,6 +219,21 @@ it('test', (done) => {
 });
 ```
 
+## Testing signals
+
+To test a signal just generate a signal in the test and assign it to the component
+
+```ts
+it('signal', () => {
+  // Generate signal
+  const workflow = signal(WorkflowMockFactory(4));
+  // Modify it if necessary
+  workflow.mutate((it) => it.statuses.map((status) => (status.color = 1)));
+  // Assign it to the component signal, in this case, workflow
+  spectator.component.workflow = workflow;
+});
+```
+
 ## Mock Components, Directives, Pipes, Modules, Services and Tokens
 
 We're using [ng-mock](https://ng-mocks.sudo.eu/) to easy mock Angular features. Check the documtation to know more.

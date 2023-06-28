@@ -106,7 +106,7 @@ describe('Kanban', () => {
     cy.getBySel('open-create-status-form').click();
     cy.getBySel('create-status-input').should('be.visible');
     cy.getBySel('create-status-input').type(statusName);
-    cy.getBySel('status-cancel').click();
+    cy.getBySel('cancel-edit-status').click();
     cy.get('tg-kanban-status').last().should('not.contain', statusName);
   });
 
@@ -117,5 +117,92 @@ describe('Kanban', () => {
     cy.getBySel('create-status-input').type(statusName);
     cy.get('tg-kanban-status').last().click();
     cy.get('tg-kanban-status').last().should('contain', statusName);
+  });
+
+  it('edit status', () => {
+    let statusName = '';
+    cy.get('tg-kanban-status')
+      .first()
+      .within(() => {
+        cy.getBySel('status-name')
+          .invoke('text')
+          .then((text) => {
+            statusName = text;
+            cy.wrap(statusName).as('status');
+          });
+      });
+    const newStatusName = randProductName();
+    cy.get('tg-kanban-status')
+      .first()
+      .within(() => {
+        cy.getBySel('status-options').click({ force: true });
+      });
+    cy.getBySel('edit-status-btn').should('be.visible');
+    cy.getBySel('edit-status-btn').click({ force: true });
+    cy.getBySel('create-status-input').should('be.visible');
+    cy.getBySel('create-status-input').type(newStatusName);
+    cy.getBySel('status-create').click({ force: true });
+    cy.get('@status').then((statusName) => {
+      cy.get('tg-kanban-status').first().should('contain', statusName);
+    });
+    cy.get('tg-kanban-status').first().should('contain', newStatusName);
+  });
+
+  it('edit status - cancel', () => {
+    let statusName = '';
+    cy.get('tg-kanban-status')
+      .first()
+      .within(() => {
+        cy.getBySel('status-name')
+          .invoke('text')
+          .then((text) => {
+            statusName = text;
+            cy.wrap(statusName).as('status');
+          });
+      });
+    const newStatusName = randProductName();
+    cy.get('tg-kanban-status')
+      .first()
+      .within(() => {
+        cy.getBySel('status-options').click({ force: true });
+      });
+    cy.getBySel('edit-status-btn').should('be.visible');
+    cy.getBySel('edit-status-btn').click({ force: true });
+    cy.getBySel('create-status-input').should('be.visible');
+    cy.getBySel('create-status-input').type(newStatusName);
+    cy.getBySel('cancel-edit-status').click();
+    cy.get('tg-kanban-status').first().should('not.contain', newStatusName);
+    cy.get('@status').then((statusName) => {
+      cy.get('tg-kanban-status').first().should('contain', statusName);
+    });
+  });
+
+  it('edit status - click outside', () => {
+    let statusName = '';
+    cy.get('tg-kanban-status')
+      .first()
+      .within(() => {
+        cy.getBySel('status-name')
+          .invoke('text')
+          .then((text) => {
+            statusName = text;
+            cy.wrap(statusName).as('status');
+          });
+      });
+    const newStatusName = randProductName();
+    cy.get('tg-kanban-status')
+      .first()
+      .within(() => {
+        cy.getBySel('status-options').click({ force: true });
+      });
+    cy.getBySel('edit-status-btn').should('be.visible');
+    cy.getBySel('edit-status-btn').click({ force: true });
+    cy.getBySel('create-status-input').should('be.visible');
+    cy.getBySel('create-status-input').type(newStatusName);
+    cy.get('tg-kanban-status').last().click();
+    cy.get('tg-kanban-status').first().should('contain', newStatusName);
+    cy.get('@status').then((statusName) => {
+      cy.get('tg-kanban-status').first().should('not.contain', statusName);
+    });
   });
 });

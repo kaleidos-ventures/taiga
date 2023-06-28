@@ -10,15 +10,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 import {
   fetch,
   optimisticUpdate,
   pessimisticUpdate,
 } from '@ngrx/router-store/data-persistence';
+import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { Story } from '@taiga/data';
+import { Status, Story } from '@taiga/data';
 import { delay, filter, finalize, map, tap } from 'rxjs';
 import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
@@ -362,6 +362,42 @@ export class KanbanEffects {
           return KanbanApiActions.createStatusError({
             statusError: httpResponse.status,
             status: action.status.name,
+          });
+        },
+      })
+    );
+  });
+
+  public editStatus$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.editStatus),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: ({ status, workflow }, project) => {
+          return this.projectApiService
+            .editStatus(project.id, status, workflow)
+            .pipe(
+              map((status: Status) => {
+                return KanbanApiActions.editStatusSuccess({
+                  name: status.name,
+                  slug: status.slug,
+                  workflow,
+                });
+              })
+            );
+        },
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status !== 403) {
+            this.appService.errorManagement(httpResponse);
+          }
+
+          return KanbanApiActions.editStatusError({
+            statusError: httpResponse.status,
+            name: action.status.name,
+            slug: action.status.slug,
+            workflow: action.workflow,
           });
         },
       })

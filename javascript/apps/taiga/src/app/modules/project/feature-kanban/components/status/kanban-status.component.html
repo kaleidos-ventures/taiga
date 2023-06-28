@@ -21,15 +21,21 @@ Copyright (c) 2023-present Kaleidos INC
         <div
           class="color"
           [style.border-color]="color"></div>
-        <div class="name">{{ status.name }}</div>
+        <div
+          class="name"
+          data-test="status-name">
+          {{ status.name }}
+        </div>
         <tui-hosted-dropdown
-          *ngIf="vm.canEdit"
           class="status-options-menu"
           [tuiDropdownAlign]="'right'"
           [content]="projectActionsDropdown"
           [(open)]="projectActionsDropdownState">
           <button
-            [attr.aria-label]=""
+            *ngIf="vm.project.userIsAdmin"
+            [tgRestoreFocusTarget]="'leave-status-edition-' + status?.id"
+            #statusOptions
+            [attr.aria-label]="t('kanban.status_options')"
             role="menu"
             aria-haspopup="true"
             [attr.aria-expanded]="projectActionsDropdownState"
@@ -40,6 +46,13 @@ Copyright (c) 2023-present Kaleidos INC
             tuiIconButton
             type="button"></button>
         </tui-hosted-dropdown>
+        <tg-edit-status
+          *ngIf="editStatusActive"
+          action="edition"
+          [status]="status"
+          (setStatus)="updateStatusName($event)"
+          (cancel)="cancelEditStatus()"
+          (leave)="leaveEditStatus($event)"></tg-edit-status>
       </div>
       <ng-container *ngIf="vm.visible">
         <div
@@ -125,7 +138,8 @@ Copyright (c) 2023-present Kaleidos INC
     <ng-template #projectActionsDropdown>
       <tui-data-list class="view-options-list">
         <button
-          class="option-bt"
+          class="option-btn"
+          data-test="edit-status-btn"
           tuiOption
           type="button"
           (click)="displayEditStatus()">

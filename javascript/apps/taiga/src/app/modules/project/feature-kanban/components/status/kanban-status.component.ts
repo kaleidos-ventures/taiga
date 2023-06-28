@@ -24,8 +24,9 @@ import { TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Status, Story, StoryDetail, Workflow } from '@taiga/data';
+import { Project, Status, Story, StoryDetail, Workflow } from '@taiga/data';
 import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
+import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
@@ -46,6 +47,7 @@ import {
   KanbanStory,
   KanbanStoryA11y,
 } from '~/app/modules/project/feature-kanban/kanban.model';
+import { EditStatus } from '~/app/modules/project/feature-kanban/models/edit-status.model';
 import { selectStory } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { AutoScrollService } from '~/app/shared/drag/services/autoscroll.service';
@@ -59,6 +61,8 @@ export interface KanbanComponentState {
   stories: KanbanStory[];
   visible: boolean;
   loadingStories: KanbanState['loadingStories'];
+  userIsAdmin: boolean;
+  project: Project;
   canEdit: boolean;
   initialCanEdit: boolean;
   showAddForm: boolean;
@@ -113,6 +117,9 @@ export class KanbanStatusComponent
   @ViewChild(CdkVirtualScrollViewport)
   public viewPort!: CdkVirtualScrollViewport;
 
+  @ViewChild('statusOptions')
+  public statusOptions?: ElementRef;
+
   @Input()
   public status!: Status;
 
@@ -155,6 +162,7 @@ export class KanbanStatusComponent
 
   public cdkScrollable!: CdkVirtualScrollViewport;
   public projectActionsDropdownState = false;
+  public editStatusActive = false;
 
   public model$ = this.state.select().pipe(
     map((state) => {
@@ -235,6 +243,11 @@ export class KanbanStatusComponent
     );
 
     this.state.connect(
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
+    );
+
+    this.state.connect(
       'canEdit',
       this.permissionService.hasPermissions$('story', ['modify'])
     );
@@ -261,11 +274,6 @@ export class KanbanStatusComponent
 
   public cancelStoryCreate() {
     this.store.dispatch(KanbanActions.closeCreateStoryForm());
-    requestAnimationFrame(() => {
-      (this.createStoryWrapper?.nativeElement as HTMLElement)
-        ?.querySelector('button')
-        ?.focus();
-    });
   }
 
   public onDragStart(story: Story) {
@@ -305,7 +313,30 @@ export class KanbanStatusComponent
   }
 
   public displayEditStatus() {
-    console.log('displayEditStatus');
+    this.editStatusActive = true;
+  }
+
+  public cancelEditStatus() {
+    this.editStatusActive = false;
+  }
+
+  public leaveEditStatus(status: EditStatus) {
+    this.updateStatusName(status);
+  }
+
+  public updateStatusName(status: EditStatus) {
+    if (status) {
+      this.store.dispatch(
+        KanbanActions.editStatus({
+          status: {
+            name: status.name,
+            slug: status.slug,
+          },
+          workflow: this.workflow.slug,
+        })
+      );
+    }
+    this.cancelEditStatus();
   }
 
   private fillColor() {

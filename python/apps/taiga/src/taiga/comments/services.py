@@ -12,8 +12,6 @@ from taiga.base.db.models import Model
 from taiga.comments import repositories as comments_repositories
 from taiga.comments.models import Comment
 from taiga.comments.repositories import CommentOrderBy
-from taiga.comments.serializers import CommentSerializer
-from taiga.comments.serializers import services as comments_serializers
 from taiga.projects.projects.models import Project
 from taiga.users.models import User
 
@@ -34,7 +32,7 @@ async def create_comment(
     text: str,
     created_by: User,
     event_on_create: EventOnCreateCallable | None = None,
-) -> CommentSerializer:
+) -> Comment:
     comment = await comments_repositories.create_comment(
         content_object=content_object,
         text=text,
@@ -44,7 +42,7 @@ async def create_comment(
     if event_on_create:
         await event_on_create(project=project, comment=comment, content_object=content_object)
 
-    return comments_serializers.serialize_comment(comment)
+    return comment
 
 
 ##########################################################
@@ -57,7 +55,7 @@ async def list_paginated_comments(
     offset: int,
     limit: int,
     order_by: CommentOrderBy = [],
-) -> tuple[Pagination, list[CommentSerializer]]:
+) -> tuple[Pagination, list[Comment]]:
     filters = {"content_object": content_object}
     comments = await comments_repositories.list_comments(
         filters=filters,
@@ -66,9 +64,8 @@ async def list_paginated_comments(
         offset=offset,
         limit=limit,
     )
-    serialized_comments = [comments_serializers.serialize_comment(c) for c in comments]
 
     total_comments = await comments_repositories.get_total_comments(filters=filters)
     pagination = Pagination(offset=offset, limit=limit, total=total_comments)
 
-    return pagination, serialized_comments
+    return pagination, comments

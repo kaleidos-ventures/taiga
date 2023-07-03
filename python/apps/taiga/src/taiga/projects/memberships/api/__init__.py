@@ -15,7 +15,7 @@ from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import CanViewProject, IsASelfRequest, IsProjectAdmin
+from taiga.permissions import CanViewProject, IsProjectAdmin, IsRelatedToTheUser
 from taiga.projects.memberships import services as memberships_services
 from taiga.projects.memberships.api.validators import ProjectMembershipValidator
 from taiga.projects.memberships.models import ProjectMembership
@@ -26,7 +26,7 @@ from taiga.routers import routes
 # PERMISSIONS
 LIST_PROJECT_MEMBERSHIPS = CanViewProject()
 UPDATE_PROJECT_MEMBERSHIP = IsProjectAdmin()
-DELETE_PROJECT_MEMBERSHIP = IsProjectAdmin() | IsASelfRequest()
+DELETE_PROJECT_MEMBERSHIP = IsProjectAdmin() | IsRelatedToTheUser("user")
 
 
 ##########################################################

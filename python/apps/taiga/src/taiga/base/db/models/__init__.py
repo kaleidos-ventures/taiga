@@ -7,6 +7,8 @@
 
 import uuid
 
+from asgiref.sync import sync_to_async
+
 # isort: off
 from django.db.models import *  # noqa
 
@@ -36,3 +38,8 @@ class BaseModel(Model):
 
     class Meta:
         abstract = True
+
+
+@sync_to_async
+def get_contenttype_for_model(model: Model) -> ContentType:
+    return ContentType.objects.get_for_model(model)

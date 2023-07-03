@@ -5,21 +5,15 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import Awaitable, Protocol
+from uuid import UUID
 
 from taiga.base.api import Pagination
 from taiga.base.db.models import Model
 from taiga.comments import repositories as comments_repositories
+from taiga.comments.events import EventOnCreateCallable, EventOnDeleteCallable
 from taiga.comments.models import Comment
-from taiga.comments.repositories import CommentOrderBy
-from taiga.projects.projects.models import Project
+from taiga.comments.repositories import CommentFilters, CommentOrderBy
 from taiga.users.models import User
-
-
-class EventOnCreateCallable(Protocol):
-    def __call__(self, project: Project, comment: Comment, content_object: Model) -> Awaitable[None]:
-        ...
-
 
 ##########################################################
 # create comment
@@ -27,7 +21,6 @@ class EventOnCreateCallable(Protocol):
 
 
 async def create_comment(
-    project: Project,
     content_object: Model,
     text: str,
     created_by: User,
@@ -40,7 +33,7 @@ async def create_comment(
     )
 
     if event_on_create:
-        await event_on_create(project=project, comment=comment, content_object=content_object)
+        await event_on_create(project=comment.project, comment=comment)
 
     return comment
 
@@ -56,7 +49,7 @@ async def list_paginated_comments(
     limit: int,
     order_by: CommentOrderBy = [],
 ) -> tuple[Pagination, list[Comment]]:
-    filters = {"content_object": content_object}
+    filters: CommentFilters = {"content_object": content_object}
     comments = await comments_repositories.list_comments(
         filters=filters,
         select_related=["created_by"],
@@ -69,3 +62,39 @@ async def list_paginated_comments(
     pagination = Pagination(offset=offset, limit=limit, total=total_comments)
 
     return pagination, comments
+
+
+##########################################################
+# get coment
+##########################################################
+
+
+async def get_comment(id: UUID, content_object: Model) -> Comment | None:
+    return await comments_repositories.get_comment(
+        filters={"id": id, "content_object": content_object}, prefetch_related=["content_object"]
+    )
+
+
+##########################################################
+# update comment
+##########################################################
+
+# TODO
+
+
+##########################################################
+# delete comment
+##########################################################
+
+
+async def delete_comment(
+    comment: Comment,
+    deleted_by: User,
+    event_on_delete: EventOnDeleteCallable | None = None,
+) -> bool:
+    deleted = await comments_repositories.delete_comments(filters={"id": comment.id})
+
+    if deleted > 0 and event_on_delete:
+        await event_on_delete(project=comment.project, comment=comment, deleted_by=deleted_by)
+
+    return deleted > 0

@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from dataclasses import dataclass
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -341,19 +342,31 @@ async def test_is_view_story_permission_deleted_true():
 
 
 #####################################################
-# is_a_self_request
+# is_an_object_related_to_the_user
 #####################################################
 
 
-async def test_is_a_self_request_false():
-    user = f.build_user()
-    membership = f.build_project_membership()
+async def test_is_an_object_related_to_the_user_with_default_field():
+    user1 = f.build_user()
+    user2 = f.build_user()
+    membership = f.build_project_membership(user=user1)
+    assert await services.is_an_object_related_to_the_user(user1, membership) is True
+    assert await services.is_an_object_related_to_the_user(user2, membership) is False
 
-    assert await services.is_a_self_request(user, membership) is False
+
+async def test_is_an_object_related_to_the_user_with_custom_field():
+    user1 = f.build_user()
+    user2 = f.build_user()
+    story = f.build_story(created_by=user1)
+    assert await services.is_an_object_related_to_the_user(user1, story, field="created_by") is True
+    assert await services.is_an_object_related_to_the_user(user2, story, field="created_by") is False
 
 
-async def test_is_a_self_request_true():
-    user = f.build_user()
-    membership = f.build_project_membership(user=user)
+async def test_is_an_object_related_to_the_user_with_anonymous_user():
+    @dataclass
+    class Obj:
+        user: AnonymousUser
 
-    assert await services.is_a_self_request(user, membership) is True
+    user = AnonymousUser()
+    obj = Obj(user=user)
+    assert await services.is_an_object_related_to_the_user(user, obj) is False

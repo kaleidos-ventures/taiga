@@ -11,6 +11,7 @@ import functools
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin
 from taiga.base.utils.uuid import encode_uuid_to_b64str
+from taiga.projects.projects.models import Project
 
 
 class Comment(
@@ -52,3 +53,7 @@ class Comment(
     @functools.cached_property
     def b64id(self) -> str:
         return encode_uuid_to_b64str(self.id)
+
+    @property
+    def project(self) -> Project:
+        return getattr(self.content_object, "project")

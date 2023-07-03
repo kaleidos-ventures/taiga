@@ -7,6 +7,7 @@
 
 import pytest
 from fastapi import status
+from taiga.comments import repositories as comments_repositories
 from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -21,7 +22,7 @@ WRONG_REF = 0
 ##########################################################
 
 
-async def test_create_story_comment_200(client):
+async def test_create_story_comment_success(client):
     project = await f.create_project()
     story = await f.create_story(project=project)
 
@@ -32,7 +33,7 @@ async def test_create_story_comment_200(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_create_story_comment_404_project(client):
+async def test_create_story_comment_error_nonexistent_project(client):
     user = await f.create_user()
     story = await f.create_story()
 
@@ -43,7 +44,7 @@ async def test_create_story_comment_404_project(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_create_story_comment_404_story(client):
+async def test_create_story_comment_error_nonexistent_story(client):
     project = await f.create_project()
 
     data = {"text": "<p>Sample comment</p>"}
@@ -53,7 +54,7 @@ async def test_create_story_comment_404_story(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_create_story_comment_422_story(client):
+async def test_create_story_comment_error_invalid_form(client):
     project = await f.create_project()
 
     data = {"invalid_param": "<p>Sample comment</p>"}
@@ -68,7 +69,7 @@ async def test_create_story_comment_422_story(client):
 ##########################################################
 
 
-async def test_list_story_comments_200_min_params(client):
+async def test_list_story_comments_success(client):
     project = await f.create_project()
     story = await f.create_story(project=project)
     await f.create_comment(content_object=story, created_by=story.project.created_by, text="comment")
@@ -79,7 +80,7 @@ async def test_list_story_comments_200_min_params(client):
     assert len(response.json()) == 1
 
 
-async def test_list_story_comments_200_max_params(client):
+async def test_list_story_comments_success_with_custom_pagination(client):
     project = await f.create_project()
     story = await f.create_story(project=project)
     await f.create_comment(content_object=story, created_by=story.project.created_by, text="comment")
@@ -98,7 +99,7 @@ async def test_list_story_comments_200_max_params(client):
     assert response.headers["Pagination-Total"] == "1"
 
 
-async def test_list_story_comments_404_project(client):
+async def test_list_story_comments_error_nonexistent_project(client):
     user = await f.create_user()
 
     client.login(user)
@@ -106,7 +107,7 @@ async def test_list_story_comments_404_project(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_list_story_comments_404_story(client):
+async def test_list_story_comments_error_nonexistent_story(client):
     project = await f.create_project()
 
     client.login(project.created_by)
@@ -114,7 +115,7 @@ async def test_list_story_comments_404_story(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_list_story_comments_403(client):
+async def test_list_story_comments_error_no_permissions(client):
     not_allowed_user = await f.create_user()
     project = await f.create_project()
     story = await f.create_story(project=project)
@@ -124,7 +125,7 @@ async def test_list_story_comments_403(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_list_story_comments_422_invalid_order(client):
+async def test_list_story_comments_error_invalid_order(client):
     project = await f.create_project()
     story = await f.create_story(project=project)
     await f.create_comment(content_object=story, created_by=story.project.created_by, text="comment")
@@ -135,3 +136,79 @@ async def test_list_story_comments_422_invalid_order(client):
     client.login(story.project.created_by)
     response = client.get(f"/projects/{story.project.b64id}/stories/{story.ref}/comments?{query_params}")
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
+
+
+##########################################################
+# DELETE projects/<id>/stories/<ref>/comments/<id>
+##########################################################
+
+
+async def test_delete_story_comments_success_with_admin_user(client):
+    project = await f.create_project()
+    admin_user = project.created_by
+    owner_user = await f.create_user()
+    story = await f.create_story(project=project)
+    comment = await f.create_comment(content_object=story, created_by=owner_user, text="comment")
+
+    assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
+    client.login(admin_user)
+    response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+    assert await comments_repositories.get_comment(filters={"id": comment.id}) is None
+
+
+async def test_delete_story_comments_success_with_owner_user(client):
+    project = await f.create_project()
+    generic_role = await project.roles.aget(is_admin=False)
+    owner_user = await f.create_user()
+    await f.create_project_membership(user=owner_user, role=generic_role)
+    story = await f.create_story(project=project)
+    comment = await f.create_comment(content_object=story, created_by=owner_user, text="comment")
+
+    assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
+    client.login(owner_user)
+    response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+    assert await comments_repositories.get_comment(filters={"id": comment.id}) is None
+
+
+async def test_delete_story_comment_error_no_permissions(client):
+    project = await f.create_project()
+    generic_role = await project.roles.aget(is_admin=False)
+    owner_user = await f.create_user()
+    await f.create_project_membership(user=owner_user, role=generic_role)
+    member_user = await f.create_user()
+    await f.create_project_membership(user=member_user, role=generic_role)
+    story = await f.create_story(project=project)
+    comment = await f.create_comment(content_object=story, created_by=owner_user, text="comment")
+
+    assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
+    client.login(member_user)
+    response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+    assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
+
+
+async def test_delete_story_comments_error_nonexistent_project(client):
+    user = await f.create_user()
+
+    client.login(user)
+    response = client.delete(f"/projects/{WRONG_B64ID}/stories/{WRONG_REF}/comments/{WRONG_B64ID}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_story_comments_error_nonexistent_404_story(client):
+    project = await f.create_project()
+
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{project.b64id}/stories/{WRONG_REF}/comments/{WRONG_B64ID}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_story_comments_error_nonexistent_404_comment(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project)
+
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{project.b64id}/stories/{story.ref}/comments/{WRONG_B64ID}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

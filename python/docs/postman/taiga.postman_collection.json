@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "1462f3c2-047e-41d0-9818-c34db07c7441",
+		"_postman_id": "f14e95f2-f030-40b7-8bc7-21414bd21c3b",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"_exporter_id": "15018493"
 	},
 	"item": [
 		{
@@ -2920,7 +2920,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"   pm.environment.set(\"story_version\", pm.response.json().version);",
+									"   pm.environment.set(\"story_comment_id\", pm.response.json().id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3031,6 +3031,54 @@
 									"key": "offset",
 									"value": "0"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete story comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () { });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/comments/{{story_comment_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"stories",
+								"{{story_ref}}",
+								"comments",
+								"{{story_comment_id}}"
 							]
 						}
 					},

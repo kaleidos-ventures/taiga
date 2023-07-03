@@ -241,6 +241,28 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    projectEventActions.createComment,
+    (state, { comment, storyRef }): StoryDetailState => {
+      if (state.story?.ref !== storyRef) {
+        return state;
+      }
+
+      if (state.commentsOrder === '-createdAt') {
+        state.comments.unshift(comment);
+      } else if (state.totalComments === state.comments.length) {
+        state.comments.push(comment);
+      }
+
+      if (state.totalComments) {
+        state.totalComments++;
+      } else {
+        state.totalComments = 1;
+      }
+
+      return state;
+    }
   )
 );
 

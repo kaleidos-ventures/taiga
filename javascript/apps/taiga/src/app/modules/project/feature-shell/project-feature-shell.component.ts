@@ -20,9 +20,11 @@ import { RxState } from '@rx-angular/state';
 import {
   Membership,
   Project,
+  Story,
   StoryAssignEvent,
   StoryDetail,
   User,
+  UserComment,
   WorkspaceMembership,
 } from '@taiga/data';
 import { distinctUntilChanged, filter, merge } from 'rxjs';
@@ -265,6 +267,21 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
             })
           );
         }
+      });
+
+    this.wsService
+      .projectEvents<{
+        ref: Story['ref'];
+        comment: UserComment;
+      }>('stories.comments.create')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          projectEventActions.createComment({
+            storyRef: eventResponse.event.content.ref,
+            comment: eventResponse.event.content.comment,
+          })
+        );
       });
 
     const userLostPermissions = this.wsService.userEvents<{

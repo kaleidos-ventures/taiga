@@ -12,7 +12,7 @@ import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fetch, optimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { ProjectApiService } from '@taiga/api';
-import { exhaustMap, filter, map } from 'rxjs';
+import { map } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
 import {
   StoryDetailActions,
@@ -21,7 +21,6 @@ import {
 import { storyDetailFeature } from '../reducers/story-detail.reducer';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 
 @Injectable()
 export class StoryDetailCommentsEffects {
@@ -110,34 +109,6 @@ export class StoryDetailCommentsEffects {
 
           return StoryDetailApiActions.newCommentError(action);
         },
-      })
-    );
-  });
-
-  public fetchCommentsOnEvent$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(projectEventActions.createComment),
-      concatLatestFrom(() => [
-        this.store.select(storyDetailFeature.selectStory).pipe(filterNil()),
-        this.store.select(storyDetailFeature.selectCommentsOrder),
-        this.store
-          .select(storyDetailFeature.selectComments)
-          .pipe(map((comments) => comments?.length ?? 0)),
-      ]),
-      filter(([{ storyRef }, story]) => story.ref === storyRef),
-      exhaustMap(([{ projectId }, story, order, offset]) => {
-        return this.projectApiService
-          .getComments(projectId, story.ref, order, 0, offset)
-          .pipe(
-            map(({ comments, total }) => {
-              return StoryDetailApiActions.fetchCommentsSuccess({
-                comments,
-                total,
-                order,
-                offset: 0,
-              });
-            })
-          );
       })
     );
   });

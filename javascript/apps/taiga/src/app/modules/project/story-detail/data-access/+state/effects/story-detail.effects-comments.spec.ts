@@ -31,7 +31,6 @@ import {
 import { StoryDetailCommentsEffects } from './story-detail-comments.effects';
 import { storyDetailFeature } from '../reducers/story-detail.reducer';
 import { HttpErrorResponse } from '@angular/common/http';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 
 describe('StoryDetailEffects', () => {
@@ -189,40 +188,5 @@ describe('StoryDetailEffects', () => {
 
       expect(effects.newComent$).toBeObservable(expected);
     });
-  });
-
-  it('should fetch comments when a createComment event occurs', () => {
-    const projectApiService = spectator.inject(ProjectApiService);
-    const effects = spectator.inject(StoryDetailCommentsEffects);
-
-    const story = StoryDetailMockFactory();
-    const projectId = 'testProject';
-    const storyRef = story.ref;
-    const order = 'createdAt';
-    const offset = 0;
-    const total = 10;
-    const comments = Array(total).fill({});
-
-    store.overrideSelector(storyDetailFeature.selectStory, story);
-    store.overrideSelector(storyDetailFeature.selectCommentsOrder, order);
-
-    const action = projectEventActions.createComment({
-      projectId,
-      storyRef,
-    });
-    const completion = StoryDetailApiActions.fetchCommentsSuccess({
-      comments,
-      total,
-      order,
-      offset,
-    });
-
-    actions$ = hot('-a', { a: action });
-    const response = cold('-b|', { b: { comments, total } });
-    const expected = cold('--c', { c: completion });
-
-    projectApiService.getComments.mockReturnValue(response);
-
-    expect(effects.fetchCommentsOnEvent$).toBeObservable(expected);
   });
 });

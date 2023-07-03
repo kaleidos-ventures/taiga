@@ -24,10 +24,7 @@ async def test_create_comment():
     story = f.build_story()
     comment = f.build_comment()
 
-    with (
-        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
-        patch("taiga.comments.services.comments_serializers", autospec=True) as fake_comments_serializers,
-    ):
+    with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
         fake_comments_repositories.create_comment.return_value = comment
 
         await services.create_comment(
@@ -42,7 +39,6 @@ async def test_create_comment():
             text=comment.text,
             created_by=comment.created_by,
         )
-        fake_comments_serializers.serialize_comment.assert_called_once_with(comment=comment)
 
 
 async def test_create_comment_and_emit_event_on_create():
@@ -51,10 +47,7 @@ async def test_create_comment_and_emit_event_on_create():
     comment = f.build_comment()
     fake_event_on_create = AsyncMock()
 
-    with (
-        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
-        patch("taiga.comments.services.comments_serializers", autospec=True) as fake_comments_serializers,
-    ):
+    with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
         fake_comments_repositories.create_comment.return_value = comment
 
         await services.create_comment(
@@ -70,7 +63,6 @@ async def test_create_comment_and_emit_event_on_create():
             text=comment.text,
             created_by=comment.created_by,
         )
-        fake_comments_serializers.serialize_comment.assert_called_once_with(comment=comment)
         fake_event_on_create.assert_called_once_with(project=project, comment=comment, content_object=story)
 
 
@@ -90,10 +82,7 @@ async def test_list_comments():
     limit = 100
     total = 1
 
-    with (
-        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
-        patch("taiga.comments.services.comments_serializers", autospec=True) as fake_comments_serializers,
-    ):
+    with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
 
         fake_comments_repositories.list_comments.return_value = [comment]
         fake_comments_repositories.get_total_comments.return_value = total
@@ -108,7 +97,6 @@ async def test_list_comments():
             limit=limit,
         )
         fake_comments_repositories.get_total_comments.assert_awaited_once_with(filters=filters)
-        fake_comments_serializers.serialize_comment.assert_called_once_with(comment=comment)
         assert len(comments_list) == 1
         assert pagination.offset == offset
         assert pagination.limit == limit

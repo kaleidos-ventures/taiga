@@ -8,11 +8,11 @@
 from fastapi import Depends, Query, Response
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
-from taiga.base.api import responses
 from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.comments import services as comments_services
+from taiga.comments.models import Comment
 from taiga.comments.serializers import CommentSerializer
 from taiga.comments.validators import CommentOrderQuery, CreateCommentValidator
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
@@ -25,10 +25,6 @@ from taiga.stories.stories.api import get_story_or_404
 CREATE_STORY_COMMENT = HasPerm("comment_story")
 LIST_STORY_COMMENTS = HasPerm("view_story")
 
-# HTTP 200 RESPONSES
-COMMENT_200 = responses.http_status_200(model=CommentSerializer)
-LIST_COMMENTS_200 = responses.http_status_200(model=list[CommentSerializer])
-
 
 ##########################################################
 # create story comment
@@ -39,14 +35,15 @@ LIST_COMMENTS_200 = responses.http_status_200(model=list[CommentSerializer])
     "/projects/{project_id}/stories/{ref}/comments",
     name="project.story.comments.create",
     summary="Create story comment",
-    responses=COMMENT_200 | ERROR_403 | ERROR_422 | ERROR_404,
+    response_model=CommentSerializer,
+    responses=ERROR_403 | ERROR_422 | ERROR_404,
 )
 async def create_story_comments(
     request: AuthRequest,
     form: CreateCommentValidator,
     project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     ref: int = Query(None, description="the unique story reference within a project (int)"),
-) -> CommentSerializer:
+) -> Comment:
     """
     Add a comment to an story
     """
@@ -71,7 +68,8 @@ async def create_story_comments(
     "/projects/{project_id}/stories/{ref}/comments",
     name="project.story.comments.list",
     summary="List story comments",
-    responses=LIST_COMMENTS_200 | ERROR_403 | ERROR_422 | ERROR_404,
+    response_model=list[CommentSerializer],
+    responses=ERROR_403 | ERROR_422 | ERROR_404,
 )
 async def list_story_comments(
     request: AuthRequest,
@@ -80,7 +78,7 @@ async def list_story_comments(
     pagination_params: PaginationQuery = Depends(),
     project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     ref: int = Query(None, description="the unique story reference within a project (str)"),
-) -> list[CommentSerializer]:
+) -> list[Comment]:
     """
     List the story comments
     """

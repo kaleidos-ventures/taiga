@@ -737,3 +737,19 @@ Content for:
       "comment": {... "comment object" ...}
   }
   ```
+
+
+#### `stories.comments.delete`
+
+It happens when a comment associated to an story is deleted.
+
+Content for:
+- project channel:
+  ```
+
+  {
+      "id": "comment id (UUIDB64)"
+      "ref": "story ref (int)"
+      "deletedBy": {... basic user info ...}
+  }
+  ```

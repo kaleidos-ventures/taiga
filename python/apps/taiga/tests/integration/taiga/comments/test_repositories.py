@@ -52,6 +52,43 @@ async def test_list_comments_by_content_object():
 
 
 ##########################################################
+# get_comment
+##########################################################
+
+
+async def tests_get_comment():
+    story1 = await f.create_story()
+    story2 = await f.create_story()
+    comment11 = await f.create_comment(content_object=story1)
+    comment21 = await f.create_comment(content_object=story2)
+    comment22 = await f.create_comment(content_object=story2)
+
+    assert await repositories.get_comment(filters={"id": comment22.id}) == comment22
+    assert await repositories.get_comment(filters={"content_object": story1}) == comment11
+    assert await repositories.get_comment(filters={"content_object": story1, "id": comment21.id}) is None
+    assert await repositories.get_comment(filters={"content_object": story1, "id": comment11.id}) == comment11
+
+
+##########################################################
+# update_comment
+##########################################################
+
+##########################################################
+# delete_comments
+##########################################################
+
+
+async def tests_delete_comments():
+    story1 = await f.create_story()
+    story2 = await f.create_story()
+    await f.create_comment(content_object=story2)
+    await f.create_comment(content_object=story2)
+
+    assert await repositories.delete_comments(filters={"content_object": story1}) == 0
+    assert await repositories.delete_comments(filters={"content_object": story2}) == 2
+
+
+##########################################################
 # misc - get_total_story_comments
 ##########################################################
 

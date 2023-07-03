@@ -7,18 +7,22 @@
 
 from typing import cast
 
-from taiga.base.db.models import Model
 from taiga.comments.models import Comment
 from taiga.events import events_manager
 from taiga.projects.projects.models import Project
-from taiga.stories.comments.events.content import CreateStoryCommentContent
+from taiga.stories.comments.events.content import CreateStoryCommentContent, DeleteStoryCommentContent
 from taiga.stories.stories.models import Story
+from taiga.users.models import User
 
 CREATE_STORY_COMMENT = "stories.comments.create"
+DELETE_STORY_COMMENT = "stories.comments.delete"
 
 
-async def emit_event_when_story_comment_is_created(project: Project, comment: Comment, content_object: Model) -> None:
-    story = cast(Story, content_object)
+async def emit_event_when_story_comment_is_created(
+    project: Project,
+    comment: Comment,
+) -> None:
+    story = cast(Story, comment.content_object)
 
     await events_manager.publish_on_project_channel(
         project=project,
@@ -26,5 +30,23 @@ async def emit_event_when_story_comment_is_created(project: Project, comment: Co
         content=CreateStoryCommentContent(
             ref=story.ref,
             comment=comment,
+        ),
+    )
+
+
+async def emit_event_when_story_comment_is_deleted(
+    project: Project,
+    comment: Comment,
+    deleted_by: User,
+) -> None:
+    story = cast(Story, comment.content_object)
+
+    await events_manager.publish_on_project_channel(
+        project=project,
+        type=DELETE_STORY_COMMENT,
+        content=DeleteStoryCommentContent(
+            ref=story.ref,
+            id=comment.id,
+            deleted_by=deleted_by,
         ),
     )

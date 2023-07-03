@@ -14,9 +14,9 @@ from taiga.permissions import (
     CanViewProject,
     DenyAll,
     HasPerm,
-    IsASelfRequest,
     IsAuthenticated,
     IsProjectAdmin,
+    IsRelatedToTheUser,
     IsSuperUser,
     IsWorkspaceMember,
 )
@@ -24,6 +24,10 @@ from tests.utils import factories as f
 
 pytestmark = pytest.mark.django_db
 
+
+# TODO: REFACTOR:
+#   - This tests should be unit tests (they shouldn't use the database).
+#   - There are tesst for classes from another module (taiga.permissions) that need to be moved.
 
 #####################################################
 # check_permissions (is_authorized)
@@ -122,19 +126,12 @@ async def test_check_permission_can_view_project():
         await check_permissions(permissions=permissions, user=user2, obj=project)
 
 
-async def test_check_permission_is_a_self_request():
+async def test_check_permission_is_an_object_related_to_the_user():
     user1 = f.build_user()
     user2 = f.build_user()
-    permissions = IsASelfRequest()
-
-    # user1 and obj are the same user
-    assert await check_permissions(permissions=permissions, user=user1, obj=user1) is None
-
-    # user1 and obj are not the same user
-    with pytest.raises(ex.ForbiddenError):
-        await check_permissions(permissions=permissions, user=user2, obj=user1)
-
     membership = f.build_project_membership(user=user1)
+
+    permissions = IsRelatedToTheUser("user")
     # user1 and obj.user are the same user
     assert await check_permissions(permissions=permissions, user=user1, obj=membership) is None
     # user1 and obj.user are not the same user
@@ -175,7 +172,48 @@ async def test_check_permission_enough_perms():
 #############################################
 # PermissionOperators (Not/Or/And)
 #############################################
+
+
 async def test_check_permission_operators():
+    # user is a pj-admin
+    user = await f.create_user()
+    project = await f.create_project(created_by=user)
+
+    permission_true_and = IsProjectAdmin() & HasPerm("view_story")
+    permission_false_and = IsProjectAdmin() & HasPerm("view_story") & IsSuperUser()
+    permission_true_all_or = IsProjectAdmin() | HasPerm("view_story")
+    permission_true_some_or = IsProjectAdmin() | HasPerm("view_story") | IsSuperUser()
+    permission_false_or = IsSuperUser() | DenyAll()
+    permission_true_not = ~DenyAll()
+    permission_false_not = ~AllowAny()
+    permission_true_all_together = ~(permission_true_all_or & permission_false_and)
+    permission_false_all_together = ~(permission_true_all_or | permission_false_and)
+
+    # user IsProjectAdmin (true) & HasPerm("view_story") (true)
+    assert await check_permissions(permissions=permission_true_and, user=user, obj=project) is None
+    # user IsProjectAdmin (true) & HasPerm("view_story") (true) & IsSuperUser() (false)
+    with pytest.raises(ex.ForbiddenError):
+        await check_permissions(permissions=permission_false_and, user=user, obj=project)
+    # user IsProjectAdmin (true) | HasPerm("view_story") (true)
+    assert await check_permissions(permissions=permission_true_all_or, user=user, obj=project) is None
+    # user IsProjectAdmin (true) | HasPerm("view_story") (true) | IsSuperUser() (false)
+    assert await check_permissions(permissions=permission_true_some_or, user=user, obj=project) is None
+    # user IsSuperUser (false) | DenyAll() (false)
+    with pytest.raises(ex.ForbiddenError):
+        await check_permissions(permissions=permission_false_or, user=user, obj=project)
+    # Not(DenyAll()) Not(false)
+    assert await check_permissions(permissions=permission_true_not, user=user, obj=project) is None
+    # Not(AllowAny()) Not(true)
+    with pytest.raises(ex.ForbiddenError):
+        await check_permissions(permissions=permission_false_not, user=user, obj=project)
+    # Not(permission_true_all_or (true) & permission_false_and (false))
+    assert await check_permissions(permissions=permission_true_all_together, user=user, obj=project) is None
+    # Not(permission_true_all_or (true) | permission_false_and (false))
+    with pytest.raises(ex.ForbiddenError):
+        await check_permissions(permissions=permission_false_all_together, user=user, obj=project)
+
+
+async def test_check_permission_operators_classes():
     # user is a pj-admin
     user = await f.create_user()
     project = await f.create_project(created_by=user)

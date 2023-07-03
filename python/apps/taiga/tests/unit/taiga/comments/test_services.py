@@ -5,7 +5,8 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, PropertyMock, patch
+from uuid import uuid1
 
 import pytest
 from taiga.comments import services
@@ -20,7 +21,6 @@ pytestmark = pytest.mark.django_db
 
 
 async def test_create_comment():
-    project = f.build_project()
     story = f.build_story()
     comment = f.build_comment()
 
@@ -28,7 +28,6 @@ async def test_create_comment():
         fake_comments_repositories.create_comment.return_value = comment
 
         await services.create_comment(
-            project=project,
             content_object=story,
             text=comment.text,
             created_by=comment.created_by,
@@ -43,15 +42,17 @@ async def test_create_comment():
 
 async def test_create_comment_and_emit_event_on_create():
     project = f.build_project()
-    story = f.build_story()
-    comment = f.build_comment()
+    story = f.build_story(project=project)
     fake_event_on_create = AsyncMock()
+    comment = f.build_comment()
 
-    with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
+    with (
+        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
+        patch("taiga.comments.models.Comment.project", new_callable=PropertyMock, return_value=project),
+    ):
         fake_comments_repositories.create_comment.return_value = comment
 
         await services.create_comment(
-            project=project,
             content_object=story,
             text=comment.text,
             created_by=comment.created_by,
@@ -63,7 +64,7 @@ async def test_create_comment_and_emit_event_on_create():
             text=comment.text,
             created_by=comment.created_by,
         )
-        fake_event_on_create.assert_called_once_with(project=project, comment=comment, content_object=story)
+        fake_event_on_create.assert_awaited_once_with(project=comment.project, comment=comment)
 
 
 #####################################################
@@ -101,3 +102,97 @@ async def test_list_comments():
         assert pagination.offset == offset
         assert pagination.limit == limit
         assert pagination.total == total
+
+
+##########################################################
+# get_coment
+##########################################################
+
+
+async def test_get_comment():
+    story = f.build_story(id="story_id")
+    comment_id = uuid1()
+
+    with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
+        await services.get_comment(id=comment_id, content_object=story)
+        fake_comments_repositories.get_comment.assert_awaited_once_with(
+            filters={"id": comment_id, "content_object": story}, prefetch_related=["content_object"]
+        )
+
+
+##########################################################
+# update_coment
+##########################################################
+
+# TODO
+
+##########################################################
+# delete_coment
+##########################################################
+
+
+async def test_delete_comment():
+    comment = f.build_comment()
+
+    with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
+        fake_comments_repositories.delete_comments.return_value = 1
+
+        assert await services.delete_comment(comment=comment, deleted_by=comment.created_by) is True
+
+        fake_comments_repositories.delete_comments.assert_awaited_once_with(
+            filters={"id": comment.id},
+        )
+
+
+async def test_delete_comment_and_emit_event_on_delete():
+    project = f.build_project()
+    comment = f.build_comment()
+    fake_event_on_delete = AsyncMock()
+
+    with (
+        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
+        patch("taiga.comments.models.Comment.project", new_callable=PropertyMock, return_value=project),
+    ):
+        fake_comments_repositories.delete_comments.return_value = 1
+
+        assert (
+            await services.delete_comment(
+                comment=comment,
+                deleted_by=comment.created_by,
+                event_on_delete=fake_event_on_delete,
+            )
+            is True
+        )
+
+        fake_comments_repositories.delete_comments.assert_awaited_once_with(
+            filters={"id": comment.id},
+        )
+        fake_event_on_delete.assert_awaited_once_with(
+            project=comment.project, comment=comment, deleted_by=comment.created_by
+        )
+
+
+async def test_delete_comment_does_not_exist():
+    project = f.build_project()
+    comment = f.build_comment()
+    fake_event_on_delete = AsyncMock()
+
+    with (
+        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
+        patch("taiga.comments.models.Comment.project", new_callable=PropertyMock, return_value=project),
+    ):
+        fake_comments_repositories.delete_comments.return_value = 0
+
+        assert (
+            await services.delete_comment(
+                comment=comment,
+                deleted_by=comment.created_by,
+                event_on_delete=fake_event_on_delete,
+            )
+            is False
+        )
+
+        fake_comments_repositories.delete_comments.assert_awaited_once_with(
+            filters={"id": comment.id},
+        )
+        fake_event_on_delete.assert_not_awaited()

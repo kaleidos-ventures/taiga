@@ -19,3 +19,7 @@ class Name(ConstrainedStr):
 class WorkflowStatusValidator(BaseModel):
     name: Name
     color: conint(gt=0, lt=9)  # type: ignore
+
+
+class UpdateWorkflowStatusValidator(BaseModel):
+    name: Name | None

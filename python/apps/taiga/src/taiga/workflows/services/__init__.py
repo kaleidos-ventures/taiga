@@ -7,14 +7,15 @@
 
 
 from decimal import Decimal
-from typing import cast
+from typing import Any, cast
 from uuid import UUID
 
 from taiga.workflows import events as workflow_events
 from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import Workflow, WorkflowStatus
-from taiga.workflows.serializers import WorkflowSerializer, WorkflowStatusSerializer
+from taiga.workflows.serializers import WorkflowSerializer
 from taiga.workflows.serializers import services as serializers_services
+from taiga.workflows.services import exceptions as ex
 
 DEFAULT_ORDER_OFFSET = Decimal(100)  # default offset when adding a workflow status
 
@@ -76,7 +77,7 @@ async def get_workflow_detail(project_id: UUID, workflow_slug: str) -> WorkflowS
 ##########################################################
 
 
-async def create_workflow_status(name: str, color: int, workflow: Workflow) -> WorkflowStatusSerializer:
+async def create_workflow_status(name: str, color: int, workflow: Workflow) -> WorkflowStatus:
     latest_status = await workflows_repositories.list_workflow_statuses(
         filters={"workflow_id": workflow.id}, order_by=["-order"], offset=0, limit=1
     )
@@ -87,16 +88,12 @@ async def create_workflow_status(name: str, color: int, workflow: Workflow) -> W
         name=name, slug=None, color=color, order=order, workflow=workflow
     )
 
-    serialized_workflow_status = serializers_services.serialize_workflow_status(
-        workflow=workflow, workflow_status=workflow_status
-    )
-
     # Emit event
     await workflow_events.emit_event_when_workflow_status_is_created(
-        project=workflow.project, workflow_status=serialized_workflow_status
+        project=workflow.project, workflow_status=workflow_status
     )
 
-    return serialized_workflow_status
+    return workflow_status
 
 
 ##########################################################
@@ -112,3 +109,20 @@ async def get_status(workflow_id: UUID, status_slug: str) -> WorkflowStatus | No
         },
         select_related=["workflow"],
     )
+
+
+##########################################################
+# update workflow status
+##########################################################
+
+
+async def update_workflow_status(workflow_status: WorkflowStatus, values: dict[str, Any] = {}) -> WorkflowStatus:
+    # TODO: Emit events
+
+    if not values:
+        return workflow_status
+
+    if "name" in values and values["name"] is None:
+        raise ex.TaigaValidationError("Name cannot be null")
+
+    return await workflows_repositories.update_workflow_status(workflow_status=workflow_status, values=values)

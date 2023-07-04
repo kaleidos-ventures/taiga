@@ -16,7 +16,7 @@ WRONG_SLUG = "wrong_slug"
 
 
 ##########################################################
-# Workflow GET /projects/<project_id>/workflows
+# Workflow GET /projects/<pj_b64id>/workflows
 ##########################################################
 
 
@@ -46,7 +46,7 @@ async def test_get_workflows_wrong_permissions(client):
 
 
 #################################################################
-# Workflow GET /projects/<project_id>/workflows/{workflow_slug}
+# Workflow GET /projects/<pj_b64id>/workflows/{wf_slug}
 #################################################################
 
 
@@ -87,7 +87,7 @@ async def test_get_workflow_wrong_permissions(client):
 
 
 ################################################################################
-# Workflow status POST /projects/<project_id>/workflows/<workflow_slug>/statuses
+# Workflow status POST /projects/<pj_b64id>/workflows/<wf_slug>/statuses
 ################################################################################
 
 
@@ -126,3 +126,56 @@ async def test_create_workflow_status_forbidden(client):
     client.login(pj_member)
     response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/statuses", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+################################################################################
+# Status PATCH /projects/<pj_b64id>/workflows/<wf_slug>/statuses/<ws_slug>
+################################################################################
+
+
+async def test_200_update_status_ok(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    wf_status = await f.create_workflow_status(workflow=workflow)
+
+    data = {"name": "New status name"}
+
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{project.b64id}/workflows/{workflow.slug}/statuses/{wf_status.slug}", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_404_update_status_invalid_workflow(client):
+    project = await f.create_project()
+
+    data = {"name": "New status name"}
+
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{project.b64id}/workflows/{WRONG_SLUG}/statuses/{WRONG_SLUG}", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+    assert "Workflow" in response.text and "status" not in response.text
+
+
+async def test_404_update_status_invalid_workflow_status(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+
+    data = {"name": "New status name"}
+
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{project.b64id}/workflows/{workflow.slug}/statuses/{WRONG_SLUG}", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+    assert "Workflow status" in response.text
+
+
+async def test_400_update_status_null_name(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    wf_status = await f.create_workflow_status(workflow=workflow)
+
+    data = {"name": None}
+
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{project.b64id}/workflows/{workflow.slug}/statuses/{wf_status.slug}", json=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+    assert response.json()["error"]["msg"] == "Name cannot be null"

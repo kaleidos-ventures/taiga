@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "763d91af-2ab5-4eef-b0a7-fae0ce8b2e6c",
+		"_postman_id": "e0100565-fff3-4294-91a0-acf5e156e983",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "15018493"
+		"_exporter_id": "3299216"
 	},
 	"item": [
 		{
@@ -3033,6 +3033,11 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.set(\"ws-slug\", pm.response.json().name);",
+									"});",
+									"",
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -3093,6 +3098,82 @@
 								"workflows",
 								"{{wf-slug}}",
 								"statuses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{p}.workflows.{wf}.statuses.{ws}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API contract",
+									"    pm.expect(Object.keys(jsonRes).length).to.equal(6);",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
+									"    pm.expect(jsonRes).to.have.property(\"name\");",
+									"    pm.expect(jsonRes).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes).to.have.property(\"color\");",
+									"    pm.expect(jsonRes).to.have.property(\"order\");",
+									"    pm.expect(jsonRes).to.have.property(\"workflow\");",
+									"    ",
+									"    pm.expect(Object.keys(jsonRes.workflow).length).to.equal(2);    ",
+									"    pm.expect(jsonRes.workflow).to.have.property(\"name\");",
+									"    pm.expect(jsonRes.workflow).to.have.property(\"slug\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"updated name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/{{ws-slug}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}",
+								"statuses",
+								"{{ws-slug}}"
 							]
 						}
 					},

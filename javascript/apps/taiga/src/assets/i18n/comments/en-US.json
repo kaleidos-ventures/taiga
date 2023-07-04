@@ -8,6 +8,9 @@
     "reverse": "Reverse order"
   },
   "comment_options": "Comment Options",
+  "edit": {
+    "edit_comment": "Edit"
+  },
   "delete": {
     "delete_comment": "Delete Comment",
     "confirm": "Delete this comment?",

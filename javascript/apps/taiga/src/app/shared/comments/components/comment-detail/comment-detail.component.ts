@@ -60,7 +60,8 @@ export class CommentDetailComponent {
   @Input({ required: true }) public comment!: UserComment;
   @Input({ required: true }) public story!: Story | null;
 
-  @Output() public highlightComment = new EventEmitter<string | undefined>();
+  @Output() public highlightComment = new EventEmitter<boolean>();
+  @Output() public displayEditComment = new EventEmitter<boolean>();
 
   public store = inject(Store);
   public state = inject(RxState<CommentDetailComponentState>);
@@ -76,7 +77,7 @@ export class CommentDetailComponent {
     this.#commentOptionsState = value;
     if (!value) {
       this.showDeleteCommentConfirm = false;
-      this.highlightComment.next(undefined);
+      this.highlightComment.next(false);
     }
   }
 
@@ -92,11 +93,15 @@ export class CommentDetailComponent {
 
   public deleteConfirm() {
     this.showDeleteCommentConfirm = true;
-    this.highlightComment.next(this.comment.id);
+    this.highlightComment.emit(true);
   }
 
   public deleteComment(): void {
     this.commentOptionsState = false;
     // Dispatch deletion
+  }
+
+  public editComment() {
+    this.displayEditComment.emit(true);
   }
 }

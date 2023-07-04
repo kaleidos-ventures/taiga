@@ -10,6 +10,7 @@ import { APP_INITIALIZER, inject, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { A11yModule } from '@angular/cdk/a11y';
 import { HttpClientModule } from '@angular/common/http';
 import { TranslocoService } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
@@ -17,20 +18,20 @@ import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { Store, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TUI_IS_CYPRESS } from '@taiga-ui/cdk';
-import { NgDompurifySanitizer } from '@tinkoff/ng-dompurify';
 import {
+  TUI_ANIMATIONS_DURATION,
+  TUI_SANITIZER,
   TuiAlertModule,
   TuiNotificationModule,
   TuiRootModule,
   tuiSvgOptionsProvider,
-  TUI_ANIMATIONS_DURATION,
-  TUI_SANITIZER,
 } from '@taiga-ui/core';
 import { TUI_LANGUAGE } from '@taiga-ui/i18n';
 import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
 import { ApiModule, SystemApiService } from '@taiga/api';
-import { ConfigService, CoreModule, coreActions } from '@taiga/core';
+import { ConfigService, coreActions, CoreModule } from '@taiga/core';
 import { PROMPT_PROVIDER } from '@taiga/ui/modal/services/modal.service';
+import { NgDompurifySanitizer } from '@tinkoff/ng-dompurify';
 import { paramCase } from 'change-case';
 import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
 import { WsModule } from '~/app/services/ws';
@@ -39,11 +40,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ErrorsModule } from './modules/errors/errors.module';
 import { EnvironmentService } from './services/environment.service';
+import { LanguageService } from './services/language/language.service';
 import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest-interceptor.module';
 import { NavigationModule } from './shared/navigation/navigation.module';
 import { TranslocoRootModule } from './transloco/transloco-root.module';
-import { LanguageService } from './services/language/language.service';
-import { A11yModule } from '@angular/cdk/a11y';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',

@@ -60,54 +60,12 @@ Copyright (c) 2023-present Kaleidos INC
 
   <ng-container *ngIf="total">
     <div class="comment-list">
-      <div
-        *ngFor="let comment of comments; trackBy: trackIndex"
-        class="comment"
-        [ngClass]="{
-          highlighted:
-            !!highlightedCommentId && highlightedCommentId === comment.id
-        }">
-        <div class="comment-top">
-          <div class="creation-info">
-            <tg-user-avatar
-              size="m"
-              class="no-border"
-              [user]="comment.createdBy"
-              [color]="comment.createdBy.color"
-              type="light"
-              [rounded]="true"
-              aria-hidden="true"></tg-user-avatar>
-            <div>
-              <span class="creation-info-fullname">
-                {{ comment.createdBy.fullName }}
-              </span>
-              <span class="creation-info-username">
-                @{{ comment.createdBy.username }}
-              </span>
-              <span>∙</span>
-              <span
-                *ngIf="comment.createdAt"
-                [title]="comment.createdAt | date: 'medium'"
-                class="creation-info-date">
-                {{ comment.createdAt | dateDistance }}
-              </span>
-            </div>
-          </div>
-          <div class="comment-options">
-            <tg-comment-detail
-              [comment]="comment"
-              [story]="story"
-              (highlightComment)="highlightComment($event)"></tg-comment-detail>
-          </div>
-        </div>
-
-        <div class="comment-content">
-          <div
-            tgCodeHightlight
-            class="description-content"
-            [innerHTML]="comment.text | safeHtml"></div>
-        </div>
-      </div>
+      <tg-comment
+        *ngFor="let comment of comments; trackBy: trackIndex; last as isLast"
+        [class.last-comment]="isLast"
+        [story]="story"
+        [comment]="comment">
+      </tg-comment>
     </div>
 
     <ng-container *ngIf="loading && comments?.length">

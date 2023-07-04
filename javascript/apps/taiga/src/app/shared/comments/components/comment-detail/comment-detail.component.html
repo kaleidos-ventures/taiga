@@ -37,6 +37,23 @@ Copyright (c) 2023-present Kaleidos INC
           data-test="comment-options-list"
           [attr.aria-label]="t('comments.comment_options')">
           <button
+            *ngIf="vm.user.username === comment.createdBy.username"
+            role="menuitem"
+            class="option-btn"
+            tuiOption
+            type="button"
+            (click)="editComment()">
+            <div class="option-container">
+              <tui-svg
+                aria-hidden="true"
+                class="option-icon"
+                src="pen"></tui-svg>
+              <span class="option-name">{{
+                t('comments.edit.edit_comment')
+              }}</span>
+            </div>
+          </button>
+          <button
             role="menuitem"
             class="option-btn option-delete"
             tuiOption

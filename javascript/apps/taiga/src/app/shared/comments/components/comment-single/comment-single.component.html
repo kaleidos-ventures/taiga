@@ -1,0 +1,97 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+<ng-container *transloco="let t">
+  <ng-container *ngIf="!editComment">
+    <div class="comment-top">
+      <div class="creation-info">
+        <tg-user-avatar
+          size="m"
+          class="no-border"
+          [user]="comment.createdBy"
+          [color]="comment.createdBy.color"
+          type="light"
+          [rounded]="true"
+          aria-hidden="true"></tg-user-avatar>
+        <div>
+          <span class="creation-info-fullname">
+            {{ comment.createdBy.fullName }}
+          </span>
+          <span class="creation-info-username">
+            @{{ comment.createdBy.username }}
+          </span>
+          <span>∙</span>
+          <span
+            *ngIf="comment.createdAt"
+            [title]="comment.createdAt | date: 'medium'"
+            class="creation-info-date">
+            {{ comment.createdAt | dateDistance }}
+          </span>
+        </div>
+      </div>
+      <div class="comment-options">
+        <tg-comment-detail
+          [comment]="comment"
+          [story]="story"
+          (displayEditComment)="displayEditComment($event)"
+          (highlightComment)="highlightComment($event)"></tg-comment-detail>
+      </div>
+    </div>
+
+    <div class="comment-content">
+      <div
+        tgCodeHightlight
+        class="description-content"
+        [innerHTML]="comment.text | safeHtml"></div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="editComment">
+    <div class="edit-comment-wrapper">
+      <tg-user-avatar
+        size="m"
+        class="no-border"
+        [user]="comment.createdBy"
+        [color]="comment.createdBy.color"
+        type="light"
+        [rounded]="true"
+        aria-hidden="true"></tg-user-avatar>
+      <form
+        class="edit-comment-form"
+        [formGroup]="editCommentForm"
+        (ngSubmit)="saveEdit()">
+        <tg-editor
+          [field]="editCommentForm.get('comment')!.value"
+          (contentChange)="onContentChange($event)"
+          [toolbar]="commentsToolbar"
+          (editorReady)="onInitEditor()"></tg-editor>
+        <div
+          class="edit-field-actions"
+          *ngIf="editorReady">
+          <button
+            data-test="edit-cancel"
+            (click)="cancelEditComment()"
+            tuiButton
+            type="button"
+            appearance="tertiary">
+            {{ t('commons.cancel') }}
+          </button>
+          <button
+            data-test="edit-save"
+            tuiButton
+            type="submit"
+            appearance="primary">
+            {{ t('commons.save') }}
+          </button>
+        </div>
+      </form>
+    </div>
+    <tg-discard-changes-modal
+      [open]="showConfirmEditCommentModal"
+      (discard)="discard()"
+      (cancel)="keepEditing()"></tg-discard-changes-modal>
+  </ng-container>
+</ng-container>

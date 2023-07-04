@@ -6,6 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,16 +16,15 @@ import {
   Output,
   inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LanguageService } from '~/app/services/language/language.service';
 import { Store } from '@ngrx/store';
-import { ProjectApiService } from '@taiga/api';
 import { RxState } from '@rx-angular/state';
+import { ProjectApiService } from '@taiga/api';
 import { Project, Story } from '@taiga/data';
-import { EditorImageUploadService } from './editor-image-upload.service';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
+import { LanguageService } from '~/app/services/language/language.service';
 import { filterFalsy } from '../utils/operators/filter-falsy';
+import { EditorImageUploadService } from './editor-image-upload.service';
 
 interface EditorState {
   project: Project;
@@ -55,6 +55,10 @@ export class EditorComponent {
 
   @Input()
   public height = 200;
+
+  @Input()
+  public toolbar =
+    'blocks | bold italic underline strikethrough | bullist numlist | link image codesample| emoticons |  alignleft aligncenter alignright | outdent indent | forecolor backcolor removeformat | hr';
 
   @Output()
   public contentChange = new EventEmitter<string>();

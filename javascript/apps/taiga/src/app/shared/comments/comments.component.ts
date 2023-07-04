@@ -15,18 +15,15 @@ import {
   Output,
   inject,
 } from '@angular/core';
-import { Story, UserComment } from '@taiga/data';
-import { RxFor } from '@rx-angular/template/for';
-import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
-import { DateDistancePipe } from '../pipes/date-distance/date-distance.pipe';
-import { CodeHightlightDirective } from '../directives/code-highlight/code-highlight.directive';
-import { SafeHtmlPipe } from '../pipes/safe-html/safe-html.pipe';
 import { TRANSLOCO_SCOPE, TranslocoModule } from '@ngneat/transloco';
+import { RxFor } from '@rx-angular/template/for';
 import { TuiButtonModule, TuiHintModule } from '@taiga-ui/core';
-import { CommentUserInputComponent } from './components/comment-user-input/comment-user-input.component';
-import { CommentSkeletonComponent } from './components/comment skeleton/comment-skeleton.component';
+import { Story, UserComment } from '@taiga/data';
+import { CodeHightlightDirective } from '../directives/code-highlight/code-highlight.directive';
 import { LocalStorageService } from '../local-storage/local-storage.service';
-import { CommentDetailComponent } from './components/comment-detail/comment-detail.component';
+import { CommentSkeletonComponent } from './components/comment skeleton/comment-skeleton.component';
+import { CommentSingleComponent } from './components/comment-single/comment-single.component';
+import { CommentUserInputComponent } from './components/comment-user-input/comment-user-input.component';
 
 export type OrderComments = '-createdAt' | 'createdAt';
 
@@ -38,16 +35,13 @@ export type OrderComments = '-createdAt' | 'createdAt';
   imports: [
     CommonModule,
     RxFor,
-    UserAvatarComponent,
-    DateDistancePipe,
     CodeHightlightDirective,
-    SafeHtmlPipe,
     TranslocoModule,
     TuiButtonModule,
     TuiHintModule,
     CommentUserInputComponent,
     CommentSkeletonComponent,
-    CommentDetailComponent,
+    CommentSingleComponent,
   ],
   providers: [
     {
@@ -69,7 +63,6 @@ export class CommentsComponent {
   @Output() public changeOrder = new EventEmitter<OrderComments>();
 
   public localStorageService = inject(LocalStorageService);
-  public highlightedCommentId: string | undefined = undefined;
 
   public toggleOrder(): void {
     const newOrder = this.order === 'createdAt' ? '-createdAt' : 'createdAt';
@@ -91,9 +84,5 @@ export class CommentsComponent {
 
   public trackIndex(index: number): number {
     return index;
-  }
-
-  public highlightComment(id: string | undefined): void {
-    this.highlightedCommentId = id;
   }
 }

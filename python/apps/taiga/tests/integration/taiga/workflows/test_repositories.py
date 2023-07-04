@@ -196,7 +196,7 @@ async def test_get_workflow_status_ok() -> None:
     statuses = await _list_workflow_statuses(workflow=workflow)
     status = statuses[0]
 
-    workflow_status = await repositories.get_status(
+    workflow_status = await repositories.get_workflow_status(
         filters={"project_id": project.id, "workflow_slug": workflow.slug, "slug": status.slug}
     )
     assert workflow_status == status
@@ -207,7 +207,7 @@ async def test_get_project_without_workflow_statuses_ok() -> None:
     workflows = await _list_workflows(project=project)
     bad_status_slug = "slug_999"
 
-    workflow_status = await repositories.get_status(
+    workflow_status = await repositories.get_workflow_status(
         filters={"project_id": project.id, "workflow_slug": workflows[0].slug, "slug": bad_status_slug}
     )
     assert workflow_status is None
@@ -253,6 +253,35 @@ async def test_bulk_update_workflow_statuses_ok() -> None:
     for status in new_statuses:
         assert status.order == order
         order += 1
+
+
+#########################################################
+# delete workflow status
+##########################################################
+
+
+async def test_delete_workflow_status_without_stories_ok() -> None:
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    # the workflow status to delete (without containing stories)
+    workflow_status = await f.create_workflow_status(workflow=workflow, slug="workspace_status_slug")
+
+    delete_ret = await repositories.delete_workflow_status(filters={"id": workflow_status.id})
+    assert delete_ret == 1
+
+
+async def test_delete_workflow_status_with_stories_ok() -> None:
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    # the workflow status to delete
+    workflow_status = await f.create_workflow_status(workflow=workflow, slug="workspace_status_slug")
+    # its two stories, that should also be deleted
+    await f.create_story(status=workflow_status, workflow=workflow)
+    await f.create_story(status=workflow_status, workflow=workflow)
+
+    delete_ret = await repositories.delete_workflow_status(filters={"id": workflow_status.id})
+
+    assert delete_ret == 3
 
 
 ##########################################################

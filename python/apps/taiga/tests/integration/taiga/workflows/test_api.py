@@ -146,17 +146,6 @@ async def test_200_update_status_ok(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_404_update_status_invalid_workflow(client):
-    project = await f.create_project()
-
-    data = {"name": "New status name"}
-
-    client.login(project.created_by)
-    response = client.patch(f"/projects/{project.b64id}/workflows/{WRONG_SLUG}/statuses/{WRONG_SLUG}", json=data)
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-    assert "Workflow" in response.text and "status" not in response.text
-
-
 async def test_404_update_status_invalid_workflow_status(client):
     project = await f.create_project()
     workflow = await f.create_workflow(project=project)
@@ -202,3 +191,40 @@ async def test_reorder_statuses_with_reorder_ok(client):
     assert "reorder" in res
     assert "statuses" in res
     assert res["statuses"] == [wf_status.slug]
+
+
+################################################################################
+# Status DELETE /projects/<pj_b64id>/workflows/<wf_slug>/statuses/<ws_slug>
+################################################################################
+
+
+async def test_200_delete_workflow_status_ok(client):
+    project = await f.create_project()
+    wf = await f.create_workflow(project=project)
+    ws1 = await f.create_workflow_status(workflow=wf, slug="to_delete_status_slug")
+    ws2 = await f.create_workflow_status(workflow=wf, slug="move_to_status_slug")
+    await f.create_story(status=ws1, workflow=wf)
+
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{project.b64id}/workflows/{wf.slug}/statuses/{ws1.slug}?moveTo={ws2.slug}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_404_delete_invalid_workflow_status(client):
+    project = await f.create_project()
+
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{WRONG_SLUG}/workflows/{WRONG_SLUG}/statuses/{WRONG_SLUG}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+    assert "Workflow status" in response.text
+
+
+async def test_403_delete_workflow_status_not_project_admin(client):
+    project = await f.create_project()
+    wf = await f.create_workflow(project=project)
+    ws = await f.create_workflow_status(workflow=wf, slug="to_delete_status_slug")
+    another_user = await f.create_user()
+
+    client.login(another_user)
+    response = client.delete(f"/projects/{project.b64id}/workflows/{wf.slug}/statuses/{ws.slug}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text

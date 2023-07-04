@@ -19,3 +19,8 @@ class UpdateWorkflowStatusContent(BaseModel):
 
 class ReorderWorkflowStatusesContent(BaseModel):
     reorder: ReorderWorkflowStatusesSerializer
+
+
+class DeleteWorkflowStatusContent(BaseModel):
+    workflow_status: WorkflowStatusSerializer
+    move_to_slug: str | None

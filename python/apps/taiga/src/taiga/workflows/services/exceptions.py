@@ -15,3 +15,12 @@ class TaigaValidationError(TaigaServiceException):
 
 class InvalidWorkflowStatusError(TaigaServiceException):
     ...
+
+
+class NonExistingMoveToStatus(TaigaServiceException):
+    ...
+
+
+class SameMoveToStatus(TaigaServiceException):
+    ...
+

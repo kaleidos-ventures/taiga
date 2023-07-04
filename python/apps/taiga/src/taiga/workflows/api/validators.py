@@ -53,3 +53,7 @@ class ReorderWorkflowStatusesValidator(BaseModel):
 
     def get_reorder_dict(self) -> dict[str, Any]:
         return self.dict()["reorder"]
+
+
+class DeleteWorkflowStatusQuery(BaseModel):
+    move_to: str | None

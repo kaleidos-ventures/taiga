@@ -34,7 +34,9 @@ async def create_story(
     project: Project, workflow: Workflow, status_slug: str, user: User, title: str, description: str | None
 ) -> StoryDetailSerializer:
     # Validate data
-    workflow_status = await workflows_repositories.get_status(filters={"slug": status_slug, "workflow_id": workflow.id})
+    workflow_status = await workflows_repositories.get_workflow_status(
+        filters={"slug": status_slug, "workflow_id": workflow.id}
+    )
     if not workflow_status:
         raise ex.InvalidStatusError("The provided status is not valid.")
 
@@ -169,7 +171,7 @@ async def _validate_and_process_values_to_update(story: Story, values: dict[str,
     output = values.copy()
 
     if status_slug := output.pop("status", None):
-        status = await workflows_repositories.get_status(
+        status = await workflows_repositories.get_workflow_status(
             filters={"workflow_id": story.workflow_id, "slug": status_slug}
         )
 
@@ -243,7 +245,7 @@ async def reorder_stories(
     reorder: dict[str, Any] | None = None,
 ) -> ReorderStoriesSerializer:
     # check target_status exists
-    target_status = await workflows_repositories.get_status(
+    target_status = await workflows_repositories.get_workflow_status(
         filters={"project_id": project.id, "workflow_slug": workflow.slug, "slug": target_status_slug}
     )
     if not target_status:

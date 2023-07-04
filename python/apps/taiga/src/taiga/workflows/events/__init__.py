@@ -9,6 +9,7 @@ from taiga.events import events_manager
 from taiga.projects.projects.models import Project
 from taiga.workflows.events.content import (
     CreateWorkflowStatusContent,
+    DeleteWorkflowStatusContent,
     ReorderWorkflowStatusesContent,
     UpdateWorkflowStatusContent,
 )
@@ -18,6 +19,7 @@ from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer
 CREATE_WORKFLOW_STATUS = "workflowstatuses.create"
 UPDATE_WORKFLOW_STATUS = "workflowstatuses.update"
 REORDER_WORKFLOW_STATUS = "workflowstatuses.reorder"
+DELETE_WORKFLOW_STATUS = "workflowstatuses.delete"
 
 
 async def emit_event_when_workflow_status_is_created(project: Project, workflow_status: WorkflowStatus) -> None:
@@ -43,4 +45,17 @@ async def emit_event_when_workflow_statuses_are_reordered(
         project=project,
         type=REORDER_WORKFLOW_STATUS,
         content=ReorderWorkflowStatusesContent(reorder=reorder),
+    )
+
+
+async def emit_event_when_workflow_status_is_deleted(
+    project: Project, workflow_status: WorkflowStatus, move_to_status_slug: str | None
+) -> None:
+    await events_manager.publish_on_project_channel(
+        project=project,
+        type=DELETE_WORKFLOW_STATUS,
+        content=DeleteWorkflowStatusContent(
+            workflow_status=workflow_status,
+            move_to_slug=move_to_status_slug,
+        ),
     )

@@ -10,6 +10,7 @@ from typing import Any
 from taiga.base.db import models
 from taiga.base.utils.datetime import timestamp_mics
 from taiga.base.utils.slug import generate_incremental_int_suffix, slugify_uniquely_for_queryset
+from taiga.projects.projects.models import Project
 
 
 class Workflow(models.BaseModel):
@@ -76,6 +77,10 @@ class WorkflowStatus(models.BaseModel):
 
     def __repr__(self) -> str:
         return f"<WorkflowStatus {self.name}>"
+
+    @property
+    def project(self) -> Project:
+        return self.workflow.project
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:

@@ -32,7 +32,7 @@ async def test_create_story_ok():
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
     ):
-        fake_workflows_repo.get_status.return_value = status
+        fake_workflows_repo.get_workflow_status.return_value = status
         fake_stories_repo.list_stories.return_value = None
         fake_stories_repo.create_story.return_value = story
         fake_stories_repo.get_story.return_value = story
@@ -57,7 +57,7 @@ async def test_create_story_ok():
             user_id=user.id,
             order=Decimal(100),
         )
-        fake_workflows_repo.get_status.assert_awaited_once_with(
+        fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
             filters={"slug": status.slug, "workflow_id": status.workflow.id}
         )
         fake_stories_repo.list_stories.assert_awaited_once_with(
@@ -77,7 +77,7 @@ async def test_create_story_invalid_status():
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
     ):
 
-        fake_workflows_repo.get_status.return_value = None
+        fake_workflows_repo.get_workflow_status.return_value = None
         await services.create_story(
             project=story.project,
             workflow=build_workflow_serializer(story),
@@ -293,7 +293,7 @@ async def test_validate_and_process_values_to_update_ok_without_status():
     ):
         valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
 
-        fake_workflows_repo.get_status.assert_not_awaited()
+        fake_workflows_repo.get_workflow_status.assert_not_awaited()
         fake_stories_repo.list_stories.assert_not_awaited()
 
         assert valid_values == values
@@ -308,12 +308,12 @@ async def test_validate_and_process_values_to_update_ok_with_status_empty():
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
     ):
-        fake_workflows_repo.get_status.return_value = status
+        fake_workflows_repo.get_workflow_status.return_value = status
         fake_stories_repo.list_stories.return_value = []
 
         valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
 
-        fake_workflows_repo.get_status.assert_awaited_once_with(
+        fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
             filters={"workflow_id": story.workflow_id, "slug": values["status"]},
         )
         fake_stories_repo.list_stories.assert_awaited_once_with(
@@ -338,12 +338,12 @@ async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
     ):
-        fake_workflows_repo.get_status.return_value = status
+        fake_workflows_repo.get_workflow_status.return_value = status
         fake_stories_repo.list_stories.return_value = [story2]
 
         valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
 
-        fake_workflows_repo.get_status.assert_awaited_once_with(
+        fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
             filters={"workflow_id": story.workflow_id, "slug": values["status"]},
         )
         fake_stories_repo.list_stories.assert_awaited_once_with(
@@ -367,11 +367,11 @@ async def test_validate_and_process_values_to_update_ok_with_same_status():
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
     ):
-        fake_workflows_repo.get_status.return_value = status
+        fake_workflows_repo.get_workflow_status.return_value = status
 
         valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
 
-        fake_workflows_repo.get_status.assert_awaited_once_with(
+        fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
             filters={"workflow_id": story.workflow_id, "slug": values["status"]},
         )
         fake_stories_repo.list_stories.assert_not_awaited()
@@ -389,12 +389,12 @@ async def test_validate_and_process_values_to_update_error_wrong_status():
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
     ):
-        fake_workflows_repo.get_status.return_value = None
+        fake_workflows_repo.get_workflow_status.return_value = None
 
         with (pytest.raises(ex.InvalidStatusError)):
             await services._validate_and_process_values_to_update(story=story, values=values)
 
-        fake_workflows_repo.get_status.assert_awaited_once_with(
+        fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
             filters={"workflow_id": story.workflow_id, "slug": "wrong_status"},
         )
         fake_stories_repo.list_stories.assert_not_awaited()
@@ -468,7 +468,7 @@ async def test_reorder_stories_ok():
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
     ):
         target_status = f.build_workflow_status()
-        fake_workflows_repo.get_status.return_value = target_status
+        fake_workflows_repo.get_workflow_status.return_value = target_status
         reorder_story = f.build_story(ref=3)
         fake_stories_repo.get_story.return_value = reorder_story
         s1 = f.build_story(ref=13)
@@ -495,7 +495,7 @@ async def test_reorder_story_workflowstatus_does_not_exist():
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         pytest.raises(ex.InvalidStatusError),
     ):
-        fake_workflows_repo.get_status.return_value = None
+        fake_workflows_repo.get_workflow_status.return_value = None
 
         await services.reorder_stories(
             project=f.build_project(),
@@ -513,7 +513,7 @@ async def test_reorder_story_story_ref_does_not_exist():
         pytest.raises(ex.InvalidStoryRefError),
     ):
         target_status = f.build_workflow_status()
-        fake_workflows_repo.get_status.return_value = target_status
+        fake_workflows_repo.get_workflow_status.return_value = target_status
 
         fake_stories_repo.get_story.return_value = None
 
@@ -533,7 +533,7 @@ async def test_reorder_story_not_all_stories_exist():
         pytest.raises(ex.InvalidStoryRefError),
     ):
         target_status = f.build_workflow_status()
-        fake_workflows_repo.get_status.return_value = target_status
+        fake_workflows_repo.get_workflow_status.return_value = target_status
 
         reorder_story = f.build_story(ref=3)
         fake_stories_repo.get_story.return_value = reorder_story

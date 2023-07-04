@@ -10,6 +10,8 @@ from decimal import Decimal
 from typing import Any, cast
 from uuid import UUID
 
+from taiga.stories.stories import repositories as stories_repositories
+from taiga.stories.stories import services as stories_services
 from taiga.workflows import events as workflows_events
 from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import Workflow, WorkflowStatus
@@ -102,13 +104,14 @@ async def create_workflow_status(name: str, color: int, workflow: Workflow) -> W
 ##########################################################
 
 
-async def get_status(workflow_id: UUID, status_slug: str) -> WorkflowStatus | None:
-    return await workflows_repositories.get_status(
+async def get_workflow_status(project_id: UUID, workflow_slug: str, status_slug: str) -> WorkflowStatus | None:
+    return await workflows_repositories.get_workflow_status(
         filters={
-            "workflow_id": workflow_id,
+            "project_id": project_id,
+            "workflow_slug": workflow_slug,
             "slug": status_slug,
         },
-        select_related=["workflow"],
+        select_related=["workflow", "workflow_project"],
     )
 
 
@@ -117,9 +120,7 @@ async def get_status(workflow_id: UUID, status_slug: str) -> WorkflowStatus | No
 ##########################################################
 
 
-async def update_workflow_status(
-    workflow: Workflow, workflow_status: WorkflowStatus, values: dict[str, Any] = {}
-) -> WorkflowStatus:
+async def update_workflow_status(workflow_status: WorkflowStatus, values: dict[str, Any] = {}) -> WorkflowStatus:
     if not values:
         return workflow_status
 
@@ -129,7 +130,7 @@ async def update_workflow_status(
     updated_status = await workflows_repositories.update_workflow_status(workflow_status=workflow_status, values=values)
 
     await workflows_events.emit_event_when_workflow_status_is_updated(
-        project=workflow.project, workflow_status=updated_status
+        project=workflow_status.project, workflow_status=updated_status
     )
 
     return updated_status
@@ -184,7 +185,7 @@ async def reorder_workflow_statuses(
         raise ex.InvalidWorkflowStatusError(f"Status {reorder['status']} should not be part of the statuses to reorder")
 
     # check anchor workflow status exists
-    reorder_status = await workflows_repositories.get_status(
+    reorder_status = await workflows_repositories.get_workflow_status(
         filters={"workflow_id": workflow.id, "slug": reorder["status"]}
     )
     if not reorder_status:
@@ -229,3 +230,58 @@ async def reorder_workflow_statuses(
     )
 
     return reorder_status_serializer
+
+
+##########################################################
+# delete workflow status
+##########################################################
+
+
+async def delete_workflow_status(workflow_status: WorkflowStatus, move_to_status_slug: str | None) -> bool:
+    """
+    This method deletes a workflow status, providing the option to first migrating its stories to another workflow
+    status of the same workflow.
+
+    :param workflow_status: the workflow status to delete
+    :param move_to_status_slug: the workflow status's slug to which move the stories from the status being deleted
+        - if not received, all the workflow status and its contained stories will be deleted
+        - if received, the workflow status will be deleted but its contained stories won't (they will be first moved to
+         the specified status)
+    :return: bool
+    """
+    # before deleting the workflow status, its stories may be transferred to an existing workflow status
+    # in the same workflow
+    if move_to_status_slug:
+        move_to_status = await get_workflow_status(
+            project_id=workflow_status.project.id,
+            workflow_slug=workflow_status.workflow.slug,
+            status_slug=move_to_status_slug,
+        )
+        if not move_to_status:
+            raise ex.NonExistingMoveToStatus(f"The status '{move_to_status_slug}' doesn't exist")
+        if move_to_status == workflow_status:
+            raise ex.SameMoveToStatus("The to-be-deleted status and the target-status cannot be the same")
+
+        stories_to_move = await stories_repositories.list_stories(
+            filters={
+                "status_id": workflow_status.id,
+            },
+            order_by=["order"],
+        )
+
+        if stories_to_move:
+            await stories_services.reorder_stories(
+                project=workflow_status.project,
+                workflow=workflow_status.workflow,
+                target_status_slug=move_to_status_slug,
+                stories_refs=[story.ref for story in stories_to_move],
+            )
+
+    deleted = await workflows_repositories.delete_workflow_status(filters={"id": workflow_status.id})
+    if deleted > 0:
+        await workflows_events.emit_event_when_workflow_status_is_deleted(
+            project=workflow_status.project, workflow_status=workflow_status, move_to_status_slug=move_to_status_slug
+        )
+        return True
+
+    return False

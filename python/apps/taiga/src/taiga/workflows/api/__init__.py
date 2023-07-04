@@ -4,10 +4,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
-
 from uuid import UUID
 
-from fastapi import Query
+from fastapi import Depends, Query
+from starlette import status
 from taiga.base.api import AuthRequest, Request, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
@@ -18,6 +18,7 @@ from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.workflows import services as workflows_services
 from taiga.workflows.api.validators import (
+    DeleteWorkflowStatusQuery,
     ReorderWorkflowStatusesValidator,
     UpdateWorkflowStatusValidator,
     WorkflowStatusValidator,
@@ -30,6 +31,7 @@ LIST_WORKFLOWS = HasPerm("view_story")
 GET_WORKFLOW = HasPerm("view_story")
 CREATE_WORKFLOW_STATUS = IsProjectAdmin()
 UPDATE_WORKFLOW_STATUS = IsProjectAdmin()
+DELETE_WORKFLOW_STATUS = IsProjectAdmin()
 REORDER_WORKFLOW_STATUSES = IsProjectAdmin()
 
 # HTTP 200 RESPONSES
@@ -151,12 +153,12 @@ async def update_workflow_status(
     """
     Updates a workflow status in the given project workflow
     """
-    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
-    await check_permissions(permissions=UPDATE_WORKFLOW_STATUS, user=request.user, obj=workflow)
-    workflow_status = await get_workflow_status_or_404(workflow_id=workflow.id, workflow_status_slug=slug)
+    workflow_status = await get_workflow_status_or_404(
+        project_id=project_id, workflow_slug=workflow_slug, workflow_status_slug=slug
+    )
+    await check_permissions(permissions=UPDATE_WORKFLOW_STATUS, user=request.user, obj=workflow_status)
 
     return await workflows_services.update_workflow_status(
-        workflow=workflow,
         workflow_status=workflow_status,
         values=form.dict(exclude_unset=True),
     )
@@ -193,13 +195,56 @@ async def reorder_workflow_statuses(
 
 
 ################################################
+# delete workflow status
+################################################
+
+
+@routes.stories.delete(
+    "/projects/{project_id}/workflows/{workflow_slug}/statuses/{slug}",
+    name="project.workflowstatus.delete",
+    summary="Delete a workflow status",
+    responses=ERROR_404 | ERROR_403,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_workflow_status(
+    project_id: B64UUID,
+    workflow_slug: str,
+    slug: str,
+    request: AuthRequest,
+    query_params: DeleteWorkflowStatusQuery = Depends(),
+) -> None:
+    """
+    Deletes a workflow status in the given project workflow, providing the option to replace the stories it may contain
+    to any other existing workflow status in the same workflow.
+
+    Query params:
+
+    * **move_to:** the workflow status's slug to which move the stories from the status being deleted
+        - if not received, the workflow status and its contained stories will be deleted
+        - if received, the workflow status will be deleted but its contained stories won't (they will be first moved to
+         the specified status).
+    """
+    workflow_status = await get_workflow_status_or_404(
+        project_id=project_id, workflow_slug=workflow_slug, workflow_status_slug=slug
+    )
+    await check_permissions(permissions=DELETE_WORKFLOW_STATUS, user=request.user, obj=workflow_status)
+
+    await workflows_services.delete_workflow_status(
+        workflow_status=workflow_status,
+        move_to_status_slug=query_params.move_to,
+    )
+
+
+################################################
 # misc
 ################################################
 
 
-async def get_workflow_status_or_404(workflow_id: UUID, workflow_status_slug: str) -> WorkflowStatus:
-    status = await workflows_services.get_status(workflow_id=workflow_id, status_slug=workflow_status_slug)
-    if status is None:
+async def get_workflow_status_or_404(project_id: UUID, workflow_slug: str, workflow_status_slug: str) -> WorkflowStatus:
+    workflow_status = await workflows_services.get_workflow_status(
+        project_id=project_id, workflow_slug=workflow_slug, status_slug=workflow_status_slug
+    )
+    if workflow_status is None:
         raise ex.NotFoundError(f"Workflow status {workflow_status_slug} does not exist")
 
-    return status
+    return workflow_status

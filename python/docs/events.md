@@ -657,6 +657,20 @@ Content for:
   }
   ```
 
+#### `workflowstatuses.delete`
+
+It happens when a workflow status has been deleted.
+
+Content for:
+- project channel:
+  ```
+  {
+      "workflowStatus": {... "workflow status object" ...},
+      "moveToSlug": null | "closed"
+  }
+  ```
+
+
 #### `stories.create`
 
 It happens when a new story has been created.

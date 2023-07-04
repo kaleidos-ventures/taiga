@@ -175,6 +175,7 @@ def _apply_filters_to_workflow_status_queryset(
 WorkflowStatusSelectRelated = list[
     Literal[
         "workflow",
+        "workflow_project",
     ]
 ]
 
@@ -183,7 +184,15 @@ def _apply_select_related_to_workflow_status_queryset(
     qs: QuerySet[WorkflowStatus],
     select_related: WorkflowStatusSelectRelated,
 ) -> QuerySet[WorkflowStatus]:
-    return qs.select_related(*select_related)
+    select_related_data = []
+
+    for key in select_related:
+        if key == "workflow_project":
+            select_related_data.append("workflow__project")
+        else:
+            select_related_data.append(key)
+
+    return qs.select_related(*select_related_data)
 
 
 WorkflowStatusOrderBy = list[
@@ -280,7 +289,7 @@ def list_workflow_status_neighbors(
 
 
 @sync_to_async
-def get_status(
+def get_workflow_status(
     filters: WorkflowStatusFilters = {},
     select_related: WorkflowStatusSelectRelated = [],
 ) -> WorkflowStatus | None:
@@ -309,3 +318,14 @@ def update_workflow_status(workflow_status: WorkflowStatus, values: dict[str, An
 
 async def bulk_update_workflow_statuses(objs_to_update: list[WorkflowStatus], fields_to_update: list[str]) -> None:
     await WorkflowStatus.objects.abulk_update(objs_to_update, fields_to_update)
+
+
+##########################################################
+# WorkflowStatus - delete workflow status
+##########################################################
+
+
+async def delete_workflow_status(filters: WorkflowStatusFilters = {}) -> int:
+    qs = _apply_filters_to_workflow_status_queryset(qs=DEFAULT_QUERYSET_WORKFLOW_STATUS, filters=filters)
+    count, _ = await qs.adelete()
+    return count

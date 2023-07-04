@@ -2,7 +2,7 @@
 
 ## Different requirements
 
-There are several "requierements" directories with different files:
+There are several "requirements" directories with different files:
 - `python/requirements` with requirements for linters and other dev dependencies which affect all the Python code
 - `python/apps/taiga/requirements` with requirements for Taiga application
 
@@ -20,8 +20,11 @@ When adding a new dependency, be aware of the different locations to place it, a
 
 2. Regenerate `requirements/devel.txt` and/or `requirements/prod.txt` files with
 ```bash
-pip-compile requirements/devel.in
-pip-compile requirements/prod.in
+pip install --upgrade pip-tools
+```
+```bash
+python -m piptools compile requirements/devel.in --resolver=backtracking  --upgrade
+python -m piptools compile requirements/prod.in --resolver=backtracking  --upgrade
 ```
 
 3. Check changes with git diff

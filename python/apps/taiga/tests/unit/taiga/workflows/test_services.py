@@ -8,7 +8,9 @@
 from decimal import Decimal
 from unittest.mock import patch
 
+import pytest
 from taiga.workflows import services
+from taiga.workflows.services import exceptions as ex
 from tests.utils import factories as f
 
 #######################################################
@@ -93,3 +95,41 @@ async def test_create_workflow_status_ok():
         fake_workflow_events.emit_event_when_workflow_status_is_created.assert_awaited_once_with(
             project=workflow.project, workflow_status=workflow_status
         )
+
+
+#######################################################
+# update_workflow_status
+#######################################################
+
+
+async def test_update_workflow_status_ok():
+    status = f.build_workflow_status()
+    values = {"name": "New status name"}
+
+    with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
+        fake_workflows_repo.update_workflow_status.return_value = status
+        await services.update_workflow_status(status=status, values=values)
+        fake_workflows_repo.update_workflow_status.assert_awaited_once_with(status=status, values=values)
+
+
+async def test_update_workflow_status_noop():
+    status = f.build_workflow_status()
+    values = {}
+
+    with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
+        ret_status = await services.update_workflow_status(status=status, values=values)
+
+        assert ret_status == status
+        fake_workflows_repo.update_workflow_status.assert_not_awaited()
+
+
+async def test_update_workflow_status_none_name():
+    status = f.build_workflow_status()
+    values = {"name": None}
+
+    with (
+        pytest.raises(ex.TaigaServiceException),
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        await services.update_workflow_status(status=status, values=values)
+        fake_workflows_repo.update_workflow_status.assert_not_awaited()

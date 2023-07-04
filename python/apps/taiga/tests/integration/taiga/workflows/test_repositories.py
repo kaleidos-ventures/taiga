@@ -140,6 +140,24 @@ async def test_get_project_without_workflow_statuses_ok() -> None:
 
 
 ##########################################################
+# WorkflowStatus - update workflow status
+##########################################################
+
+
+async def test_update_workflow_status_ok() -> None:
+    project = await f.create_project()
+    workflows = await _list_workflows(project=project)
+    workflow = workflows[0]
+    statuses = await _list_workflow_statuses(workflow=workflow)
+    status = statuses[0]
+    new_status_name = "new status name"
+    new_values = {"name": new_status_name}
+
+    updated_status = await repositories.update_workflow_status(status=status, values=new_values)
+    assert updated_status.name == new_status_name
+
+
+##########################################################
 # utils
 ##########################################################
 

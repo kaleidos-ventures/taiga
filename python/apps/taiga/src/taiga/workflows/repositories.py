@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -262,3 +262,17 @@ def get_status(
         return qs.get()
     except WorkflowStatus.DoesNotExist:
         return None
+
+
+##########################################################
+# WorkflowStatus - update workflow status
+##########################################################
+
+
+@sync_to_async
+def update_workflow_status(status: WorkflowStatus, values: dict[str, Any] = {}) -> WorkflowStatus:
+    for attr, value in values.items():
+        setattr(status, attr, value)
+
+    status.save()
+    return status

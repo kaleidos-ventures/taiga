@@ -17,19 +17,19 @@ from taiga.permissions import HasPerm, IsProjectAdmin
 from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.workflows import services as workflows_services
-from taiga.workflows.api.validators import WorkflowStatusValidator
-from taiga.workflows.models import Workflow
+from taiga.workflows.api.validators import UpdateWorkflowStatusValidator, WorkflowStatusValidator
+from taiga.workflows.models import Workflow, WorkflowStatus
 from taiga.workflows.serializers import WorkflowSerializer, WorkflowStatusSerializer
 
 # PERMISSIONS
 LIST_WORKFLOWS = HasPerm("view_story")
 GET_WORKFLOW = HasPerm("view_story")
 CREATE_WORKFLOW_STATUS = IsProjectAdmin()
+UPDATE_WORKFLOW_STATUS = IsProjectAdmin()
 
 # HTTP 200 RESPONSES
 WORKFLOW_200 = responses.http_status_200(model=WorkflowSerializer)
 LIST_WORKFLOW_200 = responses.http_status_200(model=list[WorkflowSerializer])
-WORKFLOW_STATUS_200 = responses.http_status_200(model=WorkflowStatusSerializer)
 
 
 ################################################
@@ -99,16 +99,17 @@ async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> Workflow:
 
 @routes.stories.post(
     "/projects/{project_id}/workflows/{workflow_slug}/statuses",
-    name="project.workflow.status.create",
+    name="project.workflowstatus.create",
     summary="Create a workflow status",
-    responses=WORKFLOW_STATUS_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=WorkflowStatusSerializer,
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_workflow_status(
     request: AuthRequest,
     form: WorkflowStatusValidator,
     project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
-) -> WorkflowStatusSerializer:
+) -> WorkflowStatus:
     """
     Creates a workflow status in the given project workflow
     """
@@ -120,3 +121,49 @@ async def create_workflow_status(
         color=form.color,
         workflow=workflow,
     )
+
+
+################################################
+# update workflow status
+################################################
+
+
+@routes.stories.patch(
+    "/projects/{project_id}/workflows/{workflow_slug}/statuses/{status_slug}",
+    name="project.workflowstatus.update",
+    summary="Update workflow status",
+    response_model=WorkflowStatusSerializer,
+    responses=ERROR_404 | ERROR_422 | ERROR_403,
+)
+async def update_workflow_status(
+    request: AuthRequest,
+    form: UpdateWorkflowStatusValidator,
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
+    workflow_slug: str = Query(None, description="the workflow slug (str)"),
+    status_slug: str = Query(None, description="the status slug (str)"),
+) -> WorkflowStatus:
+    """
+    Updates a workflow status in the given project workflow
+    """
+    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
+    await check_permissions(permissions=UPDATE_WORKFLOW_STATUS, user=request.user, obj=workflow)
+    status = await get_status_or_404(workflow_id=workflow.id, status_slug=status_slug)
+
+    return await workflows_services.update_workflow_status(
+        status=status,
+        # TODO: use `values=await form.cleaned_dict(request)` instead
+        values=form.dict(exclude_unset=True),
+    )
+
+
+################################################
+# misc
+################################################
+
+
+async def get_status_or_404(workflow_id: UUID, status_slug: str) -> WorkflowStatus:
+    status = await workflows_services.get_status(workflow_id=workflow_id, status_slug=status_slug)
+    if status is None:
+        raise ex.NotFoundError(f"Workflow status {status_slug} does not exist")
+
+    return status

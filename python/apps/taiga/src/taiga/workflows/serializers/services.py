@@ -7,7 +7,7 @@
 
 
 from taiga.workflows.models import Workflow, WorkflowStatus
-from taiga.workflows.serializers import WorkflowSerializer, WorkflowStatusSerializer
+from taiga.workflows.serializers import WorkflowSerializer
 
 
 def serialize_workflow(workflow: Workflow, workflow_statuses: list[WorkflowStatus] = []) -> WorkflowSerializer:
@@ -17,15 +17,4 @@ def serialize_workflow(workflow: Workflow, workflow_statuses: list[WorkflowStatu
         slug=workflow.slug,
         order=workflow.order,
         statuses=workflow_statuses,
-    )
-
-
-def serialize_workflow_status(workflow_status: WorkflowStatus, workflow: Workflow) -> WorkflowStatusSerializer:
-    return WorkflowStatusSerializer(
-        id=workflow_status.id,
-        name=workflow_status.name,
-        slug=workflow_status.slug,
-        color=workflow_status.color,
-        order=workflow_status.order,
-        workflow=workflow,
     )

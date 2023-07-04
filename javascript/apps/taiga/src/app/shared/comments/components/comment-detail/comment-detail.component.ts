@@ -23,8 +23,7 @@ import {
   TuiDataListModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
-import { Project, User, UserComment } from '@taiga/data';
-import { map } from 'rxjs';
+import { Project, Story, User, UserComment } from '@taiga/data';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
@@ -32,7 +31,7 @@ import { filterNil } from '~/app/shared/utils/operators';
 
 interface CommentDetailComponentState {
   user: User;
-  userIsAdmin: boolean;
+  project: Project;
 }
 
 @Component({
@@ -58,7 +57,9 @@ interface CommentDetailComponentState {
   ],
 })
 export class CommentDetailComponent {
-  @Input() public comment!: UserComment;
+  @Input({ required: true }) public comment!: UserComment;
+  @Input({ required: true }) public story!: Story | null;
+
   @Output() public highlightComment = new EventEmitter<string | undefined>();
 
   public store = inject(Store);
@@ -84,11 +85,8 @@ export class CommentDetailComponent {
   constructor() {
     this.state.connect('user', this.store.select(selectUser).pipe(filterNil()));
     this.state.connect(
-      'userIsAdmin',
-      this.store.select(selectCurrentProject).pipe(
-        filterNil(),
-        map((project: Project) => project.userIsAdmin)
-      )
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
     );
   }
 
@@ -97,7 +95,7 @@ export class CommentDetailComponent {
     this.highlightComment.next(this.comment.id);
   }
 
-  public deleteComment() {
+  public deleteComment(): void {
     this.commentOptionsState = false;
     // Dispatch deletion
   }

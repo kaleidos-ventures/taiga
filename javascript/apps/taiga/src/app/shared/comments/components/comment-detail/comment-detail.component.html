@@ -8,7 +8,9 @@ Copyright (c) 2023-present Kaleidos INC
 
 <ng-container *ngIf="model$ | async as vm">
   <ng-container
-    *ngIf="vm.userIsAdmin || vm.user.username === comment.createdBy.username">
+    *ngIf="
+      vm.project.userIsAdmin || vm.user.username === comment.createdBy.username
+    ">
     <ng-container *transloco="let t">
       <tui-hosted-dropdown
         [tuiDropdownAlign]="'right'"

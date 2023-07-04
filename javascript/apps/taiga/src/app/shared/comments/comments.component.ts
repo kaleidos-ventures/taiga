@@ -15,7 +15,7 @@ import {
   Output,
   inject,
 } from '@angular/core';
-import { UserComment } from '@taiga/data';
+import { Story, UserComment } from '@taiga/data';
 import { RxFor } from '@rx-angular/template/for';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 import { DateDistancePipe } from '../pipes/date-distance/date-distance.pipe';
@@ -61,6 +61,7 @@ export type OrderComments = '-createdAt' | 'createdAt';
 })
 export class CommentsComponent {
   @Input({ required: true }) public comments!: UserComment[] | null;
+  @Input({ required: true }) public story!: Story | null;
   @Input({ required: true }) public total!: number | null;
   @Input({ required: true }) public order!: OrderComments;
   @Input({ required: true }) public loading!: boolean;

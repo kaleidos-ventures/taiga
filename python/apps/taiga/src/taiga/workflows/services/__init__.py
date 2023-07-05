@@ -10,7 +10,7 @@ from decimal import Decimal
 from typing import Any, cast
 from uuid import UUID
 
-from taiga.workflows import events as workflow_events
+from taiga.workflows import events as workflows_events
 from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import Workflow, WorkflowStatus
 from taiga.workflows.serializers import WorkflowSerializer
@@ -89,7 +89,7 @@ async def create_workflow_status(name: str, color: int, workflow: Workflow) -> W
     )
 
     # Emit event
-    await workflow_events.emit_event_when_workflow_status_is_created(
+    await workflows_events.emit_event_when_workflow_status_is_created(
         project=workflow.project, workflow_status=workflow_status
     )
 
@@ -116,13 +116,19 @@ async def get_status(workflow_id: UUID, status_slug: str) -> WorkflowStatus | No
 ##########################################################
 
 
-async def update_workflow_status(workflow_status: WorkflowStatus, values: dict[str, Any] = {}) -> WorkflowStatus:
-    # TODO: Emit events
-
+async def update_workflow_status(
+    workflow: Workflow, workflow_status: WorkflowStatus, values: dict[str, Any] = {}
+) -> WorkflowStatus:
     if not values:
         return workflow_status
 
     if "name" in values and values["name"] is None:
         raise ex.TaigaValidationError("Name cannot be null")
 
-    return await workflows_repositories.update_workflow_status(workflow_status=workflow_status, values=values)
+    updated_status = await workflows_repositories.update_workflow_status(workflow_status=workflow_status, values=values)
+
+    await workflows_events.emit_event_when_workflow_status_is_updated(
+        project=workflow.project, workflow_status=updated_status
+    )
+
+    return updated_status

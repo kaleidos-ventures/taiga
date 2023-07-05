@@ -150,6 +150,7 @@ async def update_workflow_status(
     workflow_status = await get_workflow_status_or_404(workflow_id=workflow.id, workflow_status_slug=slug)
 
     return await workflows_services.update_workflow_status(
+        workflow=workflow,
         workflow_status=workflow_status,
         values=form.dict(exclude_unset=True),
     )

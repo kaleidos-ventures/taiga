@@ -62,6 +62,10 @@ export class EditorComponent {
   @Input()
   public placeholder = '';
 
+  @Input()
+  public toolbar =
+    'blocks | bold italic underline strikethrough | bullist numlist | link image codesample| emoticons |  alignleft aligncenter alignright | outdent indent | forecolor backcolor removeformat | hr';
+
   @Output()
   public contentChange = new EventEmitter<string>();
 

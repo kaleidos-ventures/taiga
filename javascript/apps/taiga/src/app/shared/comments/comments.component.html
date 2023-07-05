@@ -88,7 +88,8 @@ Copyright (c) 2023-present Kaleidos INC
               *ngIf="comment.createdAt"
               [title]="comment.createdAt | date: 'medium'"
               class="creation-info-date">
-              {{ comment.createdAt | dateDistance }}
+              <tg-real-time-date-distance
+                [date]="comment.createdAt"></tg-real-time-date-distance>
             </span>
           </div>
         </div>

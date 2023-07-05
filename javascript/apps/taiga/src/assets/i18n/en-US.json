@@ -35,7 +35,9 @@
     "delete": "delete",
     "remove": "remove",
     "save": "Save",
-    "next_page": "Next page"
+    "next_page": "Next page",
+    "now": "now",
+    "ago": "ago"
   },
   "navigation": {
     "go_home": "Go to home",

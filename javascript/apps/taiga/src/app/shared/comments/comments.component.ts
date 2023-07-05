@@ -26,6 +26,7 @@ import { TuiButtonModule, TuiHintModule } from '@taiga-ui/core';
 import { CommentUserInputComponent } from './components/comment-user-input/comment-user-input.component';
 import { CommentSkeletonComponent } from './components/comment skeleton/comment-skeleton.component';
 import { LocalStorageService } from '../local-storage/local-storage.service';
+import { RealTimeDateDistanceComponent } from '../real-time-date-distance/real-time-date-distance.component';
 
 export type OrderComments = '-createdAt' | 'createdAt';
 
@@ -46,6 +47,7 @@ export type OrderComments = '-createdAt' | 'createdAt';
     TuiHintModule,
     CommentUserInputComponent,
     CommentSkeletonComponent,
+    RealTimeDateDistanceComponent,
   ],
   providers: [
     {

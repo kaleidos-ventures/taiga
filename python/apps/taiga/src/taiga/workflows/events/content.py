@@ -11,3 +11,7 @@ from taiga.workflows.serializers import WorkflowStatusSerializer
 
 class CreateWorkflowStatusContent(BaseModel):
     workflow_status: WorkflowStatusSerializer
+
+
+class UpdateWorkflowStatusContent(BaseModel):
+    workflow_status: WorkflowStatusSerializer

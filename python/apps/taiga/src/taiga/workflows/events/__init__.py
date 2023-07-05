@@ -7,10 +7,11 @@
 
 from taiga.events import events_manager
 from taiga.projects.projects.models import Project
-from taiga.workflows.events.content import CreateWorkflowStatusContent
+from taiga.workflows.events.content import CreateWorkflowStatusContent, UpdateWorkflowStatusContent
 from taiga.workflows.models import WorkflowStatus
 
 CREATE_WORKFLOW_STATUS = "workflowstatuses.create"
+UPDATE_WORKFLOW_STATUS = "workflowstatuses.update"
 
 
 async def emit_event_when_workflow_status_is_created(project: Project, workflow_status: WorkflowStatus) -> None:
@@ -18,4 +19,12 @@ async def emit_event_when_workflow_status_is_created(project: Project, workflow_
         project=project,
         type=CREATE_WORKFLOW_STATUS,
         content=CreateWorkflowStatusContent(workflow_status=workflow_status),
+    )
+
+
+async def emit_event_when_workflow_status_is_updated(project: Project, workflow_status: WorkflowStatus) -> None:
+    await events_manager.publish_on_project_channel(
+        project=project,
+        type=UPDATE_WORKFLOW_STATUS,
+        content=UpdateWorkflowStatusContent(workflow_status=workflow_status),
     )

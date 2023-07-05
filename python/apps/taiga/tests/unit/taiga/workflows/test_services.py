@@ -68,7 +68,7 @@ async def test_create_workflow_status_ok():
 
     with (
         patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
-        patch("taiga.workflows.services.workflow_events", autospec=True) as fake_workflow_events,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
     ):
         fake_workflows_repo.list_workflow_statuses.return_value = None
         fake_workflows_repo.create_workflow_status.return_value = status
@@ -92,7 +92,7 @@ async def test_create_workflow_status_ok():
             filters={"workflow_id": workflow.id}, order_by=["-order"], offset=0, limit=1
         )
 
-        fake_workflow_events.emit_event_when_workflow_status_is_created.assert_awaited_once_with(
+        fake_workflows_events.emit_event_when_workflow_status_is_created.assert_awaited_once_with(
             project=workflow.project, workflow_status=workflow_status
         )
 
@@ -103,24 +103,37 @@ async def test_create_workflow_status_ok():
 
 
 async def test_update_workflow_status_ok():
-    status = f.build_workflow_status()
+    workflow = f.build_workflow()
+    status = f.build_workflow_status(workflow=workflow)
     values = {"name": "New status name"}
 
-    with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+    ):
         fake_workflows_repo.update_workflow_status.return_value = status
-        await services.update_workflow_status(workflow_status=status, values=values)
+        await services.update_workflow_status(workflow=status.workflow, workflow_status=status, values=values)
         fake_workflows_repo.update_workflow_status.assert_awaited_once_with(workflow_status=status, values=values)
+        fake_workflows_events.emit_event_when_workflow_status_is_updated.assert_awaited_once_with(
+            project=workflow.project, workflow_status=status
+        )
 
 
 async def test_update_workflow_status_noop():
     status = f.build_workflow_status()
     values = {}
 
-    with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
-        ret_status = await services.update_workflow_status(workflow_status=status, values=values)
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+    ):
+        ret_status = await services.update_workflow_status(
+            workflow=status.workflow, workflow_status=status, values=values
+        )
 
         assert ret_status == status
         fake_workflows_repo.update_workflow_status.assert_not_awaited()
+        fake_workflows_events.emit_event_when_workflow_status_is_updated.assert_not_awaited()
 
 
 async def test_update_workflow_status_none_name():
@@ -130,6 +143,8 @@ async def test_update_workflow_status_none_name():
     with (
         pytest.raises(ex.TaigaServiceException),
         patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
     ):
-        await services.update_workflow_status(workflow_status=status, values=values)
+        await services.update_workflow_status(workflow=status.workflow, workflow_status=status, values=values)
         fake_workflows_repo.update_workflow_status.assert_not_awaited()
+        fake_workflows_events.emit_event_when_workflow_status_is_updated.assert_not_awaited()

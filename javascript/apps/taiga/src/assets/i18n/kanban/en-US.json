@@ -23,6 +23,9 @@
   "create_status": "Create status",
   "write_status": "Write a status name",
   "status_empty": "Status name can’t be empty.",
+  "status_options": "Display status options",
   "edit_status_name": "Edit status name",
-  "delete_status": "Delete status"
+  "status_name": "Status name",
+  "delete_status": "Delete status",
+  "empty_error": "Status name can’t be empty."
 }

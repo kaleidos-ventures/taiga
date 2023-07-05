@@ -85,6 +85,10 @@ export const KanbanActions = createActionGroup({
       status: Pick<Status, 'name' | 'color'>;
       workflow: Workflow['slug'];
     }>(),
+    'Edit Status': props<{
+      status: Pick<Status, 'name' | 'slug'>;
+      workflow: Workflow['slug'];
+    }>(),
   },
 });
 
@@ -118,6 +122,17 @@ export const KanbanApiActions = createActionGroup({
     'Create status error': props<{
       statusError: number;
       status: Status['name'];
+    }>(),
+    'Edit status success': props<{
+      name: Status['name'];
+      slug: Status['slug'];
+      workflow: Workflow['slug'];
+    }>(),
+    'Edit status error': props<{
+      statusError: number;
+      name: Status['name'];
+      slug: Status['slug'];
+      workflow: Workflow['slug'];
     }>(),
   },
 });

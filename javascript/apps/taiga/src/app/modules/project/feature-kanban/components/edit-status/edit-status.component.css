@@ -5,44 +5,30 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 Copyright (c) 2023-present Kaleidos INC
 */
+
 @import url("tools/typography.css");
 
 :host {
-  inline-size: var(--column-width);
-  margin-inline-end: var(--spacing-24);
+  inline-size: calc(var(--column-width));
+  inset-block-start: -5px;
+  inset-inline-start: 0;
+  margin-inline-end: var(--spacing-20);
   min-inline-size: 122px;
+  padding: var(--spacing-4);
+  position: absolute;
+  z-index: var(--first-layer);
 }
 
-.create-status {
-  inline-size: 100%;
-  position: relative;
+:host([action="creation"]) {
+  inset-block-start: 0;
 }
 
-.status-input {
-  inline-size: 100%;
-}
-
-.open-create-status-form {
-  margin-block-start: var(--spacing-8);
-  text-wrap: nowrap;
-}
-
-.form-card {
+.edit-status-form-card {
   background-color: var(--color-white);
   border: 1px solid var(--color-gray30);
   border-radius: 3px;
   box-shadow: 3px 4px 14px 0 rgba(0, 138, 168, 0.15);
   padding: var(--spacing-8);
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-block-start: var(--spacing-4);
-}
-
-.cancel {
-  margin-inline-start: var(--spacing-8);
 }
 
 .content {
@@ -64,4 +50,11 @@ Copyright (c) 2023-present Kaleidos INC
 
   color: var(--color-gray90);
   padding-inline-start: var(--spacing-24);
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-8);
+  justify-content: flex-end;
+  margin-block-start: var(--spacing-4);
 }

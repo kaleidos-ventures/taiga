@@ -677,6 +677,20 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    KanbanApiActions.editStatusSuccess,
+    (state, { name, slug, workflow }): KanbanState => {
+      const workflowIndex = state.workflows!.findIndex(
+        (it) => it.slug === workflow
+      );
+      const statusIndex = state.workflows![workflowIndex].statuses.findIndex(
+        (it) => it.slug === slug
+      );
+      state.workflows![workflowIndex].statuses[statusIndex].name = name;
+
+      return state;
+    }
   )
 );
 

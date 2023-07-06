@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Depends, Response, status
+from fastapi import Depends, Query, Response, status
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api.pagination import PaginationQuery
@@ -28,7 +28,7 @@ from taiga.stories.stories.models import Story
 # PERMISSIONS
 CREATE_STORY_COMMENT = HasPerm("comment_story")
 LIST_STORY_COMMENTS = HasPerm("view_story")
-DELETE_STORY_COMMENTS = IsProjectAdmin() | IsRelatedToTheUser("created_by")
+DELETE_STORY_COMMENT = IsProjectAdmin() | IsRelatedToTheUser("created_by")
 
 
 ##########################################################
@@ -46,8 +46,8 @@ DELETE_STORY_COMMENTS = IsProjectAdmin() | IsRelatedToTheUser("created_by")
 async def create_story_comments(
     request: AuthRequest,
     form: CreateCommentValidator,
-    project_id: B64UUID,
-    ref: int,
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
+    ref: int = Query(None, description="the unique story reference within a project (int)"),
 ) -> Comment:
     """
     Add a comment to an story
@@ -78,8 +78,8 @@ async def create_story_comments(
 async def list_story_comments(
     request: AuthRequest,
     response: Response,
-    project_id: B64UUID,
-    ref: int,
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
+    ref: int = Query(None, description="the unique story reference within a project (str)"),
     pagination_params: PaginationQuery = Depends(),
     order_params: CommentOrderQuery = Depends(),  # type: ignore
 ) -> list[Comment]:
@@ -128,7 +128,7 @@ async def delete_story_comment(
     """
     story = await get_story_or_404(project_id=project_id, ref=ref)
     comment = await get_story_comment_or_404(comment_id=comment_id, story=story)
-    await check_permissions(permissions=DELETE_STORY_COMMENTS, user=request.user, obj=comment)
+    await check_permissions(permissions=DELETE_STORY_COMMENT, user=request.user, obj=comment)
 
     await comments_services.delete_comment(
         comment=comment,

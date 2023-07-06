@@ -381,8 +381,7 @@ export class KanbanEffects {
             .pipe(
               map((status: Status) => {
                 return KanbanApiActions.editStatusSuccess({
-                  name: status.name,
-                  slug: status.slug,
+                  status,
                   workflow,
                 });
               })

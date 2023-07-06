@@ -8,9 +8,9 @@
 
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -47,6 +47,7 @@ import { PermissionUpdateNotificationService } from '~/app/shared/permission-upd
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { filterNil } from '~/app/shared/utils/operators';
+import { pick } from '~/app/shared/utils/pick';
 import { ProjectFeatureStoryWrapperModalViewComponent } from '../feature-story-wrapper-modal-view/project-feature-story-wrapper-modal-view.component';
 import { ProjectFeatureStoryWrapperSideViewComponent } from '../feature-story-wrapper-side-view/project-feature-story-wrapper-side-view.component';
 import {
@@ -272,14 +273,41 @@ export class ProjectFeatureKanbanComponent {
         const workflowStatusResponse =
           eventResponse.event.content.workflowStatus;
         const status = {
-          id: workflowStatusResponse.id,
-          name: workflowStatusResponse.name,
-          slug: workflowStatusResponse.slug,
-          color: workflowStatusResponse.color,
-          order: workflowStatusResponse.order,
+          ...pick(workflowStatusResponse, [
+            'id',
+            'name',
+            'slug',
+            'color',
+            'order',
+          ]),
         };
         this.store.dispatch(
           KanbanEventsActions.updateStatus({
+            status,
+            workflow: workflowStatusResponse.workflow.slug,
+          })
+        );
+      });
+
+    this.wsService
+      .projectEvents<{ workflowStatus: WorkflowStatus }>(
+        'workflowstatuses.update'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const workflowStatusResponse =
+          eventResponse.event.content.workflowStatus;
+        const status = {
+          ...pick(workflowStatusResponse, [
+            'id',
+            'name',
+            'slug',
+            'color',
+            'order',
+          ]),
+        };
+        this.store.dispatch(
+          KanbanEventsActions.editStatus({
             status,
             workflow: workflowStatusResponse.workflow.slug,
           })

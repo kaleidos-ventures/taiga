@@ -87,15 +87,16 @@ export class StoryDetailCommentsEffects {
     return this.actions$.pipe(
       ofType(StoryDetailActions.newComment),
       optimisticUpdate({
-        run: ({ storyRef, projectId, comment }) => {
+        run: ({ storyRef, projectId, comment, tmpId }) => {
           return this.projectApiService
             .newComment(projectId, storyRef, comment)
             .pipe(
               concatLatestFrom(() => [
                 this.store.select(selectUser).pipe(filterNil()),
               ]),
-              map(([, user]) => {
+              map(([comment, user]) => {
                 return StoryDetailApiActions.newCommentSuccess({
+                  tmpId,
                   storyRef,
                   projectId,
                   comment,

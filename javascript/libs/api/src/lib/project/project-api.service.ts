@@ -548,7 +548,7 @@ export class ProjectApiService {
   }
 
   public newComment(projectId: Project['id'], ref: Story['ref'], text: string) {
-    return this.http.post(
+    return this.http.post<UserComment>(
       `${this.config.apiUrl}/projects/${projectId}/stories/${ref}/comments`,
       {
         text,

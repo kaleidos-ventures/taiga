@@ -216,8 +216,9 @@ export const reducer = createImmerReducer(
   ),
   on(
     StoryDetailActions.newComment,
-    (state, { comment, user }): StoryDetailState => {
+    (state, { comment, user, tmpId }): StoryDetailState => {
       const newComment: UserComment = {
+        id: tmpId,
         createdAt: new Date().toISOString(),
         createdBy: {
           fullName: user.fullName,
@@ -238,6 +239,20 @@ export const reducer = createImmerReducer(
       } else {
         state.totalComments = 1;
       }
+
+      return state;
+    }
+  ),
+  on(
+    StoryDetailApiActions.newCommentSuccess,
+    (state, { comment, tmpId }): StoryDetailState => {
+      state.comments = state.comments.map((it) => {
+        if (it.id === tmpId) {
+          return comment;
+        }
+
+        return it;
+      });
 
       return state;
     }

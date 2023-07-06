@@ -63,6 +63,7 @@ import { OrderComments } from '~/app/shared/comments/comments.component';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { EditorImageUploadService } from '~/app/shared/editor/editor-image-upload.service';
 import { StoryDetaiImageUploadService } from './story-detail-image-upload.service';
+import { v4 } from 'uuid';
 
 export interface StoryDetailState {
   project: Project;
@@ -546,6 +547,7 @@ export class StoryDetailComponent {
       .subscribe((user) => {
         this.store.dispatch(
           StoryDetailActions.newComment({
+            tmpId: v4(),
             storyRef: this.state.get('story').ref,
             projectId: this.state.get('project').id,
             comment,

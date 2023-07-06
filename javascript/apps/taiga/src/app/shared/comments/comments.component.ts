@@ -78,7 +78,7 @@ export class CommentsComponent {
     this.changeOrder.emit(newOrder);
   }
 
-  public trackIndex(index: number): number {
-    return index;
+  public trackById(_index: number, comment: UserComment): string {
+    return comment.id;
   }
 }

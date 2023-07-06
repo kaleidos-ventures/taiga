@@ -137,24 +137,27 @@ describe('StoryDetailEffects', () => {
       const storyRef = 123;
       const projectId = 'testProject';
       const user = UserMockFactory();
+      const responseComment = UserCommentMockFactory();
 
       store.overrideSelector(selectUser, user);
 
       const action = StoryDetailActions.newComment({
+        tmpId: '123',
         storyRef,
         projectId,
         comment,
         user,
       });
       const completion = StoryDetailApiActions.newCommentSuccess({
+        tmpId: '123',
         storyRef,
         projectId,
-        comment,
+        comment: responseComment,
         user,
       });
 
       actions$ = hot('-a', { a: action });
-      const response = cold('-b|', { b: null });
+      const response = cold('-b|', { b: responseComment });
       const expected = cold('--c', { c: completion });
 
       projectApiService.newComment.mockReturnValue(response);
@@ -172,6 +175,7 @@ describe('StoryDetailEffects', () => {
       store.overrideSelector(selectUser, user);
 
       const action = StoryDetailActions.newComment({
+        tmpId: '123',
         storyRef,
         projectId,
         comment,

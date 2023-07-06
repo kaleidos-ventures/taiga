@@ -7,6 +7,7 @@
  */
 
 export interface UserComment {
+  id: string;
   text: string;
   createdAt: string;
   createdBy: {

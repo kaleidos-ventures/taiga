@@ -27,7 +27,7 @@ pytestmark = pytest.mark.django_db
 
 # TODO: REFACTOR:
 #   - This tests should be unit tests (they shouldn't use the database).
-#   - There are tesst for classes from another module (taiga.permissions) that need to be moved.
+#   - There are tests for classes from another module (taiga.permissions) that need to be moved.
 
 #####################################################
 # check_permissions (is_authorized)

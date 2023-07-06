@@ -124,8 +124,7 @@ export const KanbanApiActions = createActionGroup({
       status: Status['name'];
     }>(),
     'Edit status success': props<{
-      name: Status['name'];
-      slug: Status['slug'];
+      status: Status;
       workflow: Workflow['slug'];
     }>(),
     'Edit status error': props<{
@@ -144,6 +143,10 @@ export const KanbanEventsActions = createActionGroup({
     'Reorder Story': props<KanbanReorderEvent['reorder']>(),
     'Delete Story': props<{ ref: Story['ref'] }>(),
     'Update status': props<{
+      status: Status;
+      workflow: Workflow['slug'];
+    }>(),
+    'Edit status': props<{
       status: Status;
       workflow: Workflow['slug'];
     }>(),

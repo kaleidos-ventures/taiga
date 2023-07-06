@@ -13,11 +13,12 @@ from uuid import UUID
 from taiga.workflows import events as workflows_events
 from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import Workflow, WorkflowStatus
-from taiga.workflows.serializers import WorkflowSerializer
+from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, WorkflowSerializer
 from taiga.workflows.serializers import services as serializers_services
 from taiga.workflows.services import exceptions as ex
 
 DEFAULT_ORDER_OFFSET = Decimal(100)  # default offset when adding a workflow status
+DEFAULT_PRE_ORDER = Decimal(0)  # default pre_position when adding a story at the beginning
 
 
 ##########################################################
@@ -132,3 +133,99 @@ async def update_workflow_status(
     )
 
     return updated_status
+
+
+##########################################################
+# update reorder workflow statuses
+##########################################################
+
+
+async def _calculate_offset(
+    workflow: Workflow,
+    total_statuses_to_reorder: int,
+    reorder_status: WorkflowStatus,
+    reorder_place: str,
+) -> tuple[Decimal, Decimal]:
+
+    total_slots = total_statuses_to_reorder + 1
+
+    neighbors = await workflows_repositories.list_workflow_status_neighbors(
+        status=reorder_status, filters={"workflow_id": workflow.id}
+    )
+
+    if reorder_place == "after":
+        pre_order = reorder_status.order
+        if neighbors.next:
+            post_order = neighbors.next.order
+        else:
+            post_order = pre_order + (DEFAULT_ORDER_OFFSET * total_slots)
+
+    elif reorder_place == "before":
+        post_order = reorder_status.order
+        if neighbors.prev:
+            pre_order = neighbors.prev.order
+        else:
+            pre_order = DEFAULT_PRE_ORDER
+
+    else:
+        return NotImplemented
+
+    offset = (post_order - pre_order) / total_slots
+    return offset, pre_order
+
+
+async def reorder_workflow_statuses(
+    workflow: Workflow,
+    statuses: list[str],
+    reorder: dict[str, Any],
+) -> ReorderWorkflowStatusesSerializer:
+
+    if reorder["status"] in statuses:
+        raise ex.InvalidWorkflowStatusError(f"Status {reorder['status']} should not be part of the statuses to reorder")
+
+    # check anchor workflow status exists
+    reorder_status = await workflows_repositories.get_status(
+        filters={"workflow_id": workflow.id, "slug": reorder["status"]}
+    )
+    if not reorder_status:
+        raise ex.InvalidWorkflowStatusError(f"Status {reorder['status']} doesn't exist in this workflow")
+    reorder_place = reorder["place"]
+
+    # check all statuses "to reorder" exist
+    statuses_to_reorder = await workflows_repositories.list_workflow_statuses_to_reorder(
+        filters={"workflow_id": workflow.id, "slugs": statuses}
+    )
+    if len(statuses_to_reorder) < len(statuses):
+        raise ex.InvalidWorkflowStatusError("One or more statuses don't exist in this workflow")
+
+    # calculate offset
+    offset, pre_order = await _calculate_offset(
+        workflow=workflow,
+        total_statuses_to_reorder=len(statuses_to_reorder),
+        reorder_status=reorder_status,
+        reorder_place=reorder_place,
+    )
+
+    # update workflow statuses
+    statuses_to_update_tmp = {s.slug: s for s in statuses_to_reorder}
+    statuses_to_update = []
+    for i, slug in enumerate(statuses):
+        status = statuses_to_update_tmp[slug]
+        status.order = pre_order + (offset * (i + 1))
+        statuses_to_update.append(status)
+
+    # save stories
+    await workflows_repositories.bulk_update_workflow_statuses(
+        objs_to_update=statuses_to_update, fields_to_update=["order"]
+    )
+
+    reorder_status_serializer = serializers_services.serialize_reorder_workflow_statuses(
+        workflow=workflow, statuses=statuses, reorder=reorder
+    )
+
+    # event
+    await workflows_events.emit_event_when_workflow_statuses_are_reordered(
+        project=workflow.project, reorder=reorder_status_serializer
+    )
+
+    return reorder_status_serializer

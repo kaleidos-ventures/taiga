@@ -17,19 +17,25 @@ from taiga.permissions import HasPerm, IsProjectAdmin
 from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.workflows import services as workflows_services
-from taiga.workflows.api.validators import UpdateWorkflowStatusValidator, WorkflowStatusValidator
+from taiga.workflows.api.validators import (
+    ReorderWorkflowStatusesValidator,
+    UpdateWorkflowStatusValidator,
+    WorkflowStatusValidator,
+)
 from taiga.workflows.models import Workflow, WorkflowStatus
-from taiga.workflows.serializers import WorkflowSerializer, WorkflowStatusSerializer
+from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, WorkflowSerializer, WorkflowStatusSerializer
 
 # PERMISSIONS
 LIST_WORKFLOWS = HasPerm("view_story")
 GET_WORKFLOW = HasPerm("view_story")
 CREATE_WORKFLOW_STATUS = IsProjectAdmin()
 UPDATE_WORKFLOW_STATUS = IsProjectAdmin()
+REORDER_WORKFLOW_STATUSES = IsProjectAdmin()
 
 # HTTP 200 RESPONSES
 WORKFLOW_200 = responses.http_status_200(model=WorkflowSerializer)
 LIST_WORKFLOW_200 = responses.http_status_200(model=list[WorkflowSerializer])
+REORDER_WORKFLOW_STATUSES_200 = responses.http_status_200(model=ReorderWorkflowStatusesSerializer)
 
 
 ################################################
@@ -153,6 +159,36 @@ async def update_workflow_status(
         workflow=workflow,
         workflow_status=workflow_status,
         values=form.dict(exclude_unset=True),
+    )
+
+
+################################################
+# update - reorder workflow statuses
+################################################
+
+
+@routes.stories.post(
+    "/projects/{project_id}/workflows/{workflow_slug}/statuses/reorder",
+    name="project.workflowstatus.reorder",
+    summary="Reorder workflow statuses",
+    responses=REORDER_WORKFLOW_STATUSES_200 | ERROR_404 | ERROR_422 | ERROR_403,
+)
+async def reorder_workflow_statuses(
+    request: AuthRequest,
+    form: ReorderWorkflowStatusesValidator,
+    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
+    workflow_slug: str = Query(None, description="the workflow slug (str)"),
+) -> ReorderWorkflowStatusesSerializer:
+    """
+    Reorder one or more workflow statuses; it may change workflow and order
+    """
+    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
+    await check_permissions(permissions=REORDER_WORKFLOW_STATUSES, user=request.user, obj=workflow)
+
+    return await workflows_services.reorder_workflow_statuses(
+        workflow=workflow,
+        statuses=form.statuses,
+        reorder=form.get_reorder_dict(),
     )
 
 

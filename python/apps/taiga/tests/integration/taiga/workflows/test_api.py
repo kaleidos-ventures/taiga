@@ -7,6 +7,7 @@
 
 
 import pytest
+from asgiref.sync import sync_to_async
 from fastapi import status
 from tests.utils import factories as f
 
@@ -129,7 +130,7 @@ async def test_create_workflow_status_forbidden(client):
 
 
 ################################################################################
-# Status PATCH /projects/<pj_b64id>/workflows/<wf_slug>/statuses/<ws_slug>
+# Workflow Status PATCH /projects/<pj_b64id>/workflows/<wf_slug>/statuses/<ws_slug>
 ################################################################################
 
 
@@ -179,3 +180,25 @@ async def test_400_update_status_null_name(client):
     response = client.patch(f"/projects/{project.b64id}/workflows/{workflow.slug}/statuses/{wf_status.slug}", json=data)
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
     assert response.json()["error"]["msg"] == "Name cannot be null"
+
+
+##########################################################
+# Workflow Status POST /projects/<slug>/workflows/<slug>/statuses/reorder
+##########################################################
+
+
+async def test_reorder_statuses_with_reorder_ok(client):
+    pj = await f.create_project()
+    workflow = await sync_to_async(pj.workflows.first)()
+    wf_status = await sync_to_async(workflow.statuses.first)()
+    reorder_status = await sync_to_async(workflow.statuses.last)()
+
+    data = {"statuses": [wf_status.slug], "reorder": {"place": "before", "status": reorder_status.slug}}
+    client.login(pj.created_by)
+    response = client.post(f"/projects/{pj.b64id}/workflows/main/statuses/reorder", json=data)
+
+    assert response.status_code == status.HTTP_200_OK, response.text
+    res = response.json()
+    assert "reorder" in res
+    assert "statuses" in res
+    assert res["statuses"] == [wf_status.slug]

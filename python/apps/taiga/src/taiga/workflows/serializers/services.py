@@ -6,8 +6,10 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 
+from typing import Any
+
 from taiga.workflows.models import Workflow, WorkflowStatus
-from taiga.workflows.serializers import WorkflowSerializer
+from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, WorkflowSerializer
 
 
 def serialize_workflow(workflow: Workflow, workflow_statuses: list[WorkflowStatus] = []) -> WorkflowSerializer:
@@ -18,3 +20,10 @@ def serialize_workflow(workflow: Workflow, workflow_statuses: list[WorkflowStatu
         order=workflow.order,
         statuses=workflow_statuses,
     )
+
+
+def serialize_reorder_workflow_statuses(
+    workflow: Workflow, statuses: list[str], reorder: dict[str, Any] | None = None
+) -> ReorderWorkflowStatusesSerializer:
+
+    return ReorderWorkflowStatusesSerializer(workflow=workflow, statuses=statuses, reorder=reorder)

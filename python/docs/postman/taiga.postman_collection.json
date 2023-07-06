@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "f14e95f2-f030-40b7-8bc7-21414bd21c3b",
+		"_postman_id": "50db7858-ee96-4fb4-852e-b145af14d29d",
 		"name": "taiga-next",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "15018493"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -2395,6 +2394,65 @@
 								"{{wf-slug}}",
 								"statuses",
 								"{{ws-slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reorder workflows statuses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"   // pm.environment.set(\"pj-id\", pm.response.json().slug);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"statuses\": [\"ready\"],\n    \"reorder\": {\n        \"place\": \"after\",\n        \"status\": \"in-progress\"\n    }\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/reorder",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}",
+								"statuses",
+								"reorder"
 							]
 						}
 					},

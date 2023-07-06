@@ -30,3 +30,20 @@ class WorkflowSerializer(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ReorderSerializer(BaseModel):
+    place: str
+    status: str
+
+    class Config:
+        orm_mode = True
+
+
+class ReorderWorkflowStatusesSerializer(BaseModel):
+    workflow: WorkflowNestedSerializer
+    statuses: list[str]
+    reorder: ReorderSerializer
+
+    class Config:
+        orm_mode = True

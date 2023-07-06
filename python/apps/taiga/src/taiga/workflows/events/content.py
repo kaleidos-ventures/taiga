@@ -6,7 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.base.serializers import BaseModel
-from taiga.workflows.serializers import WorkflowStatusSerializer
+from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, WorkflowStatusSerializer
 
 
 class CreateWorkflowStatusContent(BaseModel):
@@ -15,3 +15,7 @@ class CreateWorkflowStatusContent(BaseModel):
 
 class UpdateWorkflowStatusContent(BaseModel):
     workflow_status: WorkflowStatusSerializer
+
+
+class ReorderWorkflowStatusesContent(BaseModel):
+    reorder: ReorderWorkflowStatusesSerializer

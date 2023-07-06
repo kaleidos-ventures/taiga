@@ -6,8 +6,10 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 
-from pydantic import ConstrainedStr, conint
-from taiga.base.validators import BaseModel
+from typing import Any
+
+from pydantic import ConstrainedStr, conint, conlist, validator
+from taiga.base.validators import BaseModel, StrNotEmpty
 
 
 class Name(ConstrainedStr):
@@ -23,3 +25,31 @@ class WorkflowStatusValidator(BaseModel):
 
 class UpdateWorkflowStatusValidator(BaseModel):
     name: Name | None
+
+
+class ReorderValidator(BaseModel):
+    place: str
+    status: StrNotEmpty
+
+    @validator("place")
+    def check_valid_place(cls, v: str) -> str:
+        assert v in ["before", "after"], "Place should be 'after' or 'before'"
+        return v
+
+
+class ReorderWorkflowStatusesValidator(BaseModel):
+    statuses: conlist(str, min_items=1)  # type: ignore[valid-type]
+    reorder: ReorderValidator
+
+    @validator("statuses")
+    def return_unique_statuses(cls, v: list[str]) -> list[str]:
+        """
+        If there are some statuses slug repeated, ignore them,
+        but keep the original order. Example:
+        v = ["new", "new", "in-progress", "new", "in-progress"]
+        return ["new", "in-progress"]
+        """
+        return sorted(set(v), key=v.index)
+
+    def get_reorder_dict(self) -> dict[str, Any]:
+        return self.dict()["reorder"]

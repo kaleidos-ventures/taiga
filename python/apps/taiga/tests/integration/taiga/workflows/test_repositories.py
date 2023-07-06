@@ -33,25 +33,6 @@ async def test_create_workflow():
 
 
 ##########################################################
-# create_workflow_status
-##########################################################
-
-
-async def test_create_workflow_status():
-    workflow = await f.create_workflow()
-
-    workflow_status_res = await repositories.create_workflow_status(
-        name="workflow-status",
-        slug="slug",
-        color=1,
-        order=1,
-        workflow=workflow,
-    )
-    assert workflow_status_res.name == "workflow-status"
-    assert workflow_status_res.workflow == workflow
-
-
-##########################################################
 # list_workflows
 ##########################################################
 
@@ -70,6 +51,44 @@ async def test_list_project_without_workflows_ok() -> None:
     workflows = await repositories.list_workflows(filters={"project_id": project.id})
 
     assert len(workflows) == 0
+
+
+##########################################################
+# get_workflow
+##########################################################
+
+
+async def test_get_workflow_ok() -> None:
+    project = await f.create_project()
+    workflows = await _list_workflows(project=project)
+    workflow = await repositories.get_workflow(filters={"project_id": project.id, "slug": workflows[0].slug})
+    assert workflow is not None
+    assert hasattr(workflow, "id")
+
+
+async def test_get_project_without_workflow_ok() -> None:
+    project = await f.create_simple_project()
+    workflow = await repositories.get_workflow(filters={"project_id": project.id, "slug": "not-existing-slug"})
+    assert workflow is None
+
+
+##########################################################
+# create_workflow_status
+##########################################################
+
+
+async def test_create_workflow_status():
+    workflow = await f.create_workflow()
+
+    workflow_status_res = await repositories.create_workflow_status(
+        name="workflow-status",
+        slug="slug",
+        color=1,
+        order=1,
+        workflow=workflow,
+    )
+    assert workflow_status_res.name == "workflow-status"
+    assert workflow_status_res.workflow == workflow
 
 
 ##########################################################
@@ -92,22 +111,77 @@ async def test_list_no_workflows_statuses() -> None:
 
 
 ##########################################################
-# get_workflow
+# list_workflows_statuses_to_reorder
 ##########################################################
 
 
-async def test_get_workflow_ok() -> None:
+async def test_list_statuses_to_reorder() -> None:
     project = await f.create_project()
-    workflows = await _list_workflows(project=project)
-    workflow = await repositories.get_workflow(filters={"project_id": project.id, "slug": workflows[0].slug})
-    assert workflow is not None
-    assert hasattr(workflow, "id")
+    workflow = await sync_to_async(project.workflows.first)()
+
+    statuses = ["in-progress", "new", "done"]
+    statuses = await repositories.list_workflow_statuses_to_reorder(
+        filters={"workflow_id": workflow.id, "slugs": statuses}
+    )
+    assert statuses[0].slug == statuses[0].slug
+    assert statuses[1].slug == statuses[1].slug
+    assert statuses[2].slug == statuses[2].slug
+
+    statuses = ["done", "ready", "new"]
+    statuses = await repositories.list_workflow_statuses_to_reorder(
+        filters={"workflow_id": workflow.id, "slugs": statuses}
+    )
+    assert statuses[0].slug == statuses[0].slug
+    assert statuses[1].slug == statuses[1].slug
+    assert statuses[2].slug == statuses[2].slug
+
+    statuses = ["new", "ready"]
+    statuses = await repositories.list_workflow_statuses_to_reorder(
+        filters={"workflow_id": workflow.id, "slugs": statuses}
+    )
+    assert statuses[0].slug == statuses[0].slug
+    assert statuses[1].slug == statuses[1].slug
 
 
-async def test_get_project_without_workflow_ok() -> None:
-    project = await f.create_simple_project()
-    workflow = await repositories.get_workflow(filters={"project_id": project.id, "slug": "not-existing-slug"})
-    assert workflow is None
+async def test_list_statuses_to_reorder_bad_names() -> None:
+    project = await f.create_project()
+    workflow = await sync_to_async(project.workflows.first)()
+
+    statuses = ["new", "readyyy"]
+    statuses = await repositories.list_workflow_statuses_to_reorder(
+        filters={"workflow_id": workflow.id, "slugs": statuses}
+    )
+    assert len(statuses) == 1
+    assert statuses[0].slug == statuses[0].slug
+
+
+##########################################################
+# list_workflow_status_neighbors
+##########################################################
+
+
+async def test_list_workflow_status_neighbors() -> None:
+    project = await f.create_project()
+    workflow = await sync_to_async(project.workflows.first)()
+    statuses = await repositories.list_workflow_statuses(filters={"workflow_id": workflow.id})
+
+    neighbors = await repositories.list_workflow_status_neighbors(
+        status=statuses[0], filters={"workflow_id": workflow.id}
+    )
+    assert neighbors.prev is None
+    assert neighbors.next.slug == statuses[1].slug
+
+    neighbors = await repositories.list_workflow_status_neighbors(
+        status=statuses[1], filters={"workflow_id": workflow.id}
+    )
+    assert neighbors.prev.slug == statuses[0].slug
+    assert neighbors.next.slug == statuses[2].slug
+
+    neighbors = await repositories.list_workflow_status_neighbors(
+        status=statuses[3], filters={"workflow_id": workflow.id}
+    )
+    assert neighbors.prev.slug == statuses[2].slug
+    assert neighbors.next is None
 
 
 ##########################################################
@@ -140,7 +214,7 @@ async def test_get_project_without_workflow_statuses_ok() -> None:
 
 
 ##########################################################
-# WorkflowStatus - update workflow status
+# update_workflow_status
 ##########################################################
 
 
@@ -155,6 +229,30 @@ async def test_update_workflow_status_ok() -> None:
 
     updated_status = await repositories.update_workflow_status(workflow_status=status, values=new_values)
     assert updated_status.name == new_status_name
+
+
+async def test_bulk_update_workflow_statuses_ok() -> None:
+    project = await f.create_project()
+    workflow = await sync_to_async(project.workflows.first)()
+    statuses = await repositories.list_workflow_statuses(filters={"workflow_id": workflow.id})
+
+    order = 1
+    for status in statuses:
+        assert status.order == order
+        order += 1
+
+    order = 100
+    for status in statuses:
+        status.order = order
+        order += 1
+
+    await repositories.bulk_update_workflow_statuses(objs_to_update=statuses, fields_to_update=["order"])
+
+    new_statuses = await repositories.list_workflow_statuses(filters={"workflow_id": workflow.id})
+    order = 100
+    for status in new_statuses:
+        assert status.order == order
+        order += 1
 
 
 ##########################################################

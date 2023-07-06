@@ -616,10 +616,46 @@ Content for:
 - project channel:
   ```
   {
-      "status": {... "workflow status object" ...}
+      "workflowStatus": {... "workflow status object" ...}
   }
   ```
 
+
+#### `workflowstatuses.update`
+
+It happens when a workflow status has been updated.
+
+Content for:
+- project channel:
+  ```
+  {
+      "workflowStatus": {... "workflow status object" ...}
+  }
+  ```
+
+
+#### `workflowstatuses.reorder`
+
+It happens when some workflow statuses are reordered.
+
+Content for:
+- project channel:
+  ```
+  {
+      "reorder": {
+          "workflow": {... workflow object ...},
+	      "statuses": [
+		      "moved wf_status slug (str)",
+		      "moved wf_status slug (str)",
+              ....
+	      ],
+	      "reorder": {
+		      "place": "'before' or 'after'",
+		      "status": "worklflow status slug (str)"
+	      }
+      }
+  }
+  ```
 
 #### `stories.create`
 

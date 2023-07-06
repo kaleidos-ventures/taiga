@@ -10,6 +10,8 @@ from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import QuerySet
+from taiga.base.repositories import neighbors as neighbors_repositories
+from taiga.base.repositories.neighbors import Neighbor
 from taiga.projects.projects.models import Project
 from taiga.workflows.models import Workflow, WorkflowStatus
 
@@ -146,6 +148,7 @@ DEFAULT_QUERYSET_WORKFLOW_STATUS = WorkflowStatus.objects.all()
 class WorkflowStatusFilters(TypedDict, total=False):
     id: UUID
     slug: str
+    slugs: list[str]
     workflow_id: UUID
     workflow_slug: str
     project_id: UUID
@@ -156,6 +159,9 @@ def _apply_filters_to_workflow_status_queryset(
     filters: WorkflowStatusFilters = {},
 ) -> QuerySet[WorkflowStatus]:
     filter_data = dict(filters.copy())
+
+    if "slugs" in filters:
+        filter_data["slug__in"] = filter_data.pop("slugs")
 
     if "workflow_slug" in filter_data:
         filter_data["workflow__slug"] = filter_data.pop("workflow_slug")
@@ -245,6 +251,29 @@ def list_workflow_statuses(
     return list(qs[offset:limit])
 
 
+@sync_to_async
+def list_workflow_statuses_to_reorder(filters: WorkflowStatusFilters = {}) -> list[WorkflowStatus]:
+    """
+    This method is very similar to "list_workflow_statuses" except this has to keep
+    the order of the input slugs.
+    """
+    qs = _apply_filters_to_workflow_status_queryset(qs=DEFAULT_QUERYSET_WORKFLOW_STATUS, filters=filters)
+
+    statuses = {s.slug: s for s in qs}
+    return [statuses[slug] for slug in filters["slugs"] if statuses.get(slug) is not None]
+
+
+@sync_to_async
+def list_workflow_status_neighbors(
+    status: WorkflowStatus,
+    filters: WorkflowStatusFilters = {},
+) -> Neighbor[WorkflowStatus]:
+    qs = _apply_filters_to_workflow_status_queryset(qs=DEFAULT_QUERYSET_WORKFLOW_STATUS, filters=filters)
+    qs = _apply_order_by_to_workflow_status_queryset(qs=qs, order_by=["order"])
+
+    return neighbors_repositories.get_neighbors_sync(obj=status, model_queryset=qs)
+
+
 ##########################################################
 # WorkflowStatus - get workflow status
 ##########################################################
@@ -276,3 +305,7 @@ def update_workflow_status(workflow_status: WorkflowStatus, values: dict[str, An
 
     workflow_status.save()
     return workflow_status
+
+
+async def bulk_update_workflow_statuses(objs_to_update: list[WorkflowStatus], fields_to_update: list[str]) -> None:
+    await WorkflowStatus.objects.abulk_update(objs_to_update, fields_to_update)

@@ -11,3 +11,7 @@ from taiga.base.services.exceptions import TaigaServiceException
 
 class TaigaValidationError(TaigaServiceException):
     ...
+
+
+class InvalidWorkflowStatusError(TaigaServiceException):
+    ...

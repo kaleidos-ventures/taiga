@@ -14,7 +14,14 @@ import {
   inject,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, interval, map, startWith, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  interval,
+  map,
+  startWith,
+  switchMap,
+} from 'rxjs';
 import { DateService } from '~/app/services/date.service';
 import { filterFalsy } from '../utils/operators';
 
@@ -45,6 +52,7 @@ export class RealTimeDateDistanceComponent {
   constructor() {
     const realDate$ = this.date$.pipe(
       filterFalsy(),
+      distinctUntilChanged(),
       switchMap((date) => {
         return interval(this.checkTime).pipe(
           switchMap(() => this.date$),

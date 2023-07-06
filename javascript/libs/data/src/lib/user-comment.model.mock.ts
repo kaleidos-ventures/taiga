@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { randParagraph, randPastDate } from '@ngneat/falso';
+import { randParagraph, randPastDate, randUuid } from '@ngneat/falso';
 import { UserComment } from './user-comment.model';
 import { UserMockFactory } from './user.model.mock';
 
@@ -14,6 +14,7 @@ export const UserCommentMockFactory = (): UserComment => {
   const user = UserMockFactory();
 
   return {
+    id: randUuid(),
     text: randParagraph(),
     createdAt: randPastDate().toISOString(),
     createdBy: {

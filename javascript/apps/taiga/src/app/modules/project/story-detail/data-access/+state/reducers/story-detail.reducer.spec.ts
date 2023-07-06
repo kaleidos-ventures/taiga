@@ -75,6 +75,7 @@ describe('Story Detail Reducer', () => {
     const comment = 'Test Comment';
     const user = UserMockFactory();
     const action = StoryDetailActions.newComment({
+      tmpId: '123',
       comment,
       user,
       storyRef: 1,

@@ -63,6 +63,7 @@ export const StoryDetailActions = createActionGroup({
       projectId: Project['id'];
     }>(),
     'New Comment': props<{
+      tmpId: string;
       comment: string;
       storyRef: Story['ref'];
       projectId: Project['id'];
@@ -96,7 +97,8 @@ export const StoryDetailApiActions = createActionGroup({
       offset: number;
     }>(),
     'New Comment Success': props<{
-      comment: string;
+      tmpId: string;
+      comment: UserComment;
       storyRef: Story['ref'];
       projectId: Project['id'];
       user: User;

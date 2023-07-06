@@ -36,6 +36,7 @@ Copyright (c) 2023-present Kaleidos INC
         id="comment"
         tgRestoreFocus="open-comment-input"
         field=""
+        [toolbar]="toolbar"
         [placeholder]="t('comments.leave_comment')"
         (contentChange)="onCommentContentChange($event)"
         (editorReady)="onInitEditor()"></tg-editor>

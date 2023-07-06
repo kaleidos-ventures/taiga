@@ -79,6 +79,7 @@ export class CommentUserInputComponent implements ComponentCanDeactivate {
   public model$ = this.state.select();
   public discard$ = new Subject<boolean>();
   public resizeEditor$ = new Subject<void>();
+  public toolbar = 'bold italic underline link image codesample emoticons';
 
   constructor() {
     this.reset();

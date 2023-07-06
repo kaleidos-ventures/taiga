@@ -6,6 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 import pytest
+from asgiref.sync import sync_to_async
 from fastapi import status
 from taiga.comments import repositories as comments_repositories
 from tests.utils import factories as f
@@ -183,6 +184,25 @@ async def test_delete_story_comment_error_no_permissions(client):
     comment = await f.create_comment(content_object=story, created_by=owner_user, text="comment")
 
     assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
+    client.login(member_user)
+    response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+    assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
+
+
+async def test_delete_story_comment_error_no_comment_permissions(client):
+    project = await f.create_project()
+    generic_role = await project.roles.aget(is_admin=False)
+    member_user = await f.create_user()
+    await f.create_project_membership(user=member_user, role=generic_role)
+    story = await f.create_story(project=project)
+    comment = await f.create_comment(content_object=story, created_by=member_user, text="comment")
+    assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
+
+    # remove can comment permissions
+    generic_role.permissions = ["view_story"]
+    await sync_to_async(generic_role.save)()
+
     client.login(member_user)
     response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text

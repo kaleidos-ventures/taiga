@@ -28,7 +28,7 @@ from taiga.stories.stories.models import Story
 # PERMISSIONS
 CREATE_STORY_COMMENT = HasPerm("comment_story")
 LIST_STORY_COMMENTS = HasPerm("view_story")
-DELETE_STORY_COMMENT = IsProjectAdmin() | IsRelatedToTheUser("created_by")
+DELETE_STORY_COMMENT = IsProjectAdmin() | (IsRelatedToTheUser("created_by") & HasPerm("comment_story"))
 
 
 ##########################################################

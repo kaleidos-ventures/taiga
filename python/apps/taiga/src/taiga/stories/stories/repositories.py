@@ -233,12 +233,8 @@ def list_stories_to_reorder(filters: StoryFilters = {}) -> list[Story]:
     """
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
 
-    refs = filters["refs"]
-    result = [None] * len(refs)  # create an empty list the size of the references list
-    for story in qs:
-        result[refs.index(story.ref)] = story  # type: ignore[call-overload]
-
-    return result  # type: ignore[return-value]
+    stories = {s.ref: s for s in qs}
+    return [stories[ref] for ref in filters["refs"] if stories.get(ref) is not None]
 
 
 @sync_to_async

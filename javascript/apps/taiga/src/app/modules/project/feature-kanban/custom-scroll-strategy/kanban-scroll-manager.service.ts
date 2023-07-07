@@ -9,6 +9,7 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Status } from '@taiga/data';
 import {
   BehaviorSubject,
   filter,
@@ -55,8 +56,9 @@ export class KanbanScrollManagerService {
         .pipe(
           filterNil(),
           take(1),
-          switchMap((story) => {
-            return this.moveToStatus(story).pipe(
+          switchMap((story: KanbanStory) => {
+            const status = story.status;
+            return this.moveToStatus(status).pipe(
               map(() => {
                 return story;
               })
@@ -126,7 +128,7 @@ export class KanbanScrollManagerService {
     this.kanbanWorkflow$.next(null);
   }
 
-  private moveToStatus(story: KanbanStory) {
+  private moveToStatus(status: Status) {
     return new Observable((subscriber) => {
       this.store
         .select(selectCurrentWorkflow)
@@ -135,21 +137,21 @@ export class KanbanScrollManagerService {
           take(1),
           tap((workflow) => {
             const statusIndex = workflow.statuses.findIndex(
-              (status) => story.status.slug === status.slug
+              (workflowStatuses) => status.slug === workflowStatuses.slug
             );
             const runScroll = () => {
-              const status = this.kanbanStatuses$.value.find(
-                (it) => story.status.slug === it.status.slug
+              const statusEl = this.kanbanStatuses$.value.find(
+                (it) => status.slug === it.status.slug
               );
 
-              if (status) {
+              if (statusEl) {
                 const workflowPosition = (
                   this.kanbanWorkflow$.value?.cdkScrollable.elementRef
                     .nativeElement as HTMLElement
                 ).getBoundingClientRect();
 
                 const statusPosition =
-                  status.nativeElement.getBoundingClientRect();
+                  statusEl.nativeElement.getBoundingClientRect();
 
                 return !(
                   statusPosition.left >= workflowPosition.left &&
@@ -167,11 +169,11 @@ export class KanbanScrollManagerService {
                 );
               }
 
-              const status = this.kanbanStatuses$.value.find(
-                (it) => it.status.slug === story.status.slug
+              const statusEl = this.kanbanStatuses$.value.find(
+                (it) => it.status.slug === status.slug
               );
 
-              if (status) {
+              if (statusEl) {
                 if (runScroll()) {
                   this.kanbanWorkflow$.value?.cdkScrollable.scrollToIndex(
                     statusIndex

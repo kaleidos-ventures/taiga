@@ -25,6 +25,7 @@ Copyright (c) 2023-present Kaleidos INC
           [attr.aria-label]="t('kanban.status_name')"
           formControlName="name"
           data-test="create-status-input"
+          [maxlength]="statusMaxLength"
           #statusInput
           inputRef
           [placeholder]="t('kanban.write_status')" />

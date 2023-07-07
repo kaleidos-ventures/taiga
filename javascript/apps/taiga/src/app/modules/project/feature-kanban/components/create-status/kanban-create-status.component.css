@@ -11,10 +11,14 @@ Copyright (c) 2023-present Kaleidos INC
   inline-size: var(--column-width);
   margin-inline-end: var(--spacing-24);
   min-inline-size: 122px;
+  padding-block-start: var(--spacing-4);
 }
 
 .create-status {
+  display: flex;
   inline-size: 100%;
+  margin-block-end: var(--spacing-16);
+  padding: var(--spacing-8);
   position: relative;
 }
 
@@ -23,7 +27,6 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .open-create-status-form {
-  margin-block-start: var(--spacing-8);
   text-wrap: nowrap;
 }
 

@@ -73,6 +73,18 @@ async def tests_get_comment():
 # update_comment
 ##########################################################
 
+
+async def tests_update_comment():
+    story = await f.create_story()
+    comment = await f.create_comment(content_object=story)
+    updated_text = "updated text"
+
+    await repositories.update_comment(comment=comment, values={"text": updated_text})
+
+    assert comment.text == updated_text
+    assert comment.modified_at < aware_utcnow()
+
+
 ##########################################################
 # delete_comments
 ##########################################################

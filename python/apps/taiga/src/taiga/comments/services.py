@@ -5,14 +5,16 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from typing import Any
 from uuid import UUID
 
 from taiga.base.api import Pagination
 from taiga.base.db.models import Model
 from taiga.comments import repositories as comments_repositories
-from taiga.comments.events import EventOnCreateCallable, EventOnDeleteCallable
+from taiga.comments.events import EventOnCreateCallable, EventOnDeleteCallable, EventOnUpdateCallable
 from taiga.comments.models import Comment
 from taiga.comments.repositories import CommentFilters, CommentOrderBy
+from taiga.stories.stories.models import Story
 from taiga.users.models import User
 
 ##########################################################
@@ -79,7 +81,19 @@ async def get_comment(id: UUID, content_object: Model) -> Comment | None:
 # update comment
 ##########################################################
 
-# TODO
+
+async def update_comment(
+    story: Story,
+    comment: Comment,
+    values: dict[str, Any] = {},
+    event_on_update: EventOnUpdateCallable | None = None,
+) -> Comment:
+    updated_comment = await comments_repositories.update_comment(comment=comment, values=values)
+
+    if event_on_update:
+        await event_on_update(project=story.project, comment=updated_comment)
+
+    return updated_comment
 
 
 ##########################################################

@@ -16,7 +16,7 @@ from taiga.base.validators import B64UUID
 from taiga.comments import services as comments_services
 from taiga.comments.models import Comment
 from taiga.comments.serializers import CommentSerializer
-from taiga.comments.validators import CommentOrderQuery, CreateCommentValidator
+from taiga.comments.validators import CommentOrderQuery, CreateCommentValidator, UpdateCommentValidator
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm, IsProjectAdmin, IsRelatedToTheUser
@@ -28,6 +28,7 @@ from taiga.stories.stories.models import Story
 # PERMISSIONS
 CREATE_STORY_COMMENT = HasPerm("comment_story")
 LIST_STORY_COMMENTS = HasPerm("view_story")
+UPDATE_STORY_COMMENT = IsRelatedToTheUser("created_by") & HasPerm("comment_story")
 DELETE_STORY_COMMENT = IsProjectAdmin() | (IsRelatedToTheUser("created_by") & HasPerm("comment_story"))
 
 
@@ -102,7 +103,35 @@ async def list_story_comments(
 # update story comments
 ##########################################################
 
-# TODO
+
+@routes.comments.patch(
+    "/projects/{project_id}/stories/{ref}/comments/{comment_id}",
+    name="project.story.comments.update",
+    summary="Update story comment",
+    response_model=CommentSerializer,
+    responses=ERROR_403 | ERROR_422 | ERROR_404,
+)
+async def update_story_comments(
+    request: AuthRequest,
+    form: UpdateCommentValidator,
+    project_id: B64UUID,
+    ref: int,
+    comment_id: B64UUID,
+) -> Comment:
+    """
+    Update an story's comment
+    """
+    story = await get_story_or_404(project_id=project_id, ref=ref)
+    comment = await get_story_comment_or_404(comment_id=comment_id, story=story)
+    await check_permissions(permissions=UPDATE_STORY_COMMENT, user=request.user, obj=comment)
+
+    values = form.dict(exclude_unset=True)
+    return await comments_services.update_comment(
+        story=story,
+        comment=comment,
+        values=values,
+        event_on_update=events.emit_event_when_story_comment_is_updated,
+    )
 
 
 ##########################################################

@@ -124,7 +124,45 @@ async def test_get_comment():
 # update_coment
 ##########################################################
 
-# TODO
+
+async def test_update_comment():
+    story = f.build_story()
+    comment = f.build_comment()
+    updated_text = "Updated text"
+
+    with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
+        fake_comments_repositories.update_comment.return_value = comment
+
+        await services.update_comment(story=story, comment=comment, values={"text": updated_text})
+
+        fake_comments_repositories.update_comment.assert_awaited_once_with(
+            comment=comment, values={"text": updated_text}
+        )
+
+
+async def test_update_comment_and_emit_event_on_update():
+    project = f.build_project()
+    story = f.build_story(project=project)
+    comment = f.build_comment()
+    updated_text = "Updated text"
+    fake_event_on_update = AsyncMock()
+
+    with (
+        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
+        patch("taiga.comments.models.Comment.project", new_callable=PropertyMock, return_value=project),
+    ):
+        fake_comments_repositories.update_comment.return_value = comment
+
+        await services.update_comment(
+            story=story, comment=comment, values={"text": updated_text}, event_on_update=fake_event_on_update
+        )
+
+        fake_comments_repositories.update_comment.assert_awaited_once_with(
+            comment=comment, values={"text": updated_text}
+        )
+
+        fake_event_on_update.assert_awaited_once_with(project=comment.project, comment=comment)
+
 
 ##########################################################
 # delete_coment

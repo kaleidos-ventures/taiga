@@ -5,9 +5,10 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 from uuid import UUID
 
+from asgiref.sync import sync_to_async
 from taiga.base.db.models import Model, QuerySet, get_contenttype_for_model
 from taiga.comments.models import Comment
 from taiga.users.models import User
@@ -145,7 +146,14 @@ async def get_comment(
 # update comment
 ##########################################################
 
-# TODO
+
+@sync_to_async
+def update_comment(comment: Comment, values: dict[str, Any] = {}) -> Comment:
+    for attr, value in values.items():
+        setattr(comment, attr, value)
+
+    comment.save()
+    return comment
 
 
 ##########################################################

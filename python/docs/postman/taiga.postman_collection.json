@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "0a4818c9-b029-4c91-bdbe-b3ad629a9dcf",
+		"_postman_id": "cfa78931-5661-45eb-b8e9-648cfbddf44a",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3299216"
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -3124,7 +3124,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/comments?order=-createdAt&order=-text&limit=100&offset=0",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/comments?order=-createdAt&limit=100&offset=0",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -3142,10 +3142,6 @@
 									"value": "-createdAt"
 								},
 								{
-									"key": "order",
-									"value": "-text"
-								},
-								{
 									"key": "limit",
 									"value": "100"
 								},
@@ -3153,6 +3149,65 @@
 									"key": "offset",
 									"value": "0"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update story comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"   pm.environment.set(\"story_version\", pm.response.json().version);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Updated text\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/stories/{{story_ref}}/comments/{{story_comment_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"stories",
+								"{{story_ref}}",
+								"comments",
+								"{{story_comment_id}}"
 							]
 						}
 					},

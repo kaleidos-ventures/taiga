@@ -17,6 +17,11 @@ class EventOnCreateCallable(Protocol):
         ...
 
 
+class EventOnUpdateCallable(Protocol):
+    def __call__(self, project: Project, comment: Comment) -> Awaitable[None]:
+        ...
+
+
 class EventOnDeleteCallable(Protocol):
     def __call__(self, project: Project, comment: Comment, deleted_by: User) -> Awaitable[None]:
         ...

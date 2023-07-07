@@ -16,6 +16,7 @@ class CommentSerializer(BaseModel):
     text: str
     created_at: datetime
     created_by: UserNestedSerializer
+    modified_at: datetime
 
     class Config:
         orm_mode = True

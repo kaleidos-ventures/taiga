@@ -140,6 +140,72 @@ async def test_list_story_comments_error_invalid_order(client):
 
 
 ##########################################################
+# PATCH projects/<id>/stories/<ref>/comments/<id>
+##########################################################
+
+
+async def test_update_story_comment_success(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project, created_by=project.created_by)
+    comment = await f.create_comment(content_object=story, created_by=story.created_by)
+
+    data = {"text": "Updated comment"}
+
+    client.login(story.created_by)
+    response = client.patch(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_update_story_comment_error_nonexistent_project(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project, created_by=project.created_by)
+    comment = await f.create_comment(content_object=story, created_by=story.created_by)
+
+    data = {"text": "Updated comment"}
+
+    client.login(story.created_by)
+    response = client.patch(f"/projects/{WRONG_B64ID}/stories/{story.ref}/comments/{comment.b64id}", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_story_comment_error_nonexistent_story(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project, created_by=project.created_by)
+    comment = await f.create_comment(content_object=story, created_by=story.created_by)
+
+    data = {"text": "Updated comment"}
+
+    client.login(story.created_by)
+    response = client.patch(f"/projects/{story.project.b64id}/stories/{WRONG_REF}/comments/{comment.b64id}", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_story_comment_error_nonexistent_comment(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project, created_by=project.created_by)
+    await f.create_comment(content_object=story, created_by=story.created_by)
+
+    data = {"text": "Updated comment"}
+
+    client.login(story.created_by)
+    response = client.patch(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{WRONG_B64ID}", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_story_comment_error_no_permissions(client):
+    not_allowed_user = await f.create_user()
+    project = await f.create_project()
+    story = await f.create_story(project=project, created_by=project.created_by)
+    comment = await f.create_comment(content_object=story, created_by=story.created_by)
+
+    data = {"text": "Updated comment"}
+
+    client.login(not_allowed_user)
+    response = client.patch(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+##########################################################
 # DELETE projects/<id>/stories/<ref>/comments/<id>
 ##########################################################
 

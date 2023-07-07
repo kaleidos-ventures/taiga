@@ -789,6 +789,21 @@ Content for:
   ```
 
 
+#### `stories.comments.update`
+
+It happens when a comment associated to an story is updated.
+
+Content for:
+- project channel:
+  ```
+
+  {
+      "ref": "story ref (int)"
+      "comment": {... "comment object" ...}
+  }
+  ```
+
+
 #### `stories.comments.delete`
 
 It happens when a comment associated to an story is deleted.

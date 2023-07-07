@@ -15,6 +15,11 @@ class CreateStoryCommentContent(BaseModel):
     comment: CommentSerializer
 
 
+class UpdateStoryCommentContent(BaseModel):
+    ref: int
+    comment: CommentSerializer
+
+
 class DeleteStoryCommentContent(BaseModel):
     id: UUIDB64
     ref: int

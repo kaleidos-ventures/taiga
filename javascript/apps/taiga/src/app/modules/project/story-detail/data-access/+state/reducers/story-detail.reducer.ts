@@ -7,20 +7,21 @@
  */
 
 import { createFeature, on } from '@ngrx/store';
-import { StoryDetail, StoryView, Workflow, UserComment } from '@taiga/data';
+import { StoryDetail, StoryView, UserComment, Workflow } from '@taiga/data';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   KanbanActions,
   KanbanApiActions,
+  KanbanEventsActions,
 } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { createImmerReducer } from '~/app/shared/utils/store';
 
+import { OrderComments } from '~/app/shared/comments/comments.component';
 import {
   StoryDetailActions,
   StoryDetailApiActions,
 } from '../actions/story-detail.actions';
-import { OrderComments } from '~/app/shared/comments/comments.component';
 
 export interface StoryDetailState {
   story: StoryDetail | null;
@@ -73,6 +74,17 @@ export const reducer = createImmerReducer(
     (state, { workflow }): StoryDetailState => {
       state.loadingWorkflow = false;
       state.workflow = workflow;
+
+      return state;
+    }
+  ),
+  on(
+    KanbanApiActions.createStatusSuccess,
+    KanbanEventsActions.updateStatus,
+    (state, { status, workflow }): StoryDetailState => {
+      if (workflow === state.workflow?.slug) {
+        state.workflow?.statuses.push(status);
+      }
 
       return state;
     }

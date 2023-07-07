@@ -115,6 +115,8 @@ export class EditStatusComponent implements OnInit {
       this.statusForm.get('name')?.setValue(this.status.name);
       this.statusForm.get('slug')?.setValue(this.status.slug);
     }
+
+    this.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   public editStatus() {
@@ -126,7 +128,7 @@ export class EditStatusComponent implements OnInit {
   }
 
   public hasChanges() {
-    return this.statusForm.get('status')?.value !== this.status?.name;
+    return this.statusForm.get('name')?.value !== this.status?.name;
   }
 
   public cancelEdit() {

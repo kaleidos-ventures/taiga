@@ -9,6 +9,7 @@ from unittest.mock import AsyncMock, PropertyMock, patch
 from uuid import uuid1
 
 import pytest
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.comments import services
 from tests.utils import factories as f
 
@@ -170,28 +171,43 @@ async def test_update_comment_and_emit_event_on_update():
 
 
 async def test_delete_comment():
+    now = aware_utcnow()
     comment = f.build_comment()
+    updated_comment = f.build_comment(id=comment.id, text="", deleted_by=comment.created_by, deleted_at=now)
 
-    with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
-        fake_comments_repositories.delete_comments.return_value = 1
+    with (
+        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
+        patch("taiga.comments.services.aware_utcnow", autospec=True) as fake_aware_utcnow,
+    ):
+        fake_aware_utcnow.return_value = now
+        fake_comments_repositories.update_comment.return_value = updated_comment
 
-        assert await services.delete_comment(comment=comment, deleted_by=comment.created_by) is True
+        assert await services.delete_comment(comment=comment, deleted_by=comment.created_by) == updated_comment
 
-        fake_comments_repositories.delete_comments.assert_awaited_once_with(
-            filters={"id": comment.id},
+        fake_comments_repositories.update_comment.assert_awaited_once_with(
+            comment=comment,
+            values={
+                "text": updated_comment.text,
+                "deleted_by": updated_comment.deleted_by,
+                "deleted_at": updated_comment.deleted_at,
+            },
         )
 
 
 async def test_delete_comment_and_emit_event_on_delete():
+    now = aware_utcnow()
     project = f.build_project()
     comment = f.build_comment()
+    updated_comment = f.build_comment(id=comment.id, text="", deleted_by=comment.created_by, deleted_at=now)
     fake_event_on_delete = AsyncMock()
 
     with (
         patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
+        patch("taiga.comments.services.aware_utcnow", autospec=True) as fake_aware_utcnow,
         patch("taiga.comments.models.Comment.project", new_callable=PropertyMock, return_value=project),
     ):
-        fake_comments_repositories.delete_comments.return_value = 1
+        fake_aware_utcnow.return_value = now
+        fake_comments_repositories.update_comment.return_value = updated_comment
 
         assert (
             await services.delete_comment(
@@ -199,38 +215,15 @@ async def test_delete_comment_and_emit_event_on_delete():
                 deleted_by=comment.created_by,
                 event_on_delete=fake_event_on_delete,
             )
-            is True
+            == updated_comment
         )
 
-        fake_comments_repositories.delete_comments.assert_awaited_once_with(
-            filters={"id": comment.id},
+        fake_comments_repositories.update_comment.assert_awaited_once_with(
+            comment=comment,
+            values={
+                "text": updated_comment.text,
+                "deleted_by": updated_comment.deleted_by,
+                "deleted_at": updated_comment.deleted_at,
+            },
         )
-        fake_event_on_delete.assert_awaited_once_with(
-            project=comment.project, comment=comment, deleted_by=comment.created_by
-        )
-
-
-async def test_delete_comment_does_not_exist():
-    project = f.build_project()
-    comment = f.build_comment()
-    fake_event_on_delete = AsyncMock()
-
-    with (
-        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
-        patch("taiga.comments.models.Comment.project", new_callable=PropertyMock, return_value=project),
-    ):
-        fake_comments_repositories.delete_comments.return_value = 0
-
-        assert (
-            await services.delete_comment(
-                comment=comment,
-                deleted_by=comment.created_by,
-                event_on_delete=fake_event_on_delete,
-            )
-            is False
-        )
-
-        fake_comments_repositories.delete_comments.assert_awaited_once_with(
-            filters={"id": comment.id},
-        )
-        fake_event_on_delete.assert_not_awaited()
+        fake_event_on_delete.assert_awaited_once_with(project=comment.project, comment=updated_comment)

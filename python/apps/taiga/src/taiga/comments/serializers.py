@@ -17,6 +17,8 @@ class CommentSerializer(BaseModel):
     created_at: datetime
     created_by: UserNestedSerializer
     modified_at: datetime
+    deleted_at: datetime | None
+    deleted_by: UserNestedSerializer | None
 
     class Config:
         orm_mode = True

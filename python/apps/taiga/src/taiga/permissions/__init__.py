@@ -60,6 +60,17 @@ class IsRelatedToTheUser(PermissionComponent):
         return await permissions_services.is_an_object_related_to_the_user(user=user, obj=obj, field=self.related_field)
 
 
+class IsNotDeleted(PermissionComponent):
+    """
+    This permission is used to check if the object is not (logical) deleted.
+    The object must have a `deleted_at` field, using the mixin
+    `taiga.base.db.mixins.DeletedMetaInfoMixin`.
+    """
+
+    async def is_authorized(self, user: "AnyUser", obj: Any = None) -> bool:
+        return not hasattr(obj, "deleted_at") or obj.deleted_at is None
+
+
 ############################################################
 # Project permissions
 ############################################################

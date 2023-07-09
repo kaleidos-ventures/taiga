@@ -8,6 +8,7 @@
 import pytest
 from asgiref.sync import sync_to_async
 from fastapi import status
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.comments import repositories as comments_repositories
 from tests.utils import factories as f
 
@@ -205,6 +206,26 @@ async def test_update_story_comment_error_no_permissions(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
+async def test_update_story_comment_error_deleted_comment(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project, created_by=project.created_by)
+    comment = await f.create_comment(content_object=story, created_by=story.created_by)
+    await comments_repositories.update_comment(
+        comment=comment,
+        values={
+            "text": "",
+            "deleted_by": story.created_by,
+            "deleted_at": aware_utcnow(),
+        },
+    )
+
+    data = {"text": "Updated comment"}
+
+    client.login(story.created_by)
+    response = client.patch(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
 ##########################################################
 # DELETE projects/<id>/stories/<ref>/comments/<id>
 ##########################################################
@@ -220,8 +241,8 @@ async def test_delete_story_comments_success_with_admin_user(client):
     assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
     client.login(admin_user)
     response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}")
-    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
-    assert await comments_repositories.get_comment(filters={"id": comment.id}) is None
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["text"] == ""
 
 
 async def test_delete_story_comments_success_with_owner_user(client):
@@ -235,8 +256,8 @@ async def test_delete_story_comments_success_with_owner_user(client):
     assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
     client.login(owner_user)
     response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}")
-    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
-    assert await comments_repositories.get_comment(filters={"id": comment.id}) is None
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert response.json()["text"] == ""
 
 
 async def test_delete_story_comment_error_no_permissions(client):
@@ -253,7 +274,27 @@ async def test_delete_story_comment_error_no_permissions(client):
     client.login(member_user)
     response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_story_comments_error_deleted_comment(client):
+    project = await f.create_project()
+    admin_user = project.created_by
+    owner_user = await f.create_user()
+    story = await f.create_story(project=project)
+    comment = await f.create_comment(content_object=story, created_by=owner_user, text="comment")
+    await comments_repositories.update_comment(
+        comment=comment,
+        values={
+            "text": "",
+            "deleted_by": owner_user,
+            "deleted_at": aware_utcnow(),
+        },
+    )
+
     assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
+    client.login(admin_user)
+    response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/comments/{comment.b64id}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 async def test_delete_story_comment_error_no_comment_permissions(client):

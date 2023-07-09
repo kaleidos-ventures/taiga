@@ -8,6 +8,10 @@
 from taiga.base.db import models
 from taiga.base.utils.datetime import aware_utcnow
 
+#######################################################
+# Generic model metadata
+#######################################################
+
 
 class CreatedAtMetaInfoMixin(models.Model):
     created_at = models.DateTimeField(
@@ -39,6 +43,41 @@ class CreatedMetaInfoMixin(CreatedByMetaInfoMixin, CreatedAtMetaInfoMixin):
         abstract = True
 
 
+class ModifiedAtMetaInfoMixin(models.Model):
+    modified_at = models.DateTimeField(
+        null=False,
+        blank=False,
+        auto_now=True,
+        verbose_name="modified at",
+    )
+
+    class Meta:
+        abstract = True
+
+
+class DeletedMetaInfoMixin(models.Model):
+    deleted_by = models.ForeignKey(
+        "users.User",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name="deleted by",
+    )
+    deleted_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="deleted at",
+    )
+
+    class Meta:
+        abstract = True
+
+
+#######################################################
+# Title
+#######################################################
+
+
 class TitleUpdatedMetaInfoMixin(models.Model):
     title_updated_by = models.ForeignKey(
         "users.User",
@@ -57,6 +96,11 @@ class TitleUpdatedMetaInfoMixin(models.Model):
         abstract = True
 
 
+#######################################################
+# Description
+#######################################################
+
+
 class DescriptionUpdatedMetaInfoMixin(models.Model):
     description_updated_by = models.ForeignKey(
         "users.User",
@@ -69,18 +113,6 @@ class DescriptionUpdatedMetaInfoMixin(models.Model):
         null=True,
         blank=True,
         verbose_name="description updated at",
-    )
-
-    class Meta:
-        abstract = True
-
-
-class ModifiedAtMetaInfoMixin(models.Model):
-    modified_at = models.DateTimeField(
-        null=False,
-        blank=False,
-        auto_now=True,
-        verbose_name="modified at",
     )
 
     class Meta:

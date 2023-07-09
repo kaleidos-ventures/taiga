@@ -9,7 +9,6 @@ from typing import Awaitable, Protocol
 
 from taiga.comments.models import Comment
 from taiga.projects.projects.models import Project
-from taiga.users.models import User
 
 
 class EventOnCreateCallable(Protocol):
@@ -23,5 +22,5 @@ class EventOnUpdateCallable(Protocol):
 
 
 class EventOnDeleteCallable(Protocol):
-    def __call__(self, project: Project, comment: Comment, deleted_by: User) -> Awaitable[None]:
+    def __call__(self, project: Project, comment: Comment) -> Awaitable[None]:
         ...

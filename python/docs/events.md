@@ -813,8 +813,7 @@ Content for:
   ```
 
   {
-      "id": "comment id (UUIDB64)"
       "ref": "story ref (int)"
-      "deletedBy": {... basic user info ...}
+      "comment": {... "comment object" ...}
   }
   ```

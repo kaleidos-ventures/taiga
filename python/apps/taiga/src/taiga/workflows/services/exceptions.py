@@ -23,4 +23,3 @@ class NonExistingMoveToStatus(TaigaServiceException):
 
 class SameMoveToStatus(TaigaServiceException):
     ...
-

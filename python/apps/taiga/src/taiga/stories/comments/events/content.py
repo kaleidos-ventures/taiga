@@ -5,9 +5,9 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from taiga.base.serializers import UUIDB64, BaseModel
+
+from taiga.base.serializers import BaseModel
 from taiga.comments.serializers import CommentSerializer
-from taiga.users.serializers.nested import UserNestedSerializer
 
 
 class CreateStoryCommentContent(BaseModel):
@@ -21,6 +21,5 @@ class UpdateStoryCommentContent(BaseModel):
 
 
 class DeleteStoryCommentContent(BaseModel):
-    id: UUIDB64
     ref: int
-    deleted_by: UserNestedSerializer
+    comment: CommentSerializer

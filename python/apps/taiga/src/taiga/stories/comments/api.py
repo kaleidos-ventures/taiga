@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Depends, Query, Response, status
+from fastapi import Depends, Query, Response
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api.pagination import PaginationQuery
@@ -19,7 +19,7 @@ from taiga.comments.serializers import CommentSerializer
 from taiga.comments.validators import CommentOrderQuery, CreateCommentValidator, UpdateCommentValidator
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
-from taiga.permissions import HasPerm, IsProjectAdmin, IsRelatedToTheUser
+from taiga.permissions import HasPerm, IsNotDeleted, IsProjectAdmin, IsRelatedToTheUser
 from taiga.routers import routes
 from taiga.stories.comments import events
 from taiga.stories.stories.api import get_story_or_404
@@ -28,8 +28,10 @@ from taiga.stories.stories.models import Story
 # PERMISSIONS
 CREATE_STORY_COMMENT = HasPerm("comment_story")
 LIST_STORY_COMMENTS = HasPerm("view_story")
-UPDATE_STORY_COMMENT = IsRelatedToTheUser("created_by") & HasPerm("comment_story")
-DELETE_STORY_COMMENT = IsProjectAdmin() | (IsRelatedToTheUser("created_by") & HasPerm("comment_story"))
+UPDATE_STORY_COMMENT = IsNotDeleted() & IsRelatedToTheUser("created_by") & HasPerm("comment_story")
+DELETE_STORY_COMMENT = IsNotDeleted() & (
+    IsProjectAdmin() | (IsRelatedToTheUser("created_by") & HasPerm("comment_story"))
+)
 
 
 ##########################################################
@@ -143,15 +145,15 @@ async def update_story_comments(
     "/projects/{project_id}/stories/{ref}/comments/{comment_id}",
     name="project.story.comments.delete",
     summary="Delete story comment",
-    responses=ERROR_404 | ERROR_403,
-    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=CommentSerializer,
+    responses=ERROR_403 | ERROR_404,
 )
 async def delete_story_comment(
     request: AuthRequest,
     project_id: B64UUID,
     ref: int,
     comment_id: B64UUID,
-) -> None:
+) -> Comment:
     """
     Delete a comment
     """
@@ -159,7 +161,7 @@ async def delete_story_comment(
     comment = await get_story_comment_or_404(comment_id=comment_id, story=story)
     await check_permissions(permissions=DELETE_STORY_COMMENT, user=request.user, obj=comment)
 
-    await comments_services.delete_comment(
+    return await comments_services.delete_comment(
         comment=comment,
         deleted_by=request.user,
         event_on_delete=events.emit_event_when_story_comment_is_deleted,

@@ -10,6 +10,7 @@ from uuid import UUID
 
 from taiga.base.api import Pagination
 from taiga.base.db.models import Model
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.comments import repositories as comments_repositories
 from taiga.comments.events import EventOnCreateCallable, EventOnDeleteCallable, EventOnUpdateCallable
 from taiga.comments.models import Comment
@@ -105,10 +106,17 @@ async def delete_comment(
     comment: Comment,
     deleted_by: User,
     event_on_delete: EventOnDeleteCallable | None = None,
-) -> bool:
-    deleted = await comments_repositories.delete_comments(filters={"id": comment.id})
+) -> Comment:
+    updated_comment = await comments_repositories.update_comment(
+        comment=comment,
+        values={
+            "text": "",
+            "deleted_by": deleted_by,
+            "deleted_at": aware_utcnow(),
+        },
+    )
 
-    if deleted > 0 and event_on_delete:
-        await event_on_delete(project=comment.project, comment=comment, deleted_by=deleted_by)
+    if event_on_delete:
+        await event_on_delete(project=updated_comment.project, comment=updated_comment)
 
-    return deleted > 0
+    return updated_comment

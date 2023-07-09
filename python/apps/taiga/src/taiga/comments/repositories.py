@@ -43,15 +43,16 @@ async def _apply_filters_to_queryset(
 CommentSelectRelated = list[
     Literal[
         "created_by",
+        "deleted_by",
     ]
 ]
 
 
 async def _apply_select_related_to_queryset(
     qs: QuerySet[Comment],
-    select_related: CommentSelectRelated = ["created_by"],
+    select_related: CommentSelectRelated = [],
 ) -> QuerySet[Comment]:
-    return qs.select_related(*select_related)
+    return qs.select_related(*(select_related + ["created_by", "deleted_by"]))
 
 
 CommentPrefetchRelated = list[

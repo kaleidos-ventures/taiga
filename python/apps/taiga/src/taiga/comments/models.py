@@ -9,7 +9,7 @@
 import functools
 
 from taiga.base.db import models
-from taiga.base.db.mixins import CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin
+from taiga.base.db.mixins import CreatedMetaInfoMixin, DeletedMetaInfoMixin, ModifiedAtMetaInfoMixin
 from taiga.base.utils.uuid import encode_uuid_to_b64str
 from taiga.projects.projects.models import Project
 
@@ -18,6 +18,7 @@ class Comment(
     models.BaseModel,
     CreatedMetaInfoMixin,
     ModifiedAtMetaInfoMixin,
+    DeletedMetaInfoMixin,
 ):
     text = models.TextField(null=False, blank=False, verbose_name="text")
     object_content_type = models.ForeignKey(
@@ -42,7 +43,7 @@ class Comment(
         models.UniqueConstraint(
             fields=["content_type", "object_id"], name="%(app_label)s_%(class)s_unique_content_type-object_id"
         )
-        ordering = ["object_content_type", "-created_at"]
+        ordering = ["object_content_type", "object_id", "-created_at"]
 
     def __str__(self) -> str:
         return f'"{self.text}" (by {self.created_by} on {self.content_object})'

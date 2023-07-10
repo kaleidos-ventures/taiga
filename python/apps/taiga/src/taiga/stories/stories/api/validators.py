@@ -9,7 +9,7 @@ from typing import Any
 
 from pydantic import ConstrainedStr, conlist, validator
 from pydantic.types import PositiveInt
-from taiga.base.validators import BaseModel, StrNotEmpty
+from taiga.base.validators import B64UUID, BaseModel
 
 
 class Title(ConstrainedStr):
@@ -21,14 +21,14 @@ class Title(ConstrainedStr):
 class StoryValidator(BaseModel):
     title: Title
     description: str | None = None
-    status: StrNotEmpty
+    status: B64UUID
 
 
 class UpdateStoryValidator(BaseModel):
     version: PositiveInt
     title: Title | None
     description: str | None
-    status: str | None
+    status: B64UUID | None
 
 
 class ReorderValidator(BaseModel):
@@ -42,7 +42,7 @@ class ReorderValidator(BaseModel):
 
 
 class ReorderStoriesValidator(BaseModel):
-    status: StrNotEmpty
+    status: B64UUID
     stories: conlist(int, min_items=1)  # type: ignore[valid-type]
     reorder: ReorderValidator | None
 

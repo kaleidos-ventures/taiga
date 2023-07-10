@@ -237,7 +237,7 @@ async def create_stories(
     async for story in Story.objects.select_related().filter(project=project):
 
         if fake.random_number(digits=2) < constants.PROB_STORY_ASSIGNMENTS.get(
-            story.status.slug.lower(), constants.PROB_STORY_ASSIGNMENTS_DEFAULT
+            story.status.name, constants.PROB_STORY_ASSIGNMENTS_DEFAULT
         ):
             # Sometimes we assign all the members
             members_sample = (
@@ -256,7 +256,7 @@ async def create_stories(
         if with_comments:
             await create_story_comments(
                 story=story,
-                status_slug=story.status.slug.lower(),
+                status_name=story.status.name,
                 pj_members=members,
             )
 
@@ -298,12 +298,12 @@ async def _create_story(
 
 
 async def create_story_comments(
-    story: Story, status_slug: str, pj_members: list[User], text: str | None = None
+    story: Story, status_name: str, pj_members: list[User], text: str | None = None
 ) -> None:
     story_comments = []
-    prob_comments = constants.PROB_STORY_COMMENTS.get(status_slug, constants.PROB_STORY_COMMENTS_DEFAULT)
+    prob_comments = constants.PROB_STORY_COMMENTS.get(status_name, constants.PROB_STORY_COMMENTS_DEFAULT)
     if fake.random_number(digits=2) < prob_comments:
-        max_comments = constants.PROB_STORY_COMMENTS.get(status_slug, constants.PROB_STORY_COMMENTS_DEFAULT)
+        max_comments = constants.PROB_STORY_COMMENTS.get(status_name, constants.PROB_STORY_COMMENTS_DEFAULT)
         for _ in range(fake.random_int(min=1, max=max_comments)):
             story_comments.append(
                 await _create_comment_object(

@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "cfa78931-5661-45eb-b8e9-648cfbddf44a",
+		"_postman_id": "77429f0b-3edc-4811-b411-e880c3c03d88",
 		"name": "taiga-next",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -2383,7 +2382,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/{{ws-slug}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/{{wfs-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -2394,7 +2393,7 @@
 								"workflows",
 								"{{wf-slug}}",
 								"statuses",
-								"{{ws-slug}}"
+								"{{wfs-id}}"
 							]
 						}
 					},
@@ -2434,7 +2433,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"statuses\": [\"ready\"],\n    \"reorder\": {\n        \"place\": \"after\",\n        \"status\": \"in-progress\"\n    }\n\n}",
+							"raw": "{\n    \"statuses\": [\"O7AUw-FEe6olgX_6PB1Tw\"],\n    \"reorder\": {\n        \"place\": \"after\",\n        \"status\": \"O7AUg-FEe6olgX_6PB1Tw\"\n    }\n\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2499,7 +2498,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/{{ws-slug}}?moveTo=in-progress",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/{{wfs-id}}?moveTo={{wfs-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -2510,12 +2509,12 @@
 								"workflows",
 								"{{wf-slug}}",
 								"statuses",
-								"{{ws-slug}}"
+								"{{wfs-id}}"
 							],
 							"query": [
 								{
 									"key": "moveTo",
-									"value": "in-progress"
+									"value": "{{wfs-id}}"
 								}
 							]
 						}
@@ -2562,7 +2561,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"story2\",\n    \"description\": \"desc\",\n    \"status\": \"new\"\n}",
+							"raw": "{\n    \"title\": \"story2\",\n    \"description\": \"desc\",\n    \"status\": \"O7AUg-FEe6olgX_6PB1Tw\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2784,7 +2783,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"status\": \"done\",\n    \"stories\": [1],\n    \"reorder\": {\"place\": \"before\", \"ref\": 2 }\n}",
+							"raw": "{\n    \"status\": \"O7AUg-FEe6olgX_6PB1Tw\",\n    \"stories\": [1],\n    \"reorder\": {\"place\": \"before\", \"ref\": 2 }\n}",
 							"options": {
 								"raw": {
 									"language": "json"

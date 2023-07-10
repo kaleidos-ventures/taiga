@@ -44,7 +44,7 @@ async def test_create_story_ok():
             workflow=status.workflow,
             title=story.title,
             description=story.description,
-            status_slug=status.slug,
+            status_id=status.id,
             user=user,
         )
 
@@ -58,7 +58,7 @@ async def test_create_story_ok():
             order=Decimal(100),
         )
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
-            filters={"slug": status.slug, "workflow_id": status.workflow.id}
+            filters={"id": status.id, "workflow_id": status.workflow.id}
         )
         fake_stories_repo.list_stories.assert_awaited_once_with(
             filters={"status_id": status.id}, order_by=["-order"], offset=0, limit=1
@@ -83,7 +83,7 @@ async def test_create_story_invalid_status():
             workflow=build_workflow_serializer(story),
             title=story.title,
             description=story.description,
-            status_slug="invalid_slug",
+            status_id="invalid_id",
             user=user,
         )
 
@@ -302,7 +302,7 @@ async def test_validate_and_process_values_to_update_ok_without_status():
 async def test_validate_and_process_values_to_update_ok_with_status_empty():
     story = f.build_story()
     status = f.build_workflow_status()
-    values = {"title": "new title", "description": "new description", "status": status.slug}
+    values = {"title": "new title", "description": "new description", "status": status.id}
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
@@ -314,7 +314,7 @@ async def test_validate_and_process_values_to_update_ok_with_status_empty():
         valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
 
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
-            filters={"workflow_id": story.workflow_id, "slug": values["status"]},
+            filters={"workflow_id": story.workflow_id, "id": values["status"]},
         )
         fake_stories_repo.list_stories.assert_awaited_once_with(
             filters={"status_id": status.id},
@@ -332,7 +332,7 @@ async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
     story = f.build_story()
     status = f.build_workflow_status()
     story2 = f.build_story(status=status, order=42)
-    values = {"title": "new title", "description": "new description", "status": status.slug}
+    values = {"title": "new title", "description": "new description", "status": status.id}
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
@@ -344,7 +344,7 @@ async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
         valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
 
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
-            filters={"workflow_id": story.workflow_id, "slug": values["status"]},
+            filters={"workflow_id": story.workflow_id, "id": values["status"]},
         )
         fake_stories_repo.list_stories.assert_awaited_once_with(
             filters={"status_id": status.id},
@@ -361,7 +361,7 @@ async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
 async def test_validate_and_process_values_to_update_ok_with_same_status():
     status = f.build_workflow_status()
     story = f.build_story(status=status)
-    values = {"title": "new title", "description": "new description", "status": status.slug}
+    values = {"title": "new title", "description": "new description", "status": status.id}
 
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
@@ -372,7 +372,7 @@ async def test_validate_and_process_values_to_update_ok_with_same_status():
         valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
 
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
-            filters={"workflow_id": story.workflow_id, "slug": values["status"]},
+            filters={"workflow_id": story.workflow_id, "id": values["status"]},
         )
         fake_stories_repo.list_stories.assert_not_awaited()
 
@@ -395,7 +395,7 @@ async def test_validate_and_process_values_to_update_error_wrong_status():
             await services._validate_and_process_values_to_update(story=story, values=values)
 
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
-            filters={"workflow_id": story.workflow_id, "slug": "wrong_status"},
+            filters={"workflow_id": story.workflow_id, "id": "wrong_status"},
         )
         fake_stories_repo.list_stories.assert_not_awaited()
 
@@ -478,7 +478,7 @@ async def test_reorder_stories_ok():
 
         await services.reorder_stories(
             project=f.build_project(),
-            target_status_slug=target_status.slug,
+            target_status_id=target_status.id,
             workflow=f.build_workflow(),
             stories_refs=[13, 54, 2],
             reorder={"place": "after", "ref": reorder_story.ref},
@@ -499,7 +499,7 @@ async def test_reorder_story_workflowstatus_does_not_exist():
 
         await services.reorder_stories(
             project=f.build_project(),
-            target_status_slug="non-existing",
+            target_status_id="non-existing",
             workflow=f.build_workflow(),
             stories_refs=[13, 54, 2],
             reorder={"place": "after", "ref": 3},
@@ -519,7 +519,7 @@ async def test_reorder_story_story_ref_does_not_exist():
 
         await services.reorder_stories(
             project=f.build_project(),
-            target_status_slug=target_status.slug,
+            target_status_id=target_status.id,
             workflow=f.build_workflow(),
             stories_refs=[13, 54, 2],
             reorder={"place": "after", "ref": 3},
@@ -541,7 +541,7 @@ async def test_reorder_story_not_all_stories_exist():
 
         await services.reorder_stories(
             project=f.build_project(),
-            target_status_slug=target_status.slug,
+            target_status_id=target_status.id,
             workflow=f.build_workflow(),
             stories_refs=[13, 54, 2],
             reorder={"place": "after", "ref": reorder_story.ref},
@@ -608,7 +608,6 @@ def build_nested_status_serializer(status):
     return WorkflowStatusNestedSerializer(
         id=status.id,
         name=status.name,
-        slug=status.slug,
         color=status.color,
         order=status.order,
     )

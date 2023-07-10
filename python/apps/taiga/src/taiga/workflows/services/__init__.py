@@ -88,7 +88,7 @@ async def create_workflow_status(name: str, color: int, workflow: Workflow) -> W
 
     # Create workflow status
     workflow_status = await workflows_repositories.create_workflow_status(
-        name=name, slug=None, color=color, order=order, workflow=workflow
+        name=name, color=color, order=order, workflow=workflow
     )
 
     # Emit event
@@ -104,12 +104,12 @@ async def create_workflow_status(name: str, color: int, workflow: Workflow) -> W
 ##########################################################
 
 
-async def get_workflow_status(project_id: UUID, workflow_slug: str, status_slug: str) -> WorkflowStatus | None:
+async def get_workflow_status(project_id: UUID, workflow_slug: str, id: UUID) -> WorkflowStatus | None:
     return await workflows_repositories.get_workflow_status(
         filters={
             "project_id": project_id,
             "workflow_slug": workflow_slug,
-            "slug": status_slug,
+            "id": id,
         },
         select_related=["workflow", "workflow_project"],
     )
@@ -177,7 +177,7 @@ async def _calculate_offset(
 
 async def reorder_workflow_statuses(
     workflow: Workflow,
-    statuses: list[str],
+    statuses: list[UUID],
     reorder: dict[str, Any],
 ) -> ReorderWorkflowStatusesSerializer:
 
@@ -186,7 +186,7 @@ async def reorder_workflow_statuses(
 
     # check anchor workflow status exists
     reorder_status = await workflows_repositories.get_workflow_status(
-        filters={"workflow_id": workflow.id, "slug": reorder["status"]}
+        filters={"workflow_id": workflow.id, "id": reorder["status"]}
     )
     if not reorder_status:
         raise ex.InvalidWorkflowStatusError(f"Status {reorder['status']} doesn't exist in this workflow")
@@ -194,7 +194,7 @@ async def reorder_workflow_statuses(
 
     # check all statuses "to reorder" exist
     statuses_to_reorder = await workflows_repositories.list_workflow_statuses_to_reorder(
-        filters={"workflow_id": workflow.id, "slugs": statuses}
+        filters={"workflow_id": workflow.id, "ids": statuses}
     )
     if len(statuses_to_reorder) < len(statuses):
         raise ex.InvalidWorkflowStatusError("One or more statuses don't exist in this workflow")
@@ -208,10 +208,10 @@ async def reorder_workflow_statuses(
     )
 
     # update workflow statuses
-    statuses_to_update_tmp = {s.slug: s for s in statuses_to_reorder}
+    statuses_to_update_tmp = {s.id: s for s in statuses_to_reorder}
     statuses_to_update = []
-    for i, slug in enumerate(statuses):
-        status = statuses_to_update_tmp[slug]
+    for i, id in enumerate(statuses):
+        status = statuses_to_update_tmp[id]
         status.order = pre_order + (offset * (i + 1))
         statuses_to_update.append(status)
 
@@ -237,13 +237,13 @@ async def reorder_workflow_statuses(
 ##########################################################
 
 
-async def delete_workflow_status(workflow_status: WorkflowStatus, move_to_status_slug: str | None) -> bool:
+async def delete_workflow_status(workflow_status: WorkflowStatus, target_status_id: UUID | None) -> bool:
     """
     This method deletes a workflow status, providing the option to first migrating its stories to another workflow
     status of the same workflow.
 
     :param workflow_status: the workflow status to delete
-    :param move_to_status_slug: the workflow status's slug to which move the stories from the status being deleted
+    :param target_status: the workflow status's id to which move the stories from the status being deleted
         - if not received, all the workflow status and its contained stories will be deleted
         - if received, the workflow status will be deleted but its contained stories won't (they will be first moved to
          the specified status)
@@ -251,15 +251,14 @@ async def delete_workflow_status(workflow_status: WorkflowStatus, move_to_status
     """
     # before deleting the workflow status, its stories may be transferred to an existing workflow status
     # in the same workflow
-    if move_to_status_slug:
-        move_to_status = await get_workflow_status(
-            project_id=workflow_status.project.id,
-            workflow_slug=workflow_status.workflow.slug,
-            status_slug=move_to_status_slug,
+    target_status = None
+    if target_status_id:
+        target_status = await get_workflow_status(
+            project_id=workflow_status.project.id, workflow_slug=workflow_status.workflow.slug, id=target_status_id
         )
-        if not move_to_status:
-            raise ex.NonExistingMoveToStatus(f"The status '{move_to_status_slug}' doesn't exist")
-        if move_to_status == workflow_status:
+        if not target_status:
+            raise ex.NonExistingMoveToStatus(f"The status '{target_status_id}' doesn't exist")
+        if target_status.id == workflow_status.id:
             raise ex.SameMoveToStatus("The to-be-deleted status and the target-status cannot be the same")
 
         stories_to_move = await stories_repositories.list_stories(
@@ -273,14 +272,14 @@ async def delete_workflow_status(workflow_status: WorkflowStatus, move_to_status
             await stories_services.reorder_stories(
                 project=workflow_status.project,
                 workflow=workflow_status.workflow,
-                target_status_slug=move_to_status_slug,
+                target_status_id=target_status_id,
                 stories_refs=[story.ref for story in stories_to_move],
             )
 
     deleted = await workflows_repositories.delete_workflow_status(filters={"id": workflow_status.id})
     if deleted > 0:
         await workflows_events.emit_event_when_workflow_status_is_deleted(
-            project=workflow_status.project, workflow_status=workflow_status, move_to_status_slug=move_to_status_slug
+            project=workflow_status.project, workflow_status=workflow_status, target_status=target_status
         )
         return True
 

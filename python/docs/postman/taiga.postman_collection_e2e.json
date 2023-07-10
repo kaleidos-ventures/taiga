@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "72411ae8-16d8-475f-a19b-020f587a5fac",
+		"_postman_id": "b5015334-d480-4bbe-8d43-a635cb15da26",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -1144,7 +1143,7 @@
 					"response": []
 				},
 				{
-					"name": "204 workspaces.{p}",
+					"name": "204 workspaces.{pj}",
 					"event": [
 						{
 							"listen": "test",
@@ -1271,7 +1270,7 @@
 					"response": []
 				},
 				{
-					"name": "200 workspaces.{w}",
+					"name": "200 workspaces.{ws}",
 					"event": [
 						{
 							"listen": "test",
@@ -1407,10 +1406,10 @@
 			]
 		},
 		{
-			"name": "workspaces.{w}.projects",
+			"name": "workspaces.{ws}.projects",
 			"item": [
 				{
-					"name": "N/A log in as 1000user",
+					"name": "N/A log in as 1user",
 					"event": [
 						{
 							"listen": "test",
@@ -1442,7 +1441,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"1000user\",\n    \"password\": \"123123\"\n}"
+							"raw": "{\n    \"username\": \"1user\",\n    \"password\": \"123123\"\n}"
 						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/auth/token",
@@ -1520,7 +1519,7 @@
 					"response": []
 				},
 				{
-					"name": "200 workspaces.{w}.projects",
+					"name": "200 workspaces.{ws}.projects",
 					"event": [
 						{
 							"listen": "test",
@@ -1910,7 +1909,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}",
+					"name": "200 projects.{pj}",
 					"event": [
 						{
 							"listen": "test",
@@ -1997,7 +1996,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.roles.{r}.permissions",
+					"name": "200 projects.{pj}.roles.{r}.permissions",
 					"event": [
 						{
 							"listen": "test",
@@ -2072,7 +2071,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.roles",
+					"name": "200 projects.{pj}.roles",
 					"event": [
 						{
 							"listen": "test",
@@ -2148,7 +2147,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.public-permissions",
+					"name": "200 projects.{pj}.public-permissions",
 					"event": [
 						{
 							"listen": "test",
@@ -2212,7 +2211,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.public-permissions",
+					"name": "200 projects.{pj}.public-permissions",
 					"event": [
 						{
 							"listen": "test",
@@ -2279,7 +2278,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.workflows",
+					"name": "200 projects.{pj}.workflows",
 					"event": [
 						{
 							"listen": "test",
@@ -2443,7 +2442,7 @@
 					"response": []
 				},
 				{
-					"name": "204 projects.{p}",
+					"name": "204 projects.{pj}",
 					"event": [
 						{
 							"listen": "test",
@@ -2500,7 +2499,7 @@
 			]
 		},
 		{
-			"name": "projects.{p}.workflows",
+			"name": "projects.{pj}.workflows",
 			"item": [
 				{
 					"name": "N/A log in as 1user",
@@ -2628,7 +2627,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.workflows",
+					"name": "200.projects.{pj}.workflows",
 					"event": [
 						{
 							"listen": "test",
@@ -2654,10 +2653,10 @@
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes[0].statuses[0]).to.have.property(\"name\");",
-									"    pm.expect(jsonRes[0].statuses[0]).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes[0].statuses[0]).to.have.property(\"id\");",
 									"    pm.expect(jsonRes[0].statuses[0]).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes[0].statuses[0]).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2698,7 +2697,7 @@
 			]
 		},
 		{
-			"name": "projects.{p}.workflows.{wf}",
+			"name": "projects.{pj}.workflows.{wf}",
 			"item": [
 				{
 					"name": "N/A log in as 1user",
@@ -2826,7 +2825,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.workflows.{wf}",
+					"name": "200.projects.{pj}.workflows.{wf}",
 					"event": [
 						{
 							"listen": "test",
@@ -2853,11 +2852,10 @@
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"id\");",
 									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"name\");",
-									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"color\");",
 									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"order\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes.statuses[0]).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2899,7 +2897,7 @@
 			]
 		},
 		{
-			"name": "projects.{p}.workflows.{wf}.statuses",
+			"name": "projects.{pj}.workflows.{wf}.statuses",
 			"item": [
 				{
 					"name": "N/A log in as 1user",
@@ -2960,6 +2958,8 @@
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
 									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
+									"",
+									"",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3027,7 +3027,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.workflows.{wf}.statuses",
+					"name": "200.projects.{pj}.workflows.{wf}.statuses",
 					"event": [
 						{
 							"listen": "test",
@@ -3035,7 +3035,7 @@
 								"exec": [
 									"// Post-request execution tasks",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"ws-slug\", pm.response.json().name);",
+									"    pm.environment.set(\"wfs-id\", pm.response.json().id);",
 									"});",
 									"",
 									"// Tests",
@@ -3049,12 +3049,11 @@
 									"    // Validate response API contract",
 									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"name\");",
-									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"color\");",
 									"    pm.expect(jsonRes).to.have.property(\"order\");",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(6);    ",
+									"    pm.expect(numOfReturnedFields).to.equal(5);    ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3104,7 +3103,58 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.workflows.{wf}.statuses.{ws}",
+					"name": "N/A get workflows and statuses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    statuses = pm.response.json()[0].statuses;",
+									"    pm.environment.set(\"wfs-new\", statuses[0].id);",
+									"    pm.environment.set(\"wfs-ready\", statuses[1].id);",
+									"    pm.environment.set(\"wfs-in-progress\", statuses[2].id);",
+									"    pm.environment.set(\"wfs-done\", statuses[3].id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{pj}.workflows.{wf}.statuses.{wfs}",
 					"event": [
 						{
 							"listen": "test",
@@ -3119,10 +3169,9 @@
 									"    var jsonRes = pm.response.json();",
 									"",
 									"    // Validate response API contract",
-									"    pm.expect(Object.keys(jsonRes).length).to.equal(6);",
+									"    pm.expect(Object.keys(jsonRes).length).to.equal(5);",
 									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"name\");",
-									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"color\");",
 									"    pm.expect(jsonRes).to.have.property(\"order\");",
 									"    pm.expect(jsonRes).to.have.property(\"workflow\");",
@@ -3162,7 +3211,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/{{ws-slug}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/{{wfs-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -3173,14 +3222,14 @@
 								"workflows",
 								"{{wf-slug}}",
 								"statuses",
-								"{{ws-slug}}"
+								"{{wfs-id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.workflows.{wf}.statuses.reorder",
+					"name": "200.projects.{pj}.workflows.{wf}.statuses.reorder",
 					"event": [
 						{
 							"listen": "test",
@@ -3233,7 +3282,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"statuses\": [\"new\", \"in-progress\"],\n    \"reorder\": {\n        \"place\": \"before\",\n        \"status\": \"done\"\n    }   \n\n}\n",
+							"raw": "{\n    \"statuses\": [\"{{wfs-new}}\", \"{{wfs-ready}}\"],\n    \"reorder\": {\n        \"place\": \"before\",\n        \"status\": \"{{wfs-done}}\"\n    }   \n\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3259,7 +3308,7 @@
 					"response": []
 				},
 				{
-					"name": "204.projects.{p}.workflows.{wf}.statuses.{ws}",
+					"name": "204.projects.{pj}.workflows.{wf}.statuses.{wfs}",
 					"event": [
 						{
 							"listen": "test",
@@ -3303,7 +3352,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/{{ws-slug}}?moveTo=in-progress",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/statuses/{{wfs-new}}?moveTo={{wfs-done}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -3314,12 +3363,12 @@
 								"workflows",
 								"{{wf-slug}}",
 								"statuses",
-								"{{ws-slug}}"
+								"{{wfs-new}}"
 							],
 							"query": [
 								{
 									"key": "moveTo",
-									"value": "in-progress"
+									"value": "{{wfs-done}}"
 								}
 							]
 						}
@@ -3329,7 +3378,7 @@
 			]
 		},
 		{
-			"name": "projects.{p}.workflows.{wf}.stories",
+			"name": "projects.{pj}.workflows.{wf}.stories",
 			"item": [
 				{
 					"name": "N/A log in as 1user",
@@ -3457,7 +3506,58 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.workflows.{wf}.stories",
+					"name": "N/A get workflows and statuses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    statuses = pm.response.json()[0].statuses;",
+									"    pm.environment.set(\"wfs-new\", statuses[0].id);",
+									"    pm.environment.set(\"wfs-ready\", statuses[1].id);",
+									"    pm.environment.set(\"wfs-in-progress\", statuses[2].id);",
+									"    pm.environment.set(\"wfs-done\", statuses[3].id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{pj}.workflows.{wf}.stories",
 					"event": [
 						{
 							"listen": "test",
@@ -3496,10 +3596,10 @@
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
-									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes.status).to.have.property(\"id\");",
 									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    ",
 									"});"
 								],
@@ -3525,7 +3625,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"done\"\n}",
+							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"{{wfs-in-progress}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3533,7 +3633,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories?offset=0&limit=10",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -3544,13 +3644,23 @@
 								"workflows",
 								"{{wf-slug}}",
 								"stories"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.workflows.{wf}.stories",
+					"name": "200.projects.{pj}.workflows.{wf}.stories",
 					"event": [
 						{
 							"listen": "test",
@@ -3576,10 +3686,10 @@
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes[0].status).to.have.property(\"name\");",
-									"    pm.expect(jsonRes[0].status).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes[0].status).to.have.property(\"id\");",
 									"    pm.expect(jsonRes[0].status).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes[0].status).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3630,7 +3740,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A 200.projects.{p}.workflows.{wf}.stories",
+					"name": "N/A 200.projects.{pj}.workflows.{wf}.stories",
 					"event": [
 						{
 							"listen": "test",
@@ -3670,7 +3780,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"done\"\n}",
+							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"{{wfs-done}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3695,7 +3805,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.workflows.{wf}.stories.reorder",
+					"name": "200.projects.{pj}.workflows.{wf}.stories.reorder",
 					"event": [
 						{
 							"listen": "test",
@@ -3738,7 +3848,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"status\": \"done\",\n    \"stories\": [{{ref2}}],\n    \"reorder\": {\"place\": \"before\", \"ref\": {{ref1}}}\n}",
+							"raw": "{\n    \"status\": \"{{wfs-in-progress}}\",\n    \"stories\": [{{ref2}}],\n    \"reorder\": {\"place\": \"before\", \"ref\": {{ref1}}}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3766,7 +3876,7 @@
 			]
 		},
 		{
-			"name": "projects.{p}.stories.{ref}",
+			"name": "projects.{pj}.stories.{ref}",
 			"item": [
 				{
 					"name": "N/A log in as 1user",
@@ -3818,7 +3928,199 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.stories.{ref}",
+					"name": "N/A create project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.set(\"pj-id\", pm.response.json().id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "description",
+									"value": "My description",
+									"type": "text"
+								},
+								{
+									"key": "workspaceId",
+									"value": "{{ws-id}}",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": "/home/daniel/Pictures/phidays_2021.png",
+									"disabled": true
+								},
+								{
+									"key": "color",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "My project",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "N/A get workflows and statuses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    statuses = pm.response.json()[0].statuses;",
+									"    pm.environment.set(\"wfs-new\", statuses[0].id);",
+									"    pm.environment.set(\"wfs-ready\", statuses[1].id);",
+									"    pm.environment.set(\"wfs-in-progress\", statuses[2].id);",
+									"    pm.environment.set(\"wfs-done\", statuses[3].id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "N/A 200.projects.{pj}.workflows.{wf}.stories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    pm.environment.set(\"ref2\", jsonRes.ref);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"{{wfs-done}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}/stories",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}",
+								"stories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{pj}.stories.{ref}",
 					"event": [
 						{
 							"listen": "test",
@@ -3853,10 +4155,10 @@
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
-									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes.status).to.have.property(\"id\");",
 									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"",
 									"    pm.expect(jsonRes.workflow).to.have.property(\"name\");",
 									"    pm.expect(jsonRes.workflow).to.have.property(\"slug\");",
@@ -3865,7 +4167,7 @@
 									"});",
 									"",
 									"pm.test(\"Environment variable settings\", function () {",
-									"    pm.environment.set(\"story_version\", pm.response.json().ref);",
+									"    pm.environment.set(\"story_version\", pm.response.json().version);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3905,7 +4207,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.stories.{ref}",
+					"name": "200.projects.{pj}.stories.{ref}",
 					"event": [
 						{
 							"listen": "test",
@@ -3941,10 +4243,10 @@
 									"",
 									"    // Validate second-level entries",
 									"    pm.expect(jsonRes.status).to.have.property(\"name\");",
-									"    pm.expect(jsonRes.status).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes.status).to.have.property(\"id\");",
 									"    pm.expect(jsonRes.status).to.have.property(\"color\");",
 									"    var numOfReturnedFields = Object.keys(jsonRes.status).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"",
 									"    pm.expect(jsonRes.workflow).to.have.property(\"name\");",
 									"    pm.expect(jsonRes.workflow).to.have.property(\"slug\");",
@@ -4002,7 +4304,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.stories.{ref}",
+					"name": "200.projects.{pj}.stories.{ref}",
 					"event": [
 						{
 							"listen": "test",
@@ -4052,10 +4354,10 @@
 			]
 		},
 		{
-			"name": "projects.{p}.stories.{ref}.assignments",
+			"name": "projects.{pj}.stories.{ref}.assignments",
 			"item": [
 				{
-					"name": "N/A 200.projects.{p}.workflows.{wf}.stories",
+					"name": "N/A 200.projects.{pj}.workflows.{wf}.stories",
 					"event": [
 						{
 							"listen": "test",
@@ -4095,7 +4397,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"done\"\n}",
+							"raw": "{\n    \"title\": \"story1\",\n    \"status\": \"{{wfs-done}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4120,7 +4422,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.stories.{ref}.assignments",
+					"name": "200.projects.{pj}.stories.{ref}.assignments",
 					"event": [
 						{
 							"listen": "test",
@@ -4204,10 +4506,10 @@
 			]
 		},
 		{
-			"name": "projects.{p}.stories.{ref}.assignments.{username}",
+			"name": "projects.{pj}.stories.{ref}.assignments.{username}",
 			"item": [
 				{
-					"name": "200.projects.{p}.stories.{ref}.assignments.{username}",
+					"name": "200.projects.{pj}.stories.{ref}.assignments.{username}",
 					"event": [
 						{
 							"listen": "test",
@@ -4268,10 +4570,10 @@
 			]
 		},
 		{
-			"name": "projects.{p}.stories.{ref}.comments",
+			"name": "projects.{pj}.stories.{ref}.comments",
 			"item": [
 				{
-					"name": "N/A 200.projects.{p}.workflows.{wf}.stories",
+					"name": "N/A 200.projects.{pj}.workflows.{wf}.stories",
 					"event": [
 						{
 							"listen": "test",
@@ -4311,7 +4613,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"story with a commernt\",\n    \"status\": \"new\"\n}",
+							"raw": "{\n    \"title\": \"story with a commernt\",\n    \"status\": \"{{wfs-new}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4336,7 +4638,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.stories.{ref}.comments",
+					"name": "200.projects.{pj}.stories.{ref}.comments",
 					"event": [
 						{
 							"listen": "test",
@@ -4419,7 +4721,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.stories.{ref}.comments",
+					"name": "200.projects.{pj}.stories.{ref}.comments",
 					"event": [
 						{
 							"listen": "test",
@@ -4510,7 +4812,7 @@
 					"response": []
 				},
 				{
-					"name": "200.projects.{p}.stories.{ref} Copy",
+					"name": "200.projects.{pj}.stories.{ref} Copy",
 					"event": [
 						{
 							"listen": "test",
@@ -4591,7 +4893,7 @@
 					"response": []
 				},
 				{
-					"name": "204.projects.{p}.stories.{ref}.comments.{id}",
+					"name": "204.projects.{pj}.stories.{ref}.comments.{id}",
 					"event": [
 						{
 							"listen": "test",
@@ -4643,10 +4945,10 @@
 			]
 		},
 		{
-			"name": "projects.{p}.invitations",
+			"name": "projects.{pj}.invitations",
 			"item": [
 				{
-					"name": "200 projects.{p}.invitations",
+					"name": "200 projects.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -4739,7 +5041,7 @@
 					"response": []
 				},
 				{
-					"name": "204 projects.{p}.invitations.resend username",
+					"name": "204 projects.{pj}.invitations.resend username",
 					"event": [
 						{
 							"listen": "test",
@@ -4796,7 +5098,7 @@
 					"response": []
 				},
 				{
-					"name": "204 projects.{p}.invitations.resend email",
+					"name": "204 projects.{pj}.invitations.resend email",
 					"event": [
 						{
 							"listen": "test",
@@ -4853,7 +5155,7 @@
 					"response": []
 				},
 				{
-					"name": "404 projects.{p}.invitations.resend",
+					"name": "404 projects.{pj}.invitations.resend",
 					"event": [
 						{
 							"listen": "test",
@@ -4915,7 +5217,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.invitations",
+					"name": "200 projects.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -5027,7 +5329,7 @@
 					"response": []
 				},
 				{
-					"name": "200 workspaces.{w}.projects",
+					"name": "200 workspaces.{ws}.projects",
 					"event": [
 						{
 							"listen": "test",
@@ -5141,7 +5443,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.invitations.accept",
+					"name": "200 projects.{pj}.invitations.accept",
 					"event": [
 						{
 							"listen": "test",
@@ -5374,7 +5676,7 @@
 			]
 		},
 		{
-			"name": "projects.{p}.invitations.revoke",
+			"name": "projects.{pj}.invitations.revoke",
 			"item": [
 				{
 					"name": "N/A log in as 1user",
@@ -5589,7 +5891,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A 200 projects.{p}.invitations",
+					"name": "N/A 200 projects.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -5644,7 +5946,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.invitations.revoke user email",
+					"name": "200 projects.{pj}.invitations.revoke user email",
 					"event": [
 						{
 							"listen": "test",
@@ -5701,7 +6003,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.invitations.revoke username",
+					"name": "200 projects.{pj}.invitations.revoke username",
 					"event": [
 						{
 							"listen": "test",
@@ -5758,7 +6060,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.invitations.revoke email",
+					"name": "200 projects.{pj}.invitations.revoke email",
 					"event": [
 						{
 							"listen": "test",
@@ -5815,7 +6117,7 @@
 					"response": []
 				},
 				{
-					"name": "404 projects.{p}.invitations.revoke",
+					"name": "404 projects.{pj}.invitations.revoke",
 					"event": [
 						{
 							"listen": "test",
@@ -5872,7 +6174,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A 200 projects.{p}.invitations invite again",
+					"name": "N/A 200 projects.{pj}.invitations invite again",
 					"event": [
 						{
 							"listen": "test",
@@ -5929,7 +6231,7 @@
 			]
 		},
 		{
-			"name": "projects.{p}.invitations.{i}",
+			"name": "projects.{pj}.invitations.{i}",
 			"item": [
 				{
 					"name": "N/A log in as 1user",
@@ -6113,7 +6415,7 @@
 					"response": []
 				},
 				{
-					"name": "404 projects.{p}.invitations.{i} invitation not exist",
+					"name": "404 projects.{pj}.invitations.{i} invitation not exist",
 					"event": [
 						{
 							"listen": "test",
@@ -6170,7 +6472,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A 200 projects.{p}.invitations",
+					"name": "N/A 200 projects.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -6280,7 +6582,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A projects.{p}.invitations.accept",
+					"name": "N/A projects.{pj}.invitations.accept",
 					"event": [
 						{
 							"listen": "test",
@@ -6377,7 +6679,7 @@
 					"response": []
 				},
 				{
-					"name": "400 projects.{p}.invitations.{i} invitation accepted",
+					"name": "400 projects.{pj}.invitations.{i} invitation accepted",
 					"event": [
 						{
 							"listen": "test",
@@ -6438,7 +6740,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A 200 projects.{p}.invitations",
+					"name": "N/A 200 projects.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -6499,7 +6801,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.invitations.revoke",
+					"name": "200 projects.{pj}.invitations.revoke",
 					"event": [
 						{
 							"listen": "test",
@@ -6556,7 +6858,7 @@
 					"response": []
 				},
 				{
-					"name": "400 projects.{p}.invitations.{i} invitation revoked",
+					"name": "400 projects.{pj}.invitations.{i} invitation revoked",
 					"event": [
 						{
 							"listen": "test",
@@ -6617,7 +6919,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A 200 projects.{p}.invitations",
+					"name": "N/A 200 projects.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -6678,7 +6980,7 @@
 					"response": []
 				},
 				{
-					"name": "400 projects.{p}.invitations.{i} role error",
+					"name": "400 projects.{pj}.invitations.{i} role error",
 					"event": [
 						{
 							"listen": "test",
@@ -6739,7 +7041,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.invitations.{i}",
+					"name": "200 projects.{pj}.invitations.{i}",
 					"event": [
 						{
 							"listen": "test",
@@ -6838,7 +7140,7 @@
 			]
 		},
 		{
-			"name": "projects.{p}.memberships",
+			"name": "projects.{pj}.memberships",
 			"item": [
 				{
 					"name": "N/A log in as 1user",
@@ -7053,7 +7355,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A 200 projects.{p}.invitations",
+					"name": "N/A 200 projects.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -7157,7 +7459,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A projects.{p}.invitations.accept",
+					"name": "N/A projects.{pj}.invitations.accept",
 					"event": [
 						{
 							"listen": "test",
@@ -7254,7 +7556,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.memberships",
+					"name": "200 projects.{pj}.memberships",
 					"event": [
 						{
 							"listen": "test",
@@ -7355,7 +7657,7 @@
 					"response": []
 				},
 				{
-					"name": "404 projects.{p}.memberships.{u} membership not exist",
+					"name": "404 projects.{pj}.memberships.{u} membership not exist",
 					"event": [
 						{
 							"listen": "test",
@@ -7412,7 +7714,7 @@
 					"response": []
 				},
 				{
-					"name": "400 projects.{p}.memberships.{u} role error",
+					"name": "400 projects.{pj}.memberships.{u} role error",
 					"event": [
 						{
 							"listen": "test",
@@ -7473,7 +7775,7 @@
 					"response": []
 				},
 				{
-					"name": "400 projects.{p}.memberships.{u} only one admin",
+					"name": "400 projects.{pj}.memberships.{u} only one admin",
 					"event": [
 						{
 							"listen": "test",
@@ -7534,7 +7836,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.memberships.{u}",
+					"name": "200 projects.{pj}.memberships.{u}",
 					"event": [
 						{
 							"listen": "test",
@@ -7621,7 +7923,7 @@
 					"response": []
 				},
 				{
-					"name": "200 projects.{p}.memberships.{u}",
+					"name": "200 projects.{pj}.memberships.{u}",
 					"event": [
 						{
 							"listen": "test",
@@ -7757,7 +8059,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A 200 projects.{p}.invitations",
+					"name": "N/A 200 projects.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -7861,7 +8163,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A projects.{p}.invitations.accept",
+					"name": "N/A projects.{pj}.invitations.accept",
 					"event": [
 						{
 							"listen": "test",
@@ -7958,7 +8260,7 @@
 					"response": []
 				},
 				{
-					"name": "400 projects.{p}.memberships.{u} only one admin",
+					"name": "400 projects.{pj}.memberships.{u} only one admin",
 					"event": [
 						{
 							"listen": "test",
@@ -8010,7 +8312,7 @@
 					"response": []
 				},
 				{
-					"name": "204 projects.{p}.memberships.{u}",
+					"name": "204 projects.{pj}.memberships.{u}",
 					"event": [
 						{
 							"listen": "test",
@@ -8057,7 +8359,7 @@
 			]
 		},
 		{
-			"name": "projects.{p}.workspace_member_permissions",
+			"name": "projects.{pj}.workspace_member_permissions",
 			"item": [
 				{
 					"name": "N/A log in as 1000user",
@@ -8217,7 +8519,7 @@
 			]
 		},
 		{
-			"name": "workspace.{w}.memberships",
+			"name": "workspace.{ws}.memberships",
 			"item": [
 				{
 					"name": "N/A log in as 1user",
@@ -8318,7 +8620,7 @@
 					"response": []
 				},
 				{
-					"name": "200 workspaces.{w}.memberships",
+					"name": "200 workspaces.{ws}.memberships",
 					"event": [
 						{
 							"listen": "test",
@@ -8429,7 +8731,7 @@
 					"response": []
 				},
 				{
-					"name": "200 workspaces.{w}.guests",
+					"name": "200 workspaces.{ws}.guests",
 					"event": [
 						{
 							"listen": "test",
@@ -8531,7 +8833,7 @@
 					"response": []
 				},
 				{
-					"name": "404 workspaces.{w}.memberships.delete",
+					"name": "404 workspaces.{ws}.memberships.delete",
 					"event": [
 						{
 							"listen": "test",
@@ -8590,7 +8892,7 @@
 			]
 		},
 		{
-			"name": "workspace.{w}.invitations",
+			"name": "workspace.{ws}.invitations",
 			"item": [
 				{
 					"name": "new workspace invitation",
@@ -8649,7 +8951,7 @@
 					"response": []
 				},
 				{
-					"name": "200 workspaces.{p}.invitations",
+					"name": "200 workspaces.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",
@@ -9103,7 +9405,7 @@
 					"response": []
 				},
 				{
-					"name": "N/A projects.{p}.invitations",
+					"name": "N/A projects.{pj}.invitations",
 					"event": [
 						{
 							"listen": "test",

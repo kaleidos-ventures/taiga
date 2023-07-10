@@ -24,26 +24,26 @@ PROB_PROJECT_WITH_LOGO = 70  # 0-100
 STORY_TITLE_MAX_SIZE = ((75,) * 3) + ((200,) * 6) + (400,)  # 75 chars (30%), 200 chars (60%), 400 chars (10%)
 NUM_STORIES_PER_WORKFLOW = (0, 30)  # (min, max) by default
 PROB_STORY_ASSIGNMENTS = {  # 0-99 prob of a story to be assigned by its workflow status
-    "new": 10,
-    "ready": 40,
-    "in-progress": 80,
-    "done": 95,
+    "New": 10,
+    "Ready": 40,
+    "In Progress": 80,
+    "Done": 95,
 }
 PROB_STORY_ASSIGNMENTS_DEFAULT = 25
 
 # Story Comments
 MAX_DAYS_LAST_COMMENT = 12  # referred to the creation date of the story they comment
 PROB_STORY_COMMENTS = {  # 0-99 prob of a story to be commented by its workflow status
-    "new": 10,
-    "ready": 20,
-    "in-progress": 40,
-    "done": 80,
+    "New": 10,
+    "Ready": 20,
+    "In Progress": 40,
+    "Done": 80,
 }
 PROB_STORY_COMMENTS_DEFAULT = 25
 MAX_STORY_COMMENTS = {  # Max number of comments (in the positive case of having comments)
-    "new": 2,
-    "ready": 5,
-    "in-progress": 10,
-    "done": 15,
+    "New": 2,
+    "Ready": 5,
+    "In Progress": 10,
+    "Done": 15,
 }
 MAX_STORY_COMMENTS_DEFAULT = 5

@@ -5,11 +5,11 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import Any
+import functools
 
 from taiga.base.db import models
 from taiga.base.utils.datetime import timestamp_mics
-from taiga.base.utils.slug import generate_incremental_int_suffix, slugify_uniquely_for_queryset
+from taiga.base.utils.uuid import encode_uuid_to_b64str
 from taiga.projects.projects.models import Project
 
 
@@ -47,7 +47,6 @@ class Workflow(models.BaseModel):
 
 class WorkflowStatus(models.BaseModel):
     name = models.CharField(max_length=30, null=False, blank=False, verbose_name="name")
-    slug = models.LowerSlugField(max_length=250, null=False, blank=False, verbose_name="slug")
     color = models.IntegerField(null=False, blank=False, default=1, verbose_name="color")
     order = models.DecimalField(
         max_digits=16, decimal_places=10, default=100, null=False, blank=False, verbose_name="order"
@@ -65,10 +64,10 @@ class WorkflowStatus(models.BaseModel):
         verbose_name = "workflow status"
         verbose_name_plural = "workflow statuses"
         constraints = [
-            models.UniqueConstraint(fields=["workflow", "slug"], name="%(app_label)s_%(class)s_unique_workflow_slug"),
+            models.UniqueConstraint(fields=["workflow", "id"], name="%(app_label)s_%(class)s_unique_workflow_id"),
         ]
         indexes = [
-            models.Index(fields=["workflow", "slug"]),
+            models.Index(fields=["workflow", "id"]),
         ]
         ordering = ["workflow", "order", "name"]
 
@@ -78,17 +77,10 @@ class WorkflowStatus(models.BaseModel):
     def __repr__(self) -> str:
         return f"<WorkflowStatus {self.name}>"
 
+    @functools.cached_property
+    def b64id(self) -> str:
+        return encode_uuid_to_b64str(self.id)
+
     @property
     def project(self) -> Project:
         return self.workflow.project
-
-    def save(self, *args: Any, **kwargs: Any) -> None:
-        if not self.slug:
-            self.slug = slugify_uniquely_for_queryset(
-                value=self.name,
-                queryset=self.workflow.statuses.all(),
-                generate_suffix=generate_incremental_int_suffix(),
-                use_always_suffix=False,
-            )
-
-        super().save(*args, **kwargs)

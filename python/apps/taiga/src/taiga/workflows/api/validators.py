@@ -9,7 +9,7 @@
 from typing import Any
 
 from pydantic import ConstrainedStr, conint, conlist, validator
-from taiga.base.validators import BaseModel, StrNotEmpty
+from taiga.base.validators import B64UUID, BaseModel
 
 
 class Name(ConstrainedStr):
@@ -29,7 +29,7 @@ class UpdateWorkflowStatusValidator(BaseModel):
 
 class ReorderValidator(BaseModel):
     place: str
-    status: StrNotEmpty
+    status: B64UUID
 
     @validator("place")
     def check_valid_place(cls, v: str) -> str:
@@ -38,16 +38,16 @@ class ReorderValidator(BaseModel):
 
 
 class ReorderWorkflowStatusesValidator(BaseModel):
-    statuses: conlist(str, min_items=1)  # type: ignore[valid-type]
+    statuses: conlist(B64UUID, min_items=1)  # type: ignore[valid-type]
     reorder: ReorderValidator
 
     @validator("statuses")
     def return_unique_statuses(cls, v: list[str]) -> list[str]:
         """
-        If there are some statuses slug repeated, ignore them,
+        If there are some statuses ids repeated, ignore them,
         but keep the original order. Example:
-        v = ["new", "new", "in-progress", "new", "in-progress"]
-        return ["new", "in-progress"]
+        v = ["1", "1", "2", "1", "2"]
+        return ["1", "2"]
         """
         return sorted(set(v), key=v.index)
 
@@ -56,4 +56,4 @@ class ReorderWorkflowStatusesValidator(BaseModel):
 
 
 class DeleteWorkflowStatusQuery(BaseModel):
-    move_to: str | None
+    move_to: B64UUID | None

@@ -147,8 +147,7 @@ DEFAULT_QUERYSET_WORKFLOW_STATUS = WorkflowStatus.objects.all()
 
 class WorkflowStatusFilters(TypedDict, total=False):
     id: UUID
-    slug: str
-    slugs: list[str]
+    ids: list[UUID]
     workflow_id: UUID
     workflow_slug: str
     project_id: UUID
@@ -160,8 +159,8 @@ def _apply_filters_to_workflow_status_queryset(
 ) -> QuerySet[WorkflowStatus]:
     filter_data = dict(filters.copy())
 
-    if "slugs" in filters:
-        filter_data["slug__in"] = filter_data.pop("slugs")
+    if "ids" in filters:
+        filter_data["id__in"] = filter_data.pop("ids")
 
     if "workflow_slug" in filter_data:
         filter_data["workflow__slug"] = filter_data.pop("workflow_slug")
@@ -216,7 +215,6 @@ def _apply_order_by_to_workflow_status_queryset(
 
 def create_workflow_status_sync(
     name: str,
-    slug: str | None,
     color: int,
     order: int,
     workflow: Workflow,
@@ -227,11 +225,7 @@ def create_workflow_status_sync(
         order=order,
         workflow=workflow,
     )
-    if slug:
-        status.slug = slug
-
     status.save()
-
     return status
 
 
@@ -264,12 +258,12 @@ def list_workflow_statuses(
 def list_workflow_statuses_to_reorder(filters: WorkflowStatusFilters = {}) -> list[WorkflowStatus]:
     """
     This method is very similar to "list_workflow_statuses" except this has to keep
-    the order of the input slugs.
+    the order of the input ids.
     """
     qs = _apply_filters_to_workflow_status_queryset(qs=DEFAULT_QUERYSET_WORKFLOW_STATUS, filters=filters)
 
-    statuses = {s.slug: s for s in qs}
-    return [statuses[slug] for slug in filters["slugs"] if statuses.get(slug) is not None]
+    statuses = {s.id: s for s in qs}
+    return [statuses[id] for id in filters["ids"] if statuses.get(id) is not None]
 
 
 @sync_to_async

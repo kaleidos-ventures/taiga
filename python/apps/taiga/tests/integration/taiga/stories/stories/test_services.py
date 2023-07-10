@@ -39,7 +39,7 @@ async def test_not_reorder_in_empty_status() -> None:
     await services.reorder_stories(
         project=project,
         workflow=workflow,
-        target_status_slug=status_2.slug,
+        target_status_id=status_2.id,
         stories_refs=[story2.ref, story3.ref],
     )
     # Now should be
@@ -72,7 +72,7 @@ async def test_not_reorder_in_populated_status() -> None:
     # | story2   |          |
 
     await services.reorder_stories(
-        project=project, workflow=workflow, target_status_slug=status_2.slug, stories_refs=[story2.ref]
+        project=project, workflow=workflow, target_status_id=status_2.id, stories_refs=[story2.ref]
     )
     # Now should be
     # | status_1 | status_2 |
@@ -105,7 +105,7 @@ async def test_after_in_the_end() -> None:
     await services.reorder_stories(
         project=project,
         workflow=workflow,
-        target_status_slug=status_2.slug,
+        target_status_id=status_2.id,
         stories_refs=[story2.ref],
         reorder={"place": "after", "ref": story3.ref},
     )
@@ -140,7 +140,7 @@ async def test_after_in_the_middle() -> None:
     await services.reorder_stories(
         project=project,
         workflow=workflow,
-        target_status_slug=status_2.slug,
+        target_status_id=status_2.id,
         stories_refs=[story1.ref],
         reorder={"place": "after", "ref": story2.ref},
     )
@@ -177,7 +177,7 @@ async def test_before_in_the_beginning() -> None:
     await services.reorder_stories(
         project=project,
         workflow=workflow,
-        target_status_slug=status_2.slug,
+        target_status_id=status_2.id,
         stories_refs=[story1.ref],
         reorder={"place": "before", "ref": story2.ref},
     )
@@ -214,7 +214,7 @@ async def test_before_in_the_middle() -> None:
     await services.reorder_stories(
         project=project,
         workflow=workflow,
-        target_status_slug=status_2.slug,
+        target_status_id=status_2.id,
         stories_refs=[story1.ref],
         reorder={"place": "before", "ref": story3.ref},
     )

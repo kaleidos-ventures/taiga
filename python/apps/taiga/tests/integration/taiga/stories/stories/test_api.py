@@ -35,7 +35,7 @@ async def test_create_story_invalid_project(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"title": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.b64id}
     non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(project.created_by)
@@ -48,7 +48,7 @@ async def test_create_story_invalid_workflow(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"title": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.b64id}
 
     client.login(project.created_by)
     response = client.post(f"/projects/{project.b64id}/workflows/{WRONG_SLUG}/stories", json=data)
@@ -74,7 +74,7 @@ async def test_create_story_being_ws_or_pj_admin_ok(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"title": "New story", "description": "Story description", "status": workflow_status.slug}
+    data = {"title": "New story", "description": "Story description", "status": workflow_status.b64id}
 
     client.login(workspace.created_by)
     response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories", json=data)
@@ -103,7 +103,7 @@ async def test_create_story_user_has_valid_perm_ok(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"title": "New story", "description": "Story description", "status": workflow_status.slug}
+    data = {"title": "New story", "description": "Story description", "status": workflow_status.b64id}
 
     client.login(ws_member)
     response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories", json=data)
@@ -136,7 +136,7 @@ async def test_create_story_user_has_valid_perm_ko(client):
     workflow = await f.create_workflow(project=project)
     workflow_status = await f.create_workflow_status(workflow=workflow)
 
-    data = {"title": "New story", "status": workflow_status.slug}
+    data = {"title": "New story", "status": workflow_status.b64id}
 
     client.login(pj_member)
     response = client.post(f"/projects/{project.b64id}/workflows/{workflow.slug}/stories", json=data)
@@ -253,7 +253,7 @@ async def test_update_story_unprotected_attribute_ok(client):
     status2 = await workflow.statuses.alast()
     story = await f.create_story(project=project, workflow=workflow, status=status1)
 
-    data = {"version": story.version, "status": status2.slug}
+    data = {"version": story.version, "status": status2.b64id}
     client.login(project.created_by)
     response = client.patch(f"/projects/{project.b64id}/stories/{story.ref}", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text
@@ -305,7 +305,7 @@ async def test_reorder_stories_with_reorder_ok(client):
     await f.create_story(project=project, workflow=workflow, status=status_new)
     s3 = await f.create_story(project=project, workflow=workflow, status=status_new)
 
-    data = {"status": "new", "stories": [s1.ref], "reorder": {"place": "before", "ref": s3.ref}}
+    data = {"status": status_new.b64id, "stories": [s1.ref], "reorder": {"place": "before", "ref": s3.ref}}
     client.login(project.created_by)
     response = client.post(f"/projects/{project.b64id}/workflows/main/stories/reorder", json=data)
 
@@ -325,7 +325,7 @@ async def test_reorder_stories_without_reorder_ok(client):
     await f.create_story(project=project, workflow=workflow, status=status_new)
     await f.create_story(project=project, workflow=workflow, status=status_new)
 
-    data = {"status": status_new.slug, "stories": [s1.ref]}
+    data = {"status": status_new.b64id, "stories": [s1.ref]}
     client.login(project.created_by)
     response = client.post(f"/projects/{project.b64id}/workflows/main/stories/reorder", json=data)
 

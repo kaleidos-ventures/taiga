@@ -66,7 +66,7 @@ async def create_story(
         description=form.description,
         project=workflow.project,
         workflow=workflow,
-        status_slug=form.status,
+        status_id=form.status,
         user=request.user,
     )
 
@@ -194,7 +194,7 @@ async def reorder_stories(
     return await stories_services.reorder_stories(
         project=workflow.project,
         workflow=workflow,
-        target_status_slug=form.status,
+        target_status_id=form.status,
         stories_refs=form.stories,
         reorder=form.get_reorder_dict(),
     )

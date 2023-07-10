@@ -5,6 +5,8 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+import uuid
+
 import pytest
 from asgiref.sync import sync_to_async
 from taiga.projects.projects.models import Project
@@ -82,7 +84,6 @@ async def test_create_workflow_status():
 
     workflow_status_res = await repositories.create_workflow_status(
         name="workflow-status",
-        slug="slug",
         color=1,
         order=1,
         workflow=workflow,
@@ -118,41 +119,46 @@ async def test_list_no_workflows_statuses() -> None:
 async def test_list_statuses_to_reorder() -> None:
     project = await f.create_project()
     workflow = await sync_to_async(project.workflows.first)()
+    st_ids = [s.id for s in await _list_workflow_statuses(workflow=workflow)]
 
-    statuses = ["in-progress", "new", "done"]
+    # New(0), Ready(1), In progress(2), Done(3)
+
+    statuses = [st_ids[1], st_ids[0], st_ids[3]]
     statuses = await repositories.list_workflow_statuses_to_reorder(
-        filters={"workflow_id": workflow.id, "slugs": statuses}
+        filters={"workflow_id": workflow.id, "ids": statuses}
     )
-    assert statuses[0].slug == statuses[0].slug
-    assert statuses[1].slug == statuses[1].slug
-    assert statuses[2].slug == statuses[2].slug
+    assert statuses[0].id == statuses[0].id
+    assert statuses[1].id == statuses[1].id
+    assert statuses[2].id == statuses[2].id
 
-    statuses = ["done", "ready", "new"]
+    statuses = [st_ids[3], st_ids[1], st_ids[0]]
     statuses = await repositories.list_workflow_statuses_to_reorder(
-        filters={"workflow_id": workflow.id, "slugs": statuses}
+        filters={"workflow_id": workflow.id, "ids": statuses}
     )
-    assert statuses[0].slug == statuses[0].slug
-    assert statuses[1].slug == statuses[1].slug
-    assert statuses[2].slug == statuses[2].slug
+    assert statuses[0].id == statuses[0].id
+    assert statuses[1].id == statuses[1].id
+    assert statuses[2].id == statuses[2].id
 
-    statuses = ["new", "ready"]
+    statuses = [st_ids[0], st_ids[1]]
     statuses = await repositories.list_workflow_statuses_to_reorder(
-        filters={"workflow_id": workflow.id, "slugs": statuses}
+        filters={"workflow_id": workflow.id, "ids": statuses}
     )
-    assert statuses[0].slug == statuses[0].slug
-    assert statuses[1].slug == statuses[1].slug
+    assert statuses[0].id == statuses[0].id
+    assert statuses[1].id == statuses[1].id
 
 
-async def test_list_statuses_to_reorder_bad_names() -> None:
+async def test_list_statuses_to_reorder_bad_ids() -> None:
     project = await f.create_project()
     workflow = await sync_to_async(project.workflows.first)()
+    st_ids = [s.id for s in await _list_workflow_statuses(workflow=workflow)]
+    non_existing_uuid = uuid.uuid1()
 
-    statuses = ["new", "readyyy"]
+    statuses = [st_ids[0], non_existing_uuid]
     statuses = await repositories.list_workflow_statuses_to_reorder(
-        filters={"workflow_id": workflow.id, "slugs": statuses}
+        filters={"workflow_id": workflow.id, "ids": statuses}
     )
     assert len(statuses) == 1
-    assert statuses[0].slug == statuses[0].slug
+    assert statuses[0].id == statuses[0].id
 
 
 ##########################################################
@@ -169,18 +175,18 @@ async def test_list_workflow_status_neighbors() -> None:
         status=statuses[0], filters={"workflow_id": workflow.id}
     )
     assert neighbors.prev is None
-    assert neighbors.next.slug == statuses[1].slug
+    assert neighbors.next.id == statuses[1].id
 
     neighbors = await repositories.list_workflow_status_neighbors(
         status=statuses[1], filters={"workflow_id": workflow.id}
     )
-    assert neighbors.prev.slug == statuses[0].slug
-    assert neighbors.next.slug == statuses[2].slug
+    assert neighbors.prev.id == statuses[0].id
+    assert neighbors.next.id == statuses[2].id
 
     neighbors = await repositories.list_workflow_status_neighbors(
         status=statuses[3], filters={"workflow_id": workflow.id}
     )
-    assert neighbors.prev.slug == statuses[2].slug
+    assert neighbors.prev.id == statuses[2].id
     assert neighbors.next is None
 
 
@@ -197,7 +203,7 @@ async def test_get_workflow_status_ok() -> None:
     status = statuses[0]
 
     workflow_status = await repositories.get_workflow_status(
-        filters={"project_id": project.id, "workflow_slug": workflow.slug, "slug": status.slug}
+        filters={"project_id": project.id, "workflow_slug": workflow.slug, "id": status.id}
     )
     assert workflow_status == status
 
@@ -205,10 +211,10 @@ async def test_get_workflow_status_ok() -> None:
 async def test_get_project_without_workflow_statuses_ok() -> None:
     project = await f.create_project()
     workflows = await _list_workflows(project=project)
-    bad_status_slug = "slug_999"
+    bad_status_id = uuid.uuid1()
 
     workflow_status = await repositories.get_workflow_status(
-        filters={"project_id": project.id, "workflow_slug": workflows[0].slug, "slug": bad_status_slug}
+        filters={"project_id": project.id, "workflow_slug": workflows[0].slug, "id": bad_status_id}
     )
     assert workflow_status is None
 
@@ -264,7 +270,7 @@ async def test_delete_workflow_status_without_stories_ok() -> None:
     project = await f.create_project()
     workflow = await f.create_workflow(project=project)
     # the workflow status to delete (without containing stories)
-    workflow_status = await f.create_workflow_status(workflow=workflow, slug="workspace_status_slug")
+    workflow_status = await f.create_workflow_status(workflow=workflow)
 
     delete_ret = await repositories.delete_workflow_status(filters={"id": workflow_status.id})
     assert delete_ret == 1
@@ -274,7 +280,7 @@ async def test_delete_workflow_status_with_stories_ok() -> None:
     project = await f.create_project()
     workflow = await f.create_workflow(project=project)
     # the workflow status to delete
-    workflow_status = await f.create_workflow_status(workflow=workflow, slug="workspace_status_slug")
+    workflow_status = await f.create_workflow_status(workflow=workflow)
     # its two stories, that should also be deleted
     await f.create_story(status=workflow_status, workflow=workflow)
     await f.create_story(status=workflow_status, workflow=workflow)

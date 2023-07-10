@@ -645,13 +645,13 @@ Content for:
       "reorder": {
           "workflow": {... workflow object ...},
 	      "statuses": [
-		      "moved wf_status slug (str)",
-		      "moved wf_status slug (str)",
+		      "moved wf_status id",
+		      "moved wf_status id",
               ....
 	      ],
 	      "reorder": {
 		      "place": "'before' or 'after'",
-		      "status": "worklflow status slug (str)"
+		      "status": "worklflow status id"
 	      }
       }
   }

@@ -25,13 +25,13 @@ class EmailSettings(BaseSettings):
     DEFAULT_SENDER: EmailStr = EmailStr("username@domain.name")
 
     # smtp backend settings
-    SERVER: str = "smtp.domain.name"
-    USERNAME: str = "smtp.username"
-    PASSWORD: str = "smtp.password"
+    SERVER: str = "localhost"
     PORT: int = 25
-    TIMEOUT: int | None = None
-    USE_TLS: bool = True
+    USERNAME: str = ""
+    PASSWORD: str = ""
+    USE_TLS: bool = False
     USE_SSL: bool = False
+    TIMEOUT: int | None = None
     # path to a PEM-formatted certificate chain file to use for the SSL connection
     SSL_CERTFILE: str | None = None
     # path to a PEM-formatted private key file to use for the SSL connection

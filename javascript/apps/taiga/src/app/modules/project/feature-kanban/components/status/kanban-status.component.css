@@ -29,7 +29,7 @@ Copyright (c) 2023-present Kaleidos INC
 .header {
   align-items: center;
   display: flex;
-  margin-block-end: var(--spacing-16);
+  min-block-size: var(--spacing-48);
   padding: var(--spacing-8);
   position: relative;
 }

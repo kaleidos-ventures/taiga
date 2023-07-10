@@ -89,6 +89,29 @@ export const reducer = createImmerReducer(
       return state;
     }
   ),
+  on(
+    KanbanApiActions.editStatusSuccess,
+    KanbanEventsActions.editStatus,
+    (state, { status, workflow }): StoryDetailState => {
+      if (workflow === state.workflow?.slug) {
+        const statusIndex = state.workflow?.statuses.findIndex(
+          (it) => it.slug === status.slug
+        );
+
+        const prevStatus = state.workflow?.statuses.find(
+          (it) => it.slug === status.slug
+        );
+
+        if (prevStatus?.slug === status.slug && state.story) {
+          state.story.status.name = status.name;
+        }
+
+        state.workflow.statuses[statusIndex].name = status.name;
+      }
+
+      return state;
+    }
+  ),
   on(StoryDetailActions.leaveStoryDetail, (state): StoryDetailState => {
     state.story = null;
     return state;

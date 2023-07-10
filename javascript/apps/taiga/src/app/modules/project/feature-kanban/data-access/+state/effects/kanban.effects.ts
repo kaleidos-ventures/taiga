@@ -374,7 +374,7 @@ export class KanbanEffects {
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
-      pessimisticUpdate({
+      optimisticUpdate({
         run: ({ status, workflow }, project) => {
           return this.projectApiService
             .editStatus(project.id, status, workflow)
@@ -387,15 +387,15 @@ export class KanbanEffects {
               })
             );
         },
-        onError: (action, httpResponse: HttpErrorResponse) => {
+        undoAction: (action, httpResponse: HttpErrorResponse) => {
           if (httpResponse.status !== 403) {
             this.appService.errorManagement(httpResponse);
           }
 
           return KanbanApiActions.editStatusError({
             statusError: httpResponse.status,
-            name: action.status.name,
-            slug: action.status.slug,
+            undo: action.undo,
+            status: action.status,
             workflow: action.workflow,
           });
         },

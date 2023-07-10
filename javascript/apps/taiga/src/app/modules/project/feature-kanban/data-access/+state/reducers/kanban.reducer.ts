@@ -687,7 +687,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    KanbanApiActions.editStatusSuccess,
+    KanbanActions.editStatus,
     KanbanEventsActions.editStatus,
     (state, { status, workflow }): KanbanState => {
       const workflowIndex = state.workflows!.findIndex(
@@ -697,6 +697,21 @@ export const reducer = createImmerReducer(
         (it) => it.slug === status.slug
       );
       state.workflows![workflowIndex].statuses[statusIndex].name = status.name;
+
+      return state;
+    }
+  ),
+  on(
+    KanbanApiActions.editStatusError,
+    (state, { undo, status, workflow }): KanbanState => {
+      const workflowIndex = state.workflows!.findIndex(
+        (it) => it.slug === workflow
+      );
+      const statusIndex = state.workflows![workflowIndex].statuses.findIndex(
+        (it) => it.slug === status.slug
+      );
+      state.workflows![workflowIndex].statuses[statusIndex].name =
+        undo.status.name;
 
       return state;
     }

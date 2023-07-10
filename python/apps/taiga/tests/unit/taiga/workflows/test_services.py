@@ -82,7 +82,6 @@ async def test_create_workflow_status_ok():
 
         fake_workflows_repo.create_workflow_status.assert_awaited_once_with(
             name=status.name,
-            slug=None,
             color=status.color,
             order=Decimal(100),
             workflow=status.workflow,
@@ -211,8 +210,8 @@ async def test_reorder_workflow_statuses_ok():
 
         await services.reorder_workflow_statuses(
             workflow=f.build_workflow(),
-            statuses=[status3.slug, status2.slug],
-            reorder={"place": "after", "status": status1.slug},
+            statuses=[status3.id, status2.id],
+            reorder={"place": "after", "status": status1.id},
         )
 
         fake_workflows_repo.bulk_update_workflow_statuses.assert_awaited_once_with(
@@ -266,8 +265,8 @@ async def test_reorder_any_workflow_status_does_not_exist():
 
 async def test_delete_workflow_status_moving_stories_ok():
     workflow = f.build_workflow()
-    workflow_status1 = f.build_workflow_status(workflow=workflow, slug="to_delete_status_slug")
-    workflow_status2 = f.build_workflow_status(workflow=workflow, slug="move_to_status_slug")
+    workflow_status1 = f.build_workflow_status(workflow=workflow)
+    workflow_status2 = f.build_workflow_status(workflow=workflow)
     workflow_status1_stories = [f.build_story(status=workflow_status1, workflow=workflow)]
 
     with (
@@ -282,12 +281,10 @@ async def test_delete_workflow_status_moving_stories_ok():
         fake_stories_repo.list_stories.return_value = workflow_status1_stories
         fake_stories_services.reorder_stories.return_value = None
 
-        await services.delete_workflow_status(
-            workflow_status=workflow_status1, move_to_status_slug=workflow_status2.slug
-        )
+        await services.delete_workflow_status(workflow_status=workflow_status1, target_status_id=workflow_status2.id)
 
         fake_get_workflow_status.assert_awaited_once_with(
-            project_id=workflow.project.id, workflow_slug=workflow.slug, status_slug=workflow_status2.slug
+            project_id=workflow.project.id, workflow_slug=workflow.slug, id=workflow_status2.id
         )
         fake_stories_repo.list_stories.assert_awaited_once_with(
             filters={
@@ -298,20 +295,20 @@ async def test_delete_workflow_status_moving_stories_ok():
         fake_stories_services.reorder_stories.assert_awaited_once_with(
             project=workflow_status1.project,
             workflow=workflow,
-            target_status_slug=workflow_status2.slug,
+            target_status_id=workflow_status2.id,
             stories_refs=[story.ref for story in workflow_status1_stories],
         )
         fake_workflows_repo.delete_workflow_status.assert_awaited_once_with(filters={"id": workflow_status1.id})
         fake_workflows_events.emit_event_when_workflow_status_is_deleted.assert_awaited_once_with(
             project=workflow_status1.project,
             workflow_status=workflow_status1,
-            move_to_status_slug=workflow_status2.slug,
+            target_status=workflow_status2,
         )
 
 
 async def test_delete_workflow_status_deleting_stories_ok():
     workflow = f.build_workflow()
-    workflow_status1 = f.build_workflow_status(workflow=workflow, slug="to_delete_status_slug")
+    workflow_status1 = f.build_workflow_status(workflow=workflow)
     workflow_status1_stories = [f.build_story(status=workflow_status1, workflow=workflow)]
 
     with (
@@ -326,21 +323,21 @@ async def test_delete_workflow_status_deleting_stories_ok():
         fake_stories_repo.list_stories.return_value = workflow_status1_stories
         fake_stories_services.reorder_stories.return_value = None
 
-        await services.delete_workflow_status(workflow_status=workflow_status1, move_to_status_slug=None)
+        await services.delete_workflow_status(workflow_status=workflow_status1, target_status_id=None)
 
         fake_get_workflow_status.assert_not_awaited()
         fake_stories_repo.list_stories.assert_not_awaited()
         fake_stories_services.reorder_stories.assert_not_awaited()
         fake_workflows_repo.delete_workflow_status.assert_awaited_once_with(filters={"id": workflow_status1.id})
         fake_workflows_events.emit_event_when_workflow_status_is_deleted.assert_awaited_once_with(
-            project=workflow_status1.project, workflow_status=workflow_status1, move_to_status_slug=None
+            project=workflow_status1.project, workflow_status=workflow_status1, target_status=None
         )
 
 
-async def test_delete_workflow_status_wrong_move_to_status_ex():
+async def test_delete_workflow_status_wrong_target_status_ex():
     workflow = f.build_workflow()
-    workflow_status1 = f.build_workflow_status(workflow=workflow, slug="to_delete_status_slug")
-    workflow_status2 = f.build_workflow_status(workflow=workflow, slug="move_to_status_slug")
+    workflow_status1 = f.build_workflow_status(workflow=workflow)
+    workflow_status2 = f.build_workflow_status(workflow=workflow)
 
     with (
         patch("taiga.workflows.services.get_workflow_status", autospec=True) as fake_get_workflow_status,
@@ -348,18 +345,16 @@ async def test_delete_workflow_status_wrong_move_to_status_ex():
     ):
         fake_get_workflow_status.return_value = None
 
-        await services.delete_workflow_status(
-            workflow_status=workflow_status1, move_to_status_slug=workflow_status2.slug
-        )
+        await services.delete_workflow_status(workflow_status=workflow_status1, target_status_id=workflow_status2.id)
 
         fake_get_workflow_status.assert_awaited_once_with(
-            project_id=workflow.project.id, workflow_slug=workflow.slug, status_slug=workflow_status2.slug
+            project_id=workflow.project.id, workflow_slug=workflow.slug, id=workflow_status2.id
         )
 
 
-async def test_delete_workflow_status_same_move_to_status_ex():
+async def test_delete_workflow_status_same_target_status_ex():
     workflow = f.build_workflow()
-    workflow_status1 = f.build_workflow_status(workflow=workflow, slug="to_delete_status_slug")
+    workflow_status1 = f.build_workflow_status(workflow=workflow)
 
     with (
         patch("taiga.workflows.services.get_workflow_status", autospec=True) as fake_get_workflow_status,
@@ -367,10 +362,8 @@ async def test_delete_workflow_status_same_move_to_status_ex():
     ):
         fake_get_workflow_status.return_value = workflow_status1
 
-        await services.delete_workflow_status(
-            workflow_status=workflow_status1, move_to_status_slug=workflow_status1.slug
-        )
+        await services.delete_workflow_status(workflow_status=workflow_status1, target_status_id=workflow_status1.id)
 
         fake_get_workflow_status.assert_awaited_once_with(
-            project_id=workflow.project.id, workflow_slug=workflow.slug, status_slug=workflow_status1.slug
+            project_id=workflow.project.id, workflow_slug=workflow.slug, id=workflow_status1.id
         )

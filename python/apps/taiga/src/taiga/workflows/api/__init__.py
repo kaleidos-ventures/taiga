@@ -35,7 +35,7 @@ DELETE_WORKFLOW_STATUS = IsProjectAdmin()
 REORDER_WORKFLOW_STATUSES = IsProjectAdmin()
 
 # HTTP 200 RESPONSES
-WORKFLOW_200 = responses.http_status_200(model=WorkflowSerializer)
+GET_WORKFLOW_200 = responses.http_status_200(model=WorkflowSerializer)
 LIST_WORKFLOW_200 = responses.http_status_200(model=list[WorkflowSerializer])
 REORDER_WORKFLOW_STATUSES_200 = responses.http_status_200(model=ReorderWorkflowStatusesSerializer)
 
@@ -72,7 +72,7 @@ async def list_workflows(
     "/projects/{id}/workflows/{workflow_slug}",
     name="project.workflow.get",
     summary="Get project workflow",
-    responses=WORKFLOW_200 | ERROR_404 | ERROR_403,
+    responses=GET_WORKFLOW_200 | ERROR_404 | ERROR_403,
 )
 async def get_workflow(
     request: Request,
@@ -137,7 +137,7 @@ async def create_workflow_status(
 
 
 @routes.stories.patch(
-    "/projects/{project_id}/workflows/{workflow_slug}/statuses/{slug}",
+    "/projects/{project_id}/workflows/{workflow_slug}/statuses/{id}",
     name="project.workflowstatus.update",
     summary="Update workflow status",
     response_model=WorkflowStatusSerializer,
@@ -148,14 +148,12 @@ async def update_workflow_status(
     form: UpdateWorkflowStatusValidator,
     project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
     workflow_slug: str = Query(None, description="the workflow slug (str)"),
-    slug: str = Query(None, description="the status slug (str)"),
+    id: B64UUID = Query(None, description="the workflow status id (B64UUID)"),
 ) -> WorkflowStatus:
     """
     Updates a workflow status in the given project workflow
     """
-    workflow_status = await get_workflow_status_or_404(
-        project_id=project_id, workflow_slug=workflow_slug, workflow_status_slug=slug
-    )
+    workflow_status = await get_workflow_status_or_404(project_id=project_id, workflow_slug=workflow_slug, id=id)
     await check_permissions(permissions=UPDATE_WORKFLOW_STATUS, user=request.user, obj=workflow_status)
 
     return await workflows_services.update_workflow_status(
@@ -200,7 +198,7 @@ async def reorder_workflow_statuses(
 
 
 @routes.stories.delete(
-    "/projects/{project_id}/workflows/{workflow_slug}/statuses/{slug}",
+    "/projects/{project_id}/workflows/{workflow_slug}/statuses/{id}",
     name="project.workflowstatus.delete",
     summary="Delete a workflow status",
     responses=ERROR_404 | ERROR_403,
@@ -209,7 +207,7 @@ async def reorder_workflow_statuses(
 async def delete_workflow_status(
     project_id: B64UUID,
     workflow_slug: str,
-    slug: str,
+    id: B64UUID,
     request: AuthRequest,
     query_params: DeleteWorkflowStatusQuery = Depends(),
 ) -> None:
@@ -224,14 +222,12 @@ async def delete_workflow_status(
         - if received, the workflow status will be deleted but its contained stories won't (they will be first moved to
          the specified status).
     """
-    workflow_status = await get_workflow_status_or_404(
-        project_id=project_id, workflow_slug=workflow_slug, workflow_status_slug=slug
-    )
+    workflow_status = await get_workflow_status_or_404(project_id=project_id, workflow_slug=workflow_slug, id=id)
     await check_permissions(permissions=DELETE_WORKFLOW_STATUS, user=request.user, obj=workflow_status)
 
     await workflows_services.delete_workflow_status(
         workflow_status=workflow_status,
-        move_to_status_slug=query_params.move_to,
+        target_status_id=query_params.move_to,
     )
 
 
@@ -240,11 +236,11 @@ async def delete_workflow_status(
 ################################################
 
 
-async def get_workflow_status_or_404(project_id: UUID, workflow_slug: str, workflow_status_slug: str) -> WorkflowStatus:
+async def get_workflow_status_or_404(project_id: UUID, workflow_slug: str, id: UUID) -> WorkflowStatus:
     workflow_status = await workflows_services.get_workflow_status(
-        project_id=project_id, workflow_slug=workflow_slug, status_slug=workflow_status_slug
+        project_id=project_id, workflow_slug=workflow_slug, id=id
     )
     if workflow_status is None:
-        raise ex.NotFoundError(f"Workflow status {workflow_status_slug} does not exist")
+        raise ex.NotFoundError(f"Workflow status {id} does not exist")
 
     return workflow_status

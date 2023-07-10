@@ -31,11 +31,11 @@ DEFAULT_PRE_ORDER = Decimal(0)  # default pre_position when adding a story at th
 
 
 async def create_story(
-    project: Project, workflow: Workflow, status_slug: str, user: User, title: str, description: str | None
+    project: Project, workflow: Workflow, status_id: UUID, user: User, title: str, description: str | None
 ) -> StoryDetailSerializer:
     # Validate data
     workflow_status = await workflows_repositories.get_workflow_status(
-        filters={"slug": status_slug, "workflow_id": workflow.id}
+        filters={"id": status_id, "workflow_id": workflow.id}
     )
     if not workflow_status:
         raise ex.InvalidStatusError("The provided status is not valid.")
@@ -170,9 +170,9 @@ async def update_story(
 async def _validate_and_process_values_to_update(story: Story, values: dict[str, Any]) -> dict[str, Any]:
     output = values.copy()
 
-    if status_slug := output.pop("status", None):
+    if status_id := output.pop("status", None):
         status = await workflows_repositories.get_workflow_status(
-            filters={"workflow_id": story.workflow_id, "slug": status_slug}
+            filters={"workflow_id": story.workflow_id, "id": status_id}
         )
 
         if not status:
@@ -240,16 +240,16 @@ async def _calculate_offset(
 async def reorder_stories(
     project: Project,
     workflow: Workflow,
-    target_status_slug: str,
+    target_status_id: UUID,
     stories_refs: list[int],
     reorder: dict[str, Any] | None = None,
 ) -> ReorderStoriesSerializer:
     # check target_status exists
     target_status = await workflows_repositories.get_workflow_status(
-        filters={"project_id": project.id, "workflow_slug": workflow.slug, "slug": target_status_slug}
+        filters={"project_id": project.id, "workflow_slug": workflow.slug, "id": target_status_id}
     )
     if not target_status:
-        raise ex.InvalidStatusError(f"Status {target_status_slug} doesn't exist in this project")
+        raise ex.InvalidStatusError(f"Status {target_status_id} doesn't exist in this project")
 
     # check anchor story exists
     if reorder:

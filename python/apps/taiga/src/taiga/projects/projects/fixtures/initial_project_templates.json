@@ -41,10 +41,10 @@
                 "name": "Main",
                 "order": 1,
                 "statuses": [
-                  {"name": "New", "slug": "new", "order": 1, "color": 1},
-                  {"name": "Ready", "slug": "ready", "order": 2, "color": 2},
-                  {"name": "In progress", "slug": "in-progress", "order": 3, "color": 3},
-                  {"name": "Done", "slug": "done", "order": 4, "color": 4}
+                  {"name": "New", "order": 1, "color": 1},
+                  {"name": "Ready", "order": 2, "color": 2},
+                  {"name": "In progress", "order": 3, "color": 3},
+                  {"name": "Done", "order": 4, "color": 4}
                 ]
             }
         ]

@@ -157,11 +157,9 @@ async def test_list_story_neighbors() -> None:
 
     # different statuses
     workflow2 = await f.create_workflow(project=project)
-    status21 = await f.create_workflow_status(workflow=workflow2, name="New", slug="new", color=1, order=1)
-    status22 = await f.create_workflow_status(
-        workflow=workflow2, name="In progress", slug="in-progress", color=1, order=2
-    )
-    status23 = await f.create_workflow_status(workflow=workflow2, name="Done", slug="Done", color=1, order=3)
+    status21 = await f.create_workflow_status(workflow=workflow2, name="New", color=1, order=1)
+    status22 = await f.create_workflow_status(workflow=workflow2, name="In progress", color=1, order=2)
+    status23 = await f.create_workflow_status(workflow=workflow2, name="Done", color=1, order=3)
     story1 = await f.create_story(project=project, workflow=workflow2, status=status21)
     story2 = await f.create_story(project=project, workflow=workflow2, status=status22)
     story3 = await f.create_story(project=project, workflow=workflow2, status=status23)

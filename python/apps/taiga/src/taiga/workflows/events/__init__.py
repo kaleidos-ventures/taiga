@@ -49,13 +49,13 @@ async def emit_event_when_workflow_statuses_are_reordered(
 
 
 async def emit_event_when_workflow_status_is_deleted(
-    project: Project, workflow_status: WorkflowStatus, move_to_status_slug: str | None
+    project: Project, workflow_status: WorkflowStatus, target_status: WorkflowStatus | None
 ) -> None:
     await events_manager.publish_on_project_channel(
         project=project,
         type=DELETE_WORKFLOW_STATUS,
         content=DeleteWorkflowStatusContent(
             workflow_status=workflow_status,
-            move_to_slug=move_to_status_slug,
+            target_status=target_status,
         ),
     )

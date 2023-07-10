@@ -23,7 +23,6 @@ class WorkflowFactory(Factory):
 
 class WorkflowStatusFactory(Factory):
     name = factory.Sequence(lambda n: f"Workflow Status {n}")
-    slug = factory.Sequence(lambda n: f"workflow-status-{n}")
     color = factory.Faker("pyint", min_value=1, max_value=8)
     order = factory.Sequence(lambda n: n)
     workflow = factory.SubFactory("tests.utils.factories.WorkflowFactory", statuses=[])

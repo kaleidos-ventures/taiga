@@ -8,20 +8,19 @@
 from taiga.base.serializers import UUIDB64, BaseModel
 
 
-class WorkflowStatusNestedSerializer(BaseModel):
-    id: UUIDB64
+class WorkflowNestedSerializer(BaseModel):
     name: str
     slug: str
-    color: int
-    order: int
 
     class Config:
         orm_mode = True
 
 
-class WorkflowNestedSerializer(BaseModel):
+class WorkflowStatusNestedSerializer(BaseModel):
+    id: UUIDB64
     name: str
-    slug: str
+    color: int
+    order: int
 
     class Config:
         orm_mode = True

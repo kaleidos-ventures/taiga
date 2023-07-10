@@ -267,7 +267,6 @@ def apply_template_to_project_sync(template: ProjectTemplate, project: Project) 
         for status in workflow["statuses"]:
             workflows_repositories.create_workflow_status_sync(
                 name=status["name"],
-                slug=status["slug"],
                 color=status["color"],
                 order=status["order"],
                 workflow=wf,

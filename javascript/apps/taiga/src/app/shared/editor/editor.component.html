@@ -14,13 +14,13 @@ Copyright (c) 2023-present Kaleidos INC
     (ngModelChange)="contentChange.next($event)"
     (onFocus)="onFocus()"
     (onBlur)="onBlur()"
-    (onInit)="ready()"
+    (onInit)="onReady()"
     [init]="{
       language: vm.lan.code,
       language_url: vm.lan.url,
       menubar: '',
       placeholder: placeholder,
-      height: height,
+      autoresize_bottom_margin: autoResizeBottomMargin,
       toolbar: toolbar,
       toolbar_mode: 'sliding',
       quickbars_selection_toolbar:
@@ -78,7 +78,7 @@ Copyright (c) 2023-present Kaleidos INC
       promotion: false,
       branding: false,
       auto_focus: true,
-      content_css: ['/assets/editor/iframe.css', '/assets/editor/prism.css'],
+      content_css: contentCss,
       codesample_global_prismjs: true,
       images_upload_handler: editorImageUploadService.imageUploadHandler.bind(
         editorImageUploadService

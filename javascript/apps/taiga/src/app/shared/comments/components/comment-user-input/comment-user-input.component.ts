@@ -153,7 +153,12 @@ export class CommentUserInputComponent implements ComponentCanDeactivate {
   }
 
   public save() {
-    this.saved.emit(this.state.get('comment'));
+    const comment = this.state.get('comment').trim();
+
+    if (comment.length) {
+      this.saved.emit(comment);
+    }
+
     this.reset();
   }
 

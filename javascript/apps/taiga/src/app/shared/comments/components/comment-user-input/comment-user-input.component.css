@@ -41,11 +41,4 @@ Copyright (c) 2023-present Kaleidos INC
   box-shadow: 3px 4px 4px rgba(0, 138, 168, 0.15);
   inline-size: 100%;
   position: relative;
-
-  /* Prevent flicker on open */
-  visibility: hidden;
-
-  &.ready {
-    visibility: visible;
-  }
 }

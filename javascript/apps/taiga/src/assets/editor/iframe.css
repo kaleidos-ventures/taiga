@@ -58,6 +58,11 @@ a {
   background-color: #dadfe9;
 }
 
+/* Placeholder */
+.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
+  color: rgba(99, 115, 143, 1); /* gray70 */
+}
+
 ul {
   margin-block: 0 2.5rem;
   margin-block-end: 0.5rem;

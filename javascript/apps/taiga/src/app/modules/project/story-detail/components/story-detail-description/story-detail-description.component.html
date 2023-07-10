@@ -11,15 +11,16 @@ Copyright (c) 2023-present Kaleidos INC
     <ng-container *ngIf="vm.edit">
       <div
         #descriptionContent
-        class="description-wrapper">
+        class="description-wrapper"
+        tgRestoreFocus="edit-description">
         <form
           [formGroup]="descriptionForm"
           (ngSubmit)="save()">
           <tg-editor
             id="edit-description"
             [tgStoryDetailDescriptionSticky]="vm.editorReady"
+            [style.height]="vm.editorReady ? 'auto' : descriptionHeight + 'px'"
             [field]="descriptionForm.get('description')!.value"
-            [height]="descriptionHeight"
             (contentChange)="onContentChange($event)"
             (focusChange)="focusChange.emit($event)"
             (editorReady)="onInitEditor()"></tg-editor>

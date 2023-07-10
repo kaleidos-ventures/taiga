@@ -93,7 +93,7 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
     this.state.set({ story });
   }
 
-  public descriptionHeight = 200;
+  public descriptionHeight = 95;
 
   public descriptionForm = new FormGroup({
     description: new FormControl('', {
@@ -172,6 +172,7 @@ export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
     });
   }
 
+  /* Prevent flickering while the editor is loading */
   public setEditorInitialHeight() {
     const descriptionHeight = (
       this.descriptionContent.nativeElement as HTMLElement

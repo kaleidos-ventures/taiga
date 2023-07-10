@@ -57,14 +57,17 @@ export class EditorComponent {
   public field!: string | null;
 
   @Input()
-  public height = 200;
-
-  @Input()
   public placeholder = '';
 
   @Input()
   public toolbar =
     'blocks | bold italic underline strikethrough | bullist numlist | link image codesample| emoticons |  alignleft aligncenter alignright | outdent indent | forecolor backcolor removeformat | hr';
+
+  @Input()
+  public extraContentCss: string[] = [];
+
+  @Input()
+  public autoResizeBottomMargin = 30;
 
   @Output()
   public contentChange = new EventEmitter<string>();
@@ -80,12 +83,25 @@ export class EditorComponent {
     return this.state.get('editorFocused');
   }
 
+  @HostBinding('class.ready')
+  public get ready() {
+    return this.state.get('ready');
+  }
+
   public state = inject<RxState<EditorState>>(RxState);
   public languageService = inject(LanguageService);
   public store = inject(Store);
   public projectApiService = inject(ProjectApiService);
   public editorImageUploadService = inject(EditorImageUploadService);
   public model$ = this.state.select();
+
+  public get contentCss() {
+    return [
+      '/assets/editor/iframe.css',
+      '/assets/editor/prism.css',
+      ...this.extraContentCss,
+    ];
+  }
 
   constructor() {
     this.state.connect('lan', this.languageService.getEditorLanguage());
@@ -107,7 +123,7 @@ export class EditorComponent {
     this.state.set({ editorFocused: false });
   }
 
-  public ready() {
+  public onReady() {
     this.state.set({ ready: true });
   }
 }

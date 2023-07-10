@@ -25,7 +25,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Status, Story, StoryDetail, Workflow } from '@taiga/data';
-import { distinctUntilChanged, map, takeUntil, timer } from 'rxjs';
+import { distinctUntilChanged, map, takeUntil, tap, timer } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
@@ -250,7 +250,14 @@ export class KanbanStatusComponent
 
     this.state.connect(
       'project',
-      this.store.select(selectCurrentProject).pipe(filterNil())
+      this.store.select(selectCurrentProject).pipe(
+        filterNil(),
+        tap((project) => {
+          if (!project.userIsAdmin) {
+            this.cancelEditStatus();
+          }
+        })
+      )
     );
 
     this.state.connect(
@@ -334,6 +341,12 @@ export class KanbanStatusComponent
     if (status) {
       this.store.dispatch(
         KanbanActions.editStatus({
+          undo: {
+            status: {
+              name: this.status.name,
+              slug: this.status.slug,
+            },
+          },
           status: {
             name: status.name,
             slug: status.slug,

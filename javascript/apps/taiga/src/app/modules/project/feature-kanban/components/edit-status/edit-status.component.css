@@ -11,7 +11,7 @@ Copyright (c) 2023-present Kaleidos INC
 :host {
   inline-size: calc(var(--column-width));
   inset-block-start: -5px;
-  inset-inline-start: 0;
+  inset-inline-start: calc(var(--spacing-8) * -1);
   margin-inline-end: var(--spacing-20);
   min-inline-size: 122px;
   padding: var(--spacing-4);
@@ -50,6 +50,10 @@ Copyright (c) 2023-present Kaleidos INC
 
   color: var(--color-gray90);
   padding-inline-start: var(--spacing-24);
+}
+
+.status-input {
+  inline-size: 100%;
 }
 
 .actions {

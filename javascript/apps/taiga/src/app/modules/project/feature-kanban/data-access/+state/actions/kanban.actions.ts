@@ -86,6 +86,9 @@ export const KanbanActions = createActionGroup({
       workflow: Workflow['slug'];
     }>(),
     'Edit Status': props<{
+      undo: {
+        status: Pick<Status, 'name' | 'slug'>;
+      };
       status: Pick<Status, 'name' | 'slug'>;
       workflow: Workflow['slug'];
     }>(),
@@ -134,8 +137,10 @@ export const KanbanApiActions = createActionGroup({
     }>(),
     'Edit status error': props<{
       statusError: number;
-      name: Status['name'];
-      slug: Status['slug'];
+      undo: {
+        status: Pick<Status, 'name' | 'slug'>;
+      };
+      status: Pick<Status, 'name' | 'slug'>;
       workflow: Workflow['slug'];
     }>(),
     'Delete status success': props<{

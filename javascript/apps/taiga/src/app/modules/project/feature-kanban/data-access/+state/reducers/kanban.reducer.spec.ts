@@ -662,4 +662,74 @@ describe('Kanban reducer', () => {
 
     expect(state.stories[status.slug][0].title).toEqual('new title');
   });
+
+  it('delete status moving stories to another status', () => {
+    const { initialKanbanState } = kanbanReducer;
+    const status = StatusMockFactory();
+    const status2 = StatusMockFactory();
+    const workflow = WorkflowMockFactory();
+    workflow.statuses.push(status);
+    workflow.statuses.push(status2);
+    const story = StoryDetailMockFactory([status]);
+
+    const stories: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status]),
+        ref: story.ref,
+        slug: story.slug,
+      },
+    ];
+
+    const state = kanbanReducer.kanbanFeature.reducer(
+      {
+        ...initialKanbanState,
+        stories: {
+          [status.slug]: stories,
+          [status2.slug]: [],
+        },
+        workflows: [workflow],
+      },
+      KanbanApiActions.deleteStatusSuccess({
+        status: status.slug,
+        workflow: workflow.slug,
+        moveToStatus: status2.slug,
+      })
+    );
+    expect(state.stories[status.slug]).toBeUndefined();
+    expect(state.stories[status2.slug].length).toEqual(1);
+    expect(state.workflows![0].statuses.length).toEqual(11);
+  });
+
+  it('delete status and stories', () => {
+    const { initialKanbanState } = kanbanReducer;
+    const status = StatusMockFactory();
+    const workflow = WorkflowMockFactory();
+    workflow.statuses.push(status);
+    const story = StoryDetailMockFactory([status]);
+
+    const stories: KanbanStory[] = [
+      {
+        ...StoryMockFactory([status]),
+        ref: story.ref,
+        slug: story.slug,
+      },
+    ];
+
+    const state = kanbanReducer.kanbanFeature.reducer(
+      {
+        ...initialKanbanState,
+        stories: {
+          [status.slug]: stories,
+        },
+        workflows: [workflow],
+      },
+      KanbanApiActions.deleteStatusSuccess({
+        status: status.slug,
+        workflow: workflow.slug,
+        moveToStatus: undefined,
+      })
+    );
+    expect(state.stories[status.slug]).toBeUndefined();
+    expect(state.workflows![0].statuses.length).toEqual(10);
+  });
 });

@@ -205,4 +205,46 @@ describe('Kanban', () => {
       cy.get('tg-kanban-status').first().should('not.contain', statusName);
     });
   });
+
+  it('delete status moving stories', () => {
+    cy.getBySel('status-name').first().should('contain', 'New');
+    cy.get('tg-kanban-story').its('length').as('storiesCount');
+    cy.getBySel('status-options').first().click();
+    cy.getBySel('delete-status-btn').should('be.visible');
+    cy.getBySel('delete-status-btn').click();
+    cy.getBySel('submit-delete-status').click();
+
+    cy.getBySel('status-name').first().should('not.contain', 'New');
+    cy.getBySel('status-name').first().should('contain', 'Ready');
+    cy.get<number>('@storiesCount').then(function () {
+      cy.get('tg-kanban-story').should('have.length', this.storiesCount);
+    });
+  });
+
+  it('delete status and stories', () => {
+    cy.getBySel('status-name').first().should('contain', 'New');
+    cy.getBySel('status-options').first().click();
+    cy.getBySel('delete-status-btn').should('be.visible');
+    cy.getBySel('delete-status-btn').click();
+    cy.get('[data-test="delete-stories"]').find('label').click();
+    cy.getBySel('submit-delete-status').click();
+
+    cy.getBySel('status-name').first().should('not.contain', 'New');
+    cy.getBySel('status-name').first().should('contain', 'Ready');
+    cy.get('tg-kanban-story').should('have.length', 0);
+  });
+
+  it('delete all statuses', () => {
+    cy.get('tg-kanban-empty').should('not.exist');
+
+    cy.get('tg-kanban-status').each(() => {
+      cy.getBySel('status-options').first().click();
+      cy.getBySel('delete-status-btn').should('be.visible');
+      cy.getBySel('delete-status-btn').click();
+      cy.getBySel('submit-delete-status').click();
+    });
+
+    cy.get('tg-kanban-empty').should('exist');
+    cy.getBySel('kanban-empty-add-status').should('exist');
+  });
 });

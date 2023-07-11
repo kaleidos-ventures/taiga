@@ -1,0 +1,30 @@
+{
+  "title": "Comments",
+  "leave_comment": "Leave a comment...",
+  "no_comments": "There are no comments yet.",
+  "comment_action": "Comment",
+  "order": {
+    "new": "Newest first",
+    "old": "Oldest first",
+    "reverse": "Reverse order"
+  },
+  "comment_options": "Comment Options",
+  "delete": {
+    "delete_comment": "Delete",
+    "confirm": "Delete this comment?",
+    "confirm_info": "This action can not be undone.",
+    "cancel": "No, cancel",
+    "confirm_action": "Yes, delete"
+  },
+  "deleted": {
+    "already_deleted_message": "This comment was already deleted"
+  },
+  "deleted_message": {
+    "default": "This comment was deleted",
+    "own_comment": "You deleted this comment",
+    "own_comment_admin": "A project admin deleted your comment",
+    "other_comment": "You deleted the comment of {{ fullName }}",
+    "other_comment_self": "The author deleted their comment",
+    "other_comment_admin": "A project admin deleted this comment"
+  }
+}

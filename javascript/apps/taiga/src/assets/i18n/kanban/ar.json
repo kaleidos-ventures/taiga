@@ -8,6 +8,7 @@
   "create_story_permission": "You no longer have permissions to create stories",
   "edit_story_lost_permission": "You no longer have permission to edit stories",
   "edit_story_lost_some_permission": "You have lost some permissions to edit stories",
+  "lost_comment_permissions": "You no longer have permission to comment.",
   "lost_kanban_access": "You no longer have permissions to access this content.",
   "story_title": "{{ref}} {{title}}. Position {{position}} of {{total}}",
   "story_title_a11y": "Position {{position}} of {{total}}. Press Spacebar to Reorder.",
@@ -17,5 +18,28 @@
   "final_position_live_announce": "Final position {{ storyIndex }} of {{totalStories}}. Status {{status}}",
   "grabbed_live_announce": "{{title}} grabbed, current position {{position}}. Up and down arrow keys to change position, left and right arrow keys to change status, Spacebar to drop, Escape key to cancel",
   "dropped_live_announce": "{{title}} dropped",
-  "reorder_cancelled_live_announce": "reorder cancelled"
+  "reorder_cancelled_live_announce": "reorder cancelled",
+  "add_status": "Add status",
+  "create_status": "Create status",
+  "write_status": "Write a status name",
+  "status_empty": "Status name can’t be empty.",
+  "status_options": "Display status options",
+  "edit_status_name": "Edit status name",
+  "status_name": "Status name",
+  "delete_status": "Delete status",
+  "empty_error": "Status name can’t be empty.",
+  "empty_kanban": "This kanban is empty",
+  "create_status_explanation_admin": "Create statuses to organize your stories and visualize the progress of your project.",
+  "create_status_explanation": "Once the admins of this project set up the kanban, you can start creating stories",
+  "delete_status_modal": {
+    "title": "Delete {{ statusName }} status?",
+    "what_to_do_stories": "What do you want to do with the stories in this status?",
+    "stories_will_be_deleted": "The stories from this status will be automatically deleted.",
+    "cancel": "Never mind, keep status",
+    "confirm": "Yes, delete status",
+    "move_stories_another_status": "Move them to another status",
+    "delete_stories": "Delete the stories too",
+    "stories_placed_below": "The stories will be placed below the existing ones.",
+    "status": "Status"
+  }
 }

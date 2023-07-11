@@ -35,7 +35,9 @@
     "delete": "delete",
     "remove": "remove",
     "save": "Save",
-    "next_page": "Next page"
+    "next_page": "Next page",
+    "now": "now",
+    "ago": "ago"
   },
   "navigation": {
     "go_home": "Go to home",
@@ -108,7 +110,7 @@
       "format_error": "The file format is not allowed. Allowed formats: gif, png, jpg, svg or webp"
     },
     "delete_modal_title": "Delete {{projectTitle}}?",
-    "delete_modal_warning": "<strong class='bold'>Warning;</strong> This action cannot be undone.",
+    "delete_modal_warning": "<strong class='bold'>Warning:</strong> This action cannot be undone.",
     "delete_modal_text": "This action will delete the project, along with all the stories and attachments in it.",
     "delete_modal_delete": "Yes, delete project",
     "delete_modal_refuse": "No, keep project",
@@ -143,6 +145,9 @@
     "generic_deleted_project": "This project has been deleted.",
     "deleted_workspace": "The workspace {{name}} has been deleted."
   },
+  "form_errors": {
+    "max_length": "Character limit has been reached."
+  },
   "discard_changes": {
     "title": "Discard changes?",
     "description": "You will lose the changes you have made.",
@@ -168,7 +173,6 @@
       "story_title_label": "Story title",
       "title_story_required": "Story title can’t be empty.",
       "create_story_button": "Create Story",
-      "max_length": "Character limit has been reached.",
       "story_title_placeholder": "Start writing a Story title..."
     }
   },

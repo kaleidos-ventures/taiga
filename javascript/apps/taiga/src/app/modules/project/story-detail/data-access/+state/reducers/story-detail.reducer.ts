@@ -115,19 +115,18 @@ export const reducer = createImmerReducer(
     KanbanEventsActions.editStatus,
     (state, { status, workflow }): StoryDetailState => {
       if (workflow === state.workflow?.slug) {
+        // Update name from the status dropdown list
         const statusIndex = state.workflow?.statuses.findIndex(
           (it) => it.slug === status.slug
         );
 
-        const prevStatus = state.workflow?.statuses.find(
-          (it) => it.slug === status.slug
-        );
+        state.workflow.statuses[statusIndex].name = status.name;
 
-        if (prevStatus?.slug === status.slug && state.story) {
+        // Update current selected status if necessary
+
+        if (status.slug === state.story?.status.slug) {
           state.story.status.name = status.name;
         }
-
-        state.workflow.statuses[statusIndex].name = status.name;
       }
 
       return state;

@@ -16,10 +16,6 @@ Copyright (c) 2023-present Kaleidos INC
 .comment {
   padding-block: var(--spacing-8);
 
-  &:not(:last-child) {
-    margin-block-end: var(--spacing-16);
-  }
-
   &.highlighted {
     background: var(--color-primary10);
   }
@@ -79,7 +75,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 .description-content {
   border-block-end: 1px solid var(--color-gray20);
-  padding-block-end: var(--spacing-16);
+  padding-block-end: var(--spacing-8);
 }
 
 .header {

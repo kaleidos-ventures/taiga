@@ -26,9 +26,10 @@ import {
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { ShortcutsService } from '@taiga/core';
-import { User, UserComment } from '@taiga/data';
+import { User, UserComment, StoryView } from '@taiga/data';
 import { Subject, takeUntil } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { selectStoryView } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 
 @Component({
@@ -65,6 +66,8 @@ export class CommentDetailComponent {
   public shortcutsService = inject(ShortcutsService);
   public destroyRef = inject(DestroyRef);
   public project = this.store.selectSignal(selectCurrentProject);
+  public storyView = this.store.selectSignal(selectStoryView);
+  public sideView: StoryView = 'side-view';
 
   public showDeleteCommentConfirm = false;
   public commentOptionsState = false;

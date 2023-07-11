@@ -29,6 +29,7 @@ Copyright (c) 2023-present Kaleidos INC
         data-test="comment-options"
         tuiIconButton
         type="button"
+        size="m"
         tuiHintDirection="top-right"></button>
     </tui-hosted-dropdown>
 
@@ -62,7 +63,8 @@ Copyright (c) 2023-present Kaleidos INC
         aria-labelledby="delete-comment-confirm"
         aria-describedby="delete-comment-description"
         aria-modal="true"
-        class="delete-comment-confirm">
+        class="delete-comment-confirm"
+        [ngClass]="{ 'in-side-panel': storyView() === sideView }">
         <div class="confirm-container">
           <h3
             id="delete-comment-confirm"

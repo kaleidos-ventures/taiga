@@ -121,11 +121,13 @@ export class EditStatusComponent implements OnInit {
 
   public editStatus() {
     this.submitted = true;
-    if (this.statusForm.valid && this.hasChanges()) {
-      const status = this.statusForm.value as EditStatus;
-      this.setStatus.emit(status);
-    } else {
-      this.cancelEdit();
+    if (this.statusForm.valid) {
+      if (this.hasChanges()) {
+        const status = this.statusForm.value as EditStatus;
+        this.setStatus.emit(status);
+      } else {
+        this.cancelEdit();
+      }
     }
   }
 

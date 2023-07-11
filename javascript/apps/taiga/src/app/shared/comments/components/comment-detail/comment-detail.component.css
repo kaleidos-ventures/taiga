@@ -13,13 +13,13 @@ Copyright (c) 2023-present Kaleidos INC
   @mixin option-list;
 }
 
-.comment-options-button {
-  border-radius: 2px;
-}
-
 .delete-comment-confirm {
   inline-size: 398px;
   padding: var(--spacing-12);
+
+  &.in-side-panel {
+    inline-size: 267px;
+  }
 }
 
 .confirm-container {

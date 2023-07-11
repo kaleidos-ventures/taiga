@@ -16,11 +16,14 @@ import {
   StoryDetailApiActions,
 } from '../actions/story-detail.actions';
 import {
+  StatusMockFactory,
   StoryDetailMockFactory,
   UserCommentMockFactory,
   UserMockFactory,
+  WorkflowMockFactory,
 } from '@taiga/data';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { KanbanEventsActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 
 describe('Story Detail Reducer', () => {
   let state: StoryDetailState;
@@ -133,5 +136,29 @@ describe('Story Detail Reducer', () => {
 
     expect(result.comments.length).toEqual(0);
     expect(result.totalComments).toBe(null);
+  });
+
+  it('should update the statuses when one status is deleted', () => {
+    const status = StatusMockFactory();
+    const status2 = StatusMockFactory();
+    const workflow = WorkflowMockFactory();
+    workflow.statuses = [status, status2];
+    const story = StoryDetailMockFactory([status]);
+    const action = KanbanEventsActions.statusDeleted({
+      status: status.slug,
+      workflow: workflow.slug,
+      moveToStatus: status2.slug,
+    });
+    const result = reducer(
+      {
+        ...state,
+        story,
+        workflow,
+      },
+      action
+    );
+
+    expect(result.workflow!.statuses.length).toEqual(1);
+    expect(result.story!.status.slug).toEqual(status2.slug);
   });
 });

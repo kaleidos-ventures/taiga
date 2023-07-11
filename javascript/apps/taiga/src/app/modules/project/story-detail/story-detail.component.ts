@@ -41,6 +41,7 @@ import {
   StoryView,
   User,
   UserComment,
+  Workflow,
 } from '@taiga/data';
 import { map, merge, pairwise, startWith, take } from 'rxjs';
 
@@ -671,6 +672,28 @@ export class StoryDetailComponent {
             deletedAt: msg.event.content.deletedAt,
           })
         );
+      });
+
+    this.wsService
+      .projectEvents<{
+        workflowStatus: Status & { workflow: Workflow };
+        moveToSlug: Status['slug'];
+      }>('workflowstatuses.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const content = eventResponse.event.content;
+        const story = this.state.get('story');
+        if (
+          story.status.slug === content.workflowStatus.slug &&
+          !content.moveToSlug
+        ) {
+          this.store.dispatch(
+            StoryDetailApiActions.deleteStorySuccess({
+              project: this.state.get('project'),
+              ref: story.ref,
+            })
+          );
+        }
       });
   }
 }

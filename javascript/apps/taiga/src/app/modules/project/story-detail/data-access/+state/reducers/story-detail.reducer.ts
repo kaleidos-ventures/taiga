@@ -90,6 +90,27 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
+    KanbanApiActions.deleteStatusSuccess,
+    KanbanEventsActions.statusDeleted,
+    (state, { status, workflow, moveToStatus }): StoryDetailState => {
+      if (workflow === state.workflow?.slug) {
+        const statusIndex = state.workflow?.statuses.findIndex(
+          (it) => it.slug === status
+        );
+        state.workflow.statuses.splice(statusIndex, 1);
+      }
+
+      if (state.story?.status.slug === status) {
+        const newStatus = state.workflow?.statuses.find(
+          (it) => it.slug === moveToStatus
+        );
+        state.story.status = newStatus ?? state.story.status;
+      }
+
+      return state;
+    }
+  ),
+  on(
     KanbanApiActions.editStatusSuccess,
     KanbanEventsActions.editStatus,
     (state, { status, workflow }): StoryDetailState => {

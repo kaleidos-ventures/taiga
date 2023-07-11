@@ -44,6 +44,7 @@ Copyright (c) 2023-present Kaleidos INC
   @mixin font-paragraph;
 
   color: var(--color-gray80);
+  hyphens: none;
   margin-block-end: var(--spacing-16);
   text-align: center;
 }

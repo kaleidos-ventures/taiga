@@ -6,24 +6,26 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import {
-  StoryDetailState,
-  reducer,
-  initialStoryDetailState,
-} from './story-detail.reducer';
-import {
-  StoryDetailActions,
-  StoryDetailApiActions,
-} from '../actions/story-detail.actions';
+import { randCatchPhrase } from '@ngneat/falso';
 import {
   StatusMockFactory,
   StoryDetailMockFactory,
+  UserComment,
   UserCommentMockFactory,
   UserMockFactory,
   WorkflowMockFactory,
 } from '@taiga/data';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { KanbanEventsActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import {
+  StoryDetailActions,
+  StoryDetailApiActions,
+} from '../actions/story-detail.actions';
+import {
+  StoryDetailState,
+  initialStoryDetailState,
+  reducer,
+} from './story-detail.reducer';
 
 describe('Story Detail Reducer', () => {
   let state: StoryDetailState;
@@ -89,6 +91,36 @@ describe('Story Detail Reducer', () => {
     expect(result.comments.length).toEqual(1);
     expect(result.comments[0].text).toEqual(comment);
     expect(result.totalComments).toEqual(1);
+  });
+
+  it('should edit a comment when editCommentSuccess is dispatched', () => {
+    const id = '123';
+    const text = randCatchPhrase();
+    const comment: UserComment = {
+      ...UserCommentMockFactory(),
+      id,
+    };
+    const comments = [comment];
+
+    const editcomment: UserComment = {
+      ...UserCommentMockFactory(),
+      id,
+      text,
+    };
+    // const user = UserMockFactory();
+    const action = StoryDetailApiActions.editCommentSuccess({
+      comment: editcomment,
+    });
+    const result = reducer(
+      {
+        ...state,
+        comments,
+      },
+      action
+    );
+
+    expect(result.comments.length).toEqual(1);
+    expect(result.comments[0].text).toEqual(editcomment.text);
   });
 
   it('should add a new comment when createComment is dispatched with matching storyRef', () => {

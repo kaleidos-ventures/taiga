@@ -16,7 +16,6 @@ import {
   Output,
   inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TRANSLOCO_SCOPE, TranslocoModule } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
@@ -25,9 +24,7 @@ import {
   TuiDataListModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
-import { ShortcutsService } from '@taiga/core';
-import { User, UserComment, StoryView } from '@taiga/data';
-import { Subject, takeUntil } from 'rxjs';
+import { StoryView, User, UserComment } from '@taiga/data';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { selectStoryView } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
@@ -59,11 +56,11 @@ export class CommentDetailComponent {
   @Input({ required: true }) public canComment!: boolean;
   @Input({ required: true }) public user!: User;
 
-  @Output() public highlightComment = new EventEmitter<string | undefined>();
-  @Output() public deleteComment = new EventEmitter<string>();
+  @Output() public highlightComment = new EventEmitter<boolean>();
+  @Output() public deleteComment = new EventEmitter();
+  @Output() public displayEditComment = new EventEmitter<boolean>();
 
   public store = inject(Store);
-  public shortcutsService = inject(ShortcutsService);
   public destroyRef = inject(DestroyRef);
   public project = this.store.selectSignal(selectCurrentProject);
   public storyView = this.store.selectSignal(selectStoryView);
@@ -72,36 +69,25 @@ export class CommentDetailComponent {
   public showDeleteCommentConfirm = false;
   public commentOptionsState = false;
 
-  private unsetDelete$: Subject<void> = new Subject();
-
   public deleteConfirm(): void {
     this.showDeleteCommentConfirm = true;
-    this.highlightComment.next(this.comment.id);
+    this.highlightComment.emit(true);
   }
 
   public changeCommentOptionsState(state: boolean): void {
     this.commentOptionsState = state;
     if (!state) {
       this.showDeleteCommentConfirm = false;
-      this.highlightComment.next(undefined);
-      this.unsetDelete$.next();
-    } else {
-      this.setDeleteShortcut();
+      this.highlightComment.emit(false);
     }
   }
 
   public confirmedDeleteComment(): void {
     this.changeCommentOptionsState(false);
-    this.deleteComment.emit(this.comment.id);
+    this.deleteComment.emit();
   }
 
-  private setDeleteShortcut(): void {
-    this.shortcutsService.setScope('comment-detail');
-    this.shortcutsService
-      .task('comment.delete')
-      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.unsetDelete$))
-      .subscribe(() => {
-        this.deleteConfirm();
-      });
+  public editComment() {
+    this.displayEditComment.emit(true);
   }
 }

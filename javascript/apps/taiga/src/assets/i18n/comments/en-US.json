@@ -9,6 +9,11 @@
     "reverse": "Reverse order"
   },
   "comment_options": "Comment Options",
+  "edit": {
+    "edit_comment": "Edit",
+    "edited_comment": "Edited",
+    "edited_comment_tooltip": "Edited {{when}} by {{user}}"
+  },
   "delete": {
     "delete_comment": "Delete",
     "confirm": "Delete this comment?",

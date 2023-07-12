@@ -14,9 +14,9 @@ import {
   StoryDetail,
   StoryUpdate,
   StoryView,
-  Workflow,
-  UserComment,
   User,
+  UserComment,
+  Workflow,
 } from '@taiga/data';
 import { OrderComments } from '~/app/shared/comments/comments.component';
 
@@ -69,6 +69,12 @@ export const StoryDetailActions = createActionGroup({
       projectId: Project['id'];
       user: User;
     }>(),
+    'Edit comment': props<{
+      commentId: UserComment['id'];
+      text: UserComment['text'];
+      storyRef: Story['ref'];
+      projectId: Project['id'];
+    }>(),
     'Delete comment': props<{
       commentId: UserComment['id'];
       storyRef: Story['ref'];
@@ -113,6 +119,9 @@ export const StoryDetailApiActions = createActionGroup({
       comment: string;
       storyRef: Story['ref'];
       projectId: Project['id'];
+    }>(),
+    'Edit comment Success': props<{
+      comment: UserComment;
     }>(),
     'Delete comment Success': props<{
       commentId: string;

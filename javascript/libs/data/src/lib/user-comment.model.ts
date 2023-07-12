@@ -19,4 +19,5 @@ export interface UserComment {
   };
   deletedBy?: Partial<User>;
   deletedAt?: string;
+  modifiedAt?: string;
 }

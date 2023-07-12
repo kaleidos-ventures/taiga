@@ -161,4 +161,30 @@ describe('Story Detail Reducer', () => {
     expect(result.workflow!.statuses.length).toEqual(1);
     expect(result.story!.status.slug).toEqual(status2.slug);
   });
+
+  it('should update the comments when one comment is deleted', () => {
+    const user = UserMockFactory();
+    const comment = UserCommentMockFactory();
+    const comment2 = UserCommentMockFactory();
+    const comments = [comment, comment2];
+    const totalComments = 2;
+
+    const action = StoryDetailApiActions.deleteCommentSuccess({
+      commentId: comment.id,
+      deletedBy: user,
+    });
+
+    const result = reducer(
+      {
+        ...state,
+        comments,
+        totalComments,
+      },
+      action
+    );
+
+    expect(result.comments.length).toEqual(2);
+    expect(result.totalComments).toEqual(totalComments - 1);
+    expect(result.comments[0].deletedBy).toEqual(user);
+  });
 });

@@ -93,4 +93,24 @@ describe('StoryDetail', () => {
         cy.getBySel('comment').last().should('contain', firstComment);
       });
   });
+
+  it('delete comment', () => {
+    // cancel delete comment
+    cy.getBySel('comment-options').first().click();
+    cy.getBySel('delete-comment-btn').click();
+    cy.getBySel('delete-comment-cancel-button').click();
+
+    cy.getBySel('deleted-comment-message').should('have.length', 0);
+    cy.getBySel('comment').should('have.length', 2);
+    cy.getBySel('comments-total').should('contain', '2');
+
+    // confirm delete comment
+    cy.getBySel('comment-options').first().click();
+    cy.getBySel('delete-comment-btn').click();
+    cy.getBySel('delete-comment-confirm-button').click();
+
+    cy.getBySel('deleted-comment-message').should('have.length', 1);
+    cy.getBySel('comment').should('have.length', 2);
+    cy.getBySel('comments-total').should('contain', '1');
+  });
 });

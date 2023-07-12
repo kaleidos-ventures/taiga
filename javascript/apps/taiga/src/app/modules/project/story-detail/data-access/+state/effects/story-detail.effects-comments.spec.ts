@@ -193,4 +193,66 @@ describe('StoryDetailEffects', () => {
       expect(effects.newComent$).toBeObservable(expected);
     });
   });
+
+  describe('deleteComment$', () => {
+    it('should dispatch deleteCommentSuccess action on successful delete comment', () => {
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(StoryDetailCommentsEffects);
+      const comment = UserCommentMockFactory();
+      const storyRef = 123;
+      const projectId = 'testProject';
+      const user = UserMockFactory();
+      const action = StoryDetailActions.deleteComment({
+        commentId: comment.id,
+        storyRef,
+        projectId,
+        deletedBy: user,
+      });
+      const completion = StoryDetailApiActions.deleteCommentSuccess({
+        commentId: comment.id,
+        deletedBy: user,
+      });
+
+      actions$ = hot('-a', { a: action });
+      const response = cold('-b|', { b: comment });
+      const expected = cold('--c', { c: completion });
+
+      projectApiService.deleteComment.mockReturnValue(response);
+
+      expect(effects.deleteComment$).toBeObservable(expected);
+    });
+  });
+
+  it('if status is 404, should show a notification on failed delete comment', () => {
+    const appService = spectator.inject(AppService);
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(StoryDetailCommentsEffects);
+    const comment = UserCommentMockFactory();
+    const storyRef = 123;
+    const projectId = 'testProject';
+    const user = UserMockFactory();
+
+    projectApiService.deleteComment.mockReturnValue(
+      cold(
+        '-#|',
+        {},
+        {
+          status: 404,
+        }
+      )
+    );
+
+    actions$ = hot('-a', {
+      a: StoryDetailActions.deleteComment({
+        commentId: comment.id,
+        storyRef,
+        projectId,
+        deletedBy: user,
+      }),
+    });
+
+    expect(effects.deleteComment$).toSatisfyOnFlush(() => {
+      expect(appService.toastNotification).toHaveBeenCalled();
+    });
+  });
 });

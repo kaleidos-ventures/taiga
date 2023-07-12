@@ -140,5 +140,6 @@ export const projectEventActions = createActionGroup({
         position: DropCandidate['hPosition'];
       };
     }>(),
+    'Edit comment': props<{ storyRef: Story['ref']; comment: UserComment }>(),
   },
 });

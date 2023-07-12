@@ -1,0 +1,128 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="!editComment">
+    <div
+      class="comment"
+      data-test="comment"
+      [@fadeInOut]
+      [@.disabled]="deletedComment === comment.id || !deletedComment"
+      [ngClass]="{
+        highlighted: highlightedComment
+      }">
+      <div class="comment-top">
+        <div class="creation-info">
+          <tg-user-avatar
+            size="m"
+            class="no-border"
+            [user]="comment.createdBy"
+            [color]="comment.createdBy.color"
+            type="light"
+            [rounded]="true"
+            aria-hidden="true"></tg-user-avatar>
+          <div class="creation-data">
+            <span class="creation-data-fullname">
+              {{ comment.createdBy.fullName }}
+            </span>
+            <span class="creation-data-username">
+              @{{ comment.createdBy.username }}
+            </span>
+            <span>∙</span>
+            <span
+              *ngIf="comment.createdAt"
+              [title]="comment.createdAt | date: 'medium'"
+              class="creation-data-date">
+              <tg-real-time-date-distance
+                [date]="comment.createdAt"></tg-real-time-date-distance>
+            </span>
+            <ng-container
+              *ngIf="
+                comment.modifiedAt && comment.modifiedAt !== comment.createdAt
+              ">
+              <tg-ui-badge
+                class="creation-data-edited"
+                [label]="t('comments.edit.edited_comment')"
+                [tuiHint]="
+                  t('comments.edit.edited_comment_tooltip', {
+                    when: comment.modifiedAt | dateDistance,
+                    user: comment.createdBy.fullName
+                  })
+                "
+                tuiHintDirection="top-right"
+                size="s"
+                color="gray"></tg-ui-badge>
+            </ng-container>
+          </div>
+        </div>
+        <div class="comment-options">
+          <tg-comment-detail
+            [comment]="comment"
+            [canComment]="canComment"
+            [user]="user"
+            (deleteComment)="onDeleteComment()"
+            (displayEditComment)="displayEditComment($event)"
+            (highlightComment)="onHighlightComment($event)"></tg-comment-detail>
+        </div>
+      </div>
+
+      <div class="comment-content">
+        <div
+          tgCodeHightlight
+          class="description-content"
+          [innerHTML]="comment.text | safeHtml"></div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="editComment">
+    <div class="edit-comment-wrapper">
+      <tg-user-avatar
+        size="m"
+        class="no-border"
+        [user]="comment.createdBy"
+        [color]="comment.createdBy.color"
+        type="light"
+        [rounded]="true"
+        aria-hidden="true"></tg-user-avatar>
+      <form
+        class="edit-comment-form"
+        [formGroup]="editCommentForm"
+        (ngSubmit)="saveEdit()">
+        <tg-editor
+          [id]="'edit-comment-' + comment.id"
+          [field]="editCommentForm.get('comment')!.value"
+          (contentChange)="onContentChange($event)"
+          [toolbar]="commentsToolbar"
+          (editorReady)="onInitEditor()"></tg-editor>
+        <div
+          class="edit-field-actions"
+          *ngIf="editorReady">
+          <button
+            data-test="edit-cancel"
+            (click)="cancelEditComment()"
+            tuiButton
+            type="button"
+            appearance="tertiary">
+            {{ t('commons.cancel') }}
+          </button>
+          <button
+            data-test="edit-save"
+            tuiButton
+            type="submit"
+            appearance="primary">
+            {{ t('commons.save') }}
+          </button>
+        </div>
+      </form>
+    </div>
+    <tg-discard-changes-modal
+      [open]="showConfirmEditCommentModal"
+      (discard)="discard$.next(true)"
+      (cancel)="discard$.next(false)"></tg-discard-changes-modal>
+  </ng-container>
+</ng-container>

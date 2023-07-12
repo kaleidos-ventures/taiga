@@ -13,14 +13,6 @@ Copyright (c) 2023-present Kaleidos INC
   display: block;
 }
 
-.comment {
-  padding-block: var(--spacing-8);
-
-  &.highlighted {
-    background: var(--color-primary10);
-  }
-}
-
 .title {
   @mixin font-inline;
 
@@ -29,53 +21,6 @@ Copyright (c) 2023-present Kaleidos INC
   & .total-comments {
     color: var(--color-gray70);
   }
-}
-
-.comment-top {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  margin-block-end: var(--spacing-12);
-}
-
-.comment-options {
-  flex-shrink: 0;
-}
-
-.creation-info {
-  align-items: baseline;
-  display: flex;
-  flex-grow: 1;
-  gap: var(--spacing-4);
-  padding-inline-start: var(--spacing-8);
-}
-
-.creation-info-fullname {
-  @mixin font-inline;
-
-  color: var(--color-secondary);
-}
-
-.creation-info-username {
-  @mixin font-inline;
-
-  color: var(--color-gray60);
-}
-
-.creation-info-date {
-  @mixin font-small;
-
-  color: var(--color-gray80);
-  font-style: italic;
-}
-
-.comment-content {
-  padding-inline-start: var(--spacing-36);
-}
-
-.description-content {
-  border-block-end: 1px solid var(--color-gray20);
-  padding-block-end: var(--spacing-8);
 }
 
 .header {

@@ -14,9 +14,11 @@ import {
   Component,
   OnDestroy,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
+import { TuiNotification } from '@taiga-ui/core';
 import {
   Membership,
   Project,
@@ -34,6 +36,7 @@ import {
   selectCurrentProject,
   selectShowBannerOnRevoke,
 } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
+import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
 import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
@@ -44,9 +47,6 @@ import {
   projectEventActions,
 } from '../data-access/+state/actions/project.actions';
 import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
-import { Router } from '@angular/router';
-import { AppService } from '~/app/services/app.service';
-import { TuiNotification } from '@taiga-ui/core';
 
 @UntilDestroy()
 @Component({
@@ -306,6 +306,21 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
                   : 'left',
               slug: eventResponse.event.content.reorder.reorder.status,
             },
+          })
+        );
+      });
+
+    this.wsService
+      .projectEvents<{
+        ref: Story['ref'];
+        comment: UserComment;
+      }>('stories.comments.update')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          projectEventActions.editComment({
+            storyRef: eventResponse.event.content.ref,
+            comment: eventResponse.event.content.comment,
           })
         );
       });

@@ -37,9 +37,4 @@ export default [
     defaultKey: 'esc',
     scope: 'conflict',
   },
-  {
-    task: 'comment.delete',
-    defaultKey: 'ctrl + x',
-    scope: 'comment-detail',
-  },
 ] as const;

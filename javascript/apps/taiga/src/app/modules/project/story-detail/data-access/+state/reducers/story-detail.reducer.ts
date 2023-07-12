@@ -335,6 +335,23 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
+    StoryDetailApiActions.editCommentSuccess,
+    projectEventActions.editComment,
+    (state, action): StoryDetailState => {
+      state.comments = state.comments.map((comment) =>
+        comment.id === action.comment.id
+          ? {
+              ...comment,
+              text: action.comment.text,
+              modifiedAt: action.comment.modifiedAt,
+            }
+          : comment
+      );
+
+      return state;
+    }
+  ),
+  on(
     StoryDetailApiActions.deleteCommentSuccess,
     (state, { commentId, deletedBy, deletedAt }): StoryDetailState => {
       state.comments = state.comments.map((comment) =>

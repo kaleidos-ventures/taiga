@@ -8,7 +8,7 @@
 
 import { Router } from '@angular/router';
 import { randUuid } from '@ngneat/falso';
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -21,6 +21,8 @@ import {
 import { cold, hot } from 'jest-marbles';
 import { Observable } from 'rxjs';
 
+import { HttpErrorResponse } from '@angular/common/http';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AppService } from '~/app/services/app.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
@@ -28,10 +30,8 @@ import {
   StoryDetailActions,
   StoryDetailApiActions,
 } from '../actions/story-detail.actions';
-import { StoryDetailCommentsEffects } from './story-detail-comments.effects';
 import { storyDetailFeature } from '../reducers/story-detail.reducer';
-import { HttpErrorResponse } from '@angular/common/http';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
+import { StoryDetailCommentsEffects } from './story-detail-comments.effects';
 
 describe('StoryDetailEffects', () => {
   let actions$: Observable<Action>;
@@ -253,6 +253,37 @@ describe('StoryDetailEffects', () => {
 
     expect(effects.deleteComment$).toSatisfyOnFlush(() => {
       expect(appService.toastNotification).toHaveBeenCalled();
+    });
+  });
+  describe('editComment$', () => {
+    it('should dispatch editCommentSuccess action on successful edit comment', () => {
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(StoryDetailCommentsEffects);
+      const comment = 'Test comment';
+      const storyRef = 123;
+      const projectId = 'testProject';
+      const user = UserMockFactory();
+      const responseComment = UserCommentMockFactory();
+
+      store.overrideSelector(selectUser, user);
+
+      const action = StoryDetailActions.editComment({
+        commentId: '123',
+        text: comment,
+        storyRef,
+        projectId,
+      });
+      const completion = StoryDetailApiActions.editCommentSuccess({
+        comment: responseComment,
+      });
+
+      actions$ = hot('-a', { a: action });
+      const response = cold('-b|', { b: responseComment });
+      const expected = cold('--c', { c: completion });
+
+      projectApiService.editComment.mockReturnValue(response);
+
+      expect(effects.editComment$).toBeObservable(expected);
     });
   });
 });

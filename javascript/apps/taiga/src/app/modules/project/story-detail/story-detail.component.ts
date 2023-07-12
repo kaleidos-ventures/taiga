@@ -45,10 +45,14 @@ import {
 } from '@taiga/data';
 import { map, merge, pairwise, startWith, take } from 'rxjs';
 
+import { v4 } from 'uuid';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
+import { OrderComments } from '~/app/shared/comments/comments.component';
+import { EditorImageUploadService } from '~/app/shared/editor/editor-image-upload.service';
 import { PermissionUpdateNotificationService } from '~/app/shared/permission-update-notification/permission-update-notification.service';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -56,18 +60,14 @@ import {
   StoryDetailActions,
   StoryDetailApiActions,
 } from './data-access/+state/actions/story-detail.actions';
+import { storyDetailFeature } from './data-access/+state/reducers/story-detail.reducer';
 import {
   selectLoadingWorkflow,
   selectStory,
   selectStoryView,
   selectWorkflow,
 } from './data-access/+state/selectors/story-detail.selectors';
-import { storyDetailFeature } from './data-access/+state/reducers/story-detail.reducer';
-import { OrderComments } from '~/app/shared/comments/comments.component';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { EditorImageUploadService } from '~/app/shared/editor/editor-image-upload.service';
 import { StoryDetaiImageUploadService } from './story-detail-image-upload.service';
-import { v4 } from 'uuid';
 
 export interface StoryDetailState {
   project: Project;
@@ -174,7 +174,6 @@ export class StoryDetailComponent {
   public resetCopyLinkTimeout?: ReturnType<typeof setTimeout>;
   public showCopyLinkHintTimeout?: ReturnType<typeof setTimeout>;
   public form: FormGroup<StoryDetailForm> | null = null;
-  public highlightedCommentId!: string;
 
   public model$ = this.state.select();
   public project$ = this.store.select(selectCurrentProject);
@@ -565,10 +564,6 @@ export class StoryDetailComponent {
       });
   }
 
-  public highlightComment(commentId: string): void {
-    this.highlightedCommentId = commentId;
-  }
-
   public deleteComment(commentId: string): void {
     this.store.dispatch(
       StoryDetailActions.deleteComment({
@@ -579,6 +574,17 @@ export class StoryDetailComponent {
           username: this.state.get('user').username,
           fullName: this.state.get('user').fullName,
         },
+      })
+    );
+  }
+
+  public editComment(comment: Pick<UserComment, 'text' | 'id'>): void {
+    this.store.dispatch(
+      StoryDetailActions.editComment({
+        commentId: comment.id,
+        text: comment.text,
+        projectId: this.state.get('project').id,
+        storyRef: this.state.get('story').ref,
       })
     );
   }
@@ -656,15 +662,6 @@ export class StoryDetailComponent {
       }>('stories.comments.delete')
       .pipe(untilDestroyed(this))
       .subscribe((msg) => {
-        if (msg.event.content.id === this.highlightedCommentId) {
-          this.appService.toastNotification({
-            message: 'deleted.already_deleted_message',
-            status: TuiNotification.Info,
-            scope: 'comments',
-            autoClose: true,
-          });
-        }
-
         this.store.dispatch(
           StoryDetailApiActions.deleteCommentSuccess({
             commentId: msg.event.content.id,

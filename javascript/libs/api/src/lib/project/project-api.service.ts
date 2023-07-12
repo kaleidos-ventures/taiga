@@ -536,6 +536,20 @@ export class ProjectApiService {
       );
   }
 
+  public editComment(
+    commentId: UserComment['id'],
+    text: UserComment['text'],
+    storyRef: Story['ref'],
+    projectId: Project['id']
+  ) {
+    return this.http.patch<UserComment>(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}/comments/${commentId}`,
+      {
+        text,
+      }
+    );
+  }
+
   public deleteComment(
     projectId: Project['id'],
     commentId: UserComment['id'],

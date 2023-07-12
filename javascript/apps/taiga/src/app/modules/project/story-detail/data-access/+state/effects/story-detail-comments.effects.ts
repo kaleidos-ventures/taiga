@@ -9,24 +9,24 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 import {
   fetch,
   optimisticUpdate,
   pessimisticUpdate,
 } from '@ngrx/router-store/data-persistence';
+import { Store } from '@ngrx/store';
+import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
+import { ErrorManagementOptions } from '@taiga/data';
 import { map } from 'rxjs';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AppService } from '~/app/services/app.service';
+import { filterNil } from '~/app/shared/utils/operators';
 import {
   StoryDetailActions,
   StoryDetailApiActions,
 } from '../actions/story-detail.actions';
 import { storyDetailFeature } from '../reducers/story-detail.reducer';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { filterNil } from '~/app/shared/utils/operators';
-import { ErrorManagementOptions } from '@taiga/data';
-import { TuiNotification } from '@taiga-ui/core';
 
 @Injectable()
 export class StoryDetailCommentsEffects {
@@ -115,6 +115,28 @@ export class StoryDetailCommentsEffects {
           this.appService.toastGenericError(httpResponse);
 
           return StoryDetailApiActions.newCommentError(action);
+        },
+      })
+    );
+  });
+
+  public editComment$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailActions.editComment),
+      pessimisticUpdate({
+        run: ({ commentId, text, storyRef, projectId }) => {
+          return this.projectApiService
+            .editComment(commentId, text, storyRef, projectId)
+            .pipe(
+              map((response) => {
+                return StoryDetailApiActions.editCommentSuccess({
+                  comment: response,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastGenericError(httpResponse);
         },
       })
     );

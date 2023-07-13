@@ -154,9 +154,10 @@ async def create_project_invitations(
     for invitation in invitations_to_send_list:
         await send_project_invitation_email(invitation=invitation)
 
-    if invitations_to_send_list:
+    if len(invitations_to_create) + len(invitations_to_update) > 0:
+        invitations_to_publish = (invitations_to_create | invitations_to_update).values()
         await invitations_events.emit_event_when_project_invitations_are_created(
-            project=project, invitations=invitations_to_send_list
+            project=project, invitations=invitations_to_publish
         )
 
     return serializers_services.serialize_create_project_invitations(

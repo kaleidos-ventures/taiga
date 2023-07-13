@@ -103,7 +103,7 @@ async def test_create_workspace_invitations_with_pending_invitations_time_spam(t
         fake_invitations_repo.bulk_update_workspace_invitations.assert_awaited_once()
 
         assert len(tqmanager.pending_jobs) == 0
-        fake_invitations_events.emit_event_when_workspace_invitations_are_created.assert_not_awaited()
+        fake_invitations_events.emit_event_when_workspace_invitations_are_created.assert_awaited_once()
 
 
 async def test_create_workspace_invitations_by_emails(tqmanager):

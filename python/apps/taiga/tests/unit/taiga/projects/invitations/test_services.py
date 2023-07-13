@@ -381,7 +381,7 @@ async def test_create_project_invitations_with_pending_invitations_time_spam(tqm
         fake_invitations_repo.bulk_update_project_invitations.assert_awaited_once()
 
         assert len(tqmanager.pending_jobs) == 0
-        fake_invitations_events.emit_event_when_project_invitations_are_created.assert_not_awaited()
+        fake_invitations_events.emit_event_when_project_invitations_are_created.assert_awaited_once()
 
 
 async def test_create_project_invitations_with_revoked_invitations(tqmanager):
@@ -454,7 +454,7 @@ async def test_create_project_invitations_with_revoked_invitations_time_spam(tqm
         fake_invitations_repo.bulk_update_project_invitations.assert_awaited_once()
 
         assert len(tqmanager.pending_jobs) == 0
-        fake_invitations_events.emit_event_when_project_invitations_are_created.assert_not_awaited()
+        fake_invitations_events.emit_event_when_project_invitations_are_created.assert_awaited_once()
 
 
 async def test_create_project_invitations_by_emails(tqmanager):

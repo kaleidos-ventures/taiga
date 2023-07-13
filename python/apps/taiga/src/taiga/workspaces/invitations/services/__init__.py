@@ -140,9 +140,10 @@ async def create_workspace_invitations(
     for invitation in invitations_to_send_list:
         await send_workspace_invitation_email(invitation=invitation)
 
-    if invitations_to_send_list:
+    if len(invitations_to_create) + len(invitations_to_update) > 0:
+        invitations_to_publish = (invitations_to_create | invitations_to_update).values()
         await invitations_events.emit_event_when_workspace_invitations_are_created(
-            workspace=workspace, invitations=invitations_to_send_list
+            workspace=workspace, invitations=invitations_to_publish
         )
 
     return serializers_services.serialize_create_workspace_invitations(

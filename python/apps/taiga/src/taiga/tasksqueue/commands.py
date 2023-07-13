@@ -6,6 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 import logging
+import traceback
 from collections.abc import Generator
 from contextlib import contextmanager
 from typing import TYPE_CHECKING
@@ -52,8 +53,9 @@ def init(info: bool = typer.Option(False, "--info", "-i", help="Only show info a
                 try:
                     tqm.migrate()
                     typer.secho("OK", fg="bright_green", bold=True)
-                except Exception as e:
-                    typer.echo(f"Unknown error applying procrastinate migrations: {e}")
+                except Exception:
+                    typer.echo("Unknown error applying procrastinate migrations")
+                    traceback.print_exc()
             else:
                 typer.secho("PASS [The db schema is just applied]", fg="bright_yellow", bold=True)
 

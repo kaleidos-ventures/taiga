@@ -205,7 +205,7 @@ describe('ProjectEffects', () => {
     const status = StatusMockFactory();
 
     const fakeStoryposition = {
-      status: status.slug,
+      status: status.id,
       index: randNumber(),
     };
 
@@ -273,7 +273,7 @@ describe('ProjectEffects', () => {
           ref: 1111,
           position: 'bottom',
         },
-        status: status.slug,
+        status: status.id,
       }),
     });
 
@@ -291,7 +291,7 @@ describe('ProjectEffects', () => {
       expect(projectApiService.moveStory).toHaveBeenCalledWith(
         {
           ref: story.ref,
-          status: status.slug,
+          status: status.id,
         },
         project.id,
         workflow.slug,
@@ -408,7 +408,7 @@ describe('ProjectEffects', () => {
   it('delete status', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(KanbanEffects);
-    const status = StatusMockFactory().slug;
+    const status = StatusMockFactory().id;
     const workflow = 'main';
     const moveToStatus = 'done';
 

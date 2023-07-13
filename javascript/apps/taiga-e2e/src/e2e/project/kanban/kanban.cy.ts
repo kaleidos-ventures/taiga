@@ -30,7 +30,7 @@ describe('Kanban', () => {
             cy.visit(`/project/${response.body.id}/${response.body.slug}`);
             cy.initAxe();
             navigateToKanban();
-            createStory('new', title);
+            createStory('New', title);
           }
         );
       })

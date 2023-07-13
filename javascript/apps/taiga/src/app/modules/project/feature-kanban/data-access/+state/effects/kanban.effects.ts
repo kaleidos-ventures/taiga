@@ -451,12 +451,12 @@ export class KanbanEffects {
           if (action.candidate) {
             reorder = {
               place: action.candidate.position === 'left' ? 'before' : 'after',
-              status: action.candidate.slug,
+              status: action.candidate.id,
             };
           }
 
           return this.projectApiService
-            .moveStatus([action.slug], project, workflow?.slug, reorder)
+            .moveStatus([action.id], project, workflow?.slug, reorder)
             .pipe(
               map(() => {
                 return KanbanApiActions.moveStatusSuccess({

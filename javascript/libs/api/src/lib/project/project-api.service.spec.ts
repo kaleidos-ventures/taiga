@@ -56,7 +56,7 @@ describe('ProjectApiService', () => {
     const data = {
       story: {
         ref: storyMock.ref,
-        status: storyMock.status.slug,
+        status: storyMock.status.id,
       },
       project: projectMock,
       workflow: workflowMock,

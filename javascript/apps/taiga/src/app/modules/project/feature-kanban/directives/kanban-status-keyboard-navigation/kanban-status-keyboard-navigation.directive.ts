@@ -76,7 +76,7 @@ export class KanbanStatusKeyboardNavigationDirective implements OnInit {
     private store: Store,
     private state: RxState<{
       KanbanStoryA11y: KanbanStoryA11y;
-      Stories: Record<Status['slug'], KanbanStory[]>;
+      Stories: Record<Status['id'], KanbanStory[]>;
     }>
   ) {
     this.state.connect(

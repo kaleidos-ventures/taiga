@@ -9,9 +9,8 @@
 import { Workflow } from './workflow.model';
 
 export interface Status {
-  id?: string;
+  id: string;
   name: string;
-  slug: string;
   color: number;
   order?: number;
 }

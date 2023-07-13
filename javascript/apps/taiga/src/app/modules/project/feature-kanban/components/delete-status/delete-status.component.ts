@@ -62,7 +62,7 @@ export class DeleteStatusComponent implements OnInit {
   public closeModal = new EventEmitter<void>();
 
   @Output()
-  public submitDelete = new EventEmitter<Status['slug'] | undefined>();
+  public submitDelete = new EventEmitter<Status['id'] | undefined>();
 
   @Input({ required: true })
   public set statuses(statuses: Status[]) {
@@ -73,9 +73,7 @@ export class DeleteStatusComponent implements OnInit {
   public fb = inject(FormBuilder);
   public statusesList: WritableSignal<Status[]> = signal([]);
   public filteredStatus: Signal<Status[]> = computed(() => {
-    return this.statusesList().filter(
-      (it) => it.slug !== this.currentStatus.slug
-    );
+    return this.statusesList().filter((it) => it.id !== this.currentStatus.id);
   });
   public valueContent!: Signal<string>;
 
@@ -92,9 +90,7 @@ export class DeleteStatusComponent implements OnInit {
 
       const valueContent$ = this.form.get('status')?.valueChanges.pipe(
         map((value) => {
-          return (
-            this.statusesList().find((it) => it.slug === value)?.name ?? ''
-          );
+          return this.statusesList().find((it) => it.id === value)?.name ?? '';
         })
       ) as Observable<string>;
 
@@ -107,7 +103,7 @@ export class DeleteStatusComponent implements OnInit {
   public ngOnInit() {
     if (this.filteredStatus().length) {
       (this.form.get('status') as FormControl).setValue(
-        this.filteredStatus()[0].slug
+        this.filteredStatus()[0].id
       );
     }
   }
@@ -118,9 +114,9 @@ export class DeleteStatusComponent implements OnInit {
 
   public submit() {
     this.close();
-    const moveToStatus: Status['slug'] | undefined =
+    const moveToStatus: Status['id'] | undefined =
       !this.isLastStatus && this.form.get('stories')!.value === 'move'
-        ? (this.form.get('status')!.value as Status['slug'])
+        ? (this.form.get('status')!.value as Status['id'])
         : undefined;
     this.submitDelete.next(moveToStatus);
   }

@@ -104,7 +104,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
     private store: Store,
     private state: RxState<{
       KanbanStoryA11y: KanbanStoryA11y;
-      Stories: Record<Status['slug'], KanbanStory[]>;
+      Stories: Record<Status['id'], KanbanStory[]>;
     }>
   ) {
     this.state.connect(
@@ -143,7 +143,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
 
     if (status) {
       const statusData: KanbanStory['status'] = {
-        slug: status.statusSlug,
+        id: status.statusId,
         color: status.statusColor,
         name: status.statusName,
       };
@@ -152,7 +152,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
         'kanban.position_live_announce',
         {
           storyIndex: newIndex + 1,
-          totalStories: Object.keys(this.state.get('Stories')[statusData.slug])
+          totalStories: Object.keys(this.state.get('Stories')[statusData.id])
             .length,
         }
       );
@@ -208,7 +208,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
     );
 
     return statuses.find((status) => {
-      return status.getAttribute('data-slug') === currentStatus;
+      return status.getAttribute('data-id') === currentStatus;
     });
   }
 
@@ -270,7 +270,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
 
     if (horizontalNavData.nextStatus) {
       const statusData: KanbanStory['status'] = {
-        slug: horizontalNavData.nextStatus.getAttribute('data-slug')!,
+        id: horizontalNavData.nextStatus.getAttribute('data-id')!,
         color: Number(
           horizontalNavData.nextStatus.getAttribute('data-color')!
         )!,
@@ -308,7 +308,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
           index: this.currentDraggedStory.currentPosition.index,
         },
         currentPosition: {
-          status: statusData.slug,
+          status: statusData.id,
           index: storyIndex,
         },
       };
@@ -328,7 +328,7 @@ export class KanbanStoryKeyboardNavigationDirective implements OnInit {
         'kanban.position_live_announce',
         {
           storyIndex: storyIndex + 1,
-          totalStories: Object.keys(this.state.get('Stories')[statusData.slug])
+          totalStories: Object.keys(this.state.get('Stories')[statusData.id])
             .length,
         }
       );

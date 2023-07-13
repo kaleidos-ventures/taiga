@@ -9,7 +9,7 @@
 import { Status } from '@taiga/data';
 
 export interface EditStatus {
+  id: Status['id'];
   color: Status['color'];
   name: Status['name'];
-  slug: Status['slug'];
 }

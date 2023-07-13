@@ -9,6 +9,7 @@
 import { Status } from './status.model';
 
 export interface Workflow {
+  id: string;
   name: string;
   slug: string;
   statuses: Status[];

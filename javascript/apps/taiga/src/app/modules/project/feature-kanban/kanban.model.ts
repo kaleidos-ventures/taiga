@@ -17,15 +17,15 @@ interface BaseStory extends Story {
 export interface KanbanStoryA11y {
   ref: null | PartialStory['ref'];
   initialPosition: {
-    status: Status['slug'];
+    status: Status['id'];
     index: null | number;
   };
   prevPosition: {
-    status: Status['slug'];
+    status: Status['id'];
     index: null | number;
   };
   currentPosition: {
-    status: Status['slug'];
+    status: Status['id'];
     index: null | number;
   };
 }

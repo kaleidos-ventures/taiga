@@ -30,6 +30,6 @@ export class StoryDetailStatusComponent {
   constructor(private state: RxState<StoryDetailState>) {}
 
   public trackByStatus(_index: number, status: Status) {
-    return status.slug;
+    return status.id;
   }
 }

@@ -6,12 +6,13 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { randSlug, randWord } from '@ngneat/falso';
+import { randSlug, randWord, randUuid } from '@ngneat/falso';
 import { StatusMockFactory } from './status.model.mock';
 import { Workflow } from './workflow.model';
 
 export const WorkflowMockFactory = (numStatuses = 10): Workflow => {
   return {
+    id: randUuid(),
     name: randWord(),
     slug: randSlug(),
     statuses: Array.from({ length: numStatuses }, () => StatusMockFactory()),

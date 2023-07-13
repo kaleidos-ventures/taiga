@@ -134,9 +134,9 @@ export const projectEventActions = createActionGroup({
     'Update Member': props<{ membership: Membership }>(),
     'Create comment': props<{ storyRef: Story['ref']; comment: UserComment }>(),
     'Status reorder': props<{
-      slug: Status['slug'];
+      id: Status['id'];
       candidate?: {
-        slug: Status['slug'];
+        id: Status['id'];
         position: DropCandidate['hPosition'];
       };
     }>(),

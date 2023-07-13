@@ -67,8 +67,8 @@ Copyright (c) 2023-present Kaleidos INC
                 tuiOption
                 [attr.data-test]="status.name.toLowerCase()"
                 size="s"
-                [class.selected]="status.slug === form.get('status')?.value"
-                [value]="status.slug">
+                [class.selected]="status.id === form.get('status')?.value"
+                [value]="status.id">
                 {{ status.name }}
               </button>
             </tui-data-list>

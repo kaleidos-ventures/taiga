@@ -96,13 +96,12 @@ export class A11yDragService {
 
         const currentStatus = statuses.find((status) => {
           return (
-            status.getAttribute('data-slug') ===
-            storyA11y.initialPosition?.status
+            status.getAttribute('data-id') === storyA11y.initialPosition?.status
           );
         });
 
         const currentStatusData: KanbanStory['status'] = {
-          slug: currentStatus!.getAttribute('data-slug')!,
+          id: currentStatus!.getAttribute('data-id')!,
           color: Number(currentStatus!.getAttribute('data-color'))!,
           name: currentStatus!.getAttribute('data-name')!,
         };
@@ -177,23 +176,23 @@ export class A11yDragService {
           return;
         }
 
-        const stories = state.stories[story.status.slug];
-        const index = state.stories[story.status.slug].findIndex(
+        const stories = state.stories[story.status.id];
+        const index = state.stories[story.status.id].findIndex(
           (it) => it.ref === story.ref
         );
 
         const storyA11y: KanbanStoryA11y = {
           ref: story.ref,
           initialPosition: {
-            status: story.status.slug,
+            status: story.status.id,
             index,
           },
           prevPosition: {
-            status: story.status.slug,
+            status: story.status.id,
             index,
           },
           currentPosition: {
-            status: story.status.slug,
+            status: story.status.id,
             index,
           },
         };

@@ -20,7 +20,7 @@ export const KanbanActions = createActionGroup({
   source: 'Kanban',
   events: {
     'Init Kanban': emptyProps(),
-    'Open Create Story form': props<{ status: Status['slug'] }>(),
+    'Open Create Story form': props<{ status: Status['id'] }>(),
     'Close Create Story form': emptyProps(),
     'Create Story': props<{
       story: PartialStory;
@@ -53,7 +53,7 @@ export const KanbanActions = createActionGroup({
         ref: Story['ref'];
         position: DropCandidate['position'];
       };
-      status?: Story['status']['slug'];
+      status?: Story['status']['id'];
     }>(),
     'Story drag start': props<{
       ref: Story['ref'];
@@ -64,7 +64,7 @@ export const KanbanActions = createActionGroup({
         ref: Story['ref'];
         position: DropCandidate['position'];
       };
-      status?: Story['status']['slug'];
+      status?: Story['status']['id'];
     }>(),
     'Load stories complete': emptyProps(),
     'Delete Story': props<{
@@ -87,30 +87,30 @@ export const KanbanActions = createActionGroup({
     }>(),
     'Edit Status': props<{
       undo: {
-        status: Pick<Status, 'name' | 'slug'>;
+        status: Pick<Status, 'name' | 'id'>;
       };
-      status: Pick<Status, 'name' | 'slug'>;
+      status: Pick<Status, 'name' | 'id'>;
       workflow: Workflow['slug'];
     }>(),
     'Delete status': props<{
-      status: Status['slug'];
+      status: Status['id'];
       workflow: Workflow['slug'];
-      moveToStatus?: Status['slug'];
+      moveToStatus?: Status['id'];
     }>(),
     'Status drag start': props<{
-      slug: Status['slug'];
+      id: Status['id'];
     }>(),
     'Status drop candidate': props<{
-      slug: Status['slug'];
+      id: Status['id'];
       candidate?: {
-        slug: Status['slug'];
+        id: Status['id'];
         position: DropCandidate['hPosition'];
       };
     }>(),
     'Status dropped': props<{
-      slug: Status['slug'];
+      id: Status['id'];
       candidate?: {
-        slug: Status['slug'];
+        id: Status['id'];
         position: DropCandidate['hPosition'];
       };
     }>(),
@@ -155,20 +155,20 @@ export const KanbanApiActions = createActionGroup({
     'Edit status error': props<{
       statusError: number;
       undo: {
-        status: Pick<Status, 'name' | 'slug'>;
+        status: Pick<Status, 'name' | 'id'>;
       };
-      status: Pick<Status, 'name' | 'slug'>;
+      status: Pick<Status, 'name' | 'id'>;
       workflow: Workflow['slug'];
     }>(),
     'Delete status success': props<{
-      status: Status['slug'];
+      status: Status['id'];
       workflow: Workflow['slug'];
-      moveToStatus?: Status['slug'];
+      moveToStatus?: Status['id'];
     }>(),
     'Move Status Success': props<{
-      slug: Status['slug'];
+      id: Status['id'];
       candidate?: {
-        slug: Status['slug'];
+        id: Status['id'];
         position: DropCandidate['hPosition'];
       };
     }>(),
@@ -190,9 +190,9 @@ export const KanbanEventsActions = createActionGroup({
       workflow: Workflow['slug'];
     }>(),
     'Status deleted': props<{
-      status: Status['slug'];
+      status: Status['id'];
       workflow: Workflow['slug'];
-      moveToStatus?: Status['slug'];
+      moveToStatus?: Status['id'];
     }>(),
   },
 });

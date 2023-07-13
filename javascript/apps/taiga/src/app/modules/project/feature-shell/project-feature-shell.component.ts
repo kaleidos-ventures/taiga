@@ -289,8 +289,8 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     this.wsService
       .projectEvents<{
         reorder: {
-          reorder: { place: 'before' | 'after'; status: Status['slug'] };
-          statuses: Status['slug'][];
+          reorder: { place: 'before' | 'after'; status: Status['id'] };
+          statuses: Status['id'][];
           workflow: Pick<Workflow, 'name' | 'slug'>;
         };
       }>('workflowstatuses.reorder')
@@ -298,13 +298,13 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       .subscribe((eventResponse) => {
         this.store.dispatch(
           projectEventActions.statusReorder({
-            slug: eventResponse.event.content.reorder.statuses[0],
+            id: eventResponse.event.content.reorder.statuses[0],
             candidate: {
               position:
                 eventResponse.event.content.reorder.reorder.place === 'after'
                   ? 'right'
                   : 'left',
-              slug: eventResponse.event.content.reorder.reorder.status,
+              id: eventResponse.event.content.reorder.reorder.status,
             },
           })
         );

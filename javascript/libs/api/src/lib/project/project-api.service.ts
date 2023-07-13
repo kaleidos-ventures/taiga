@@ -368,7 +368,7 @@ export class ProjectApiService {
       `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/stories`,
       {
         title: story.title,
-        status: story.status.slug,
+        status: story.status.id,
       }
     );
   }
@@ -376,7 +376,7 @@ export class ProjectApiService {
   public moveStory(
     story: {
       ref: Story['ref'];
-      status: Status['slug'];
+      status: Status['id'];
     },
     project: Project['id'],
     workflow: Workflow['slug'],
@@ -568,11 +568,11 @@ export class ProjectApiService {
 
   public editStatus(
     project: Project['id'],
-    status: Pick<Status, 'name' | 'slug'>,
+    status: Pick<Status, 'name' | 'id'>,
     workflow: Workflow['slug']
   ) {
     return this.http.patch<Status>(
-      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/statuses/${status.slug}`,
+      `${this.config.apiUrl}/projects/${project}/workflows/${workflow}/statuses/${status.id}`,
       {
         name: status.name,
       }
@@ -582,8 +582,8 @@ export class ProjectApiService {
   public deleteStatus(
     project: Project['id'],
     workflow: Workflow['slug'],
-    status: Status['slug'],
-    moveToStatus?: Status['slug']
+    status: Status['id'],
+    moveToStatus?: Status['id']
   ) {
     return this.http.delete(
       `${

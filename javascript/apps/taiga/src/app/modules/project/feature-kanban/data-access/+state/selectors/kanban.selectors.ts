@@ -30,12 +30,12 @@ export const {
   selectDraggingStatus,
 } = kanbanFeature;
 
-export const selectStatusNewStories = (statusSlug: Status['slug']) => {
+export const selectStatusNewStories = (statusId: Status['id']) => {
   return createSelector(
     selectScrollToStory,
     selectStories,
     (newStories, stories) => {
-      const story = stories[statusSlug].find((story) => {
+      const story = stories[statusId].find((story) => {
         if ('tmpId' in story) {
           return newStories.includes(story.tmpId);
         }

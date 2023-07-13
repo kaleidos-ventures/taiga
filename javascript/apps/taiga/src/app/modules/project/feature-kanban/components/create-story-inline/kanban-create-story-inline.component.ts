@@ -82,7 +82,7 @@ export class KanbanCreateStoryInlineComponent implements AfterViewInit {
             description: '',
             status: {
               name: this.status.name,
-              slug: this.status.slug,
+              id: this.status.id,
               color: this.status.color,
             },
             assignees: [],

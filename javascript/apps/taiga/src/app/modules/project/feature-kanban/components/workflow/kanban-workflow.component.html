@@ -21,20 +21,19 @@ Copyright (c) 2023-present Kaleidos INC
       tuiScrollable
       class="tui-zero-scrollbar"
       role="row">
-      <ng-container
-        *cdkVirtualFor="let column of columns; trackBy: trackBySlug">
+      <ng-container *cdkVirtualFor="let column of columns; trackBy: trackById">
         <div
           *ngIf="column.isPlaceholder"
           class="placeholder-status drop-target"></div>
         <tg-kanban-status
           *ngIf="!column.isPlaceholder"
-          [tgUiDraggable]="column.status.slug"
+          [tgUiDraggable]="column.status.id"
           [dragData]="column.status"
           [dragDisabled]="columns.length === 1 || !userIsAdmin"
           dropCategory="status"
           role="gridcell"
           tgKanbanStatusKeyboardNavigation
-          [attr.data-test]="column.status.slug"
+          [attr.data-test]="column.status.name"
           [status]="column.status"
           [workflow]="workflow"></tg-kanban-status>
       </ng-container>
@@ -58,7 +57,7 @@ Copyright (c) 2023-present Kaleidos INC
       *ngIf="movingStatus() as status"
       role="gridcell"
       tgKanbanStatusKeyboardNavigation
-      [attr.data-test]="status.slug"
+      [attr.data-test]="status.id"
       [status]="status"
       [workflow]="workflow"></tg-kanban-status>
   </tg-ui-drag-in-progress>

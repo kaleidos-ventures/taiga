@@ -42,8 +42,8 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.stories[workflow.statuses[0].slug]).toEqual([]);
-    expect(state.createStoryForm).toEqual(workflow.statuses[0].slug);
+    expect(state.stories[workflow.statuses[0].id]).toEqual([]);
+    expect(state.createStoryForm).toEqual(workflow.statuses[0].id);
     expect(state.loadingWorkflows).toEqual(false);
   });
 
@@ -63,7 +63,7 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.stories[story.status.slug]).toEqual([story]);
+    expect(state.stories[story.status.id]).toEqual([story]);
     expect(state.loadingStories).toEqual(false);
     expect(state.empty).toEqual(false);
   });
@@ -85,7 +85,7 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.createStoryForm).toEqual(workflow.statuses[0].slug);
+    expect(state.createStoryForm).toEqual(workflow.statuses[0].id);
     expect(state.loadingStories).toEqual(false);
     expect(state.empty).toEqual(true);
   });
@@ -111,7 +111,7 @@ describe('Kanban reducer', () => {
         {
           ...initialKanbanState,
           stories: {
-            [status.slug]: stories,
+            [status.id]: stories,
           },
         },
         KanbanActions.storyDragStart({
@@ -119,11 +119,11 @@ describe('Kanban reducer', () => {
         })
       );
 
-      expect(state.stories[status.slug][0]._dragging).toEqual(true);
+      expect(state.stories[status.id][0]._dragging).toEqual(true);
       expect(state.dragging[0].ref).toBe(stories[0].ref);
       expect(state.initialDragDropPosition).toEqual({
         [stories[0].ref!]: {
-          status: stories[0].status.slug,
+          status: stories[0].status.id,
           index: 0,
         },
       });
@@ -153,7 +153,7 @@ describe('Kanban reducer', () => {
         {
           ...initialKanbanState,
           stories: {
-            [status.slug]: stories,
+            [status.id]: stories,
           },
         },
         KanbanActions.storyDropCandidate({
@@ -162,15 +162,15 @@ describe('Kanban reducer', () => {
             ref: stories[1].ref!,
             position: 'bottom',
           },
-          status: status.slug,
+          status: status.id,
         })
       );
 
       expect(state.hasDropCandidate).toEqual(true);
-      expect(state.stories[status.slug][2].ref).toEqual(stories[0].ref);
-      expect(state.stories[status.slug][2]._shadow).toEqual(true);
+      expect(state.stories[status.id][2].ref).toEqual(stories[0].ref);
+      expect(state.stories[status.id][2]._shadow).toEqual(true);
       expect(
-        state.stories[status.slug].filter((it) => it._shadow).length
+        state.stories[status.id].filter((it) => it._shadow).length
       ).toEqual(1);
     });
 
@@ -198,7 +198,7 @@ describe('Kanban reducer', () => {
         {
           ...initialKanbanState,
           stories: {
-            [status.slug]: stories,
+            [status.id]: stories,
           },
         },
         KanbanActions.storyDropCandidate({
@@ -207,14 +207,14 @@ describe('Kanban reducer', () => {
             ref: stories[1].ref!,
             position: 'top',
           },
-          status: status.slug,
+          status: status.id,
         })
       );
 
       expect(state.hasDropCandidate).toEqual(false);
-      expect(state.stories[status.slug][1].ref).toEqual(stories[1].ref);
+      expect(state.stories[status.id][1].ref).toEqual(stories[1].ref);
       expect(
-        state.stories[status.slug].filter((it) => it._shadow).length
+        state.stories[status.id].filter((it) => it._shadow).length
       ).toEqual(0);
     });
 
@@ -232,7 +232,7 @@ describe('Kanban reducer', () => {
         {
           ...initialKanbanState,
           stories: {
-            [status.slug]: stories,
+            [status.id]: stories,
             ['test']: [],
           },
         },
@@ -262,7 +262,7 @@ describe('Kanban reducer', () => {
           ...initialKanbanState,
           hasDropCandidate: true,
           stories: {
-            [status.slug]: stories,
+            [status.id]: stories,
           },
         },
         KanbanActions.storyDropCandidate({
@@ -298,7 +298,7 @@ describe('Kanban reducer', () => {
         {
           ...initialKanbanState,
           stories: {
-            [status.slug]: stories,
+            [status.id]: stories,
           },
           dragging: [stories[0]],
           workflows: [workflow],
@@ -309,15 +309,15 @@ describe('Kanban reducer', () => {
             ref: stories[1].ref!,
             position: 'bottom',
           },
-          status: status.slug,
+          status: status.id,
         })
       );
 
       expect(state.hasDropCandidate).toEqual(false);
       expect(state.dragging.length).toEqual(0);
-      expect(state.stories[status.slug][1].ref).toEqual(stories[0].ref);
+      expect(state.stories[status.id][1].ref).toEqual(stories[0].ref);
       expect(
-        state.stories[status.slug].filter((it) => it._shadow || it._dragging)
+        state.stories[status.id].filter((it) => it._shadow || it._dragging)
           .length
       ).toEqual(0);
     });
@@ -343,11 +343,11 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         stories: {
-          [status.slug]: stories,
+          [status.id]: stories,
         },
         initialDragDropPosition: {
           [stories[0].ref!]: {
-            status: status.slug,
+            status: status.id,
             index: 2,
           },
         },
@@ -358,9 +358,9 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.stories[status.slug][2]).toEqual(stories[0]);
+    expect(state.stories[status.id][2]).toEqual(stories[0]);
     expect(state.initialDragDropPosition[stories[0].ref!]).toBeUndefined();
-    expect(state.stories[status.slug].length).toEqual(stories.length);
+    expect(state.stories[status.id].length).toEqual(stories.length);
   });
 
   it('reorder event', () => {
@@ -393,8 +393,8 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         stories: {
-          [status.slug]: stories,
-          [status2.slug]: stories2,
+          [status.id]: stories,
+          [status2.id]: stories2,
         },
         workflows: [workflow],
       },
@@ -408,8 +408,8 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.stories[status.slug][0].ref).toEqual(stories[1].ref);
-    expect(state.stories[status2.slug][1].ref).toEqual(stories[0].ref);
+    expect(state.stories[status.id][0].ref).toEqual(stories[1].ref);
+    expect(state.stories[status2.id][1].ref).toEqual(stories[0].ref);
   });
 
   it('update story status', () => {
@@ -443,15 +443,15 @@ describe('Kanban reducer', () => {
     const storyUpdate = {
       ref: stories[0].ref!,
       version: 1,
-      status: status2.slug,
+      status: status2.id,
     };
 
     const state = kanbanReducer.kanbanFeature.reducer(
       {
         ...initialKanbanState,
         stories: {
-          [status.slug]: stories,
-          [status2.slug]: stories2,
+          [status.id]: stories,
+          [status2.id]: stories2,
         },
         workflows: [workflow],
       },
@@ -461,8 +461,8 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.stories[status.slug].length).toEqual(3);
-    expect(state.stories[status2.slug][1].ref).toEqual(stories[0].ref);
+    expect(state.stories[status.id].length).toEqual(3);
+    expect(state.stories[status2.id][1].ref).toEqual(stories[0].ref);
   });
 
   it('update story description does not break the kanban story title', () => {
@@ -488,7 +488,7 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         stories: {
-          [status.slug]: stories,
+          [status.id]: stories,
         },
         workflows: [workflow],
       },
@@ -498,7 +498,7 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.stories[status.slug][0].title).toEqual('yy');
+    expect(state.stories[status.id][0].title).toEqual('yy');
   });
 
   it('update story status by event', () => {
@@ -536,8 +536,8 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         stories: {
-          [status.slug]: stories,
-          [status2.slug]: stories2,
+          [status.id]: stories,
+          [status2.id]: stories2,
         },
         workflows: [workflow],
       },
@@ -550,9 +550,9 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.stories[status.slug].length).toEqual(3);
-    expect(state.stories[status2.slug][1].ref).toEqual(stories[0].ref);
-    expect(state.stories[status2.slug][1].title).toEqual('new title');
+    expect(state.stories[status.id].length).toEqual(3);
+    expect(state.stories[status2.id][1].ref).toEqual(stories[0].ref);
+    expect(state.stories[status2.id][1].title).toEqual('new title');
   });
 
   it('remove members by event', () => {
@@ -601,16 +601,16 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         stories: {
-          [status.slug]: stories,
-          [status2.slug]: stories2,
+          [status.id]: stories,
+          [status2.id]: stories2,
         },
         workflows: [workflow],
       },
       KanbanActions.removeMembers({ members: [assignee2] })
     );
 
-    expect(state.stories[status.slug][0].assignees.length).toEqual(1);
-    expect(state.stories[status2.slug][0].assignees.length).toEqual(0);
+    expect(state.stories[status.id][0].assignees.length).toEqual(1);
+    expect(state.stories[status2.id][0].assignees.length).toEqual(0);
   });
 
   it('update story title by event', () => {
@@ -648,8 +648,8 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         stories: {
-          [status.slug]: stories,
-          [status2.slug]: stories2,
+          [status.id]: stories,
+          [status2.id]: stories2,
         },
         workflows: [workflow],
       },
@@ -661,7 +661,7 @@ describe('Kanban reducer', () => {
       })
     );
 
-    expect(state.stories[status.slug][0].title).toEqual('new title');
+    expect(state.stories[status.id][0].title).toEqual('new title');
   });
 
   it('delete status moving stories to another status', () => {
@@ -685,19 +685,19 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         stories: {
-          [status.slug]: stories,
-          [status2.slug]: [],
+          [status.id]: stories,
+          [status2.id]: [],
         },
         workflows: [workflow],
       },
       KanbanApiActions.deleteStatusSuccess({
-        status: status.slug,
+        status: status.id,
         workflow: workflow.slug,
-        moveToStatus: status2.slug,
+        moveToStatus: status2.id,
       })
     );
-    expect(state.stories[status.slug]).toBeUndefined();
-    expect(state.stories[status2.slug].length).toEqual(1);
+    expect(state.stories[status.id]).toBeUndefined();
+    expect(state.stories[status2.id].length).toEqual(1);
     expect(state.workflows![0].statuses.length).toEqual(11);
   });
 
@@ -720,17 +720,17 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         stories: {
-          [status.slug]: stories,
+          [status.id]: stories,
         },
         workflows: [workflow],
       },
       KanbanApiActions.deleteStatusSuccess({
-        status: status.slug,
+        status: status.id,
         workflow: workflow.slug,
         moveToStatus: undefined,
       })
     );
-    expect(state.stories[status.slug]).toBeUndefined();
+    expect(state.stories[status.id]).toBeUndefined();
     expect(state.workflows![0].statuses.length).toEqual(10);
   });
 
@@ -746,22 +746,22 @@ describe('Kanban reducer', () => {
         },
 
         KanbanActions.statusDropped({
-          slug: workflow.statuses[0].slug,
+          id: workflow.statuses[0].id,
           candidate: {
-            slug: workflow.statuses[2].slug,
+            id: workflow.statuses[2].id,
             position: 'right',
           },
         })
       );
 
-      expect(state.workflows![0].statuses[0].slug).toEqual(
-        workflow.statuses[1].slug
+      expect(state.workflows![0].statuses[0].id).toEqual(
+        workflow.statuses[1].id
       );
-      expect(state.workflows![0].statuses[1].slug).toEqual(
-        workflow.statuses[2].slug
+      expect(state.workflows![0].statuses[1].id).toEqual(
+        workflow.statuses[2].id
       );
-      expect(state.workflows![0].statuses[2].slug).toEqual(
-        workflow.statuses[0].slug
+      expect(state.workflows![0].statuses[2].id).toEqual(
+        workflow.statuses[0].id
       );
     });
 
@@ -776,22 +776,22 @@ describe('Kanban reducer', () => {
         },
 
         KanbanActions.statusDropped({
-          slug: workflow.statuses[0].slug,
+          id: workflow.statuses[0].id,
           candidate: {
-            slug: workflow.statuses[2].slug,
+            id: workflow.statuses[2].id,
             position: 'left',
           },
         })
       );
 
-      expect(state.workflows![0].statuses[0].slug).toEqual(
-        workflow.statuses[1].slug
+      expect(state.workflows![0].statuses[0].id).toEqual(
+        workflow.statuses[1].id
       );
-      expect(state.workflows![0].statuses[1].slug).toEqual(
-        workflow.statuses[0].slug
+      expect(state.workflows![0].statuses[1].id).toEqual(
+        workflow.statuses[0].id
       );
-      expect(state.workflows![0].statuses[2].slug).toEqual(
-        workflow.statuses[2].slug
+      expect(state.workflows![0].statuses[2].id).toEqual(
+        workflow.statuses[2].id
       );
     });
   });
@@ -802,10 +802,10 @@ describe('Kanban reducer', () => {
       const statuses = workflows[0].statuses;
       const draggingStatus = statuses[0];
       const statusDropCandidate = {
-        slug: draggingStatus.slug,
+        id: draggingStatus.id,
         candidate: {
           position: 'right',
-          slug: statuses[1].slug,
+          id: statuses[1].id,
         },
       } as KanbanState['statusDropCandidate'];
 
@@ -836,10 +836,10 @@ describe('Kanban reducer', () => {
       const statuses = workflows[0].statuses;
       const draggingStatus = statuses[1];
       const statusDropCandidate = {
-        slug: draggingStatus.slug,
+        id: draggingStatus.id,
         candidate: {
           position: 'left',
-          slug: statuses[0].slug,
+          id: statuses[0].id,
         },
       } as KanbanState['statusDropCandidate'];
 

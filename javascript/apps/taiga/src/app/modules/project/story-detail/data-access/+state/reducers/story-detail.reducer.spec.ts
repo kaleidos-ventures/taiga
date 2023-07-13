@@ -145,9 +145,9 @@ describe('Story Detail Reducer', () => {
     workflow.statuses = [status, status2];
     const story = StoryDetailMockFactory([status]);
     const action = KanbanEventsActions.statusDeleted({
-      status: status.slug,
+      status: status.id,
       workflow: workflow.slug,
-      moveToStatus: status2.slug,
+      moveToStatus: status2.id,
     });
     const result = reducer(
       {
@@ -159,7 +159,7 @@ describe('Story Detail Reducer', () => {
     );
 
     expect(result.workflow!.statuses.length).toEqual(1);
-    expect(result.story!.status.slug).toEqual(status2.slug);
+    expect(result.story!.status.id).toEqual(status2.id);
   });
 
   it('should update the comments when one comment is deleted', () => {

@@ -737,7 +737,7 @@ Content for:
   ```
 
 
-#### `stories_assignments.create`
+#### `storiesassignments.create`
 
 It happens when a new story assignment has been created.
 
@@ -755,7 +755,7 @@ Content for:
   }
   ```
 
-#### `stories_assignments.delete`
+#### `storiesassignments.delete`
 
 It happens when a story assignment has been deleted.
 

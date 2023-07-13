@@ -154,8 +154,9 @@ export class CommentUserInputComponent implements ComponentCanDeactivate {
 
   public save() {
     const comment = this.state.get('comment').trim();
-
-    if (comment.length) {
+    // to avoid blank spaces or line breaks
+    const commentEmpty = /^(?:<p>(?:&nbsp; *)*<\/p>\W*)*$/g.test(comment);
+    if (comment.length && !commentEmpty) {
       this.saved.emit(comment);
     }
 

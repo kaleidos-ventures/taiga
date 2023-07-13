@@ -126,7 +126,7 @@ export class StoryDetailAssignComponent implements OnChanges {
   }
 
   public trackByStatus(_index: number, status: Status) {
-    return status.slug;
+    return status.id;
   }
 
   public trackByIndex(index: number) {

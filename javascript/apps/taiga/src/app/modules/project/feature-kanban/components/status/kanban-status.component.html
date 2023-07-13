@@ -9,7 +9,7 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div
-      [tgUiDropZone]="status.slug"
+      [tgUiDropZone]="status.id"
       dropCategory="story"
       class="wrapper"
       root="cdk-virtual-scroll-viewport">

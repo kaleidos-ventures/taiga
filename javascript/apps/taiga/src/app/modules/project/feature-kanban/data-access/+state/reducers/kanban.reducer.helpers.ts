@@ -58,7 +58,7 @@ export function getStory(
   const target = findStory(state, (it) => it.ref === targetRef);
 
   if (target) {
-    let index = state.stories[target.status.slug].findIndex((it) => {
+    let index = state.stories[target.status.id].findIndex((it) => {
       return it.ref === target.ref;
     });
 
@@ -68,7 +68,7 @@ export function getStory(
       index++;
     }
 
-    return state.stories[target.status.slug][index];
+    return state.stories[target.status.id][index];
   }
 
   return undefined;
@@ -84,7 +84,7 @@ export function addStory(
   const target = findStory(state, (it) => it.ref === targetRef);
 
   if (target) {
-    let index = state.stories[target.status.slug].findIndex((it) => {
+    let index = state.stories[target.status.id].findIndex((it) => {
       return it.ref === target.ref;
     });
 
@@ -92,9 +92,9 @@ export function addStory(
       index++;
     }
 
-    state.stories[target.status.slug].splice(index, 0, story);
+    state.stories[target.status.id].splice(index, 0, story);
   } else if (status) {
-    state.stories[status.slug].push(story);
+    state.stories[status.id].push(story);
   }
 
   return state;
@@ -119,7 +119,7 @@ export function setIntialPosition(state: KanbanState, story: KanbanStory) {
 
     if (index !== -1) {
       state.initialDragDropPosition[story.ref] = {
-        status: story.status.slug,
+        status: story.status.id,
         index,
       };
     }

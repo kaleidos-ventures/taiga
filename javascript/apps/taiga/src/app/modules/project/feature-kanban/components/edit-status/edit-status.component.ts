@@ -108,12 +108,12 @@ export class EditStatusComponent implements OnInit {
         ],
       ],
       color: this.color,
-      slug: '',
+      id: '',
     });
 
     if (this.status) {
       this.statusForm.get('name')?.setValue(this.status.name);
-      this.statusForm.get('slug')?.setValue(this.status.slug);
+      this.statusForm.get('id')?.setValue(this.status.id);
     }
 
     this.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });

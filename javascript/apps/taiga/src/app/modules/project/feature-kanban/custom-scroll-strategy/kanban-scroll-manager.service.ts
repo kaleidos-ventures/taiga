@@ -137,11 +137,11 @@ export class KanbanScrollManagerService {
           take(1),
           tap((workflow) => {
             const statusIndex = workflow.statuses.findIndex(
-              (workflowStatuses) => status.slug === workflowStatuses.slug
+              (workflowStatuses) => status.id === workflowStatuses.id
             );
             const runScroll = () => {
               const statusEl = this.kanbanStatuses$.value.find(
-                (it) => status.slug === it.status.slug
+                (it) => status.id === it.status.id
               );
 
               if (statusEl) {
@@ -170,7 +170,7 @@ export class KanbanScrollManagerService {
               }
 
               const statusEl = this.kanbanStatuses$.value.find(
-                (it) => it.status.slug === status.slug
+                (it) => it.status.id === status.id
               );
 
               if (statusEl) {
@@ -268,7 +268,7 @@ export class KanbanScrollManagerService {
       take(1),
       map((kanbanStatuses) => {
         return kanbanStatuses.find((kanbanStatus) => {
-          return kanbanStatus.status.slug == story.status.slug;
+          return kanbanStatus.status.id == story.status.id;
         });
       }),
       filter(

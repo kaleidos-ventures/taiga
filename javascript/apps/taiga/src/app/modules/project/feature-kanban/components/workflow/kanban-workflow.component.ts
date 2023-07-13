@@ -105,11 +105,11 @@ export class KanbanWorkflowComponent
       .subscribe();
   }
 
-  public trackBySlug(
+  public trackById(
     _index: number,
     obj: ReturnType<typeof kanbanFeature.selectColums>[0]
   ) {
-    return obj.status.slug;
+    return obj.status.id;
   }
 
   public trackByStorySlug(_index: number, story: KanbanStory) {

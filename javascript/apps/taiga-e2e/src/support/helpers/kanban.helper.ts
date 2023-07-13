@@ -11,12 +11,12 @@ export const navigateToKanban = () => {
   cy.get('tg-project-feature-kanban').should('be.visible');
 };
 
-export const getStatusColumn = (statusSlug: string) => {
-  return cy.getBySel(statusSlug);
+export const getStatusColumn = (statusName: string) => {
+  return cy.getBySel(statusName);
 };
 
-export const createStory = (statusSlug: string, title: string) => {
-  const status = getStatusColumn(statusSlug);
+export const createStory = (statusName: string, title: string) => {
+  const status = getStatusColumn(statusName);
   status.within(() => {
     cy.getBySel('create-story-title').should('be.visible');
     cy.getBySel('create-story-title').first().type(title);

@@ -102,14 +102,14 @@ export const createStoryRequest = (
   workspaceSlug: Workspace['slug'],
   projectId: Project['id'],
   story: Partial<Story>,
-  statusSlug: Status['slug']
+  statusId: Status['id']
 ): Promise<Cypress.Response<Story>> => {
   return request(
     'POST',
     `/projects/${projectId}/workflows/${workspaceSlug}/stories`,
     {
       ...story,
-      status: statusSlug,
+      status: statusId,
     }
   );
 };

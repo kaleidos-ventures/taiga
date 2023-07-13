@@ -283,13 +283,7 @@ export class ProjectFeatureKanbanComponent {
         const workflowStatusResponse =
           eventResponse.event.content.workflowStatus;
         const status = {
-          ...pick(workflowStatusResponse, [
-            'id',
-            'name',
-            'slug',
-            'color',
-            'order',
-          ]),
+          ...pick(workflowStatusResponse, ['id', 'name', 'color', 'order']),
         };
         this.store.dispatch(
           KanbanEventsActions.updateStatus({
@@ -308,13 +302,7 @@ export class ProjectFeatureKanbanComponent {
         const workflowStatusResponse =
           eventResponse.event.content.workflowStatus;
         const status = {
-          ...pick(workflowStatusResponse, [
-            'id',
-            'name',
-            'slug',
-            'color',
-            'order',
-          ]),
+          ...pick(workflowStatusResponse, ['id', 'name', 'color', 'order']),
         };
         this.store.dispatch(
           KanbanEventsActions.editStatus({
@@ -327,14 +315,14 @@ export class ProjectFeatureKanbanComponent {
     this.wsService
       .projectEvents<{
         workflowStatus: Status & { workflow: Workflow };
-        moveToSlug: Status['slug'];
+        moveToSlug: Status['id'];
       }>('workflowstatuses.delete')
       .pipe(untilDestroyed(this))
       .subscribe((eventResponse) => {
         const content = eventResponse.event.content;
         this.store.dispatch(
           KanbanEventsActions.statusDeleted({
-            status: content.workflowStatus.slug,
+            status: content.workflowStatus.id,
             workflow: content.workflowStatus.workflow.slug,
             moveToStatus: content.moveToSlug,
           })

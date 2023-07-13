@@ -95,14 +95,14 @@ export const reducer = createImmerReducer(
     (state, { status, workflow, moveToStatus }): StoryDetailState => {
       if (workflow === state.workflow?.slug) {
         const statusIndex = state.workflow?.statuses.findIndex(
-          (it) => it.slug === status
+          (it) => it.id === status
         );
         state.workflow.statuses.splice(statusIndex, 1);
       }
 
-      if (state.story?.status.slug === status) {
+      if (state.story?.status.id === status) {
         const newStatus = state.workflow?.statuses.find(
-          (it) => it.slug === moveToStatus
+          (it) => it.id === moveToStatus
         );
         state.story.status = newStatus ?? state.story.status;
       }
@@ -117,14 +117,14 @@ export const reducer = createImmerReducer(
       if (workflow === state.workflow?.slug) {
         // Update name from the status dropdown list
         const statusIndex = state.workflow?.statuses.findIndex(
-          (it) => it.slug === status.slug
+          (it) => it.id === status.id
         );
 
         state.workflow.statuses[statusIndex].name = status.name;
 
         // Update current selected status if necessary
 
-        if (status.slug === state.story?.status.slug) {
+        if (status.id === state.story?.status.id) {
           state.story.status.name = status.name;
         }
       }

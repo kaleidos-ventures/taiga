@@ -36,7 +36,6 @@ describe('StoryDetail', () => {
           projectMock.name
         ).then((response) => {
           project = response.body;
-
           void createStoryRequest(
             'main',
             response.body.id,

@@ -302,8 +302,8 @@ export class StoryDetailComponent {
         .get('statuses')
         .find((status) => status.name === form.status);
 
-      if (status && this.state.get('story').status.slug !== status.slug) {
-        story.status = status.slug;
+      if (status && this.state.get('story').status.id !== status.id) {
+        story.status = status.id;
       }
 
       if (this.state.get('story').title !== form.title) {
@@ -674,14 +674,14 @@ export class StoryDetailComponent {
     this.wsService
       .projectEvents<{
         workflowStatus: Status & { workflow: Workflow };
-        moveToSlug: Status['slug'];
+        moveToSlug: Status['id'];
       }>('workflowstatuses.delete')
       .pipe(untilDestroyed(this))
       .subscribe((eventResponse) => {
         const content = eventResponse.event.content;
         const story = this.state.get('story');
         if (
-          story.status.slug === content.workflowStatus.slug &&
+          story.status.id === content.workflowStatus.id &&
           !content.moveToSlug
         ) {
           this.store.dispatch(

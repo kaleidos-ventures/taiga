@@ -6,14 +6,13 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { randNumber, randSlug, randStatus, randUuid } from '@ngneat/falso';
+import { randNumber, randStatus, randUuid } from '@ngneat/falso';
 import { Status } from './status.model';
 
 export const StatusMockFactory = (): Status => {
   return {
     id: randUuid(),
     name: randStatus(),
-    slug: randSlug(),
     color: randNumber({
       max: 2,
     }),

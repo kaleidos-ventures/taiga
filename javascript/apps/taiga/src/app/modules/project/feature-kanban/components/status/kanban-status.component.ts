@@ -137,8 +137,8 @@ export class KanbanStatusComponent
     return this.status.name;
   }
 
-  @HostBinding('attr.data-slug') public get statusSlug() {
-    return this.status.slug;
+  @HostBinding('attr.data-id') public get statusId() {
+    return this.status.id;
   }
 
   @HostBinding('attr.data-color') public get statusColor() {
@@ -214,7 +214,7 @@ export class KanbanStatusComponent
       'stories',
       this.store.select(selectStories).pipe(
         map((stories) => {
-          return stories[this.status.slug] ?? [];
+          return stories[this.status.id] ?? [];
         }),
         distinctUntilChanged()
       )
@@ -229,7 +229,7 @@ export class KanbanStatusComponent
       'showAddForm',
       this.store.select(selectCreateStoryForm).pipe(
         map((openForm) => {
-          return this.status.slug === openForm;
+          return this.status.id === openForm;
         })
       )
     );
@@ -282,7 +282,7 @@ export class KanbanStatusComponent
     this.state.set({ formAutoFocus: true });
 
     this.store.dispatch(
-      KanbanActions.openCreateStoryForm({ status: this.status.slug })
+      KanbanActions.openCreateStoryForm({ status: this.status.id })
     );
   }
 
@@ -345,12 +345,12 @@ export class KanbanStatusComponent
           undo: {
             status: {
               name: this.status.name,
-              slug: this.status.slug,
+              id: this.status.id,
             },
           },
           status: {
             name: status.name,
-            slug: status.slug,
+            id: status.id,
           },
           workflow: this.workflow.slug,
         })
@@ -372,12 +372,12 @@ export class KanbanStatusComponent
     }
   }
 
-  public submitDeleteStatus(moveToStatus?: Status['slug']) {
+  public submitDeleteStatus(moveToStatus?: Status['id']) {
     this.projectActionsDropdownState = false;
 
     this.store.dispatch(
       KanbanActions.deleteStatus({
-        status: this.status.slug,
+        status: this.status.id,
         workflow: this.workflow.slug,
         moveToStatus,
       })
@@ -395,7 +395,7 @@ export class KanbanStatusComponent
   private watchNewStories() {
     this.state.hold(
       this.store
-        .select(selectStatusNewStories(this.status.slug))
+        .select(selectStatusNewStories(this.status.id))
         .pipe(filterNil()),
       (newStory) => {
         this.scrollToStory(newStory.tmpId);

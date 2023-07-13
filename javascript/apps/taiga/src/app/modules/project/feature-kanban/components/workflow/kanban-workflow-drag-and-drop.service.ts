@@ -37,7 +37,7 @@ export class KanbanWorkflowDragAndDropService {
           );
           this.store.dispatch(
             KanbanActions.statusDragStart({
-              slug: dragElm.data.slug,
+              id: dragElm.data.id,
             })
           );
         } else if ('ref' in dragElm.data && dragElm.data.ref) {
@@ -62,20 +62,19 @@ export class KanbanWorkflowDragAndDropService {
 
         if (dropEvent.candidate) {
           const candidate = {
-            slug: dropEvent.candidate.result.slug,
+            id: dropEvent.candidate.result.id,
             position: dropEvent.candidate.hPosition,
           };
-
           this.store.dispatch(
             KanbanActions.statusDropped({
-              slug: dropEvent.source[0].slug,
+              id: dropEvent.source[0].id,
               candidate,
             })
           );
         } else {
           this.store.dispatch(
             KanbanActions.statusDropped({
-              slug: dropEvent.source[0].slug,
+              id: dropEvent.source[0].id,
             })
           );
         }
@@ -130,18 +129,18 @@ export class KanbanWorkflowDragAndDropService {
           let candidate;
 
           if (event?.over) {
-            const candidateSlug = event.over?.result.slug;
+            const candidateId = event.over?.result.id;
 
-            if (candidateSlug) {
+            if (candidateId) {
               candidate = {
-                slug: candidateSlug,
+                id: candidateId,
                 position: event.over.hPosition,
               };
             }
           }
 
           return {
-            source: event?.source[0].slug,
+            source: event?.source[0].id,
             candidate,
           };
         })
@@ -150,7 +149,7 @@ export class KanbanWorkflowDragAndDropService {
         if (source) {
           this.store.dispatch(
             KanbanActions.statusDropCandidate({
-              slug: source,
+              id: source,
               candidate,
             })
           );
@@ -193,7 +192,7 @@ export class KanbanWorkflowDragAndDropService {
       ref: Story['ref'];
       position: DropCandidate['position'];
     };
-    status?: Story['status']['slug'];
+    status?: Story['status']['id'];
   }) {
     let drop: HTMLElement | null = null;
 

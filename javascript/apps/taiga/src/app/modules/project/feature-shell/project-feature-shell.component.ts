@@ -223,7 +223,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       });
 
     this.wsService
-      .projectEvents<StoryAssignEvent>('stories_assignments.create')
+      .projectEvents<StoryAssignEvent>('storiesassignments.create')
       .pipe(untilDestroyed(this))
       .subscribe((eventResponse) => {
         const response = eventResponse.event.content.storyAssignment;
@@ -236,7 +236,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       });
 
     this.wsService
-      .projectEvents<StoryAssignEvent>('stories_assignments.delete')
+      .projectEvents<StoryAssignEvent>('storiesassignments.delete')
       .pipe(untilDestroyed(this))
       .subscribe((eventResponse) => {
         const response = eventResponse.event.content.storyAssignment;

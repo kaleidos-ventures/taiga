@@ -10,8 +10,8 @@ from taiga.stories.assignments.events.content import CreateStoryAssignmentConten
 from taiga.stories.assignments.models import StoryAssignment
 from taiga.stories.assignments.serializers import StoryAssignmentSerializer
 
-CREATE_STORY_ASSIGNMENT = "stories_assignments.create"
-DELETE_STORY_ASSIGNMENT = "stories_assignments.delete"
+CREATE_STORY_ASSIGNMENT = "storiesassignments.create"
+DELETE_STORY_ASSIGNMENT = "storiesassignments.delete"
 
 
 async def emit_event_when_story_assignment_is_created(story_assignment: StoryAssignment) -> None:

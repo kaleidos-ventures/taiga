@@ -136,7 +136,6 @@ export const reducer = createImmerReducer(
     membersActions.cancelInvitationUI,
     (state, { invitation }): MembersState => {
       state.animationDisabled = false;
-      state.totalInvitations = state.totalInvitations - 1;
       state.invitationUpdateAnimation = 'create';
       state.cancelledInvitations.push(invitation.email);
 
@@ -146,7 +145,6 @@ export const reducer = createImmerReducer(
   on(
     membersActions.undoCancelInvitationUI,
     (state, { invitation }): MembersState => {
-      state.totalInvitations = state.totalInvitations + 1;
       state.invitationCancelAnimation = null;
       state.cancelledInvitations = state.cancelledInvitations.filter(
         (cancelled) => cancelled !== invitation.email
@@ -187,6 +185,7 @@ export const reducer = createImmerReducer(
   on(
     membersActions.revokeInvitationSuccess,
     (state, { invitation }): MembersState => {
+      state.totalInvitations = state.totalInvitations - 1;
       state.cancelledInvitations = state.cancelledInvitations.filter(
         (cancelled) => cancelled !== invitation.email
       );
@@ -219,7 +218,6 @@ export const reducer = createImmerReducer(
   ),
   on(membersActions.cancelRemoveMemberUI, (state, { member }): MembersState => {
     state.animationDisabled = false;
-    state.totalMemberships = state.totalMemberships - 1;
     state.cancelledRemovedMember.push(member.user.username);
 
     return state;
@@ -227,7 +225,6 @@ export const reducer = createImmerReducer(
   on(
     membersActions.undoCancelRemoveMemberUI,
     (state, { member }): MembersState => {
-      state.totalMemberships = state.totalMemberships + 1;
       state.cancelledRemovedMember = state.cancelledRemovedMember.filter(
         (cancelled) => cancelled !== member.user.username
       );
@@ -246,6 +243,7 @@ export const reducer = createImmerReducer(
   on(
     membersActions.deleteRemoveMemberUndoDoneAnimation,
     (state, { member }): MembersState => {
+      state.totalMemberships = state.totalMemberships - 1;
       state.memberUndoDoneAnimation = state.memberUndoDoneAnimation.filter(
         (undoAnimation) => undoAnimation !== member.user.username
       );

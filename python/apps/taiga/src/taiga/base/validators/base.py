@@ -27,3 +27,4 @@ class BaseModel(_BaseModel):
     class Config:
         alias_generator = camelize
         allow_population_by_field_name = True
+        extra = "forbid"

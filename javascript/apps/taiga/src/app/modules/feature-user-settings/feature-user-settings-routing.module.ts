@@ -27,6 +27,13 @@ const routes: Routes = [
         path: 'preferences',
         component: PreferencesComponent,
       },
+      {
+        path: 'account',
+        loadComponent: () =>
+          import('./components/account/account.component').then(
+            (mod) => mod.AccountComponent
+          ),
+      },
     ],
   },
 ];

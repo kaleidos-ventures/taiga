@@ -9,7 +9,7 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container
   *ngIf="
     project()?.userIsAdmin ||
-    (user.username === comment.createdBy.username && canComment)
+    (user.username === comment.createdBy?.username && canComment)
   ">
   <ng-container *transloco="let t">
     <tui-hosted-dropdown
@@ -38,7 +38,7 @@ Copyright (c) 2023-present Kaleidos INC
         data-test="comment-options-list"
         [attr.aria-label]="t('comments.comment_options')">
         <button
-          *ngIf="user.username === comment.createdBy.username && canComment"
+          *ngIf="user.username === comment.createdBy?.username && canComment"
           role="menuitem"
           class="option-btn"
           tuiOption

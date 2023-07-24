@@ -30,7 +30,7 @@ export interface StoryDetail extends Story {
     ref: Story['ref'];
     title: Story['title'];
   };
-  createdBy: createdBy;
+  createdBy?: createdBy;
   createdAt: string;
   titleUpdatedAt: string | null;
   titleUpdatedBy: Pick<User, 'username' | 'fullName' | 'color'> | null;

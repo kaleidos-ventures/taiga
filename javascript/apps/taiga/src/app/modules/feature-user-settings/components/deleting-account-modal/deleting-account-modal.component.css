@@ -1,0 +1,67 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import url("tools/typography.css");
+@import url("taiga-ui/mixins/wrapper.css");
+
+.title {
+  font-size: var(--font-size-heading-3);
+  font-weight: var(--font-weight-medium);
+  margin-block: 0 var(--spacing-24);
+}
+
+.actions {
+  display: flex;
+  gap: 2rem;
+  justify-content: flex-end;
+}
+
+.confirm-delete-check {
+  margin-block-end: var(--spacing-24);
+}
+
+.user-admin-list {
+  margin-block-end: var(--spacing-16);
+
+  &:last-child {
+    margin-block-end: 0;
+  }
+
+  & .description {
+    color: var(--color-gray80);
+    margin-block-end: var(--spacing-16);
+    padding-inline-end: var(--spacing-8);
+  }
+
+  & .one-workspace {
+    color: var(--color-gray100);
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-medium);
+    margin-block-end: var(--spacing-16);
+  }
+}
+
+.delete-account-form {
+  padding-block-start: var(--spacing-16);
+}
+
+.workspace {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-12);
+  padding-block: var(--spacing-8);
+  padding-inline-start: var(--spacing-8);
+}
+
+.projects-list {
+  margin-inline-start: auto;
+}
+
+tui-scrollbar {
+  max-block-size: 55vh;
+}

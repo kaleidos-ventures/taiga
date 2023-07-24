@@ -1,0 +1,22 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<div class="checkbox-container">
+  <input
+    type="checkbox"
+    [id]="id"
+    [attr.name]="name"
+    [formControl]="control" />
+  <label
+    *ngIf="label"
+    class="check-label"
+    [attr.for]="id"
+    >{{ label }}</label
+  >
+</div>
+<ng-content select="[inputError]"></ng-content>

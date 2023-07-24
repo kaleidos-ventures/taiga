@@ -30,6 +30,7 @@ import { UiPasswordStrengthModule } from './password-strength/password-strength.
 import { SelectComponent } from './select/select.component';
 import { TextareaComponent } from './textarea/textarea.component';
 import { RadioComponent } from './radio/radio.component';
+import { CheckboxComponent } from './checkbox/checkbox.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -53,6 +54,7 @@ import { RadioComponent } from './radio/radio.component';
     SelectComponent,
     TextareaComponent,
     RadioComponent,
+    CheckboxComponent,
   ],
   providers: [],
   exports: [
@@ -70,6 +72,7 @@ import { RadioComponent } from './radio/radio.component';
     TuiTextAreaModule,
     UiErrorModule,
     UiPasswordStrengthModule,
+    CheckboxComponent,
   ],
 })
 export class InputsModule {}

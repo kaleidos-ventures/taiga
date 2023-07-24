@@ -37,10 +37,18 @@ Copyright (c) 2023-present Kaleidos INC
     <a
       tuiOption
       role="menuitem"
+      [routerLink]="['user-settings', 'account']"
+      (click)="requestClose.emit()"
+      class="user-link">
+      {{ t('navigation_user.account') }}
+    </a>
+    <a
+      tuiOption
+      role="menuitem"
       [routerLink]="['user-settings', 'preferences']"
       (click)="requestClose.emit()"
       class="user-link">
-      {{ t('navigation_user.edit_profile') }}
+      {{ t('navigation_user.preferences') }}
     </a>
     <hr class="separator" />
     <button

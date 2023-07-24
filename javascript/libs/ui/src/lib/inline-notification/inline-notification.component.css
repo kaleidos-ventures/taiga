@@ -1,0 +1,61 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+:host {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--color);
+  display: flex;
+  gap: var(--spacing-8);
+  inline-size: 100%;
+  line-height: 1.5;
+  margin-block-end: var(--spacing-16);
+  padding-block: var(--spacing-8);
+  padding-inline: var(--spacing-16);
+
+  &::ng-deep strong {
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+:host([status="warning"]) {
+  --border-color: var(--color-warning30);
+  --color: var(--color-warning80);
+  --background-color: var(--color-warning20);
+  --icon-color: var(--color-warning50);
+}
+
+:host([status="success"]) {
+  --border-color: var(--color-ok30);
+  --color: var(--color-ok80);
+  --background-color: var(--color-ok10);
+  --icon-color: var(--color-ok50);
+}
+
+.title-warning {
+  &::ng-deep p {
+    font-weight: var(--font-weight-medium);
+    margin-block: 0;
+  }
+}
+
+.content {
+  color: var(--color);
+  padding-block-start: 1px;
+}
+
+.title {
+  margin-block-end: 0;
+}
+
+tui-svg {
+  aspect-ratio: 1;
+  color: var(--icon-color);
+  inline-size: var(--spacing-16);
+}

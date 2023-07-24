@@ -6,8 +6,9 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { User } from '@ngneat/falso';
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Language } from '@taiga/data';
+import { DeleteInfo, Language } from '@taiga/data';
 
 export const userSettingsActions = createActionGroup({
   source: 'UserSettings',
@@ -16,6 +17,10 @@ export const userSettingsActions = createActionGroup({
     'New Language': props<{
       lang: Language;
     }>(),
+    'Init delete acccount': emptyProps(),
+    'Cancel delete account': emptyProps(),
+    'Confirm delete account': emptyProps(),
+    'Show delete account modal': props<DeleteInfo>(),
   },
 });
 
@@ -31,5 +36,9 @@ export const userSettingsApiActions = createActionGroup({
     'Update User Language Error': props<{
       lang: Language['code'];
     }>(),
+    'Init delete user': props<{
+      username: User['username'];
+    }>(),
+    'Delete user Success': emptyProps(),
   },
 });

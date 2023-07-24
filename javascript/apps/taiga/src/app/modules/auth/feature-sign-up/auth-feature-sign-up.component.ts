@@ -11,6 +11,7 @@ import {
   ChangeDetectorRef,
   Component,
   HostBinding,
+  Input,
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -31,6 +32,8 @@ import { SignUp } from './models/sign-up.model';
 export class AuthFeatureSignUpComponent implements OnInit {
   @HostBinding('class.verify-email') public displayVerifyEmail = false;
   @HostBinding('class.waves') public waves = true;
+
+  @Input() public deletedAccount = false;
 
   public displayForm = false;
   public signUpFormData: SignUp = {

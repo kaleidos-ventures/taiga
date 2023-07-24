@@ -42,7 +42,6 @@ import { WorkspaceDetailEffects } from './+state/effects/workspace-detail.effect
 import { workspaceDetailFeature } from './+state/reducers/workspace-detail.reducer';
 import { DeleteWorkspaceComponent } from './components/workspace-delete-modal/workspace-delete-modal.component';
 import { WorkspaceDetailEditModalComponent } from './components/workspace-detail-edit-modal/workspace-detail-edit-modal.component';
-import { WorkspaceDetailPeopleMembersProjectsComponent } from './components/workspace-detail-people-members-projects/workspace-detail-people-members-projects.component';
 import { WorkspaceDetailPeopleMembersRemoveComponent } from './components/workspace-detail-people-members/components/workspace-detail-people-members-remove/workspace-detail-people-members-remove.component';
 import { WorkspaceDetailPeopleMembersComponent } from './components/workspace-detail-people-members/workspace-detail-people-members.component';
 import { WorkspaceDetailPeopleNonMembersComponent } from './components/workspace-detail-people-non-members/workspace-detail-people-non-members.component';
@@ -55,6 +54,7 @@ import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.m
 import { LeaveWorkspaceDropdownComponent } from './components/leave-workspace-dropdown/leave-workspace-dropdown.component';
 import { ToolTipModule } from '@taiga/ui/tooltip';
 import { WorkspaceDetailPeopleEffects } from './+state/effects/workspace-detail-people.effects';
+import { ProjectsDropdownComponent } from '~/app/shared/projects-dropdown/projects-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +66,6 @@ import { WorkspaceDetailPeopleEffects } from './+state/effects/workspace-detail-
     WorkspaceDetailPeopleMembersComponent,
     WorkspaceDetailPeoplePendingComponent,
     WorkspaceDetailPeopleNonMembersComponent,
-    WorkspaceDetailPeopleMembersProjectsComponent,
     WorkspaceDetailPeopleMembersRemoveComponent,
   ],
   imports: [
@@ -107,6 +106,7 @@ import { WorkspaceDetailPeopleEffects } from './+state/effects/workspace-detail-
     InviteUserModalModule,
     ContextNotificationModule,
     LeaveWorkspaceDropdownComponent,
+    ProjectsDropdownComponent,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

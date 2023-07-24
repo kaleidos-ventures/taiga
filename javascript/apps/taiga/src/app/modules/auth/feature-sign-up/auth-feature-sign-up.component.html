@@ -21,6 +21,17 @@ Copyright (c) 2023-present Kaleidos INC
           [innerHtml]="t('signup.join', { project: params.project })"></span>
       </tg-ui-context-notification>
       <div class="auth-wrapper">
+        <tg-ui-inline-notification
+          status="success"
+          *ngIf="deletedAccount">
+          <p>
+            {{ t('signup.delete_account_success_title') }}
+          </p>
+          <p subtitle>
+            {{ t('signup.delete_account_success_subtitle') }}
+          </p>
+        </tg-ui-inline-notification>
+
         <img
           class="taiga-logo"
           role="presentation"

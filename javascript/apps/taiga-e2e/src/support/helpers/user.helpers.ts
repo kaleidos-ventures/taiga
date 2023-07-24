@@ -17,3 +17,14 @@ export const loginRequest = (username: string, password: string) => {
     password,
   });
 };
+
+export const loginPage = (username: string, password: string) => {
+  cy.visit('/login');
+  cy.getBySel('login-username').type(username);
+  cy.getBySel('login-password').type(password);
+  cy.getBySel('login-submit').click();
+};
+
+export const loginPageHasError = () => {
+  cy.getBySel('submitted-error').should('be.visible');
+};

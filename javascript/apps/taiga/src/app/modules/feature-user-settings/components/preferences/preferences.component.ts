@@ -11,7 +11,7 @@ import { FormControl } from '@angular/forms';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Language } from '@taiga/data';
+import { Language, User } from '@taiga/data';
 import { combineLatest, map, take } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { userSettingsActions } from '~/app/modules/feature-user-settings/data-access/+state/actions/user-settings.actions';
@@ -37,6 +37,7 @@ export class PreferencesComponent implements OnInit {
       langLabel: Language['englishName'];
       languages: Language[][];
       currentLang: Language;
+      user: User;
     }>
   ) {}
 
@@ -50,6 +51,7 @@ export class PreferencesComponent implements OnInit {
 
     const userNavLang = this.languageService.navigatorLanguage();
 
+    this.state.connect('user', this.store.select(selectUser).pipe(filterNil()));
     this.state.connect(
       'languages',
       combineLatest([this.store.select(selectLanguages), currentLang$]).pipe(

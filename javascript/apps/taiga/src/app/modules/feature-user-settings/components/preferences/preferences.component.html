@@ -8,6 +8,11 @@ Copyright (c) 2023-present Kaleidos INC
 
 <ng-container *transloco="let t; read: 'user_settings'">
   <ng-container *ngIf="model$ | async as vm">
+    <tg-title
+      [title]="
+        t('perefences.page_title', { username: vm.user.username })
+      "></tg-title>
+
     <h3
       mainFocus
       id="main-area-title"

@@ -44,8 +44,8 @@ Copyright (c) 2023-present Kaleidos INC
                   [navigateToUser]="true"></tg-user-card>
               </tg-ui-dtable-cell>
               <tg-ui-dtable-cell [@removeCell]="member.cancelled">
-                <tg-workspace-detail-people-members-projects [member]="member">
-                </tg-workspace-detail-people-members-projects>
+                <tg-projects-dropdown
+                  [projects]="member.projects"></tg-projects-dropdown>
               </tg-ui-dtable-cell>
               <tg-ui-dtable-cell
                 class="action-column"

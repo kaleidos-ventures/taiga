@@ -16,22 +16,38 @@ Copyright (c) 2023-present Kaleidos INC
       *ngIf="!comment.deletedBy; else commentIsDeleted"
       @fadeInOut>
       <div class="comment-top">
-        <div class="creation-info">
-          <tg-user-avatar
-            size="m"
-            class="no-border"
-            [user]="comment.createdBy"
-            [color]="comment.createdBy.color"
-            type="light"
-            [rounded]="true"
-            aria-hidden="true"></tg-user-avatar>
+        <div
+          class="creation-info"
+          [class.no-user]="!comment.createdBy">
+          <ng-container *ngIf="comment.createdBy">
+            <tg-user-avatar
+              size="m"
+              class="no-border"
+              [user]="comment.createdBy"
+              [color]="comment.createdBy.color"
+              type="light"
+              [rounded]="true"
+              aria-hidden="true"></tg-user-avatar>
+          </ng-container>
+
+          <tg-nouser-avatar
+            *ngIf="!comment.createdBy"
+            class="former-user-avatar"></tg-nouser-avatar>
+
           <div class="creation-data">
-            <span class="creation-data-fullname">
-              {{ comment.createdBy.fullName }}
-            </span>
-            <span class="creation-data-username">
-              @{{ comment.createdBy.username }}
-            </span>
+            <ng-container *ngIf="comment.createdBy">
+              <span class="creation-data-fullname">
+                {{ comment.createdBy.fullName }}
+              </span>
+              <span class="creation-data-username">
+                @{{ comment.createdBy.username }}
+              </span>
+            </ng-container>
+            <span
+              *ngIf="!comment.createdBy"
+              class="former-user-text"
+              >{{ t('commons.former_user') }}</span
+            >
             <span>∙</span>
             <span
               *ngIf="comment.createdAt"
@@ -83,7 +99,7 @@ Copyright (c) 2023-present Kaleidos INC
     </ng-template>
   </div>
 
-  <ng-container *ngIf="editComment">
+  <ng-container *ngIf="editComment && comment.createdBy">
     <div class="edit-comment-wrapper">
       <tg-user-avatar
         size="m"

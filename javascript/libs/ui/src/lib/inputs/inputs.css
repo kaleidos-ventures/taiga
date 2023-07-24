@@ -8,7 +8,9 @@ Copyright (c) 2023-present Kaleidos INC
 
 :host {
   --label-color: var(--color-gray80);
+  --label-color-error: var(--color-red);
   --label-font-weight: var(--font-weight-medium);
+  --label-focus-color: var(--color-secondary);
 }
 
 label {
@@ -28,7 +30,7 @@ label {
 }
 
 :host:focus-within:not(.readonly) label {
-  color: var(--color-secondary);
+  color: var(--label-focus-color);
 }
 
 :host.invalid.show-errors:focus-within {
@@ -38,7 +40,7 @@ label {
   &.update-on-blur.touched,
   &.update-on-change.touched {
     & label {
-      color: var(--color-red);
+      color: var(--label-color-error);
     }
   }
 }

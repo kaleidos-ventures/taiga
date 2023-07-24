@@ -13,7 +13,12 @@ import { UsersApiService } from '@taiga/api';
 import { Observable } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
 
-import { LanguageListMockFactory, UserMockFactory } from '@taiga/data';
+import {
+  LanguageListMockFactory,
+  ProjectMockFactory,
+  User,
+  UserMockFactory,
+} from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import {
   userSettingsActions,
@@ -25,6 +30,8 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectLanguages } from '@taiga/core';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { unexpectedError } from '~/app/modules/errors/+state/actions/errors.actions';
 
 describe('UserSettingsEffects', () => {
   let actions$: Observable<Action>;
@@ -91,6 +98,86 @@ describe('UserSettingsEffects', () => {
       expect(effects.newLanguage$).toBeObservable(expected);
       expect(authService.patchUser).toHaveBeenCalledWith({
         lang: languages[0].code,
+      });
+    });
+  });
+
+  describe('delete account', () => {
+    it('should show delete account modal when user has projects or workspaces', () => {
+      const effects = spectator.inject(UserSettingsEffects);
+      const deleteUserInfo = {
+        projects: [ProjectMockFactory()],
+        workspaces: [],
+      };
+      const action = userSettingsActions.initDeleteAcccount();
+      const completion = userSettingsActions.showDeleteAccountModal({
+        projects: deleteUserInfo.projects,
+        workspaces: deleteUserInfo.workspaces,
+      });
+
+      const user = UserMockFactory();
+      store.overrideSelector(selectUser, user);
+
+      const usersApiService = spectator.inject(UsersApiService);
+
+      actions$ = hot('-a', { a: action });
+      const expected = hot('-c', { c: completion });
+
+      usersApiService.deleteAccountInfo.mockReturnValue(
+        hot('-a', { a: deleteUserInfo })
+      );
+
+      expect(usersApiService.deleteAccount).not.toHaveBeenCalled();
+      expect(effects.initDeleteAccount$).toBeObservable(expected);
+    });
+
+    it('should delete user account when user has no projects & workspaces', () => {
+      const effects = spectator.inject(UserSettingsEffects);
+      const user: User = UserMockFactory();
+      const deleteUserInfo = { projects: [], workspaces: [] };
+      const action = userSettingsActions.initDeleteAcccount();
+      const completion = userSettingsApiActions.deleteUserSuccess();
+
+      store.overrideSelector(selectUser, user);
+
+      const usersApiService = spectator.inject(UsersApiService);
+
+      actions$ = hot('-a', { a: action });
+      const deleteUserInfo$ = hot('-a', { a: deleteUserInfo });
+      const expected = hot('-c', { c: completion });
+
+      usersApiService.deleteAccountInfo.mockReturnValue(deleteUserInfo$);
+      usersApiService.deleteAccount.mockReturnValue(hot('-a', { a: null }));
+
+      expect(effects.initDeleteAccount$).toBeObservable(expected);
+    });
+
+    it('should handle error when deleting user account', () => {
+      const effects = spectator.inject(UserSettingsEffects);
+      const appService = spectator.inject(AppService);
+      const error = new HttpErrorResponse({
+        status: 500,
+        statusText: 'Internal Server Error',
+      });
+      const usersApiService = spectator.inject(UsersApiService);
+      const action = userSettingsActions.initDeleteAcccount();
+      const user = UserMockFactory();
+      store.overrideSelector(selectUser, user);
+
+      actions$ = hot('-a', { a: action });
+      const deleteUserInfo$ = hot('-#', {}, error);
+      const expected = hot('--c', {
+        c: unexpectedError({
+          error,
+        }),
+      });
+
+      usersApiService.deleteAccountInfo.mockReturnValue(deleteUserInfo$);
+      usersApiService.deleteAccount.mockReturnValue(hot('-a', { a: null }));
+
+      expect(effects.initDeleteAccount$).toSatisfyOnFlush(() => {
+        expect(effects.initDeleteAccount$).toBeObservable(expected);
+        expect(appService.errorManagement).toHaveBeenCalled();
       });
     });
   });

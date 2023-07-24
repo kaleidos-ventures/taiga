@@ -8,13 +8,17 @@ Copyright (c) 2023-present Kaleidos INC
 
 @import url("tools/typography.css");
 
+:host {
+  --padding-start: var(--spacing-4);
+}
+
 .label-error {
   @mixin font-small;
 
   color: var(--color-red80);
   display: flex;
   font-weight: var(--font-weight-regular);
-  padding-inline-start: var(--spacing-4);
+  padding-inline-start: var(--padding-start);
 
   & .warning {
     aspect-ratio: 1/1;

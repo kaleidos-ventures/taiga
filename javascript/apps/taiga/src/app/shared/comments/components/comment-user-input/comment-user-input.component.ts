@@ -164,7 +164,7 @@ export class CommentUserInputComponent implements ComponentCanDeactivate {
   }
 
   private discard() {
-    this.state.set({ showConfirmationModal: false, open: false });
+    this.state.set({ showConfirmationModal: false, open: false, comment: '' });
   }
 
   private keepEditing() {

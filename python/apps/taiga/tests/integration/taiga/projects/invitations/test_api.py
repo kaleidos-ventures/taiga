@@ -277,7 +277,6 @@ async def test_accept_user_project_invitation(client):
     response = client.post(f"projects/{project.b64id}/invitations/accept")
     assert response.status_code == status.HTTP_200_OK, response.text
     assert response.json()["user"]["username"] == invited_user.username
-    assert response.json()["email"] == invited_user.email
 
 
 async def test_accept_user_project_not_found(client):

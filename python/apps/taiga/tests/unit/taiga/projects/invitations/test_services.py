@@ -85,7 +85,6 @@ async def test_get_public_project_invitation_ok():
         )
         fake_auth_services.get_available_user_logins.assert_awaited_once_with(user=invitation.user)
 
-        assert pub_invitation.email == invitation.email
         assert pub_invitation.existing_user is True
         assert pub_invitation.project.name == invitation.project.name
         assert pub_invitation.available_logins == available_user_logins
@@ -107,7 +106,6 @@ async def test_get_public_project_invitation_ok_without_user():
         )
         fake_auth_services.get_available_user_logins.assert_not_awaited()
 
-        assert pub_invitation.email == invitation.email
         assert pub_invitation.existing_user is False
         assert pub_invitation.project.name == invitation.project.name
         assert pub_invitation.available_logins == []

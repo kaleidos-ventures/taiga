@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "72411ae8-16d8-475f-a19b-020f587a5fac",
+		"_postman_id": "f5d4bb9e-25b0-4238-bb9c-2701cdb38c0b",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -4676,7 +4675,6 @@
 									"    pm.expect(invitation).to.have.property(\"id\");",
 									"    pm.expect(invitation).to.have.property(\"user\");",
 									"    pm.expect(invitation).to.have.property(\"role\");",
-									"    pm.expect(invitation).to.have.property(\"email\");",
 									"",
 									"    pm.expect(invitationUser).to.have.property(\"username\");",
 									"    pm.expect(invitationUser).to.have.property(\"fullName\");",
@@ -4945,7 +4943,6 @@
 									"    pm.expect(invitation).to.have.property(\"id\");",
 									"    pm.expect(invitation).to.have.property(\"user\");",
 									"    pm.expect(invitation).to.have.property(\"role\");",
-									"    pm.expect(invitation).to.have.property(\"email\");",
 									"",
 									"    pm.expect(invitationUser).to.have.property(\"username\");",
 									"    pm.expect(invitationUser).to.have.property(\"fullName\");",
@@ -4966,7 +4963,7 @@
 									"    var numOfReturnedUserFields = Object.keys(invitationUser).length;",
 									"    var numOfReturnedRoleFields = Object.keys(invitationRole).length;",
 									"    var numOfReturnedProjectFields = Object.keys(invitationProject).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    pm.expect(numOfReturnedUserFields).to.equal(3);",
 									"    pm.expect(numOfReturnedRoleFields).to.equal(4);",
 									"    pm.expect(numOfReturnedProjectFields).to.equal(4);",
@@ -5165,7 +5162,6 @@
 									"    pm.expect(invitation).to.have.property(\"id\");",
 									"    pm.expect(invitation).to.have.property(\"user\");",
 									"    pm.expect(invitation).to.have.property(\"role\");",
-									"    pm.expect(invitation).to.have.property(\"email\");",
 									"",
 									"    pm.expect(invitationUser).to.have.property(\"username\");",
 									"    pm.expect(invitationUser).to.have.property(\"fullName\");",
@@ -5186,7 +5182,7 @@
 									"    var numOfReturnedUserFields = Object.keys(invitationUser).length;",
 									"    var numOfReturnedRoleFields = Object.keys(invitationRole).length;",
 									"    var numOfReturnedProjectFields = Object.keys(invitationProject).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    pm.expect(numOfReturnedUserFields).to.equal(3);",
 									"    pm.expect(numOfReturnedRoleFields).to.equal(4);",
 									"    pm.expect(numOfReturnedProjectFields).to.equal(4);",
@@ -6763,7 +6759,6 @@
 									"    pm.expect(invitation).to.have.property(\"id\");",
 									"    pm.expect(invitation).to.have.property(\"user\");",
 									"    pm.expect(invitation).to.have.property(\"role\");",
-									"    pm.expect(invitation).to.have.property(\"email\");",
 									"",
 									"    pm.expect(invitationUser).to.have.property(\"username\");",
 									"    pm.expect(invitationUser).to.have.property(\"fullName\");",
@@ -6786,7 +6781,7 @@
 									"    var numOfReturnedUserFields = Object.keys(invitationUser).length;",
 									"    var numOfReturnedRoleFields = Object.keys(invitationRole).length;",
 									"    var numOfReturnedProjectFields = Object.keys(invitationProject).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    pm.expect(numOfReturnedUserFields).to.equal(3);",
 									"    pm.expect(numOfReturnedRoleFields).to.equal(4);",
 									"    pm.expect(numOfReturnedProjectFields).to.equal(4);",

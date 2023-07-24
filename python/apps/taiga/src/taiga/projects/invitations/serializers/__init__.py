@@ -17,7 +17,6 @@ from taiga.users.serializers.nested import UserNestedSerializer
 
 class PublicProjectInvitationSerializer(BaseModel):
     status: ProjectInvitationStatus
-    email: EmailStr
     existing_user: bool
     available_logins: list[str]
     project: ProjectSmallNestedSerializer
@@ -31,7 +30,6 @@ class ProjectInvitationSerializer(BaseModel):
     project: ProjectSmallNestedSerializer
     user: UserNestedSerializer | None
     role: ProjectRoleNestedSerializer
-    email: EmailStr
 
     class Config:
         orm_mode = True

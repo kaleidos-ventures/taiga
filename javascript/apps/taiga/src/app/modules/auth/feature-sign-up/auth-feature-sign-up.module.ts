@@ -25,6 +25,7 @@ import { VerifyEmailGuard } from '../guards/verify-email.guard';
 import { AuthFeatureSignUpComponent } from './auth-feature-sign-up.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verify-email.component';
+import { InlineNotificationComponent } from '@taiga/ui/inline-notification';
 
 const routes: Routes = [
   {
@@ -73,6 +74,7 @@ const routes: Routes = [
     SignupComponent,
     CommonTemplateModule,
     TitleComponent,
+    InlineNotificationComponent,
   ],
   exports: [],
   providers: [

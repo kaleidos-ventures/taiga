@@ -1,0 +1,17 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+:host {
+  --no-user-avatar-size: 32px;
+
+  aspect-ratio: 1;
+  border: solid 2px var(--color-gray20);
+  border-radius: 50%;
+  inline-size: var(--no-user-avatar-size);
+  overflow: hidden;
+}

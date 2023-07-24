@@ -37,7 +37,8 @@
     "save": "Save",
     "next_page": "Next page",
     "now": "now",
-    "ago": "ago"
+    "ago": "ago",
+    "former_user": "Former user"
   },
   "navigation": {
     "go_home": "Go to home",
@@ -70,7 +71,7 @@
   "navigation_user": {
     "user_menu": "User menu",
     "user_profile": "See Profile",
-    "edit_profile": "Edit profile",
+    "account": "Account",
     "preferences": "Preferences",
     "account_settings": "Account",
     "accessibility_settings": "Accesibility",
@@ -203,10 +204,6 @@
     "pending_tab": "Pending",
     "non_members_tab": "Non-members",
     "column_user": "User",
-    "column_projects": {
-      "projects_number": "{projectsNum, plural, =0 {0 projects} one {1 project} other {# projects}}",
-      "projects_list_title": "Projects in this workspace"
-    },
     "column_actions": "Actions",
     "no_pending": "There are no pending invitations to accept.",
     "leave": "Leave project",
@@ -224,5 +221,9 @@
   },
   "banner": {
     "alpha": "Heads up! This app, while amazing, is unstable. It is still in Alpha, so the data could be erased at some point. So, embrace the wild, cherish each moment, and don't forget your bear repellent."
+  },
+  "projects_dropdown": {
+    "projects_number": "{projectsNum, plural, =0 {0 projects} one {1 project} other {# projects}}",
+    "projects_list_title": "Projects in this workspace"
   }
 }

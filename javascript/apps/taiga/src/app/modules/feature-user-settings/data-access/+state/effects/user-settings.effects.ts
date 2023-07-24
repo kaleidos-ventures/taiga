@@ -14,7 +14,7 @@ import {
   userSettingsActions,
   userSettingsApiActions,
 } from '../actions/user-settings.actions';
-import { map } from 'rxjs';
+import { EMPTY, catchError, exhaustMap, map, of, switchMap, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AppService } from '~/app/services/app.service';
 import { Store } from '@ngrx/store';
@@ -23,6 +23,7 @@ import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import { selectLanguages } from '@taiga/core';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class UserSettingsEffects {
@@ -76,11 +77,82 @@ export class UserSettingsEffects {
     );
   });
 
+  public initDeleteAccount$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(userSettingsActions.initDeleteAcccount),
+      exhaustMap(() => {
+        return this.usersApiService.deleteAccountInfo().pipe(
+          switchMap((deleteUserInfo) => {
+            if (
+              deleteUserInfo.projects.length ||
+              deleteUserInfo.workspaces.length
+            ) {
+              return of(
+                userSettingsActions.showDeleteAccountModal({
+                  projects: deleteUserInfo.projects,
+                  workspaces: deleteUserInfo.workspaces,
+                })
+              );
+            }
+
+            return this.usersApiService.deleteAccount().pipe(
+              map(() => {
+                return userSettingsApiActions.deleteUserSuccess();
+              })
+            );
+          })
+        );
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.appService.errorManagement(error);
+
+        return EMPTY;
+      })
+    );
+  });
+
+  public confirmDeleteAccount$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(userSettingsActions.confirmDeleteAccount),
+      exhaustMap(() => {
+        return this.usersApiService.deleteAccount().pipe(
+          map(() => {
+            return userSettingsApiActions.deleteUserSuccess();
+          })
+        );
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.appService.errorManagement(error);
+
+        return EMPTY;
+      })
+    );
+  });
+
+  public deleteUserSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(userSettingsApiActions.deleteUserSuccess),
+        tap(() => {
+          this.authService.logout();
+
+          void this.router.navigate(['/signup'], {
+            queryParams: {
+              deletedAccount: true,
+            },
+          });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(
     private store: Store,
     private authService: AuthService,
     private appService: AppService,
     private actions$: Actions,
-    private usersApiService: UsersApiService
+    private usersApiService: UsersApiService,
+    private router: Router
   ) {}
 }

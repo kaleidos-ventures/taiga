@@ -58,7 +58,7 @@ export class DeletedCommentComponent implements OnInit {
   private getDeletionMessage(): string {
     const currentUser = this.user.username;
     const deletionUser = this.comment?.deletedBy?.username;
-    const creationUser = this.comment?.createdBy.username;
+    const creationUser = this.comment?.createdBy?.username;
 
     if (!deletionUser) {
       return this.translocoService.translate(

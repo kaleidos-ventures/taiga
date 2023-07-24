@@ -21,7 +21,11 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { RxState } from '@rx-angular/state';
-import { TuiButtonModule, TuiHostedDropdownModule } from '@taiga-ui/core';
+import {
+  TuiButtonModule,
+  TuiHostedDropdownModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { UserComment } from '@taiga/data';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { Subject, of, take } from 'rxjs';
@@ -39,6 +43,7 @@ import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.compon
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 import { DeletedCommentComponent } from '../deleted-comment/deleted-comment.component';
 import { TooltipDirective } from '@taiga/ui/tooltip/tooltip.directive';
+import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.component';
 
 @Component({
   selector: 'tg-comment',
@@ -63,6 +68,8 @@ import { TooltipDirective } from '@taiga/ui/tooltip/tooltip.directive';
     TooltipDirective,
     TuiHostedDropdownModule,
     DeletedCommentComponent,
+    TuiSvgModule,
+    NouserAvatarComponent,
   ],
   animations: [fadeIntOutAnimation],
   providers: [

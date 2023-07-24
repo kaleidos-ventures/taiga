@@ -37,7 +37,9 @@
       "please_refresh": "Please refresh the page or try again in a few minutes",
       "resend_email_label": "Sorry, something went wrong sending the email",
       "resend_email_message": "Wait a few minutes and try again"
-    }
+    },
+    "delete_account_success_title": "Your account was deleted successfully.",
+    "delete_account_success_subtitle": "👋 Sorry to see you go!"
   },
   "login": {
     "title": "Log in to your Taiga account",

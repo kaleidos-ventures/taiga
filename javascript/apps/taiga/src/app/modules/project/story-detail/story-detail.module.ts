@@ -48,6 +48,7 @@ import { CommentsComponent } from '~/app/shared/comments/comments.component';
 import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
 import { CommentsAutoScrollDirective } from '~/app/shared/comments/directives/comments-auto-scroll.directive';
 import { ToolTipModule } from '@taiga/ui/tooltip';
+import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.component';
 
 @NgModule({
   imports: [
@@ -86,6 +87,7 @@ import { ToolTipModule } from '@taiga/ui/tooltip';
     CommentsComponent,
     StoryCommentsPaginationDirective,
     CommentsAutoScrollDirective,
+    NouserAvatarComponent,
   ],
   declarations: [
     StoryDetailComponent,

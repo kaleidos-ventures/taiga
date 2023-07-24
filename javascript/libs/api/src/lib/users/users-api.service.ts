@@ -9,7 +9,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/core';
-import { Auth, User } from '@taiga/data';
+import { Auth, DeleteInfo, User } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -44,5 +44,15 @@ export class UsersApiService {
         password,
       }
     );
+  }
+
+  public deleteAccountInfo() {
+    return this.http.get<DeleteInfo>(
+      `${this.config.apiUrl}/my/user/delete-info`
+    );
+  }
+
+  public deleteAccount() {
+    return this.http.delete(`${this.config.apiUrl}/my/user`);
   }
 }

@@ -1,0 +1,95 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t; read: 'user_settings'">
+  <ng-container *ngIf="model$ | async as vm">
+    <tg-title
+      [title]="
+        t('account.page_title', { username: vm.user.username })
+      "></tg-title>
+
+    <h1 class="visually-hidden">
+      {{
+        t('account.a11y_title', {
+          username: vm.user.username,
+        })
+      }}
+    </h1>
+    <p class="visual-title">{{ t('account.title') }}</p>
+
+    <p class="subtitle">{{ t('account.subtitle') }}</p>
+    <tg-user-card [user]="vm.user"></tg-user-card>
+
+    <section class="delete-account">
+      <h2
+        watchElement="delete-account"
+        data-fragment="delete-account"
+        class="settings-subtitle">
+        {{ t('sections.delete_account') }}
+      </h2>
+
+      <div class="delete-user-msg">
+        <tui-svg
+          aria-hidden="true"
+          src="face"
+          class="face"></tui-svg>
+        <p
+          [innerHtml]="
+          t('account.delete.msg', {
+            username: vm.user.username,
+          })
+          "></p>
+      </div>
+
+      <div class="delete-explain">
+        <p class="delete-explain-title">
+          {{ t('account.delete.explain.title') }}
+        </p>
+
+        <ul class="delete-explain-steps">
+          <li>{{ t('account.delete.explain.access') }}</li>
+          <li>{{ t('account.delete.explain.delete_data') }}</li>
+          <li>{{ t('account.delete.explain.shared') }}</li>
+        </ul>
+      </div>
+
+      <form
+        #form="ngForm"
+        [formGroup]="deleteAccount"
+        (submit)="initDeleteAccount()">
+        <tg-ui-checkbox
+          class="confirm-delete-check"
+          name="delete-account"
+          [control]="deleteAccount.controls.confirmDelete"
+          data-test="confirm-delete"
+          [label]="t('account.delete.confirm_msg')">
+          <ng-container inputError>
+            <tg-ui-error
+              [enabled]="form.submitted"
+              error="required">
+              {{ t('account.delete.confirm_delete_error') }}
+            </tg-ui-error>
+          </ng-container>
+        </tg-ui-checkbox>
+
+        <button
+          type="submit"
+          data-test="submit-delete-account"
+          tuiButton
+          icon="trash"
+          appearance="destructive">
+          {{ t('account.delete.delete_account_action') }}
+        </button>
+      </form>
+    </section>
+
+    <tg-deleting-account-modal
+      [open]="vm.deletingAccountModal"
+      (cancel)="cancelDeletingAccountModal()"></tg-deleting-account-modal>
+  </ng-container>
+</ng-container>

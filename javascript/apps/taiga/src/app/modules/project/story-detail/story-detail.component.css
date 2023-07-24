@@ -155,6 +155,10 @@ Copyright (c) 2023-present Kaleidos INC
   gap: var(--spacing-4);
   margin-block-end: var(--spacing-12);
   padding-inline-start: var(--spacing-8);
+
+  &.no-user {
+    align-items: center;
+  }
 }
 
 .creation-info-fullname {
@@ -232,6 +236,15 @@ Copyright (c) 2023-present Kaleidos INC
 
 .field-focus {
   background-color: var(--color-gray20);
+}
+
+.former-user-text {
+  color: var(--color-gray70);
+  font-style: italic;
+}
+
+.former-user-avatar {
+  --no-user-avatar-size: 24px;
 }
 
 /* stylelint-disable selector-max-compound-selectors, selector-max-type */

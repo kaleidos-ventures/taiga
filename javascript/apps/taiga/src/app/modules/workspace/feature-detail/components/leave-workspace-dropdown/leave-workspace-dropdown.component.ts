@@ -54,6 +54,8 @@ export class LeaveWorkspaceDropdownComponent {
   @Output()
   public openDialog = new EventEmitter<boolean>();
 
+  #dropdownState = false;
+
   public get dropdownState() {
     return this.#dropdownState;
   }
@@ -62,8 +64,6 @@ export class LeaveWorkspaceDropdownComponent {
     this.openDialog.next(value);
     this.#dropdownState = value;
   }
-
-  #dropdownState = false;
 
   public keep() {
     this.dropdownState = false;

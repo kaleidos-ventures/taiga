@@ -7,16 +7,23 @@
  */
 
 import { createFeature, on } from '@ngrx/store';
-import { Language } from '@taiga/data';
+import { DeleteInfo, Language } from '@taiga/data';
 import { createImmerReducer } from '~/app/shared/utils/store';
-import { userSettingsApiActions } from '../actions/user-settings.actions';
+import {
+  userSettingsActions,
+  userSettingsApiActions,
+} from '../actions/user-settings.actions';
 
 export interface UserSettingsState {
   languages: Language[];
+  deletingAccountModal: boolean;
+  deleteUserInfo: DeleteInfo | null;
 }
 
 export const initialUserSettingsState: UserSettingsState = {
   languages: [],
+  deletingAccountModal: false,
+  deleteUserInfo: null,
 };
 
 export const reducer = createImmerReducer(
@@ -25,6 +32,24 @@ export const reducer = createImmerReducer(
     userSettingsApiActions.fetchLanguagesSuccess,
     (state, { languages }): UserSettingsState => {
       state.languages = languages;
+
+      return state;
+    }
+  ),
+  on(userSettingsActions.cancelDeleteAccount, (state): UserSettingsState => {
+    state.deletingAccountModal = false;
+
+    return state;
+  }),
+  on(
+    userSettingsActions.showDeleteAccountModal,
+    (state, { workspaces, projects }): UserSettingsState => {
+      state.deletingAccountModal = true;
+
+      state.deleteUserInfo = {
+        workspaces,
+        projects,
+      };
 
       return state;
     }

@@ -25,6 +25,7 @@ import { NavigationService } from './shared/navigation/navigation.service';
 import { InputModalityDetector } from '@angular/cdk/a11y';
 import { LanguageService } from './services/language/language.service';
 import { ConfigService } from '@taiga/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'tg-root',
@@ -76,6 +77,13 @@ export class AppComponent {
     if (user) {
       this.store.dispatch(setUser({ user }));
     }
+
+    this.wsService
+      .userEvents('users.delete')
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        void this.router.navigate(['/logout']);
+      });
   }
 
   public get globalBannerActivated() {

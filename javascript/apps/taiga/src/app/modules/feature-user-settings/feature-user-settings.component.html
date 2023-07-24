@@ -15,11 +15,35 @@ Copyright (c) 2023-present Kaleidos INC
     ">
   </tg-title>
   <div class="menu-wrapper">
-    <div
+    <nav
       *ngIf="model$ | async as vm"
+      aria-labelledby="user-settings-menu-label"
       class="menu">
-      <h2 class="user-settings-title">{{ t('user_settings') }}</h2>
+      <p
+        id="user-settings-menu-label"
+        class="user-settings-title">
+        {{ t('user_settings') }}
+      </p>
       <ul class="user-settings-menu">
+        <li class="user-settings-menu-item">
+          <a
+            class="user-settings-menu-anchor"
+            routerLink="/user-settings/account"
+            routerLinkActive="active"
+            >{{ t('account') }}</a
+          >
+          <ul class="user-settings-submenu">
+            <li class="user-settings-submenu-item">
+              <a
+                class="user-settings-submenu-anchor"
+                [class.active]="vm.currentFragment === 'delete-account'"
+                routerLink="/user-settings/account"
+                fragment="delete-account"
+                >{{ t('delete_account') }}
+              </a>
+            </li>
+          </ul>
+        </li>
         <li class="user-settings-menu-item">
           <a
             class="user-settings-menu-anchor"
@@ -40,7 +64,7 @@ Copyright (c) 2023-present Kaleidos INC
           </ul>
         </li>
       </ul>
-    </div>
+    </nav>
   </div>
   <div class="user-settings-container">
     <router-outlet></router-outlet>

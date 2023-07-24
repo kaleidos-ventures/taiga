@@ -9,10 +9,10 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *transloco="let t">
   <span
     class="display-project-list"
-    *ngIf="!member.projects.length">
+    *ngIf="!projects.length">
     {{
-      t('common_members_tabs.column_projects.projects_number', {
-        projectsNum: member.projects.length
+      t('projects_dropdown.projects_number', {
+        projectsNum: projects.length
       })
     }}
   </span>
@@ -21,15 +21,15 @@ Copyright (c) 2023-present Kaleidos INC
     [(open)]="displayProjectList"
     [tuiDropdownMaxHeight]="800">
     <button
-      *ngIf="member.projects.length"
+      *ngIf="projects.length"
       class="display-project-list"
       (click)="displayProjectsList()"
       aria-haspopup="true"
       aria-controls="project-list"
       aria-expanded="displayProjectList ? null">
       {{
-        t('common_members_tabs.column_projects.projects_number', {
-          projectsNum: member.projects.length
+        t('projects_dropdown.projects_number', {
+          projectsNum: projects.length
         })
       }}
     </button>
@@ -46,13 +46,13 @@ Copyright (c) 2023-present Kaleidos INC
         <div
           class="title-area"
           id="project-list-dropdown-title">
-          {{ t('common_members_tabs.column_projects.projects_list_title') }}
+          {{ t('projects_dropdown.projects_list_title') }}
         </div>
         <tui-scrollbar>
           <ul class="project-list-listmenu">
             <li
               class="project-list-listmenu-item"
-              *ngFor="let project of member.projects; trackBy: trackByProject">
+              *ngFor="let project of projects; trackBy: trackByProject">
               <a
                 tuiOption
                 class="project-data"

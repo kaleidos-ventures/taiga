@@ -1,0 +1,183 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <tg-ui-modal
+      class="confirm-close"
+      [open]="open"
+      [width]="500"
+      (requestClose)="cancel.next()">
+      <div
+        data-test="deleting-account-modal"
+        role="dialog"
+        aria-labelledby="deleting-account"
+        aria-modal="true">
+        <h1
+          class="title"
+          id="deleting-account">
+          {{ t('user_settings.account.delete.confirmation_modal.title') }}
+        </h1>
+        <h2 class="visually-hidden">
+          {{ t('user_settings.account.delete.confirmation_modal.description') }}
+        </h2>
+
+        <tui-scrollbar>
+          <ng-container *ngIf="vm.accountInfo?.workspaces as workspaces">
+            <section
+              class="user-admin-list"
+              *ngIf="workspaces.length">
+              <tg-ui-inline-notification status="warning">
+                <p>
+                  {{
+                    t('user_settings.account.delete.confirmation_modal.caution')
+                  }}
+                </p>
+                <p
+                  subtitle
+                  [innerHTML]="
+                    t(
+                      'user_settings.account.delete.confirmation_modal.only_admin_workspaces',
+                      {
+                        workspaces: workspaces.length
+                      }
+                    ) | safeHtml
+                  "></p>
+              </tg-ui-inline-notification>
+              <p class="description">
+                {{
+                  t(
+                    'user_settings.account.delete.confirmation_modal.workspace_description',
+                    {
+                      workspaces: workspaces.length
+                    }
+                  )
+                }}
+              </p>
+              <h3 class="visually-hidden">
+                {{
+                  t(
+                    'user_settings.account.delete.confirmation_modal.workspace_a11y_title'
+                  )
+                }}
+              </h3>
+
+              <div class="workspaces">
+                <div
+                  class="workspace"
+                  data-test="delete-user-workspace"
+                  *ngFor="let workspace of workspaces; trackBy: trackById">
+                  <tg-ui-avatar
+                    class="workspace-avatar"
+                    [color]="workspace.color"
+                    type="dark"
+                    size="m"
+                    [name]="workspace.name">
+                  </tg-ui-avatar>
+
+                  <span class="workspace-name">{{ workspace.name }}</span>
+
+                  <tg-projects-dropdown
+                    class="projects-list"
+                    [projects]="workspace.projects"></tg-projects-dropdown>
+                </div>
+              </div>
+            </section>
+          </ng-container>
+
+          <ng-container *ngIf="vm.accountInfo?.projects as projects">
+            <section
+              class="user-admin-list"
+              *ngIf="projects.length">
+              <tg-ui-inline-notification status="warning">
+                <p *ngIf="!vm.accountInfo?.workspaces?.length">
+                  {{
+                    t('user_settings.account.delete.confirmation_modal.caution')
+                  }}
+                </p>
+                <p
+                  subtitle
+                  [innerHTML]="
+                    t(
+                      'user_settings.account.delete.confirmation_modal.only_admin_projects',
+                      {
+                        projects: projects.length
+                      }
+                    ) | safeHtml
+                  "></p>
+              </tg-ui-inline-notification>
+              <p class="description">
+                {{
+                  t(
+                    'user_settings.account.delete.confirmation_modal.project_description'
+                  )
+                }}
+              </p>
+              <h3 class="visually-hidden">
+                {{
+                  t(
+                    'user_settings.account.delete.confirmation_modal.project_a11y_title'
+                  )
+                }}
+              </h3>
+
+              <div class="projects">
+                <div
+                  class="project"
+                  data-test="delete-user-project"
+                  *ngFor="let project of projects; trackBy: trackById">
+                  <tg-project-summary-card
+                    [project]="project"
+                    openInNewTab></tg-project-summary-card>
+                </div>
+              </div>
+            </section>
+          </ng-container>
+        </tui-scrollbar>
+
+        <form
+          class="delete-account-form"
+          #form="ngForm"
+          [formGroup]="deleteAccount"
+          (submit)="confirmDelete()">
+          <tg-ui-checkbox
+            data-test="confirm-delete-modal-check"
+            class="confirm-delete-check"
+            name="delete-account"
+            [control]="deleteAccount.controls.confirmDelete"
+            [label]="t('user_settings.account.delete.confirm_msg')">
+            <ng-container inputError>
+              <tg-ui-error
+                [enabled]="form.submitted"
+                error="required">
+                {{ t('user_settings.account.delete.confirm_delete_error') }}
+              </tg-ui-error>
+            </ng-container>
+          </tg-ui-checkbox>
+          <div class="actions">
+            <button
+              type="button"
+              (click)="cancel.next()"
+              data-test="cancel-delete"
+              tuiLink>
+              {{ t('user_settings.account.delete.confirmation_modal.keep') }}
+            </button>
+            <button
+              (click)="discard.next()"
+              data-test="confirm-delete-modal"
+              tuiButton
+              icon="trash"
+              type="submit"
+              appearance="destructive">
+              {{ t('user_settings.account.delete.confirmation_modal.confirm') }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </tg-ui-modal>
+  </ng-container>
+</ng-container>

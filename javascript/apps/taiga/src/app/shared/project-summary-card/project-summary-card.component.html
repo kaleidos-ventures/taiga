@@ -1,0 +1,44 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <a
+    *ngIf="openInNewTab"
+    target="_blank"
+    [routerLink]="['/project', project.id, project.slug]"
+    class="project">
+    <ng-template [ngTemplateOutlet]="linkContent"></ng-template>
+  </a>
+
+  <a
+    *ngIf="!openInNewTab"
+    [routerLink]="['/project', project.id, project.slug]"
+    class="project">
+    <ng-template [ngTemplateOutlet]="linkContent"></ng-template>
+  </a>
+
+  <ng-template #linkContent>
+    <div class="project-image">
+      <tg-ui-avatar
+        type="light"
+        [color]="project.color"
+        [avatarUrl]="project.logoSmall"
+        [name]="project.name">
+      </tg-ui-avatar>
+    </div>
+    <div class="project-data">
+      <span class="project-name">{{ project.name }} </span>
+      <span class="project-workspace">{{ project.workspace.name }}</span>
+      <span
+        *ngIf="openInNewTab"
+        class="visually-hidden"
+        >{{ t('navigation.new_tab') }}</span
+      >
+    </div>
+  </ng-template>
+</ng-container>

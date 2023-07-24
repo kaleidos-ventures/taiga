@@ -1,0 +1,83 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+:host {
+  --inner-background-color: var(--color-white);
+  --label-color: var(--color-gray80);
+  --label-color-error: var(--color-gray80);
+  --label-focus-color: var(--color-gray80);
+
+  display: block;
+}
+
+.checkbox-container {
+  display: flex;
+  gap: var(--spacing-8);
+
+  & .check-label {
+    font-weight: var(--font-weight-regular);
+    line-height: 18px;
+    margin: 0;
+  }
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  aspect-ratio: 1;
+  background-color: var(--color-gray40);
+  block-size: 18px;
+  border: 2px solid var(--color-gray40);
+  border-radius: 2px;
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  margin: 0;
+  margin-block-end: var(--spacing-4);
+  place-content: center;
+}
+
+input[type="checkbox"]::before {
+  aspect-ratio: 1;
+  background-color: var(--inner-background-color);
+  border: 2px solid var(--inner-background-color);
+  border-radius: 1px;
+  content: "";
+  inline-size: 14px;
+}
+
+input[type="checkbox"]:checked::before {
+  background-color: var(--color-secondary);
+}
+
+input[type="checkbox"]:checked ~ .check-label {
+  color: var(--color-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+input[type="checkbox"]:focus {
+  border: 2px solid var(--color-secondary);
+  outline: none;
+}
+
+input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+}
+
+:host.invalid.show-errors {
+  &.update-on-submit.submitted,
+  &.update-on-blur.dirty,
+  &.update-on-change.dirty,
+  &.update-on-blur.touched,
+  &.update-on-change.touched {
+    --inner-background-color: var(--color-red20);
+
+    & input {
+      border-color: var(--color-red);
+    }
+  }
+}

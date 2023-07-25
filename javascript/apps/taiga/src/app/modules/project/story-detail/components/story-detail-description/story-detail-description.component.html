@@ -82,8 +82,15 @@ Copyright (c) 2023-present Kaleidos INC
           class="description-wrapper">
           <p
             class="empty"
+            [ngClass]="{
+              'can-view': !vm.hasPermissionToEdit,
+            }"
             (click)="editDescription()">
-            {{ t('story.empty_description') }}
+            {{
+              vm.hasPermissionToEdit
+                ? t('story.empty_description')
+                : t('story.empty_description_view_permissions')
+            }}
           </p>
           <ng-template [ngTemplateOutlet]="editDescriptionBtn"></ng-template>
         </div>

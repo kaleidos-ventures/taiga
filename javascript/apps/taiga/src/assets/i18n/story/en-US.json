@@ -21,6 +21,7 @@
   "status": "Status",
   "edit_title": "Edit title",
   "empty_description": "Add a description to your story",
+  "empty_description_view_permissions": "This story doesn't have a description yet.",
   "edit_description": "Edit description",
   "delete": {
     "delete_story": "Delete Story",

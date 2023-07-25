@@ -73,6 +73,10 @@ Copyright (c) 2023-present Kaleidos INC
   padding-block-end: var(--spacing-20);
   padding-block-start: var(--spacing-16);
   text-align: center;
+
+  &.can-view {
+    cursor: auto;
+  }
 }
 
 .shape-outside-text {

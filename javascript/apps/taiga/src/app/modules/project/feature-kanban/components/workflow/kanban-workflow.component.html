@@ -45,23 +45,25 @@ Copyright (c) 2023-present Kaleidos INC
         (closeForm)="openCreateStatusForm = false"></tg-kanban-create-status>
     </cdk-virtual-scroll-viewport>
   </tui-scrollbar>
+</ng-container>
 
-  <tg-ui-drag-in-progress>
-    <div *ngFor="let story of movingStories(); trackBy: trackByStorySlug">
-      <tg-kanban-story
-        class="dragging"
-        [story]="story"></tg-kanban-story>
-    </div>
+<tg-ui-drag-in-progress *ngIf="movingStories().length">
+  <div *ngFor="let story of movingStories(); trackBy: trackByStorySlug">
+    <tg-kanban-story
+      class="dragging"
+      [story]="story"></tg-kanban-story>
+  </div>
+</tg-ui-drag-in-progress>
 
+<ng-container *ngIf="movingStatus() as status">
+  <tg-ui-drag-in-progress [@dropStatusTransition]>
     <tg-kanban-status
-      *ngIf="movingStatus() as status"
       role="gridcell"
-      tgKanbanStatusKeyboardNavigation
-      [attr.data-test]="status.id"
       [status]="status"
       [workflow]="workflow"></tg-kanban-status>
   </tg-ui-drag-in-progress>
 </ng-container>
+
 <ng-container *ngIf="!workflow.statuses.length && !openCreateStatusForm">
   <tg-kanban-empty
     [userIsAdmin]="userIsAdmin"

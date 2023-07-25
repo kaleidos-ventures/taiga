@@ -81,6 +81,9 @@ export const StoryDetailActions = createActionGroup({
       projectId: Project['id'];
       deletedBy: Partial<User>;
     }>(),
+    'New status order after drag': props<{
+      workflow: Workflow;
+    }>(),
   },
 });
 

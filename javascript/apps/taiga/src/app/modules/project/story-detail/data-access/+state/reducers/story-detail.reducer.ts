@@ -370,6 +370,14 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    StoryDetailActions.newStatusOrderAfterDrag,
+    (state, { workflow }): StoryDetailState => {
+      state.workflow = workflow;
+
+      return state;
+    }
   )
 );
 

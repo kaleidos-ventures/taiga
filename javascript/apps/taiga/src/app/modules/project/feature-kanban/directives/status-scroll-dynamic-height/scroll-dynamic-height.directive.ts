@@ -49,9 +49,12 @@ export class StatusScrollDynamicHeightDirective
   }
 
   private siblings: HTMLElement[] = [];
-  private observer = new MutationObserver(() => this.calculateHeight());
+  private observer = new MutationObserver(() => {
+    this.calculateHeight();
+  });
   private currentBlockSize = 0;
   private _virtualScrollViewPort: HTMLElement | null = null;
+  private lastBlockSize: null | number = null;
 
   public get nativeElement() {
     return this.el.nativeElement as HTMLElement;
@@ -162,7 +165,10 @@ export class StatusScrollDynamicHeightDirective
       }
     }
 
-    this.dynamicHeightChanged.emit(blockSize);
+    if (this.lastBlockSize !== blockSize) {
+      this.dynamicHeightChanged.emit(blockSize);
+      this.lastBlockSize = blockSize;
+    }
   }
 
   private getMaxHeight() {

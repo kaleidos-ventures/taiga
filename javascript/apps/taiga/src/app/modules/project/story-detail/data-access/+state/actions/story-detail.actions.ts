@@ -107,6 +107,7 @@ export const StoryDetailApiActions = createActionGroup({
     }>(),
     'Fetch Comments Success': props<{
       comments: UserComment[];
+      activeComments: number;
       total: number;
       order: OrderComments;
       offset: number;
@@ -129,7 +130,7 @@ export const StoryDetailApiActions = createActionGroup({
     'Delete comment Success': props<{
       commentId: string;
       deletedBy: Partial<User>;
-      deletedAt?: string;
+      deletedAt: string;
     }>(),
   },
 });

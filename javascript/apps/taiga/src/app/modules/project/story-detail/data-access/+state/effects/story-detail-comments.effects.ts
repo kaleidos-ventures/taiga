@@ -72,9 +72,10 @@ export class StoryDetailCommentsEffects {
           return this.projectApiService
             .getComments(projectId, storyRef, order, offset, 40)
             .pipe(
-              map(({ comments, total }) => {
+              map(({ comments, total, activeComments }) => {
                 return StoryDetailApiActions.fetchCommentsSuccess({
                   comments,
+                  activeComments,
                   total,
                   order,
                   offset,
@@ -146,14 +147,15 @@ export class StoryDetailCommentsEffects {
     return this.actions$.pipe(
       ofType(StoryDetailActions.deleteComment),
       pessimisticUpdate({
-        run: ({ commentId, projectId, storyRef, deletedBy }) => {
+        run: ({ commentId, projectId, storyRef }) => {
           return this.projectApiService
             .deleteComment(projectId, commentId, storyRef)
             .pipe(
-              map(() => {
+              map((comment) => {
                 return StoryDetailApiActions.deleteCommentSuccess({
-                  commentId,
-                  deletedBy,
+                  commentId: comment.id,
+                  deletedBy: comment.deletedBy,
+                  deletedAt: comment.deletedAt,
                 });
               })
             );
@@ -170,6 +172,7 @@ export class StoryDetailCommentsEffects {
             return StoryDetailApiActions.deleteCommentSuccess({
               commentId,
               deletedBy: {},
+              deletedAt: new Date().toISOString(),
             });
           }
           return this.appService.toastGenericError(httpResponse);

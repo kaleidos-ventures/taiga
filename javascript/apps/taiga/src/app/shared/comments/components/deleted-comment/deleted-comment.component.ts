@@ -22,6 +22,7 @@ import {
   TranslocoService,
 } from '@ngneat/transloco';
 import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
+import { RealTimeDateDistanceComponent } from '~/app/shared/real-time-date-distance/real-time-date-distance.component';
 
 @Component({
   selector: 'tg-deleted-comment',
@@ -29,7 +30,12 @@ import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance
   templateUrl: './deleted-comment.component.html',
   styleUrls: ['./deleted-comment.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TranslocoModule, DateDistancePipe],
+  imports: [
+    CommonModule,
+    TranslocoModule,
+    DateDistancePipe,
+    RealTimeDateDistanceComponent,
+  ],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

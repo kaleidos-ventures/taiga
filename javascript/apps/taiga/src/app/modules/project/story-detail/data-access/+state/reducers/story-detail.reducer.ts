@@ -32,6 +32,7 @@ export interface StoryDetailState {
   comments: UserComment[];
   loadingComments: boolean;
   totalComments: number | null;
+  activeComments: number | null;
   commentsOrder: OrderComments;
 }
 
@@ -44,6 +45,7 @@ export const initialStoryDetailState: StoryDetailState = {
   comments: [],
   loadingComments: false,
   totalComments: null,
+  activeComments: null,
   commentsOrder: LocalStorageService.get('comments_order') || '-createdAt',
 };
 
@@ -248,7 +250,7 @@ export const reducer = createImmerReducer(
   }),
   on(
     StoryDetailApiActions.fetchCommentsSuccess,
-    (state, { comments, total, offset }): StoryDetailState => {
+    (state, { comments, total, offset, activeComments }): StoryDetailState => {
       if (offset) {
         state.comments = [...state.comments, ...comments];
       } else {
@@ -256,6 +258,7 @@ export const reducer = createImmerReducer(
       }
       state.loadingComments = false;
       state.totalComments = total;
+      state.activeComments = activeComments;
 
       return state;
     }
@@ -295,6 +298,12 @@ export const reducer = createImmerReducer(
         state.totalComments = 1;
       }
 
+      if (state.activeComments) {
+        state.activeComments++;
+      } else {
+        state.activeComments = 1;
+      }
+
       return state;
     }
   ),
@@ -331,6 +340,12 @@ export const reducer = createImmerReducer(
         state.totalComments = 1;
       }
 
+      if (state.activeComments) {
+        state.activeComments++;
+      } else {
+        state.activeComments = 1;
+      }
+
       return state;
     }
   ),
@@ -365,7 +380,15 @@ export const reducer = createImmerReducer(
       );
 
       if (state.totalComments) {
-        state.totalComments = state.totalComments - 1;
+        state.totalComments--;
+      } else {
+        state.totalComments = 0;
+      }
+
+      if (state.activeComments) {
+        state.activeComments--;
+      } else {
+        state.activeComments = 0;
       }
 
       return state;

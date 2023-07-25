@@ -85,6 +85,7 @@ export interface StoryDetailState {
   showDiscardChangesModal: boolean;
   comments: UserComment[] | null;
   totalComments: number | null;
+  activeComments: number | null;
   commentsOrder: OrderComments;
   commentsLoading: boolean;
   user: User;
@@ -249,6 +250,10 @@ export class StoryDetailComponent {
     this.state.connect(
       'totalComments',
       this.store.select(storyDetailFeature.selectTotalComments)
+    );
+    this.state.connect(
+      'activeComments',
+      this.store.select(storyDetailFeature.selectActiveComments)
     );
     this.state.connect(
       'commentsOrder',
@@ -651,24 +656,6 @@ export class StoryDetailComponent {
               );
             });
         }
-      });
-
-    this.wsService
-      .projectEvents<{
-        id: string;
-        ref: string;
-        deletedBy: Partial<User>;
-        deletedAt: string;
-      }>('stories.comments.delete')
-      .pipe(untilDestroyed(this))
-      .subscribe((msg) => {
-        this.store.dispatch(
-          StoryDetailApiActions.deleteCommentSuccess({
-            commentId: msg.event.content.id,
-            deletedBy: msg.event.content.deletedBy,
-            deletedAt: msg.event.content.deletedAt,
-          })
-        );
       });
 
     this.wsService

@@ -16,7 +16,10 @@ Copyright (c) 2023-present Kaleidos INC
 .deleted-message {
   background-color: var(--color-gray10);
   color: var(--color-gray70);
+  display: flex;
   font-style: italic;
+  gap: var(--spacing-4);
+  justify-content: flex-start;
   padding-block: var(--spacing-8);
   padding-inline: var(--spacing-16);
 }

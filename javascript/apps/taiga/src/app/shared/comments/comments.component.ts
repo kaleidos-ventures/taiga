@@ -20,7 +20,11 @@ import { TRANSLOCO_SCOPE, TranslocoModule } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { RxFor } from '@rx-angular/template/for';
-import { TuiButtonModule, TuiHintModule } from '@taiga-ui/core';
+import {
+  TuiButtonModule,
+  TuiHintModule,
+  TuiNotification,
+} from '@taiga-ui/core';
 import { User, UserComment } from '@taiga/data';
 import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
@@ -32,6 +36,8 @@ import { CommentDetailComponent } from './components/comment-detail/comment-deta
 import { CommentSingleComponent } from './components/comment-single/comment-single.component';
 import { CommentUserInputComponent } from './components/comment-user-input/comment-user-input.component';
 import { DeletedCommentComponent } from './components/deleted-comment/deleted-comment.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { StoryDetailApiActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 
 export type OrderComments = '-createdAt' | 'createdAt';
 
@@ -41,6 +47,7 @@ export interface CommentsComponentState {
   user: User;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'tg-comments',
   standalone: true,
@@ -75,6 +82,7 @@ export interface CommentsComponentState {
 export class CommentsComponent implements OnInit {
   @Input({ required: true }) public comments!: UserComment[] | null;
   @Input({ required: true }) public total!: number | null;
+  @Input({ required: true }) public activeComments!: number | null;
   @Input({ required: true }) public order!: OrderComments;
   @Input({ required: true }) public loading!: boolean;
   @Input({ required: true }) public user!: User;
@@ -92,8 +100,11 @@ export class CommentsComponent implements OnInit {
   public appService = inject(AppService);
   public state = inject(RxState) as RxState<CommentsComponentState>;
 
+  public selectedComment?: string;
+
   public ngOnInit(): void {
     this.watchState();
+    this.events();
   }
 
   public watchState() {
@@ -136,5 +147,36 @@ export class CommentsComponent implements OnInit {
         text: '',
       },
     });
+  }
+
+  public selectComment(commentId: string): void {
+    this.selectedComment = commentId;
+  }
+
+  private events(): void {
+    this.wsService
+      .projectEvents<{
+        ref: number;
+        comment: Required<UserComment>;
+      }>('stories.comments.delete')
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        if (this.selectedComment === msg.event.content.comment.id) {
+          this.appService.toastNotification({
+            message: 'deleted.already_deleted_message',
+            status: TuiNotification.Info,
+            scope: 'comments',
+            autoClose: true,
+          });
+        }
+
+        this.store.dispatch(
+          StoryDetailApiActions.deleteCommentSuccess({
+            commentId: msg.event.content.comment.id,
+            deletedBy: msg.event.content.comment.deletedBy,
+            deletedAt: msg.event.content.comment.deletedAt,
+          })
+        );
+      });
   }
 }

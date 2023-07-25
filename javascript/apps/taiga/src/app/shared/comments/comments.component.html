@@ -11,10 +11,10 @@ Copyright (c) 2023-present Kaleidos INC
     <h2 class="title">
       {{ t('comments.title') }}
       <span
-        *ngIf="total"
+        *ngIf="activeComments"
         data-test="comments-total"
         class="total-comments"
-        >({{ total }})</span
+        >({{ activeComments }})</span
       >
     </h2>
 
@@ -61,7 +61,7 @@ Copyright (c) 2023-present Kaleidos INC
     [order]="order"
     (saved)="comment.next($event)"></tg-comment-user-input>
 
-  <ng-container *ngIf="total">
+  <ng-container *ngIf="!!comments?.length">
     <div
       class="comment-list"
       data-test="comment-list">
@@ -70,7 +70,8 @@ Copyright (c) 2023-present Kaleidos INC
           [attr.id]="comment.id"
           *ngIf="!comment.deletedBy; else commentIsDeleted"
           [comment]="comment"
-          [canComment]="canComment">
+          [canComment]="canComment"
+          (selectComment)="selectComment($event)">
         </tg-comment>
         <ng-template #commentIsDeleted>
           <tg-deleted-comment

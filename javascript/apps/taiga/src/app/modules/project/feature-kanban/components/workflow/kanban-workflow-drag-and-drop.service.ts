@@ -16,7 +16,6 @@ import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/
 import { filter, map, take } from 'rxjs';
 import { kanbanFeature } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
 import { filterNil } from '~/app/shared/utils/operators';
-
 @Injectable()
 export class KanbanWorkflowDragAndDropService {
   public dragService = inject(DragService);
@@ -47,7 +46,9 @@ export class KanbanWorkflowDragAndDropService {
         }
       });
 
-    const handleDropEvent = async (dropEvent: DroppedEvent<Status, string>) => {
+    const handleDropStatusEvent = async (
+      dropEvent: DroppedEvent<Status, string>
+    ) => {
       const dragInProgress = document.querySelector<HTMLElement>(
         'tg-ui-drag-in-progress'
       );
@@ -57,7 +58,7 @@ export class KanbanWorkflowDragAndDropService {
       if (dropEvent && drop && dragInProgress) {
         // when drag is cancel with ESC there is no animation
         if (dropEvent.dropZone) {
-          await this.animateDrop(dragInProgress, drop);
+          await this.animateDrop(dragInProgress, drop, false);
         }
 
         if (dropEvent.candidate) {
@@ -88,7 +89,7 @@ export class KanbanWorkflowDragAndDropService {
         filter((event) => event?.dropCategory === 'status')
       )
       .subscribe((dropEvent) => {
-        void handleDropEvent(dropEvent);
+        void handleDropStatusEvent(dropEvent);
       });
 
     this.dragService
@@ -221,7 +222,11 @@ export class KanbanWorkflowDragAndDropService {
     }
   }
 
-  public animateDrop(el: HTMLElement, destination: HTMLElement) {
+  public animateDrop(
+    el: HTMLElement,
+    destination: HTMLElement,
+    buzzAnimation = true
+  ) {
     return new Promise((resolve) => {
       const positionDrop = destination.getBoundingClientRect();
       const positionDrag = el.getBoundingClientRect();
@@ -292,18 +297,28 @@ export class KanbanWorkflowDragAndDropService {
         ],
         {
           duration: 100,
+          fill: 'forwards',
         }
       );
 
       void animation.finished
         .then(() => {
-          return el.animate(buzz, {
-            duration: 200,
-            easing: 'ease-out',
-          }).finished;
+          if (buzzAnimation) {
+            return el
+              .animate(buzz, {
+                duration: 200,
+                easing: 'ease-out',
+              })
+              .finished.then(() => {
+                return undefined;
+              });
+          }
+
+          return Promise.resolve();
         })
         .then(() => {
           document.body.classList.remove('drop-in-progress');
+
           resolve(null);
         });
     });

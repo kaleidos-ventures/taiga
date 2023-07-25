@@ -29,6 +29,8 @@ import {
   selectStory,
   selectWorkflow,
 } from '../selectors/story-detail.selectors';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 
 @Injectable()
 export class StoryDetailEffects {
@@ -253,6 +255,27 @@ export class StoryDetailEffects {
           this.appService.toastSaveChangesError(httpResponse);
         },
       })
+    );
+  });
+
+  public updatesWorkflowStatusAfterDragAndDrop$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.statusDropped, projectEventActions.statusReorder),
+      concatLatestFrom(() => [this.store.select(selectWorkflows)]),
+      map(([action, workflows]) => {
+        const workflow = workflows?.find((workflow) =>
+          workflow.statuses.find((status) => status.id === action.candidate?.id)
+        );
+
+        if (workflow) {
+          return StoryDetailActions.newStatusOrderAfterDrag({
+            workflow,
+          });
+        }
+
+        return null;
+      }),
+      filterNil()
     );
   });
 

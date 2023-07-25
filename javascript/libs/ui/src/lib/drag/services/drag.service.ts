@@ -59,6 +59,7 @@ export class DragService {
   private source: { data: unknown; id: unknown }[] = [];
   private dragInProgress!: DragInProgressComponent;
   private initialZone?: DropZone;
+  public dragElementWidth = 0;
 
   public over<T, U>() {
     return this.over$.asObservable() as Observable<OverEvent<T, U>>;
@@ -201,9 +202,8 @@ export class DragService {
   public dragStart(draggableDirective: Draggable) {
     this.initialZone = draggableDirective.dropZone;
 
-    this.dragInProgress.nativeElement.style.width = `${
-      draggableDirective.nativeElement.getBoundingClientRect().width
-    }px`;
+    this.dragElementWidth =
+      draggableDirective.nativeElement.getBoundingClientRect().width;
 
     let initialPosition = { x: 0, y: 0 };
 

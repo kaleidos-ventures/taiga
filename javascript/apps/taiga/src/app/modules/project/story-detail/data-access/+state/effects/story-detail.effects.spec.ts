@@ -15,6 +15,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ProjectApiService } from '@taiga/api';
 import {
   ProjectMockFactory,
+  StatusMockFactory,
   StoryDetailMockFactory,
   WorkflowMockFactory,
 } from '@taiga/data';
@@ -34,6 +35,7 @@ import {
   selectWorkflow,
 } from '../selectors/story-detail.selectors';
 import { StoryDetailEffects } from './story-detail.effects';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 
 describe('StoryDetailEffects', () => {
   let actions$: Observable<Action>;
@@ -341,5 +343,36 @@ describe('StoryDetailEffects', () => {
         `/project/${project.id}/${project.slug}/kanban`,
       ]);
     });
+  });
+
+  it('should dispatch newStatusOrderAfterDrag action when statusDropped is dispatched and workflow exists', () => {
+    const effects = spectator.inject(StoryDetailEffects);
+
+    const status = StatusMockFactory();
+    const status2 = StatusMockFactory();
+
+    const action = KanbanActions.statusDropped({
+      id: status2.id,
+      candidate: {
+        id: status.id,
+        position: 'right',
+      },
+    });
+
+    const workflow = WorkflowMockFactory();
+    workflow.statuses = [status, status2];
+
+    actions$ = hot('-a', { a: action });
+
+    const expected = cold('-b', {
+      b: StoryDetailActions.newStatusOrderAfterDrag({ workflow }),
+    });
+
+    store.overrideSelector(selectWorkflows, [workflow]);
+    store.refreshState();
+
+    expect(effects.updatesWorkflowStatusAfterDragAndDrop$).toBeObservable(
+      expected
+    );
   });
 });

@@ -39,6 +39,7 @@ import {
 } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { Store } from '@ngrx/store';
 import { kanbanFeature } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'tg-kanban-workflow',
@@ -46,6 +47,12 @@ import { kanbanFeature } from '~/app/modules/project/feature-kanban/data-access/
   styleUrls: ['./kanban-workflow.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [KineticScrollService, RxState, KanbanWorkflowDragAndDropService],
+  animations: [
+    // prevent flicker on status drop
+    trigger('dropStatusTransition', [
+      transition(':leave', [animate('50ms', style({}))]),
+    ]),
+  ],
 })
 export class KanbanWorkflowComponent
   implements

@@ -36,6 +36,7 @@ export class DragInProgressComponent {
       )
       .subscribe((position) => {
         this.nativeElement.style.transform = `translate(${position.x}px, ${position.y}px)`;
+        this.nativeElement.style.width = `${this.dragService.dragElementWidth}px`;
 
         requestAnimationFrame(() => {
           this.dragService.newDragPosition(

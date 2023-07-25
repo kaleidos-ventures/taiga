@@ -118,10 +118,17 @@ describe('StoryDetailEffects', () => {
       total: comments.length,
       order: 'createdAt',
       offset: 0,
+      activeComments: comments.filter((c) => !c.deletedAt).length,
     });
 
     actions$ = hot('-a', { a: action });
-    const response = cold('-a|', { a: { comments, total: comments.length } });
+    const response = cold('-a|', {
+      a: {
+        comments,
+        total: comments.length,
+        activeComments: comments.filter((c) => !c.deletedAt).length,
+      },
+    });
     const expected = cold('--b', { b: outcome });
 
     projectApiService.getComments.mockReturnValue(response);
@@ -202,6 +209,7 @@ describe('StoryDetailEffects', () => {
       const storyRef = 123;
       const projectId = 'testProject';
       const user = UserMockFactory();
+      const now = new Date().toISOString();
       const action = StoryDetailActions.deleteComment({
         commentId: comment.id,
         storyRef,
@@ -211,10 +219,14 @@ describe('StoryDetailEffects', () => {
       const completion = StoryDetailApiActions.deleteCommentSuccess({
         commentId: comment.id,
         deletedBy: user,
+        deletedAt: now,
       });
 
       actions$ = hot('-a', { a: action });
-      const response = cold('-b|', { b: comment });
+
+      const response = cold('-b|', {
+        b: { ...comment, deletedBy: user, deletedAt: now },
+      });
       const expected = cold('--c', { c: completion });
 
       projectApiService.deleteComment.mockReturnValue(response);

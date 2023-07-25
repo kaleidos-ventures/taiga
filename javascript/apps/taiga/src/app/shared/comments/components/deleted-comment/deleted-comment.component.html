@@ -10,6 +10,16 @@ Copyright (c) 2023-present Kaleidos INC
   class="deleted-message-wrapper"
   data-test="deleted-comment-message">
   <div class="deleted-message">
-    {{ message }}
+    <span class="deletion-data-message">
+      {{ message }}
+    </span>
+    <span>∙</span>
+    <span
+      *ngIf="comment.deletedAt"
+      [title]="comment.deletedAt | date: 'medium'"
+      class="deletion-data-date">
+      <tg-real-time-date-distance
+        [date]="comment.deletedAt"></tg-real-time-date-distance>
+    </span>
   </div>
 </div>

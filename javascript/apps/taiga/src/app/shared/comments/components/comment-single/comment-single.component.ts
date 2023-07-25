@@ -12,8 +12,10 @@ import {
   Component,
   DestroyRef,
   HostBinding,
+  EventEmitter,
   HostListener,
   Input,
+  Output,
   inject,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -77,6 +79,8 @@ export class CommentSingleComponent {
   @Input({ required: true }) public comment!: UserComment;
   @Input({ required: true }) public canComment = false;
 
+  @Output() public selectComment = new EventEmitter<string>();
+
   @HostListener('window:beforeunload')
   public unloadHandler() {
     return !this.hasChanges();
@@ -138,6 +142,7 @@ export class CommentSingleComponent {
 
   public onHighlightComment(value: boolean): void {
     this.highlightedComment = value;
+    this.selectComment.emit(this.comment.id);
   }
 
   public displayEditComment(value: boolean): void {

@@ -513,7 +513,11 @@ export class ProjectApiService {
     order: string,
     offset: number,
     limit: number
-  ): Observable<{ comments: UserComment[]; total: number }> {
+  ): Observable<{
+    comments: UserComment[];
+    total: number;
+    activeComments: number;
+  }> {
     return this.http
       .get<UserComment[]>(
         `${this.config.apiUrl}/projects/${projectId}/stories/${ref}/comments`,
@@ -531,6 +535,9 @@ export class ProjectApiService {
           return {
             total: Number(response.headers.get('pagination-total')),
             comments: response.body ?? [],
+            activeComments: Number(
+              response.headers.get('taiga-total-comments')
+            ),
           };
         })
       );
@@ -555,7 +562,7 @@ export class ProjectApiService {
     commentId: UserComment['id'],
     storyRef: Story['ref']
   ) {
-    return this.http.delete<void>(
+    return this.http.delete<Required<UserComment>>(
       `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}/comments/${commentId}`
     );
   }

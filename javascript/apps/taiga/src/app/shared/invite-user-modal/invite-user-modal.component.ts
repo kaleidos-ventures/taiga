@@ -126,7 +126,7 @@ export class InviteUserModalComponent implements OnInit, OnChanges {
   }
 
   public model$ = this.state.select();
-  public regexpEmail = /\w+([.\-_+]?\w+)*@\w+([.-]?\w+)*(\.\D{2,4})+/g;
+  public regexpEmail = /\w+([.\-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+/g;
   public inviteIdentifier = '';
   public inviteIdentifier$ = new BehaviorSubject('');
   public inviteIdentifierErrors: {

@@ -21,7 +21,7 @@ import { Component } from '@angular/core';
           [control]="control"
           title="title"
           label="label"
-          tip="Allowed formats: gif, png, jpg, gif, svg and webp"
+          [tip]="t('common_project.forms.choose_image_tip')"
           accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg">
         </tg-ui-image-upload>
       </form>

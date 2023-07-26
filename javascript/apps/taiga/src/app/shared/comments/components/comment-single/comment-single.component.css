@@ -7,6 +7,7 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 @import url("tools/typography.css");
+@import url("../../styles/delete-comment-confirm.css");
 
 .comment {
   padding-block: var(--spacing-8);

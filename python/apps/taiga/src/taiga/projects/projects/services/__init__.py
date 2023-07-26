@@ -221,12 +221,24 @@ async def update_project_public_permissions(project: Project, permissions: list[
 
 
 async def delete_project(project: Project, deleted_by: AnyUser) -> bool:
+    # Mark the file to delete
+    file_to_delete = None
+    if project.logo:
+        file_to_delete = project.logo.path
+
     guests = await users_services.list_guests_in_workspace_for_project(project=project)
     deleted = await projects_repositories.delete_projects(filters={"id": project.id})
+
     if deleted > 0:
+        # Delete old file if existed
+        if file_to_delete:
+            await projects_tasks.delete_old_logo.defer(path=file_to_delete)
+
+        # Emit event
         await projects_events.emit_event_when_project_is_deleted(
             workspace=project.workspace, project=project, deleted_by=deleted_by, guests=guests
         )
+
         return True
 
     return False

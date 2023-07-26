@@ -329,9 +329,10 @@ async def test_delete_project_fail():
         )
 
 
-async def test_delete_project_ok():
+async def test_delete_project_ok(tqmanager):
     user = f.build_user()
-    project = f.build_project()
+    logo = f.build_image_file()
+    project = f.build_project(logo=logo)
 
     with (
         patch("taiga.projects.projects.services.projects_repositories", autospec=True) as fake_projects_repo,
@@ -348,3 +349,8 @@ async def test_delete_project_ok():
         fake_projects_repo.delete_projects.assert_awaited_once_with(
             filters={"id": project.id},
         )
+        assert len(tqmanager.pending_jobs) == 1
+        job = tqmanager.pending_jobs[0]
+        assert "delete_old_logo" in job["task_name"]
+        assert "path" in job["args"]
+        assert job["args"]["path"].endswith(logo.name)

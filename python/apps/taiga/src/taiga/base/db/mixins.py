@@ -45,9 +45,8 @@ class CreatedMetaInfoMixin(CreatedByMetaInfoMixin, CreatedAtMetaInfoMixin):
 
 class ModifiedAtMetaInfoMixin(models.Model):
     modified_at = models.DateTimeField(
-        null=False,
-        blank=False,
-        auto_now=True,
+        null=True,
+        blank=True,
         verbose_name="modified at",
     )
 

@@ -10,6 +10,7 @@ from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import QuerySet
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.base.utils.files import File
 from taiga.projects import references
 from taiga.projects.invitations.choices import ProjectInvitationStatus
@@ -175,6 +176,7 @@ def update_project(project: Project, values: dict[str, Any] = {}) -> Project:
     for attr, value in values.items():
         setattr(project, attr, value)
 
+    project.modified_at = aware_utcnow()
     project.save()
     return project
 

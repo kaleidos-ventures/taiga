@@ -82,7 +82,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             .values_list("id", flat=True)
         )
         total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_at")
+        projects_qs = Project.objects.filter(id__in=projects_ids[:12]).order_by("-created_at")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         invited_projects_qs = Project.objects.filter(
             Q(invitations__user_id=user.id)
@@ -127,7 +127,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             .values_list("id", flat=True)
         )
         total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_at")
+        projects_qs = Project.objects.filter(id__in=projects_ids[:12]).order_by("-created_at")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         invited_projects_qs = Project.objects.filter(
             Q(invitations__user_id=user.id)
@@ -208,7 +208,9 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
         visible_project_ids_qs = (
             Project.objects.filter(workspace=OuterRef("workspace")).values_list("id", flat=True).order_by("-created_at")
         )
-        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:6])).order_by("-created_at")
+        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:12])).order_by(
+            "-created_at"
+        )
         return (
             Workspace.objects.filter(
                 id=id,
@@ -252,7 +254,9 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             .order_by("-created_at")
             .values_list("id", flat=True)
         )
-        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:6])).order_by("-created_at")
+        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:12])).order_by(
+            "-created_at"
+        )
         return (
             Workspace.objects.filter(user_not_ws_member & (user_pj_member | user_invited_pj), id=id)
             .distinct()

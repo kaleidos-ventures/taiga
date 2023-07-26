@@ -33,13 +33,6 @@ PROB_STORY_ASSIGNMENTS_DEFAULT = 25
 
 # Story Comments
 MAX_DAYS_LAST_COMMENT = 12  # referred to the creation date of the story they comment
-PROB_STORY_COMMENTS = {  # 0-99 prob of a story to be commented by its workflow status
-    "New": 10,
-    "Ready": 20,
-    "In Progress": 40,
-    "Done": 80,
-}
-PROB_STORY_COMMENTS_DEFAULT = 25
 MAX_STORY_COMMENTS = {  # Max number of comments (in the positive case of having comments)
     "New": 2,
     "Ready": 5,
@@ -47,3 +40,12 @@ MAX_STORY_COMMENTS = {  # Max number of comments (in the positive case of having
     "Done": 15,
 }
 MAX_STORY_COMMENTS_DEFAULT = 5
+PROB_STORY_COMMENTS = {  # 0-99 prob of a story to be commented by its workflow status
+    "New": 10,
+    "Ready": 20,
+    "In Progress": 40,
+    "Done": 80,
+}
+PROB_STORY_COMMENTS_DEFAULT = 25
+PROB_MODIFIED_COMMENT = 10  # 0-99 prob of a comment to be modified
+PROB_DELETED_COMMENT = 10  # 0-99 prob of a comment to be deleted

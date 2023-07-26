@@ -17,11 +17,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   HostBinding,
   Input,
   OnInit,
+  AfterViewInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -126,8 +129,12 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
     ]),
   ],
 })
-export class ProjectCardComponent implements OnInit {
-  constructor(private store: Store, private cd: ChangeDetectorRef) {}
+export class ProjectCardComponent implements OnInit, AfterViewInit {
+  constructor(
+    private store: Store,
+    private cd: ChangeDetectorRef,
+    private el: ElementRef
+  ) {}
 
   @Input()
   public variant: CardVariant = 'project';
@@ -170,6 +177,9 @@ export class ProjectCardComponent implements OnInit {
     >
   >();
 
+  @ViewChild('projectDescription')
+  public projectDescription!: ElementRef;
+
   @HostBinding('attr.data-invite-status')
   public invitationStatus: 'accepted' | null = null;
 
@@ -178,6 +188,7 @@ export class ProjectCardComponent implements OnInit {
   public invitationStatus$ = this.store.select(selectProjectAcceptedInvite);
   public rejectedByAdmin = false;
   public projectActionsDropdownState = false;
+  public showTooltip = false;
 
   public animationAcceptedInvitation: 'done' | null = null;
 
@@ -216,6 +227,10 @@ export class ProjectCardComponent implements OnInit {
       });
   }
 
+  public ngAfterViewInit() {
+    this.showTooltip = this.hasToShowTooltip() ?? false;
+  }
+
   public onRejectInvite() {
     if (this.project) {
       if (this.workspace.userRole === 'member') {
@@ -236,5 +251,12 @@ export class ProjectCardComponent implements OnInit {
       this.projectToDelete.next(this.project);
     }
     this.openModal.next(modalName);
+  }
+
+  public hasToShowTooltip() {
+    const el = (this.el.nativeElement as HTMLElement).querySelector(
+      '.project-card-description'
+    );
+    return el && el.clientHeight < el.scrollHeight;
   }
 }

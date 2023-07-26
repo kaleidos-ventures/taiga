@@ -16,7 +16,7 @@ class CommentSerializer(BaseModel):
     text: str
     created_at: datetime
     created_by: UserNestedSerializer
-    modified_at: datetime
+    modified_at: datetime | None
     deleted_at: datetime | None
     deleted_by: UserNestedSerializer | None
 

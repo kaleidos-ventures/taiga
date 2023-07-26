@@ -10,7 +10,7 @@ from typing import Any
 
 from slugify import slugify
 from taiga.base.db import models
-from taiga.base.db.mixins import CreatedAtMetaInfoMixin, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin
+from taiga.base.db.mixins import CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin
 from taiga.base.utils.files import get_obfuscated_file_path
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.uuid import encode_uuid_to_b64str
@@ -99,7 +99,7 @@ class Project(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin):
         references.create_project_references_sequence(project_id=self.id)
 
 
-class ProjectTemplate(models.BaseModel, CreatedAtMetaInfoMixin, ModifiedAtMetaInfoMixin):
+class ProjectTemplate(models.BaseModel):
     name = models.CharField(max_length=250, null=False, blank=False, verbose_name="name")
     slug = models.LowerSlugField(max_length=250, null=False, blank=True, unique=True, verbose_name="slug")
     roles = models.JSONField(null=True, blank=True, verbose_name="roles")

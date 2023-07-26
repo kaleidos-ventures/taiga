@@ -10,6 +10,7 @@ from uuid import UUID
 
 from asgiref.sync import sync_to_async
 from taiga.base.db.models import Model, QuerySet, get_contenttype_for_model
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.comments.models import Comment
 from taiga.users.models import User
 
@@ -153,6 +154,7 @@ def update_comment(comment: Comment, values: dict[str, Any] = {}) -> Comment:
     for attr, value in values.items():
         setattr(comment, attr, value)
 
+    comment.modified_at = aware_utcnow()
     comment.save()
     return comment
 

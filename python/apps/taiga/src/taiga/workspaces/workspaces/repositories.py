@@ -24,6 +24,7 @@ from taiga.base.db.models import (
     Subquery,
     Value,
 )
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.projects.models import Project
 from taiga.users.models import User
@@ -278,6 +279,7 @@ def update_workspace(workspace: Workspace, values: dict[str, Any] = {}) -> Works
     for attr, value in values.items():
         setattr(workspace, attr, value)
 
+    workspace.modified_at = aware_utcnow()
     workspace.save()
     return workspace
 

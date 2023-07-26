@@ -121,15 +121,17 @@ tg-ui-textarea {
 }
 
 tui-text-area {
-  /* stylelint-disable-next-line declaration-no-important */
-  --tui-textarea-height: var(--spacing-24) !important;
+  &.general-textarea {
+    /* stylelint-disable-next-line declaration-no-important */
+    --tui-textarea-height: var(--spacing-24) !important;
 
-  font-size: var(--font-size-heading-3);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.1;
+    font-size: var(--font-size-heading-3);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.1;
 
-  &:focus-within {
-    box-shadow: 3px 4px 4px 0 rgba(0, 138, 168, 0.15);
+    &:focus-within {
+      box-shadow: 3px 4px 4px 0 rgba(0, 138, 168, 0.15);
+    }
   }
 }
 

@@ -18,7 +18,11 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { RxState } from '@rx-angular/state';
-import { TuiButtonModule, TuiHintModule } from '@taiga-ui/core';
+import {
+  TuiButtonModule,
+  TuiHintModule,
+  TuiHostedDropdownModule,
+} from '@taiga-ui/core';
 import { UserComment } from '@taiga/data';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { Subject, of, take } from 'rxjs';
@@ -56,6 +60,7 @@ import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
     BadgeModule,
     DateDistancePipe,
     TuiHintModule,
+    TuiHostedDropdownModule,
   ],
   animations: [fadeIntOutAnimation],
   providers: [
@@ -87,6 +92,7 @@ export class CommentSingleComponent {
     'bold italic underline | link image codesample | emoticons';
 
   public showConfirmEditCommentModal = false;
+  public confirmDelete = false;
 
   public editCommentForm = new FormGroup({
     comment: new FormControl('', {
@@ -108,7 +114,6 @@ export class CommentSingleComponent {
       }
     });
   }
-
   public canDeactivate() {
     if (this.hasChanges()) {
       this.displayConfirmEditCommentModal(true);
@@ -125,6 +130,7 @@ export class CommentSingleComponent {
   }
 
   public onDeleteComment() {
+    this.displayConfirmDeleteComment(false);
     this.state.set({ deletedComment: this.comment.id });
   }
 
@@ -134,6 +140,10 @@ export class CommentSingleComponent {
 
   public displayEditComment(value: boolean): void {
     this.editComment = value;
+  }
+
+  public displayConfirmDeleteComment(value: boolean): void {
+    this.confirmDelete = value;
   }
 
   public displayConfirmEditCommentModal(value: boolean): void {
@@ -156,14 +166,21 @@ export class CommentSingleComponent {
   }
 
   public saveEdit() {
-    this.state.set({
-      editComment: {
-        id: this.comment.id,
-        text: this.editCommentForm.get('comment')!.value,
-      },
-    });
-    this.displayEditComment(false);
-    this.reset();
+    const comment = this.editCommentForm.get('comment')!.value;
+
+    if (comment) {
+      this.state.set({
+        editComment: {
+          id: this.comment.id,
+          text: this.editCommentForm.get('comment')!.value,
+        },
+      });
+      this.displayEditComment(false);
+      this.displayConfirmDeleteComment(false);
+      this.resetForm();
+    } else {
+      this.displayConfirmDeleteComment(true);
+    }
   }
 
   public onContentChange(content: string) {
@@ -173,14 +190,14 @@ export class CommentSingleComponent {
   public discard() {
     this.displayEditComment(false);
     this.displayConfirmEditCommentModal(false);
-    this.reset();
+    this.resetForm();
   }
 
   public keepEditing() {
     this.displayConfirmEditCommentModal(false);
   }
 
-  public reset() {
+  public resetForm() {
     this.editCommentForm.get('comment')?.setValue(this.comment.text);
     this.editCommentForm.markAsPristine();
   }

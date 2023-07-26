@@ -143,7 +143,7 @@ describe('Kanban', () => {
     cy.getBySel('create-status-input').type(newStatusName);
     cy.getBySel('status-create').click({ force: true });
     cy.get('@status').then((statusName) => {
-      cy.get('tg-kanban-status').first().should('contain', statusName);
+      cy.get('tg-kanban-status').first().should('not.contain', statusName);
     });
     cy.get('tg-kanban-status').first().should('contain', newStatusName);
   });

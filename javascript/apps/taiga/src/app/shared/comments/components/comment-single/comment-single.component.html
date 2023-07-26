@@ -110,16 +110,65 @@ Copyright (c) 2023-present Kaleidos INC
             appearance="tertiary">
             {{ t('commons.cancel') }}
           </button>
-          <button
-            data-test="edit-save"
-            tuiButton
-            type="submit"
-            appearance="primary">
-            {{ t('commons.save') }}
-          </button>
+
+          <tui-hosted-dropdown
+            [tuiDropdownAlign]="'right'"
+            [tuiDropdownDirection]="'bottom'"
+            [content]="confirmDeleteTpl"
+            [(open)]="confirmDelete">
+            <button
+              data-test="edit-save"
+              tuiButton
+              type="submit"
+              appearance="primary">
+              {{ t('commons.save') }}
+            </button>
+          </tui-hosted-dropdown>
         </div>
       </form>
     </div>
+
+    <ng-template #confirmDeleteTpl>
+      <div
+        aria-labelledby="delete-comment-confirm"
+        aria-describedby="delete-comment-description"
+        aria-modal="true"
+        class="delete-comment-confirm">
+        <div class="confirm-container">
+          <h3
+            id="delete-comment-confirm"
+            class="delete-comment-confirm-title"
+            data-test="delete-comment-confirm-title">
+            {{ t('comments.delete.confirm') }}
+          </h3>
+          <p
+            class="delete-comment-description"
+            id="delete-comment-description">
+            {{ t('comments.delete.confirm_info') }}
+          </p>
+        </div>
+        <div class="delete-comment-confirm-actions-area">
+          <button
+            appearance="button-form"
+            data-test="delete-comment-cancel-button"
+            tuiButton
+            tuiAutoFocus
+            (click)="displayConfirmDeleteComment(false)"
+            type="button">
+            {{ t('comments.delete.cancel') }}
+          </button>
+          <button
+            data-test="delete-comment-confirm-button"
+            appearance="destructive"
+            tuiButton
+            icon="trash"
+            (click)="onDeleteComment()"
+            type="button">
+            {{ t('comments.delete.confirm_action') }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
     <tg-discard-changes-modal
       [open]="showConfirmEditCommentModal"
       (discard)="discard$.next(true)"

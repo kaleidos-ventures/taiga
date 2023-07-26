@@ -8,34 +8,8 @@ Copyright (c) 2023-present Kaleidos INC
 
 @import url("tools/typography.css");
 @import url("shared/option-list.css");
+@import url("../../styles/delete-comment-confirm.css");
 
 .comment-options-list {
   @mixin option-list;
-}
-
-.delete-comment-confirm {
-  inline-size: 398px;
-  padding: var(--spacing-12);
-
-  &.in-side-panel {
-    inline-size: 267px;
-  }
-}
-
-.confirm-container {
-  padding: var(--spacing-8);
-}
-
-.delete-comment-confirm-title {
-  font-size: var(--font-size-medium);
-  margin-block-start: 0;
-}
-
-.delete-comment-description {
-  margin-block: var(--spacing-12);
-}
-
-.delete-comment-confirm-actions-area {
-  display: flex;
-  justify-content: space-between;
 }

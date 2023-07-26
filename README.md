@@ -27,6 +27,9 @@
 
 [Taiga](https://www.taiga.io/) is a free and open-source project management tool for cross-functional agile teams to work effectively. 
 
+![taiga-projects-homepage](https://github.com/taigaio/taiga/assets/5446186/b9dc7f21-c670-44bf-ae1f-e5a41343dffc)
+
+
 This is the repository of the next iteration of Taiga in which we are keeping key Taiga concepts but rethinking many aspects related to user experience, processes and interaction. The new Taiga will also showcase the [Kaleidos](https://kaleidos.net/) vision around lean and design processes, connecting our two products, Taiga and [Penpot](https://penpot.app/), together.
 
 ### Built with

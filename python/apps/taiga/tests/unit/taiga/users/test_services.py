@@ -584,6 +584,14 @@ async def test_update_user_ok(tqmanager):
 
 
 #####################################################################
+# delete user
+#####################################################################
+
+
+# TODO
+
+
+#####################################################################
 # reset password
 #####################################################################
 
@@ -794,3 +802,75 @@ async def test_clean_expired_users():
     with patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo:
         await services.clean_expired_users()
         fake_users_repo.clean_expired_users.assert_awaited_once()
+
+
+async def test_list_workspaces_delete_info():
+    user = f.build_user(is_active=True)
+    other_user = f.build_user(is_active=True)
+    # user only ws member with projects
+    ws1 = f.build_workspace(created_by=user)
+    f.build_project(created_by=user, workspace=ws1)
+    f.build_project(created_by=user, workspace=ws1)
+    # user only ws member with projects
+    ws2 = f.build_workspace(created_by=user)
+    f.build_project(created_by=user, workspace=ws2)
+    # user only ws member without projects
+    f.build_workspace(created_by=user)
+    # user not only ws member with projects
+    ws4 = f.build_workspace(created_by=user)
+    f.build_workspace_membership(user=other_user, workspace=ws4)
+    f.build_project(created_by=user, workspace=ws4)
+    # user not only ws member without projects
+    ws5 = f.build_workspace(created_by=user)
+    f.build_workspace_membership(user=other_user, workspace=ws5)
+
+    with patch("taiga.users.services.workspaces_repositories", autospec=True) as fake_workspaces_repo:
+        fake_workspaces_repo.list_workspaces.return_value = [ws2, ws1]
+        workspaces = await services._list_workspaces_delete_info(user=user)
+
+        fake_workspaces_repo.list_workspaces.assert_called_once_with(
+            filters={"workspace_member_id": user.id, "num_members": 1, "has_projects": True},
+            prefetch_related=["projects"],
+        )
+        assert workspaces == [ws2, ws1]
+
+
+async def test_list_projects_delete_info():
+    user = f.build_user(is_active=True)
+    other_user = f.build_user(is_active=True)
+    ws1 = f.build_workspace(created_by=user)
+    # user only pj admin but only pj member and only ws member
+    f.build_project(created_by=user, workspace=ws1)
+    # user only pj admin and not only pj member but only ws member
+    pj2_ws1 = f.build_project(created_by=user, workspace=ws1)
+    f.build_project_membership(user=other_user, project=pj2_ws1)
+    ws2 = f.build_workspace(created_by=user)
+    f.build_workspace_membership(user=other_user, workspace=ws2)
+    # user not only ws member but not only pj admin
+    pj1_ws2 = f.build_project(created_by=user, workspace=ws2)
+    admin_role = f.build_project_role(project=pj1_ws2, is_admin=True)
+    f.build_project_membership(user=other_user, project=pj1_ws2, role=admin_role)
+    ws3 = f.build_workspace(created_by=other_user)
+    # user not ws member and only pj admin
+    pj1_ws3 = f.build_project(created_by=user, workspace=ws3)
+    f.build_project_membership(user=other_user, project=pj1_ws3)
+    ws4 = f.build_workspace(created_by=user)
+    f.build_workspace_membership(user=other_user, workspace=ws4)
+    # user not only ws member and only pj admin
+    pj1_ws4 = f.build_project(created_by=user, workspace=ws4)
+    admin_role = f.build_project_role(project=pj1_ws4, is_admin=True)
+    f.build_project_membership(user=other_user, project=pj1_ws4, role=admin_role)
+
+    with (
+        patch("taiga.users.services.workspaces_repositories", autospec=True) as fake_workspaces_repo,
+        patch("taiga.users.services.projects_repositories", autospec=True) as fake_projects_repo,
+    ):
+        fake_projects_repo.list_projects.return_value = [pj1_ws4, pj1_ws3]
+        projects = await services._list_projects_delete_info(user=user, ws_list=[ws2, ws1])
+
+        fake_workspaces_repo.list_workspace_projects.assert_awaited()
+        fake_projects_repo.list_projects.assert_called_once_with(
+            filters={"project_member_id": user.id, "is_admin": True, "num_admins": 1, "is_onewoman_project": False},
+            select_related=["workspace"],
+        )
+        assert projects == [pj1_ws4, pj1_ws3]

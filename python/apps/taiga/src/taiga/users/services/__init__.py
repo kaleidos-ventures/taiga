@@ -17,16 +17,19 @@ from taiga.emails.tasks import send_email
 from taiga.projects.invitations import services as project_invitations_services
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.invitations.services import exceptions as invitations_ex
+from taiga.projects.projects import repositories as projects_repositories
 from taiga.projects.projects.models import Project
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
-from taiga.users.serializers import VerificationInfoSerializer
+from taiga.users.serializers import UserDeleteInfoSerializer, VerificationInfoSerializer
 from taiga.users.serializers import services as serializers_services
 from taiga.users.services import exceptions as ex
 from taiga.users.tokens import ResetPasswordToken, VerifyUserToken
 from taiga.workspaces.invitations import services as workspace_invitations_services
 from taiga.workspaces.invitations.models import WorkspaceInvitation
+from taiga.workspaces.workspaces import repositories as workspaces_repositories
+from taiga.workspaces.workspaces.models import Workspace
 
 #####################################################################
 # create user
@@ -226,6 +229,33 @@ async def update_user(user: User, full_name: str, lang: str) -> User:
 
 
 #####################################################################
+# delete user
+#####################################################################
+
+
+# TODO
+
+
+#####################################################################
+# delete info user
+#####################################################################
+
+
+async def get_user_delete_info(user: User) -> UserDeleteInfoSerializer:
+    ws_list = await _list_workspaces_delete_info(user=user)
+    pj_list = await _list_projects_delete_info(user=user, ws_list=ws_list)
+
+    ws_list_serialized = [
+        serializers_services.serialize_workspace_with_projects_nested(
+            workspace=workspace, projects=await workspaces_repositories.list_workspace_projects(workspace=workspace)
+        )
+        for workspace in ws_list
+    ]
+
+    return serializers_services.serialize_user_delete_info(workspaces=ws_list_serialized, projects=pj_list)
+
+
+#####################################################################
 # reset password
 #####################################################################
 
@@ -364,3 +394,27 @@ async def _accept_workspace_invitation_from_token(
         except (invitations_ex.BadInvitationTokenError, invitations_ex.InvitationDoesNotExistError):
             pass  # TODO: Logging invitation is invalid
     return invitation
+
+
+async def _list_workspaces_delete_info(user: User) -> list[Workspace]:
+    # list workspaces where the user is the only ws member and ws has projects
+    return await workspaces_repositories.list_workspaces(
+        filters={"workspace_member_id": user.id, "num_members": 1, "has_projects": True},
+        prefetch_related=["projects"],
+    )
+
+
+async def _list_projects_delete_info(user: User, ws_list: list[Workspace]) -> list[Project]:
+    # list projects where the user is the only pj admin and is not the only ws member or is not ws member
+
+    # list projects where the user is the only ws member
+    pj_list_user_only_ws_member = []
+    for ws in ws_list:
+        pj_list_user_only_ws_member += await workspaces_repositories.list_workspace_projects(workspace=ws)
+
+    pj_list_user_only_admin = await projects_repositories.list_projects(
+        filters={"project_member_id": user.id, "is_admin": True, "num_admins": 1, "is_onewoman_project": False},
+        select_related=["workspace"],
+    )
+
+    return [pj for pj in pj_list_user_only_admin if pj not in pj_list_user_only_ws_member]

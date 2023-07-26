@@ -79,6 +79,62 @@ async def test_create_project_with_no_logo():
 ##########################################################
 
 
+async def test_list_projects_user_only_member():
+    user = await f.create_user()
+    other_user = await f.create_user()
+    ws1 = await f.create_workspace(created_by=user)
+    # user only pj member
+    pj1_ws1 = await f.create_project(created_by=user, workspace=ws1)
+    # user only pj member
+    pj2_ws1 = await f.create_project(created_by=user, workspace=ws1)
+    ws2 = await f.create_workspace(created_by=user)
+    # user only pj member
+    pj1_ws2 = await f.create_project(created_by=user, workspace=ws2)
+    ws3 = await f.create_workspace(created_by=user)
+    # user not only pj member
+    pj1_ws3 = await f.create_project(created_by=user, workspace=ws3)
+    await f.create_project_membership(user=other_user, project=pj1_ws3)
+
+    pj_list = await repositories.list_projects(
+        filters={"project_member_id": user.id, "is_admin": True, "num_admins": 1, "is_onewoman_project": True},
+        select_related=["workspace"],
+    )
+
+    assert len(pj_list) == 3
+    assert pj_list[0].name == pj1_ws2.name
+    assert pj_list[1].name == pj2_ws1.name
+    assert pj_list[2].name == pj1_ws1.name
+
+
+async def test_list_projects_user_only_admin_but_not_only_member():
+    user = await f.create_user()
+    other_user = await f.create_user()
+    ws1 = await f.create_workspace(created_by=user)
+    # user only pj member
+    await f.create_project(created_by=user, workspace=ws1)
+    # user only pj member
+    await f.create_project(created_by=user, workspace=ws1)
+    ws2 = await f.create_workspace(created_by=user)
+    # user only pj member
+    await f.create_project(created_by=user, workspace=ws2)
+    ws3 = await f.create_workspace(created_by=user)
+    # user only pj admin but not only member
+    pj1_ws3 = await f.create_project(created_by=user, workspace=ws3)
+    await f.create_project_membership(user=other_user, project=pj1_ws3)
+    # user not only pj admin
+    pj2_ws3 = await f.create_project(created_by=user, workspace=ws3)
+    admin_role = await pj1_ws3.roles.aget(is_admin=True)
+    await f.create_project_membership(user=other_user, project=pj2_ws3, role=admin_role)
+
+    pj_list = await repositories.list_projects(
+        filters={"project_member_id": user.id, "is_admin": True, "num_admins": 1, "is_onewoman_project": False},
+        select_related=["workspace"],
+    )
+
+    assert len(pj_list) == 1
+    assert pj_list[0].name == pj1_ws3.name
+
+
 async def test_list_workspace_invited_projects_for_user():
     user8 = await f.create_user()
     user9 = await f.create_user()

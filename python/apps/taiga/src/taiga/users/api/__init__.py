@@ -27,7 +27,12 @@ from taiga.users.api.validators import (
     VerifyTokenValidator,
 )
 from taiga.users.models import User
-from taiga.users.serializers import UserSearchSerializer, UserSerializer, VerificationInfoSerializer
+from taiga.users.serializers import (
+    UserDeleteInfoSerializer,
+    UserSearchSerializer,
+    UserSerializer,
+    VerificationInfoSerializer,
+)
 
 # PERMISSIONS
 LIST_USERS_BY_TEXT = IsAuthenticated()
@@ -36,6 +41,7 @@ LIST_USERS_BY_TEXT = IsAuthenticated()
 # HTTP 200 RESPONSES
 ACCESS_TOKEN_200 = responses.http_status_200(model=AccessTokenWithRefreshSerializer)
 VERIFICATION_INFO_200 = responses.http_status_200(model=VerificationInfoSerializer)
+USER_DELETE_INFO_200 = responses.http_status_200(model=UserDeleteInfoSerializer)
 
 
 #####################################################################
@@ -176,6 +182,41 @@ async def update_my_user(request: Request, form: UpdateUserValidator) -> User:
         full_name=form.full_name,
         lang=form.lang,
     )
+
+
+#####################################################################
+# delete user
+#####################################################################
+
+
+# TODO
+
+
+#####################################################################
+# delete info user
+#####################################################################
+
+
+@routes.my.get(
+    "/my/user/delete-info",
+    name="my.user.delete-info",
+    summary="Get user delete info",
+    responses=USER_DELETE_INFO_200 | ERROR_401,
+)
+async def get_user_delete_info(request: Request) -> UserDeleteInfoSerializer:
+    """
+    Get some info before deleting a user.
+
+    This endpoint returns:
+    - A list of workspaces where the user is the only workspace member and the workspace has projects
+    - A list projects where the user is the only project admin and is not the only workspace member
+    or is not workspace member
+    """
+    if request.user.is_anonymous:
+        # NOTE: We force a 401 instead of using the permissions system (which would return a 403)
+        raise ex.AuthorizationError("User is anonymous")
+
+    return await users_services.get_user_delete_info(user=request.user)
 
 
 #####################################################################

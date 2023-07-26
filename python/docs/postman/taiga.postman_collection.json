@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "77429f0b-3edc-4811-b411-e880c3c03d88",
+		"_postman_id": "f1132cea-3f5f-47c1-ab4d-d4c19d2541ea",
 		"name": "taiga-next",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -261,6 +262,48 @@
 							"path": [
 								"my",
 								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "my user delete info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/user/delete-info",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"user",
+								"delete-info"
 							]
 						}
 					},

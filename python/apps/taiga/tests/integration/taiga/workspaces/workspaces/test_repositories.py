@@ -29,6 +29,70 @@ async def test_create_workspace_with_non_ASCI_chars():
 
 
 ##########################################################
+# list_workspaces
+##########################################################
+
+
+async def test_list_workspaces_user_only_member_with_projects():
+    user = await f.create_user()
+    other_user = await f.create_user()
+    # user only ws member with projects
+    ws1 = await f.create_workspace(created_by=user)
+    await f.create_project(created_by=user, workspace=ws1)
+    await f.create_project(created_by=user, workspace=ws1)
+    # user only ws member with projects
+    ws2 = await f.create_workspace(created_by=user)
+    await f.create_project(created_by=user, workspace=ws2)
+    # user only ws member without projects
+    await f.create_workspace(created_by=user)
+    # user not only ws member with projects
+    ws4 = await f.create_workspace(created_by=user)
+    await f.create_workspace_membership(user=other_user, workspace=ws4)
+    await f.create_project(created_by=user, workspace=ws4)
+    # user not only ws member without projects
+    ws5 = await f.create_workspace(created_by=user)
+    await f.create_workspace_membership(user=other_user, workspace=ws5)
+
+    ws_list = await repositories.list_workspaces(
+        filters={"workspace_member_id": user.id, "num_members": 1, "has_projects": True},
+        prefetch_related=["projects"],
+    )
+
+    assert len(ws_list) == 2
+    assert ws_list[0].name == ws2.name
+    assert ws_list[1].name == ws1.name
+
+
+async def test_list_workspaces_user_only_member_without_projects():
+    user = await f.create_user()
+    other_user = await f.create_user()
+    # user only ws member with projects
+    ws1 = await f.create_workspace(created_by=user)
+    await f.create_project(created_by=user, workspace=ws1)
+    await f.create_project(created_by=user, workspace=ws1)
+    # user only ws member with projects
+    ws2 = await f.create_workspace(created_by=user)
+    await f.create_project(created_by=user, workspace=ws2)
+    # user only ws member without projects
+    ws3 = await f.create_workspace(created_by=user)
+    # user not only ws member with projects
+    ws4 = await f.create_workspace(created_by=user)
+    await f.create_workspace_membership(user=other_user, workspace=ws4)
+    await f.create_project(created_by=user, workspace=ws4)
+    # user not only ws member without projects
+    ws5 = await f.create_workspace(created_by=user)
+    await f.create_workspace_membership(user=other_user, workspace=ws5)
+
+    ws_list = await repositories.list_workspaces(
+        filters={"workspace_member_id": user.id, "num_members": 1, "has_projects": False},
+        prefetch_related=["projects"],
+    )
+
+    assert len(ws_list) == 1
+    assert ws_list[0].name == ws3.name
+
+
+##########################################################
 # get_workspace
 ##########################################################
 
@@ -573,3 +637,18 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
 
         ws = await repositories.get_user_workspace_overview(user=self.user3, id=self.workspace7.id)
         self.assertIsNone(ws)
+
+
+##########################################################
+# list_workspace_projects
+##########################################################
+
+
+async def test_list_workspace_projects():
+    workspace = await f.create_workspace()
+    await f.create_project(workspace=workspace)
+    await f.create_project(workspace=workspace)
+
+    projects = await repositories.list_workspace_projects(workspace=workspace)
+
+    assert len(projects) == 2

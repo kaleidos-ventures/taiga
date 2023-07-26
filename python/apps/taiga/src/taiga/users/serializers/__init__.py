@@ -9,6 +9,7 @@ from pydantic import EmailStr
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.serializers import BaseModel
 from taiga.projects.invitations.serializers.nested import ProjectInvitationNestedSerializer
+from taiga.users.serializers.nested import _ProjectWithWorkspaceNestedSerializer, _WorkspaceWithProjectsNestedSerializer
 from taiga.workspaces.invitations.serializers.nested import WorkspaceInvitationNestedSerializer
 
 
@@ -32,6 +33,14 @@ class UserSerializer(UserBaseSerializer):
 class UserSearchSerializer(UserBaseSerializer):
     user_is_member: bool | None
     user_has_pending_invitation: bool | None
+
+    class Config:
+        orm_mode = True
+
+
+class UserDeleteInfoSerializer(BaseModel):
+    workspaces: list[_WorkspaceWithProjectsNestedSerializer]
+    projects: list[_ProjectWithWorkspaceNestedSerializer]
 
     class Config:
         orm_mode = True

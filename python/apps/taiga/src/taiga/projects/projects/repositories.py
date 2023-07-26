@@ -9,7 +9,7 @@ from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from taiga.base.db.models import QuerySet
+from taiga.base.db.models import Case, Count, QuerySet, When
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.base.utils.files import File
 from taiga.projects import references
@@ -33,6 +33,9 @@ class ProjectFilters(TypedDict, total=False):
     invitee_id: UUID
     invitation_status: ProjectInvitationStatus
     project_member_id: UUID
+    is_admin: bool
+    num_admins: int
+    is_onewoman_project: bool
 
 
 def _apply_filters_to_project_queryset(
@@ -50,6 +53,20 @@ def _apply_filters_to_project_queryset(
     # filters for those projects where the user is already a project member
     if "project_member_id" in filter_data:
         filter_data["memberships__user_id"] = filter_data.pop("project_member_id")
+
+    if "is_admin" in filter_data:
+        filter_data["memberships__role__is_admin"] = filter_data.pop("is_admin")
+
+    if "num_admins" in filter_data:
+        qs = qs.annotate(num_admins=Count(Case(When(memberships__role__is_admin=True, then=1))))
+
+    # filters for those projects where the user is the only project member
+    if "is_onewoman_project" in filter_data:
+        qs = qs.annotate(num_members=Count("members"))
+        if filter_data.pop("is_onewoman_project"):
+            filter_data["num_members"] = 1
+        else:
+            filter_data["num_members__gt"] = 1
 
     return qs.filter(**filter_data)
 
@@ -129,12 +146,14 @@ def create_project(
 @sync_to_async
 def list_projects(
     filters: ProjectFilters = {},
+    select_related: ProjectSelectRelated = [],
     prefetch_related: ProjectPrefetchRelated = [],
     order_by: ProjectOrderBy = ["-created_at"],
     offset: int | None = None,
     limit: int | None = None,
 ) -> list[Project]:
     qs = _apply_filters_to_project_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_project_queryset(qs=qs, select_related=select_related)
     qs = _apply_prefetch_related_to_project_queryset(qs=qs, prefetch_related=prefetch_related)
     qs = _apply_order_by_to_project_queryset(order_by=order_by, qs=qs)
     qs = qs.distinct()

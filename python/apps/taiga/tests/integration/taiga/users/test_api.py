@@ -285,6 +285,60 @@ async def test_update_my_user_success(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
+#####################################################################
+# GET /my/user/delete-info
+#####################################################################
+
+
+async def test_get_user_delete_info_no_authenticated_user(client):
+    response = client.get("/my/user/delete-info")
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+async def test_get_user_delete_info_success(client):
+    user = await f.create_user(username="user", is_active=True)
+    other_user = await f.create_user(username="other_user", is_active=True)
+    ws1 = await f.create_workspace(name="ws1", created_by=user)
+    # user only pj admin but only pj member and only ws member
+    await f.create_project(name="pj1_ws1", created_by=user, workspace=ws1)
+    # user only pj admin and not only pj member but only ws member
+    pj2_ws1 = await f.create_project(name="pj2_ws1", created_by=user, workspace=ws1)
+    await f.create_project_membership(user=other_user, project=pj2_ws1)
+    ws2 = await f.create_workspace(name="ws2", created_by=user)
+    await f.create_workspace_membership(user=other_user, workspace=ws2)
+    # user not only ws member but not only pj admin
+    pj1_ws2 = await f.create_project(name="pj1_ws2", created_by=user, workspace=ws2)
+    admin_role = await pj1_ws2.roles.aget(is_admin=True)
+    await f.create_project_membership(user=other_user, project=pj1_ws2, role=admin_role)
+    ws3 = await f.create_workspace(name="ws3", created_by=other_user)
+    # user not ws member and only pj admin
+    pj1_ws3 = await f.create_project(name="pj1_ws3", created_by=user, workspace=ws3)
+    await f.create_project_membership(user=other_user, project=pj1_ws3)
+    ws4 = await f.create_workspace(name="ws4", created_by=user)
+    await f.create_workspace_membership(user=other_user, workspace=ws4)
+    # user not only ws member and not only pj admin
+    pj1_ws4 = await f.create_project(name="pj1_ws4", created_by=user, workspace=ws4)
+    admin_role = await pj1_ws4.roles.aget(is_admin=True)
+    await f.create_project_membership(user=other_user, project=pj1_ws4, role=admin_role)
+    # user not only ws member and only pj admin
+    pj2_ws4 = await f.create_project(name="pj2_ws4", created_by=user, workspace=ws4)
+    await f.create_project_membership(user=other_user, project=pj2_ws4)
+    # user only ws member without projects
+    await f.create_workspace(name="ws5", created_by=user)
+
+    client.login(user)
+    response = client.get("/my/user/delete-info")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert len(response.json()) == 2
+    assert response.json().keys() == {"workspaces", "projects"}
+    assert len(response.json()["workspaces"]) == 1
+    assert response.json()["workspaces"][0]["name"] == "ws1"
+    assert len(response.json()["projects"]) == 2
+    assert response.json()["projects"][0]["name"] == "pj2_ws4"
+    assert response.json()["projects"][1]["name"] == "pj1_ws3"
+
+
 ##########################################################
 # POST /users/reset-password
 ##########################################################

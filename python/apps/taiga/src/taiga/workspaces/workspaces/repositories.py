@@ -6,7 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from itertools import chain
-from typing import Any, Iterable, TypedDict
+from typing import Any, Iterable, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
@@ -40,13 +40,59 @@ DEFAULT_QUERYSET = Workspace.objects.all()
 
 class WorkspaceFilters(TypedDict, total=False):
     id: UUID
+    workspace_member_id: UUID
+    num_members: int
+    has_projects: bool
 
 
 def _apply_filters_to_queryset(
     qs: QuerySet[Workspace],
     filters: WorkspaceFilters = {},
 ) -> QuerySet[Workspace]:
-    return qs.filter(**filters)
+    filter_data = dict(filters.copy())
+
+    # filters for those workspace where the user is already a workspace member
+    if "workspace_member_id" in filter_data:
+        filter_data["memberships__user_id"] = filter_data.pop("workspace_member_id")
+
+    if "num_members" in filter_data:
+        qs = qs.annotate(num_members=Count("members"))
+
+    if "has_projects" in filter_data:
+        if filter_data.pop("has_projects"):
+            qs = qs.filter(~Q(projects=None))
+        else:
+            qs = qs.filter(Q(projects=None))
+
+    return qs.filter(**filter_data)
+
+
+WorkspacePrefetchRelated = list[
+    Literal[
+        "projects",
+    ]
+]
+
+
+def _apply_prefetch_related_to_queryset(
+    qs: QuerySet[Workspace],
+    prefetch_related: WorkspacePrefetchRelated,
+) -> QuerySet[Workspace]:
+    return qs.prefetch_related(*prefetch_related)
+
+
+WorkspaceOrderBy = list[
+    Literal[
+        "-created_at",
+    ]
+]
+
+
+def _apply_order_by_to_queryset(
+    qs: QuerySet[Workspace],
+    order_by: WorkspaceOrderBy,
+) -> QuerySet[Workspace]:
+    return qs.order_by(*order_by)
 
 
 ##########################################################
@@ -62,6 +108,20 @@ def create_workspace(name: str, color: int, created_by: User) -> Workspace:
 ##########################################################
 # list
 ##########################################################
+
+
+@sync_to_async
+def list_workspaces(
+    filters: WorkspaceFilters = {},
+    prefetch_related: WorkspacePrefetchRelated = [],
+    order_by: WorkspaceOrderBy = ["-created_at"],
+) -> list[Workspace]:
+    qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_prefetch_related_to_queryset(qs=qs, prefetch_related=prefetch_related)
+    qs = _apply_order_by_to_queryset(order_by=order_by, qs=qs)
+    qs = qs.distinct()
+
+    return list(qs)
 
 
 @sync_to_async
@@ -208,7 +268,9 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
         visible_project_ids_qs = (
             Project.objects.filter(workspace=OuterRef("workspace")).values_list("id", flat=True).order_by("-created_at")
         )
-        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:12])).order_by("-created_at")
+        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:12])).order_by(
+            "-created_at"
+        )
         return (
             Workspace.objects.filter(
                 id=id,
@@ -252,7 +314,9 @@ def get_user_workspace_overview(user: User, id: UUID) -> Workspace | None:
             .order_by("-created_at")
             .values_list("id", flat=True)
         )
-        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:12])).order_by("-created_at")
+        latest_projects_qs = Project.objects.filter(id__in=Subquery(visible_project_ids_qs[:12])).order_by(
+            "-created_at"
+        )
         return (
             Workspace.objects.filter(user_not_ws_member & (user_pj_member | user_invited_pj), id=id)
             .distinct()
@@ -294,3 +358,13 @@ def delete_workspaces(filters: WorkspaceFilters = {}) -> int:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     count, _ = qs.delete()
     return count
+
+
+##########################################################
+# misc
+##########################################################
+
+
+@sync_to_async
+def list_workspace_projects(workspace: Workspace) -> list[Project]:
+    return list(workspace.projects.all().order_by("-created_at"))

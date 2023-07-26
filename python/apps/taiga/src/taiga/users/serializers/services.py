@@ -8,8 +8,11 @@
 
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.projects.invitations.models import ProjectInvitation
-from taiga.users.serializers import VerificationInfoSerializer
+from taiga.projects.projects.models import Project
+from taiga.users.serializers import UserDeleteInfoSerializer, VerificationInfoSerializer
+from taiga.users.serializers.nested import _WorkspaceWithProjectsNestedSerializer
 from taiga.workspaces.invitations.models import WorkspaceInvitation
+from taiga.workspaces.workspaces.models import Workspace
 
 
 def serialize_verification_info(
@@ -21,4 +24,25 @@ def serialize_verification_info(
         auth=auth,
         project_invitation=project_invitation,
         workspace_invitation=workspace_invitation,
+    )
+
+
+def serialize_workspace_with_projects_nested(
+    workspace: Workspace, projects: list[Project] = []
+) -> _WorkspaceWithProjectsNestedSerializer:
+    return _WorkspaceWithProjectsNestedSerializer(
+        id=workspace.id,
+        name=workspace.name,
+        slug=workspace.slug,
+        color=workspace.color,
+        projects=projects,
+    )
+
+
+def serialize_user_delete_info(
+    workspaces: list[_WorkspaceWithProjectsNestedSerializer], projects: list[Project] = []
+) -> UserDeleteInfoSerializer:
+    return UserDeleteInfoSerializer(
+        workspaces=workspaces,
+        projects=projects,
     )

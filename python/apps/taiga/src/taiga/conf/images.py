@@ -21,7 +21,6 @@ class ImageSettings(BaseSettings):
         "image/png",
         "image/gif",
         "image/webp",
-        "image/svg+xml",
     ]
 
     class Config:

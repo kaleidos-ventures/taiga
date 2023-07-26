@@ -36,7 +36,7 @@ def valid_content_type(uploaded_img: UploadFile) -> bool:
     return uploaded_img.content_type in settings.IMAGES.VALID_CONTENT_TYPES
 
 
-def valid_image_format(uploaded_img: UploadFile) -> bool:
+def valid_image_content(uploaded_img: UploadFile) -> bool:
     try:
         pil_image(uploaded_img.file)
         return True

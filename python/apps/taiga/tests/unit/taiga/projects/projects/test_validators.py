@@ -92,7 +92,7 @@ def test_validate_logo_content_type():
         "logo",
         "workspaceId",
     ]
-    expected_error_messages = ["Invalid image format", "field required"]
+    expected_error_messages = ["Invalid image content type", "field required"]
     check_validation_errors(validations_errors, expected_error_fields, expected_error_messages)
 
 

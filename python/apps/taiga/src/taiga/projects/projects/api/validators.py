@@ -8,7 +8,7 @@
 
 from fastapi import UploadFile
 from pydantic import conint, constr, validator
-from taiga.base.utils.images import valid_content_type, valid_image_format
+from taiga.base.utils.images import valid_content_type, valid_image_content
 from taiga.base.validators import B64UUID, BaseModel, as_form
 from taiga.permissions.validators import Permissions
 
@@ -31,13 +31,13 @@ class ProjectValidator(BaseModel):
     @validator("logo")
     def check_content_type(cls, v: UploadFile | None) -> UploadFile | None:
         if v:
-            assert valid_content_type(v), "Invalid image format"
+            assert valid_content_type(v), "Invalid image content type"
         return v
 
     @validator("logo")
-    def check_image_format(cls, v: UploadFile | None) -> UploadFile | None:
+    def check_image_content(cls, v: UploadFile | None) -> UploadFile | None:
         if v:
-            assert valid_image_format(v), "Invalid image content"
+            assert valid_image_content(v), "Invalid image content"
         return v
 
 
@@ -50,13 +50,13 @@ class UpdateProjectValidator(BaseModel):
     @validator("logo")
     def check_content_type(cls, v: UploadFile | None) -> UploadFile | None:
         if v:
-            assert valid_content_type(v), "Invalid image format"
+            assert valid_content_type(v), "Invalid image content type"
         return v
 
     @validator("logo")
-    def check_image_format(cls, v: UploadFile | None) -> UploadFile | None:
+    def check_image_content(cls, v: UploadFile | None) -> UploadFile | None:
         if v:
-            assert valid_image_format(v), "Invalid image content"
+            assert valid_image_content(v), "Invalid image content"
         return v
 
 

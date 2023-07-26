@@ -73,10 +73,10 @@ Copyright (c) 2023-present Kaleidos INC
             [control]="logo"
             [title]="form.get('name')!.value"
             [label]="t('common_project.forms.project_icon')"
-            [formatError]="t('common_project.forms.format_error')"
-            [tip]="t('common_project.forms.choose_image_tip')"
+            [formatError]="t('common_project.forms.format_no_svg_error')"
+            [tip]="t('common_project.forms.choose_image_no_svg_tip')"
             [initialImage]="project.logoLarge"
-            accept="image/webp, image/gif, image/jpg, image/jpeg, image/png, image/svg, image/svg+xml">
+            accept="image/webp, image/gif, image/jpg, image/jpeg, image/png">
           </tg-ui-image-upload>
 
           <div class="actions">

@@ -322,7 +322,7 @@ def _create_comment_object(
     object: Model,
     created_at: datetime | None = None,
 ) -> Comment:
-    return Comment(
+    comment = Comment(
         text=text,
         content_object=object,
         created_by=created_by,
@@ -334,3 +334,15 @@ def _create_comment_object(
             end_date=object.created_at + timedelta(days=constants.MAX_DAYS_LAST_COMMENT),  # type: ignore[attr-defined]
         ),
     )
+
+    if fake.boolean(chance_of_getting_true=constants.PROB_MODIFIED_COMMENT):
+        comment.modified_at = fake.date_time_between(start_date=comment.created_at, tzinfo=timezone.utc)
+
+    if fake.boolean(chance_of_getting_true=constants.PROB_DELETED_COMMENT):
+        comment.text = ""
+        comment.deleted_at = fake.date_time_between(
+            start_date=comment.modified_at or comment.created_at, tzinfo=timezone.utc
+        )
+        comment.deleted_by = comment.created_by
+
+    return comment

@@ -11,6 +11,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  HostBinding,
   HostListener,
   Input,
   inject,
@@ -71,6 +72,8 @@ import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
   ],
 })
 export class CommentSingleComponent {
+  @HostBinding('class.highlighted') public highlightedComment = false;
+
   @Input({ required: true }) public comment!: UserComment;
   @Input({ required: true }) public canComment = false;
 
@@ -84,7 +87,6 @@ export class CommentSingleComponent {
   public deletedComment = this.state.get('deletedComment');
   public user = this.state.get('user');
 
-  public highlightedComment = false;
   public editComment = false;
 
   public editorReady = false;
@@ -143,6 +145,7 @@ export class CommentSingleComponent {
   }
 
   public displayConfirmDeleteComment(value: boolean): void {
+    this.onHighlightComment(value);
     this.confirmDelete = value;
   }
 

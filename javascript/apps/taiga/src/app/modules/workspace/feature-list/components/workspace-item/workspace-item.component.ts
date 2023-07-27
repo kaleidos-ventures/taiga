@@ -58,6 +58,7 @@ import { UserStorageService } from '~/app/shared/user-storage/user-storage.servi
 
 interface ViewModel {
   projectsToShow: number;
+  projectsToShowPerRow: number;
   showAllProjects: boolean;
   projects: WorkspaceProject[];
   invitations: WorkspaceProject[];
@@ -77,6 +78,7 @@ interface ViewModel {
 
 export interface WorkspaceItemState {
   projectsToShow: number;
+  projectsToShowPerRow: number;
   showAllProjects: boolean;
   projects: WorkspaceProject[];
   invitations: WorkspaceProject[];
@@ -164,9 +166,12 @@ export class WorkspaceItemComponent
   }>;
 
   @Input()
-  public set projectsToShow(projectsToShow: number) {
+  public set projectsToShowPerRow(projectsToShowPerRow: number) {
     this.state.set({
-      projectsToShow: projectsToShow <= 3 ? 3 : projectsToShow,
+      projectsToShowPerRow:
+        projectsToShowPerRow <= 3 ? 3 : projectsToShowPerRow,
+      projectsToShow:
+        projectsToShowPerRow * 2 <= 3 ? 3 : projectsToShowPerRow * 2,
     });
   }
 
@@ -200,7 +205,7 @@ export class WorkspaceItemComponent
   }
 
   public get gridClass() {
-    return `grid-items-${this.state.get('projectsToShow')}`;
+    return `grid-items-${this.state.get('projectsToShowPerRow')}`;
   }
 
   public setRejectedInvites(rejectedInvites: string[]) {
@@ -297,15 +302,15 @@ export class WorkspaceItemComponent
 
         const totalCards = invitations.length + projects.length;
         let skeletonToShow =
-          state.projectsToShow - (totalCards % state.projectsToShow);
+          state.projectsToShowPerRow -
+          (totalCards % state.projectsToShowPerRow);
         if (totalCards > 0) {
           skeletonToShow === 0
-            ? (skeletonToShow = state.projectsToShow)
+            ? (skeletonToShow = state.projectsToShowPerRow)
             : skeletonToShow;
         } else {
           skeletonToShow = 0;
         }
-
         state.slideOutActive = false;
 
         const workspacesSkeletonList = state.loadingWorkspaces;

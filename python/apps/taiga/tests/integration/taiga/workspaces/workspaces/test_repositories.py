@@ -386,6 +386,13 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
         await f.create_project_invitation(
             email=self.user3.email, user=self.user3, project=pj16, role=pj_general_role, invited_by=self.user2
         )
+        await f.create_project(name="pj17", workspace=workspace1, created_by=self.user1)
+        await f.create_project(name="pj18", workspace=workspace1, created_by=self.user1)
+        await f.create_project(name="pj19", workspace=workspace1, created_by=self.user1)
+        await f.create_project(name="pj20", workspace=workspace1, created_by=self.user1)
+        await f.create_project(name="pj21", workspace=workspace1, created_by=self.user1)
+        await f.create_project(name="pj22", workspace=workspace1, created_by=self.user1)
+        await f.create_project(name="pj23", workspace=workspace1, created_by=self.user1)
         self.workspace1 = workspace1
 
     async def _asyncSetUp_workspace2(self):
@@ -443,9 +450,9 @@ class GetUserWorkspaceOverview(IsolatedAsyncioTestCase):
 
         ws = await repositories.get_user_workspace_overview(user=self.user1, id=self.workspace1.id)
         self.assertEqual(ws.name, self.workspace1.name)
-        self.assertEqual(len(ws.latest_projects), 6)
+        self.assertEqual(len(ws.latest_projects), 12)
         self.assertEqual(len(ws.invited_projects), 1)
-        self.assertEqual(ws.total_projects, 7)
+        self.assertEqual(ws.total_projects, 14)
         self.assertTrue(ws.has_projects)
         self.assertEqual(ws.user_role, "member")
 

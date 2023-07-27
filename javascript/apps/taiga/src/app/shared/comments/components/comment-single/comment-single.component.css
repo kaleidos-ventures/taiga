@@ -9,12 +9,16 @@ Copyright (c) 2023-present Kaleidos INC
 @import url("tools/typography.css");
 @import url("../../styles/delete-comment-confirm.css");
 
+:host() {
+  display: block;
+}
+
+:host(.highlighted) {
+  background: var(--color-primary10);
+}
+
 .comment {
   padding-block: var(--spacing-8);
-
-  &.highlighted {
-    background: var(--color-primary10);
-  }
 }
 
 .comment-top {
@@ -74,6 +78,7 @@ Copyright (c) 2023-present Kaleidos INC
   display: flex;
   gap: var(--spacing-8);
   min-block-size: 140px;
+  padding-block-start: var(--spacing-4);
   padding-inline-start: var(--spacing-8);
   position: relative;
 }

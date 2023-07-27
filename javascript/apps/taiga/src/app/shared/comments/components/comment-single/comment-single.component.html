@@ -12,10 +12,7 @@ Copyright (c) 2023-present Kaleidos INC
       class="comment"
       data-test="comment"
       [@fadeInOut]
-      [@.disabled]="deletedComment === comment.id || !deletedComment"
-      [ngClass]="{
-        highlighted: highlightedComment
-      }">
+      [@.disabled]="deletedComment === comment.id || !deletedComment">
       <div class="comment-top">
         <div class="creation-info">
           <tg-user-avatar
@@ -47,8 +44,7 @@ Copyright (c) 2023-present Kaleidos INC
                 [label]="t('comments.edit.edited_comment')"
                 [tuiHint]="
                   t('comments.edit.edited_comment_tooltip', {
-                    when: comment.modifiedAt | dateDistance,
-                    user: comment.createdBy.fullName
+                    when: comment.modifiedAt | dateDistance
                   })
                 "
                 tuiHintDirection="top-right"

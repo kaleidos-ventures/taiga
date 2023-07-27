@@ -90,7 +90,7 @@ describe('WorkspaceItem', () => {
         props: {
           wsEvents: of(wsEvent$),
           workspace: workspaceItem,
-          projectsToShow: 3,
+          projectsToShowPerRow: 3,
         },
         detectChanges: false,
       });
@@ -110,7 +110,7 @@ describe('WorkspaceItem', () => {
 
       const availableInvites = workspaceItem.invitedProjects.slice(1);
 
-      spectator.component.projectsToShow = availableInvites.length;
+      spectator.component.projectsToShowPerRow = availableInvites.length;
 
       spectator.detectChanges();
 
@@ -126,7 +126,8 @@ describe('WorkspaceItem', () => {
       const dispatchSpy = jest.spyOn(store, 'dispatch');
 
       const id = workspaceItem.invitedProjects.at(0)!.id;
-      spectator.component.projectsToShow = workspaceItem.invitedProjects.length;
+      spectator.component.projectsToShowPerRow =
+        workspaceItem.invitedProjects.length;
 
       spectator.detectChanges();
 
@@ -177,7 +178,7 @@ describe('WorkspaceItem', () => {
 
       requestAnimationFrame(() => {
         spectator.component.model$.subscribe(() => {
-          expect(Object.keys(spectator.component.reorder).length).toEqual(3);
+          expect(Object.keys(spectator.component.reorder).length).toEqual(6);
           expect(
             (spectator.component.reorder[
               workspaceItem.invitedProjects.at(1)!.id
@@ -206,7 +207,7 @@ describe('WorkspaceItem', () => {
     });
 
     it('The project has to reflect at least 3 projects', (done) => {
-      spectator.component.projectsToShow = 1;
+      spectator.component.projectsToShowPerRow = 1;
       spectator.detectChanges();
 
       spectator.component.model$.subscribe(({ projects, invitations }) => {
@@ -215,18 +216,17 @@ describe('WorkspaceItem', () => {
       });
     });
 
-    it('A number between 3 to 6 projectToShow should return an equal number of projects ', (done) => {
-      spectator.component.projectsToShow = 5;
+    it('A number between 3 to 6 projectsToShowPerRow should return the double number of projects ', (done) => {
+      spectator.component.projectsToShowPerRow = 5;
       spectator.detectChanges();
-
       spectator.component.model$.subscribe(({ projects, invitations }) => {
-        expect(projects.length + invitations.length).toEqual(5);
+        expect(projects.length + invitations.length).toEqual(10);
         done();
       });
     });
 
     it('The project has to reflect no more than 12 projects if its not showing all projects', (done) => {
-      spectator.component.projectsToShow = 30;
+      spectator.component.projectsToShowPerRow = 30;
       spectator.detectChanges();
 
       spectator.component.model$.subscribe(({ projects, invitations }) => {
@@ -238,7 +238,7 @@ describe('WorkspaceItem', () => {
     it('If show all project is true, it should show all the projects ignoring projectsToShow', (done) => {
       spectator.component.setShowAllProjects(true);
 
-      spectator.component.projectsToShow = 3;
+      spectator.component.projectsToShowPerRow = 3;
       spectator.detectChanges();
 
       spectator.component.model$.subscribe(({ projects }) => {
@@ -337,7 +337,7 @@ describe('WorkspaceItem', () => {
         currentWorkspace
       );
 
-      spectator.component.projectsToShow = 3;
+      spectator.component.projectsToShowPerRow = 3;
       spectator.detectChanges();
       const action = acceptInvitationEvent({
         projectId: memberToCreate,
@@ -356,7 +356,7 @@ describe('WorkspaceItem', () => {
         props: {
           wsEvents: of(wsEvent$),
           workspace: workspaceItemMember,
-          projectsToShow: 8,
+          projectsToShowPerRow: 8,
         },
         detectChanges: false,
       });
@@ -369,7 +369,7 @@ describe('WorkspaceItem', () => {
     it('Checking when the member user has the invitations also in the projects list', (done) => {
       const projectsToShow = 12;
 
-      spectator.component.projectsToShow = projectsToShow;
+      spectator.component.projectsToShowPerRow = projectsToShow;
       spectator.detectChanges();
 
       expect(workspaceItemMember.userRole).toEqual('member');
@@ -396,9 +396,9 @@ describe('WorkspaceItem', () => {
     });
 
     it('Checking the pagination when the member user has the invitations also in the projects list', (done) => {
-      const projectsToShow = 8;
+      const setProjectsToShow = 5;
 
-      spectator.component.projectsToShow = projectsToShow;
+      spectator.component.projectsToShowPerRow = setProjectsToShow;
       spectator.detectChanges();
 
       expect(workspaceItemMember.userRole).toEqual('member');
@@ -407,8 +407,14 @@ describe('WorkspaceItem', () => {
       expect(workspaceItemMember.totalProjects).toEqual(12);
 
       spectator.component.model$.subscribe(
-        ({ projects, invitations, showMoreProjects, remainingProjects }) => {
-          expect(projects.length + invitations.length).toEqual(8);
+        ({
+          projects,
+          invitations,
+          showMoreProjects,
+          remainingProjects,
+          projectsToShow,
+        }) => {
+          expect(projects.length + invitations.length).toEqual(10);
 
           const ids = [...projects, ...invitations].map(
             (project) => project.id
@@ -416,7 +422,7 @@ describe('WorkspaceItem', () => {
 
           const uniqSlugs = [...new Set(ids)];
 
-          expect(uniqSlugs.length).toEqual(projectsToShow);
+          expect(uniqSlugs.length).toEqual(10);
           expect(showMoreProjects).toEqual(true);
           expect(remainingProjects).toEqual(
             workspaceItemMember.totalProjects - projectsToShow

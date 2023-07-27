@@ -82,7 +82,7 @@ def list_user_workspaces_overview(user: User) -> list[Workspace]:
             .values_list("id", flat=True)
         )
         total_projects = len(projects_ids)
-        projects_qs = Project.objects.filter(id__in=projects_ids[:6]).order_by("-created_at")
+        projects_qs = Project.objects.filter(id__in=projects_ids[:12]).order_by("-created_at")
         has_projects = Workspace.objects.get(id=ws_id).projects.count() > 0
         invited_projects_qs = Project.objects.filter(
             Q(invitations__user_id=user.id)

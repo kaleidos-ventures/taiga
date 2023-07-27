@@ -7,7 +7,7 @@
  */
 
 import { randText } from '@ngneat/falso';
-import { Project, Status, Story, User, Workspace } from '@taiga/data';
+import { Project, Status, Story, User, Workflow, Workspace } from '@taiga/data';
 import { getEmails, request } from './api.helpers';
 import { loginRequest } from './user.helpers';
 
@@ -96,6 +96,12 @@ export const createProjectWsDetail = (projectName: string) => {
   selectBlankProject();
   typeProjectName(projectName);
   submitProject();
+};
+
+export const getProjectWorkflows = (
+  projectId: Project['id']
+): Promise<Cypress.Response<Workflow[]>> => {
+  return request('GET', `/projects/${projectId}/workflows/`);
 };
 
 export const createStoryRequest = (

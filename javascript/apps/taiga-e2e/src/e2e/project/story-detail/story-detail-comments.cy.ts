@@ -6,16 +6,18 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { randText } from '@ngneat/falso';
+import { randParagraph } from '@ngneat/falso';
 import {
   Project,
   ProjectMockFactory,
   Story,
   WorkspaceMockFactory,
 } from '@taiga/data';
+import * as commentsHelper from '@test/support/helpers/comments.helper';
 import {
   createFullProjectInWSRequest,
   createStoryRequest,
+  getProjectWorkflows,
 } from '@test/support/helpers/project.helpers';
 import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
@@ -36,15 +38,23 @@ describe('StoryDetail', () => {
           projectMock.name
         ).then((response) => {
           project = response.body;
-          void createStoryRequest(
-            'main',
-            response.body.id,
-            {
-              title: 'test',
-            },
-            'new'
-          ).then((response) => {
-            story = response.body;
+          void getProjectWorkflows(project.id).then((response) => {
+            const workflows = response.body;
+            void createStoryRequest(
+              'main',
+              project.id,
+              {
+                title: 'test',
+              },
+              workflows[0].statuses[0].id
+            ).then((response) => {
+              story = response.body;
+              void commentsHelper.createCommentRequest(
+                project.id,
+                story.ref,
+                randParagraph()
+              );
+            });
           });
         });
       })
@@ -53,35 +63,25 @@ describe('StoryDetail', () => {
 
   beforeEach(() => {
     cy.login();
-
     cy.visit(`/project/${project.id}/${project.slug}/stories/${story.ref}`);
   });
 
   it('create comment && sort', () => {
-    // first comment
-    cy.getBySel('open-comment-input').click();
+    cy.getBySel('comment')
+      .its('length')
+      .then((commentsNum) => {
+        commentsHelper.createComment();
+        commentsHelper.createComment();
 
-    const newComment = randText();
+        const currentComments = commentsNum + 2;
 
-    cy.setEditorContent('comment', newComment);
-
-    cy.getBySel('comment-save').click();
-
-    // second comment
-    cy.getBySel('open-comment-input').click();
-
-    const newComment2 = randText();
-
-    cy.setEditorContent('comment', newComment2);
-
-    cy.getBySel('comment-save').click();
-
-    cy.getBySel('comment').should('have.length', 2);
-
-    cy.getBySel('comments-total').should('contain', '2');
+        cy.getBySel('comment').should('have.length', currentComments);
+        cy.getBySel('comments-total').should('contain', currentComments);
+      });
   });
 
   it('sort comments', () => {
+    commentsHelper.createComment();
     cy.getBySel('comment')
       .first()
       .then(($comments) => {
@@ -93,23 +93,56 @@ describe('StoryDetail', () => {
       });
   });
 
-  it('delete comment', () => {
-    // cancel delete comment
-    cy.getBySel('comment-options').first().click();
-    cy.getBySel('delete-comment-btn').click();
-    cy.getBySel('delete-comment-cancel-button').click();
+  it('edit comment', () => {
+    commentsHelper.createComment();
+    cy.getBySel('comment')
+      .first()
+      .then(($comment) => {
+        const firstComment = $comment.text();
+        const firstCommentId = $comment.closest('tg-comment').attr('id');
 
-    cy.getBySel('deleted-comment-message').should('have.length', 0);
-    cy.getBySel('comment').should('have.length', 2);
-    cy.getBySel('comments-total').should('contain', '2');
+        commentsHelper.displayEditComment();
 
-    // confirm delete comment
-    cy.getBySel('comment-options').first().click();
-    cy.getBySel('delete-comment-btn').click();
-    cy.getBySel('delete-comment-confirm-button').click();
+        const newComment = randParagraph();
+        cy.setEditorContent(firstCommentId, newComment);
 
-    cy.getBySel('deleted-comment-message').should('have.length', 1);
-    cy.getBySel('comment').should('have.length', 2);
-    cy.getBySel('comments-total').should('contain', '1');
+        commentsHelper.saveComment();
+
+        cy.getBySel('comment').first().should('not.contain', firstComment);
+        cy.getBySel('comment').first().should('contain', newComment);
+        cy.getBySel('comment-edited').should('exist');
+      });
+  });
+
+  it('delete comment - cancel', () => {
+    cy.getBySel('comment')
+      .first()
+      .then(() => {
+        commentsHelper.deleteCommentConfirm(false);
+      });
+
+    cy.getBySel('comment')
+      .its('length')
+      .then((commentsNum) => {
+        cy.getBySel('deleted-comment-message').should('not.exist');
+        cy.getBySel('comment').should('have.length', commentsNum);
+        cy.getBySel('comments-total').should('contain', commentsNum);
+      });
+  });
+
+  it('delete comment - confirm', () => {
+    cy.getBySel('comment')
+      .first()
+      .then(() => {
+        commentsHelper.deleteCommentConfirm();
+      });
+
+    cy.getBySel('comment')
+      .its('length')
+      .then((commentsNum) => {
+        cy.getBySel('deleted-comment-message').should('have.length', 1);
+        cy.getBySel('comment').should('have.length', commentsNum - 1);
+        cy.getBySel('comments-total').should('contain', commentsNum - 1);
+      });
   });
 });

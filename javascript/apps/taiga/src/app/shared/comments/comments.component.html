@@ -62,9 +62,12 @@ Copyright (c) 2023-present Kaleidos INC
     (saved)="comment.next($event)"></tg-comment-user-input>
 
   <ng-container *ngIf="total">
-    <div class="comment-list">
+    <div
+      class="comment-list"
+      data-test="comment-list">
       <ng-container *ngFor="let comment of comments; trackBy: trackById">
         <tg-comment
+          [attr.id]="comment.id"
           *ngIf="!comment.deletedBy; else commentIsDeleted"
           [comment]="comment"
           [canComment]="canComment">

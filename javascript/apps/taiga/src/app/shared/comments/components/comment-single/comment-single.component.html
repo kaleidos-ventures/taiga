@@ -40,6 +40,7 @@ Copyright (c) 2023-present Kaleidos INC
             </span>
             <ng-container *ngIf="comment.modifiedAt">
               <tg-ui-badge
+                data-test="comment-edited"
                 class="creation-data-edited"
                 [label]="t('comments.edit.edited_comment')"
                 [tuiHint]="
@@ -87,7 +88,9 @@ Copyright (c) 2023-present Kaleidos INC
         [formGroup]="editCommentForm"
         (ngSubmit)="saveEdit()">
         <tg-editor
-          [id]="'edit-comment-' + comment.id"
+          data-test="comment-editor"
+          [attr.id]="comment.id"
+          [id]="comment.id"
           [field]="editCommentForm.get('comment')!.value"
           (contentChange)="onContentChange($event)"
           [toolbar]="commentsToolbar"

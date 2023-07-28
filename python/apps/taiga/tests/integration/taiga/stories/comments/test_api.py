@@ -101,6 +101,22 @@ async def test_list_story_comments_success_with_custom_pagination(client):
     assert response.headers["Pagination-Total"] == "1"
 
 
+async def test_list_story_comments_success_with_deleted_comments(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project)
+    await f.create_comment(content_object=story, created_by=story.project.created_by, text="comment")
+    await f.create_comment(
+        content_object=story, created_by=story.project.created_by, deleted_by=story.project.created_by
+    )
+
+    client.login(story.project.created_by)
+    response = client.get(f"/projects/{story.project.b64id}/stories/{story.ref}/comments")
+    assert response.status_code == status.HTTP_200_OK, response.text
+    assert len(response.json()) == 2
+    assert response.headers["Pagination-Total"] == "2"
+    assert response.headers["Taiga-Total-Comments"] == "1"
+
+
 async def test_list_story_comments_error_nonexistent_project(client):
     user = await f.create_user()
 

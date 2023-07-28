@@ -39,7 +39,6 @@ export interface SignUpError {
   error: {
     code: string;
     detail: SignUpErrorDetail[] | string;
-    message?: string;
     msg?: string;
   };
 }

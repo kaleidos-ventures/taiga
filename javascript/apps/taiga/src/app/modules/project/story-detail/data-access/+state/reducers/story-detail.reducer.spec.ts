@@ -55,6 +55,7 @@ describe('Story Detail Reducer', () => {
       total,
       offset,
       order: '-createdAt',
+      activeComments: total,
     });
     const result = reducer(state, action);
 
@@ -204,6 +205,7 @@ describe('Story Detail Reducer', () => {
     const action = StoryDetailApiActions.deleteCommentSuccess({
       commentId: comment.id,
       deletedBy: user,
+      deletedAt: comment.deletedAt || new Date().toDateString(),
     });
 
     const result = reducer(

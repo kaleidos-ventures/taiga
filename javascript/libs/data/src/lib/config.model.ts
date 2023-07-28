@@ -20,4 +20,5 @@ export interface Config {
       clientId: string;
     };
   };
+  accessTokenLifetime: number;
 }

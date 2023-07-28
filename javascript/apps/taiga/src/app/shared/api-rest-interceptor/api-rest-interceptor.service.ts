@@ -23,7 +23,7 @@ import { ConfigService, coreActions, selectGlobalLoading } from '@taiga/core';
 import { Auth } from '@taiga/data';
 import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
-import { loginSuccess } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import { refreshTokenSuccess } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 
 @Injectable()
@@ -147,9 +147,12 @@ export class ApiRestInterceptorService implements HttpInterceptor {
           switchMap((auth) => {
             this.refreshTokenInProgress = false;
 
-            this.refreshTokenSubject.next(auth.token);
+            this.authService.setAuth(auth);
 
-            this.store.dispatch(loginSuccess({ auth }));
+            this.store.dispatch(refreshTokenSuccess({ auth }));
+
+            // resume pending request with new token
+            this.refreshTokenSubject.next(auth.token);
 
             return next.handle(this.authInterceptor(request));
           }),

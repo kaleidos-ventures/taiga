@@ -32,6 +32,13 @@ export const loginSuccess = createAction(
   }>()
 );
 
+export const refreshTokenSuccess = createAction(
+  '[Auth] refresh token success',
+  props<{
+    auth: Auth;
+  }>()
+);
+
 export const loginProjectInvitation = createAction(
   '[Auth] login project invitation',
   props<{

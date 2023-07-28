@@ -90,7 +90,7 @@ export class AuthService {
           this.setAuth(auth);
         });
       }
-    }, 1000 * 3600 * 3);
+    }, this.config.accessTokenLifetime);
   }
 
   public anyAvailableSocialLogins(availableLogins: string[]) {

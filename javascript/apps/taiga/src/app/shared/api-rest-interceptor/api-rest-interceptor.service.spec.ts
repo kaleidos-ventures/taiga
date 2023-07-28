@@ -20,7 +20,7 @@ import { forkJoin, of, throwError } from 'rxjs';
 import { ConfigService, ConfigServiceMock } from '@taiga/core';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AuthApiService } from '@taiga/api';
-import { loginSuccess } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
+import { refreshTokenSuccess } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { Router } from '@angular/router';
 import { AppService } from '~/app/services/app.service';
@@ -105,7 +105,7 @@ describe('ApiRestInterceptor', () => {
     authInterceptorService.intercept(apiRequest, next).subscribe(() => {
       expect(authApiService.refreshToken).toHaveBeenCalledWith(refresh);
       expect(store.dispatch).toHaveBeenCalledWith(
-        loginSuccess({ auth: { token, refresh } })
+        refreshTokenSuccess({ auth: { token, refresh } })
       );
 
       done();
@@ -190,7 +190,7 @@ describe('ApiRestInterceptor', () => {
     ]).subscribe(() => {
       expect(authApiService.refreshToken).toHaveBeenCalledWith(refresh);
       expect(store.dispatch).toHaveBeenCalledWith(
-        loginSuccess({ auth: { token, refresh } })
+        refreshTokenSuccess({ auth: { token, refresh } })
       );
 
       done();

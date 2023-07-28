@@ -15,5 +15,6 @@
     "google": {
       "clientId": ""
     }
-  }
+  },
+  "accessTokenLifetime": 180
 }

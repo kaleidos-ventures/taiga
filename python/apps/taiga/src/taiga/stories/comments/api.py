@@ -9,6 +9,7 @@ from uuid import UUID
 
 from fastapi import Depends, Query, Response
 from taiga.base.api import AuthRequest
+from taiga.base.api import headers as api_headers
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
@@ -91,13 +92,14 @@ async def list_story_comments(
     """
     story = await get_story_or_404(project_id=project_id, ref=ref)
     await check_permissions(permissions=LIST_STORY_COMMENTS, user=request.user, obj=story)
-    pagination, comments = await comments_services.list_paginated_comments(
+    pagination, total_comments, comments = await comments_services.list_paginated_comments(
         content_object=story,
         offset=pagination_params.offset,
         limit=pagination_params.limit,
         order_by=order_params,
     )
     api_pagination.set_pagination(response=response, pagination=pagination)
+    api_headers.set_headers(response=response, headers={"Total-Comments": total_comments})
     return comments
 
 

@@ -53,6 +53,7 @@ api.add_middleware(
         "pagination-offset",
         "pagination-limit",
         "pagination-total",
+        "taiga-total-comments",
         CorrelationIdMiddleware.CORRELATION_ID_HEADER_NAME,
     ],
     max_age=1800,

@@ -114,3 +114,17 @@ async def test_get_total_comments_by_content_object():
 
     total_comments = await repositories.get_total_comments(filters={"content_object": story1})
     assert total_comments == 2
+
+
+async def test_get_total_comments_not_deleted():
+    story1 = await f.create_story()
+    user = await f.create_user()
+    await f.create_comment(content_object=story1)
+    await f.create_comment(content_object=story1)
+    await f.create_comment(content_object=story1, deleted_by=user, deleted_at=aware_utcnow())
+
+    total_comments = await repositories.get_total_comments(
+        filters={"content_object": story1},
+        excludes={"deleted": True},
+    )
+    assert total_comments == 2

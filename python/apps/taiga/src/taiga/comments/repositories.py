@@ -41,6 +41,22 @@ async def _apply_filters_to_queryset(
     return qs.filter(**filter_data)
 
 
+class CommentExcludes(TypedDict, total=False):
+    deleted: bool
+
+
+async def _apply_excludes_to_queryset(
+    qs: QuerySet[Comment],
+    excludes: CommentExcludes = {},
+) -> QuerySet[Comment]:
+    excludes_data = dict(excludes.copy())
+
+    if "deleted" in excludes_data and excludes_data.pop("deleted"):
+        excludes_data["deleted_by__isnull"] = False
+
+    return qs.exclude(**excludes_data)
+
+
 CommentSelectRelated = list[
     Literal[
         "created_by",
@@ -53,7 +69,7 @@ async def _apply_select_related_to_queryset(
     qs: QuerySet[Comment],
     select_related: CommentSelectRelated = [],
 ) -> QuerySet[Comment]:
-    return qs.select_related(*(select_related + ["created_by", "deleted_by"]))
+    return qs.select_related(*select_related)
 
 
 CommentPrefetchRelated = list[
@@ -175,6 +191,7 @@ async def delete_comments(filters: CommentFilters = {}) -> int:
 ##########################################################
 
 
-async def get_total_comments(filters: CommentFilters = {}) -> int:
+async def get_total_comments(filters: CommentFilters = {}, excludes: CommentExcludes = {}) -> int:
     qs = await _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = await _apply_excludes_to_queryset(qs=qs, excludes=excludes)
     return await qs.acount()

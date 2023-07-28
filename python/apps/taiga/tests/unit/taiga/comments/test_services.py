@@ -75,20 +75,21 @@ async def test_create_comment_and_emit_event_on_create():
 
 async def test_list_comments():
     story = f.build_story(id="")
-    comment = f.build_comment()
+    comments = [f.build_comment(), f.build_comment(deleted_by=story.created_by), f.build_comment()]
 
     filters = {"content_object": story}
-    select_related = ["created_by"]
+    select_related = ["created_by", "deleted_by"]
     order_by = ["-created_at"]
     offset = 0
     limit = 100
-    total = 1
+    total = 3
+    total_objs = 2
 
     with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
 
-        fake_comments_repositories.list_comments.return_value = [comment]
-        fake_comments_repositories.get_total_comments.return_value = total
-        pagination, comments_list = await services.list_paginated_comments(
+        fake_comments_repositories.list_comments.return_value = comments
+        fake_comments_repositories.get_total_comments.side_effect = [total, total_objs]
+        pagination, total_comments, comments_list = await services.list_paginated_comments(
             content_object=story, order_by=order_by, offset=offset, limit=limit
         )
         fake_comments_repositories.list_comments.assert_awaited_once_with(
@@ -98,8 +99,8 @@ async def test_list_comments():
             offset=offset,
             limit=limit,
         )
-        fake_comments_repositories.get_total_comments.assert_awaited_once_with(filters=filters)
-        assert len(comments_list) == 1
+        fake_comments_repositories.get_total_comments.assert_awaited()
+        assert len(comments_list) == 3
         assert pagination.offset == offset
         assert pagination.limit == limit
         assert pagination.total == total
@@ -117,7 +118,9 @@ async def test_get_comment():
     with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
         await services.get_comment(id=comment_id, content_object=story)
         fake_comments_repositories.get_comment.assert_awaited_once_with(
-            filters={"id": comment_id, "content_object": story}, prefetch_related=["content_object"]
+            filters={"id": comment_id, "content_object": story},
+            select_related=["created_by", "deleted_by"],
+            prefetch_related=["content_object"],
         )
 
 

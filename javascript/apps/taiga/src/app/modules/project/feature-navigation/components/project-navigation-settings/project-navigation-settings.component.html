@@ -38,6 +38,7 @@ Copyright (c) 2023-present Kaleidos INC
             class="project-settings-menu-anchor"
             routerLink="./settings/members"
             routerLinkActive="active"
+            [state]="{ ignoreNextMainFocus: true }"
             data-test="members-settings">
             {{ t('commons.members') }}
           </a>
@@ -46,6 +47,7 @@ Copyright (c) 2023-present Kaleidos INC
           <a
             class="project-settings-menu-anchor"
             routerLink="./settings/permissions"
+            [state]="{ ignoreNextMainFocus: true }"
             routerLinkActive="active">
             {{ t('project_settings.roles_and_permissions') }}
           </a>

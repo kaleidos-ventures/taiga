@@ -7,12 +7,25 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 
 <tui-root [class.no-header]="(header$ | async) === false">
-  <div class="app-content">
-    <tg-navigation *ngIf="header$ | async"></tg-navigation>
+  <ng-container *transloco="let t">
+    <tg-banner
+      *ngIf="globalBannerActivated"
+      status="warning"
+      textPosition="center"
+      icon="banner-icon">
+      <ng-container text>
+        {{ t('banner.alpha') }}
+      </ng-container>
+    </tg-banner>
     <div
-      aria-labelledby="main-area-title"
-      id="fallback-main-area-focus">
-      <router-outlet></router-outlet>
+      class="app-content"
+      [class.banner]="globalBannerActivated">
+      <tg-navigation *ngIf="header$ | async"></tg-navigation>
+      <div
+        aria-labelledby="main-area-title"
+        id="fallback-main-area-focus">
+        <router-outlet></router-outlet>
+      </div>
     </div>
-  </div>
+  </ng-container>
 </tui-root>

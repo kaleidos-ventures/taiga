@@ -48,4 +48,8 @@ export class ConfigService {
     // 1000ms * 60s -> 1min, as back sets the lifetime per minute
     return 1000 * 60 * this.config.accessTokenLifetime;
   }
+
+  public get globalBanner() {
+    return this.config.globalBanner;
+  }
 }

@@ -31,6 +31,7 @@ import { RouteHistoryService } from './shared/route-history/route-history.servic
 import { NavigationService } from './shared/navigation/navigation.service';
 import { InputModalityDetector } from '@angular/cdk/a11y';
 import { LanguageService } from './services/language/language.service';
+import { ConfigService } from '@taiga/core';
 
 @Component({
   selector: 'tg-root',
@@ -53,7 +54,8 @@ export class AppComponent {
     private navigationService: NavigationService,
     private inputModalityDetector: InputModalityDetector,
     private localStorageService: LocalStorageService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private config: ConfigService
   ) {
     this.userModality();
     this.language();
@@ -106,6 +108,10 @@ export class AppComponent {
           );
         });
       });
+  }
+
+  public get globalBannerActivated() {
+    return this.config.globalBanner;
   }
 
   public userModality() {

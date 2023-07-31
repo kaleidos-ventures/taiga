@@ -21,4 +21,5 @@ export interface Config {
     };
   };
   accessTokenLifetime: number;
+  globalBanner: boolean;
 }

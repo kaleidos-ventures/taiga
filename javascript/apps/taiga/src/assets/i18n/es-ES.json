@@ -221,5 +221,8 @@
     "remove_description": "The user will lose the permissions granted as a member of the project and will be removed from all their assignmets.",
     "remove_confirm": "Yes, remove",
     "no_longer_member": "You are no longer member of the {name} {type}."
+  },
+  "banner": {
+    "alpha": "Heads up! This app, while amazing, is unstable. It is still in Alpha, so the data could be erased at some point. So, embrace the wild, cherish each moment, and don't forget your bear repellent."
   }
 }

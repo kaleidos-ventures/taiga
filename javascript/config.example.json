@@ -16,5 +16,6 @@
       "clientId": ""
     }
   },
-  "accessTokenLifetime": 180
+  "accessTokenLifetime": 180,
+  "globalBanner": true
 }

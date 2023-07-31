@@ -145,4 +145,14 @@ describe('StoryDetail', () => {
         cy.getBySel('comments-total').should('contain', commentsNum - 1);
       });
   });
+
+  it('delete comment - when reload, deleted comment message should stay', () => {
+    cy.getBySel('comment')
+      .its('length')
+      .then((commentsNum) => {
+        cy.getBySel('deleted-comment-message').should('have.length', 1);
+        cy.getBySel('comment').should('have.length', commentsNum);
+        cy.getBySel('comments-total').should('contain', commentsNum);
+      });
+  });
 });

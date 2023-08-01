@@ -32,10 +32,8 @@ import { CodeHightlightDirective } from '../directives/code-highlight/code-highl
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { RealTimeDateDistanceComponent } from '../real-time-date-distance/real-time-date-distance.component';
 import { CommentSkeletonComponent } from './components/comment skeleton/comment-skeleton.component';
-import { CommentDetailComponent } from './components/comment-detail/comment-detail.component';
 import { CommentSingleComponent } from './components/comment-single/comment-single.component';
 import { CommentUserInputComponent } from './components/comment-user-input/comment-user-input.component';
-import { DeletedCommentComponent } from './components/deleted-comment/deleted-comment.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { StoryDetailApiActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 
@@ -63,8 +61,6 @@ export interface CommentsComponentState {
     CommentUserInputComponent,
     CommentSkeletonComponent,
     RealTimeDateDistanceComponent,
-    CommentDetailComponent,
-    DeletedCommentComponent,
     CommentSingleComponent,
   ],
   providers: [

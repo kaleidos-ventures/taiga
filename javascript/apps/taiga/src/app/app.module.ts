@@ -130,7 +130,7 @@ export function prefersReducedMotion(): boolean {
           return new Promise((resolve) => {
             const config = environmentService.getEnvironment().configLocal;
             if (config) {
-              appConfigService._config = config;
+              appConfigService.setConfig(config);
 
               if (config.emailWs) {
                 import('./shared/mail-testing')

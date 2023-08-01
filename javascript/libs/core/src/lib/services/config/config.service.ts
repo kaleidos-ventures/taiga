@@ -9,6 +9,7 @@
 import { Injectable } from '@angular/core';
 import { Config } from '@taiga/data';
 import { v4 } from 'uuid';
+import { ConfigValidator } from './config.validator';
 
 export const CORRELATION_ID = v4();
 
@@ -17,12 +18,17 @@ export const CORRELATION_ID = v4();
 })
 export class ConfigService {
   public readonly correlationId = CORRELATION_ID;
+  #config!: Config;
 
-  public get config(): Config {
-    return this._config;
+  public setConfig(config: Config) {
+    ConfigValidator.parse(config);
+
+    this.#config = config;
   }
 
-  public _config!: Config;
+  public get config(): Config {
+    return this.#config;
+  }
 
   public get apiUrl(): string {
     return this.config.api;

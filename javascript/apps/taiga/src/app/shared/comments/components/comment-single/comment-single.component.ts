@@ -41,6 +41,7 @@ import { SafeHtmlPipe } from '~/app/shared/pipes/safe-html/safe-html.pipe';
 import { RealTimeDateDistanceComponent } from '~/app/shared/real-time-date-distance/real-time-date-distance.component';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
+import { DeletedCommentComponent } from '../deleted-comment/deleted-comment.component';
 
 @Component({
   selector: 'tg-comment',
@@ -64,6 +65,7 @@ import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
     DateDistancePipe,
     TuiHintModule,
     TuiHostedDropdownModule,
+    DeletedCommentComponent,
   ],
   animations: [fadeIntOutAnimation],
   providers: [
@@ -108,6 +110,8 @@ export class CommentSingleComponent {
 
   public discard$ = new Subject<boolean>();
 
+  public isDeleted = false;
+
   constructor() {
     const canDeactivateService = inject(CanDeactivateService);
     canDeactivateService.addComponent(this, inject(DestroyRef));
@@ -138,6 +142,7 @@ export class CommentSingleComponent {
   public onDeleteComment() {
     this.displayConfirmDeleteComment(false);
     this.state.set({ deletedComment: this.comment.id });
+    this.isDeleted = true;
   }
 
   public onHighlightComment(value: boolean): void {

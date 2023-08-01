@@ -7,12 +7,14 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 
 <ng-container *transloco="let t">
-  <ng-container *ngIf="!editComment">
+  <div
+    *ngIf="!editComment"
+    [@.disabled]="!comment.deletedBy">
     <div
       class="comment"
       data-test="comment"
-      [@fadeInOut]
-      [@.disabled]="deletedComment === comment.id || !deletedComment">
+      *ngIf="!comment.deletedBy; else commentIsDeleted"
+      @fadeInOut>
       <div class="comment-top">
         <div class="creation-info">
           <tg-user-avatar
@@ -72,7 +74,15 @@ Copyright (c) 2023-present Kaleidos INC
           [innerHTML]="comment.text | safeHtml"></div>
       </div>
     </div>
-  </ng-container>
+    <ng-template #commentIsDeleted>
+      <tg-deleted-comment
+        @fadeInOut
+        [@.disabled]="!isDeleted"
+        [comment]="comment"
+        [user]="user"></tg-deleted-comment>
+    </ng-template>
+  </div>
+
   <ng-container *ngIf="editComment">
     <div class="edit-comment-wrapper">
       <tg-user-avatar

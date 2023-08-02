@@ -7,24 +7,16 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 img {
-  max-block-size: 100vh;
+  inset-block-start: var(--banner-height);
+  max-block-size: calc(100vh - var(--banner-height));
   pointer-events: none;
   position: absolute;
   transition: transform 0.2s ease-in-out;
 
-  &.banner {
-    inset-block-start: 75px;
-    max-block-size: calc(100vh - 75px);
-  }
-
   &.left {
-    block-size: 100vh;
+    block-size: calc(100vh - var(--banner-height));
     inset-block-end: 0;
     inset-inline-start: 0;
-
-    &.banner {
-      block-size: calc(100vh - 75px);
-    }
 
     @media (--lt-small) {
       transform: scale(0.8) translate(-20%, 20%);
@@ -32,14 +24,9 @@ img {
   }
 
   &.right {
-    block-size: 100vh;
-    inset-block-start: 0;
+    block-size: calc(100vh - var(--banner-height));
+    inset-block-start: var(--banner-height);
     inset-inline-end: 0;
-
-    &.banner {
-      block-size: calc(100vh - 75px);
-      inset-block-start: 75px;
-    }
 
     @media (--lt-small) {
       opacity: 0;

@@ -202,7 +202,8 @@ export class StoryDetailComponent {
     private appService: AppService,
     private router: Router,
     private permissionUpdateNotificationService: PermissionUpdateNotificationService,
-    private resizedDirective: ResizedDirective
+    private resizedDirective: ResizedDirective,
+    private el: ElementRef
   ) {
     this.state.hold(this.resizedDirective.resized, () => {
       this.setHeights();
@@ -277,21 +278,33 @@ export class StoryDetailComponent {
   }
 
   public setHeights() {
+    const el = this.el.nativeElement as HTMLElement;
     const selectedStoryView = this.state.get('selectedStoryView');
     const viewportHeight = window.innerHeight;
-    const headerHeight = 48;
+    const headerHeight = this.getValueFromProperty(
+      getComputedStyle(el).getPropertyValue('--header-height')
+    );
     const storyHeaderHeight = 32;
-    const modalpadding = 112;
+    const modalpadding = this.getValueFromProperty(
+      getComputedStyle(el).getPropertyValue('--modal-block-margin')
+    );
     const headerMargin = 16;
+    const bannerHeight = this.getValueFromProperty(
+      getComputedStyle(el).getPropertyValue('--banner-height')
+    );
 
     if (selectedStoryView === 'modal-view') {
       this.storyHeight = viewportHeight - modalpadding - headerMargin;
-      this.columnHeight = this.storyHeight - storyHeaderHeight;
+      this.columnHeight = this.storyHeight - storyHeaderHeight - bannerHeight;
     } else {
       this.storyHeight = viewportHeight - headerHeight - headerMargin;
-      this.columnHeight = this.storyHeight - storyHeaderHeight;
+      this.columnHeight = this.storyHeight - storyHeaderHeight - bannerHeight;
       this.storyHeight = viewportHeight - headerHeight - headerMargin;
     }
+  }
+
+  public getValueFromProperty(prop: string): number {
+    return prop.length ? +prop.replace('px', '') : 0;
   }
 
   public getStoryUpdate(): StoryUpdate {

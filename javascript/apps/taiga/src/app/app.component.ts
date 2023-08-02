@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { concatLatestFrom } from '@ngrx/effects';
@@ -55,7 +55,8 @@ export class AppComponent {
     private inputModalityDetector: InputModalityDetector,
     private localStorageService: LocalStorageService,
     private languageService: LanguageService,
-    private config: ConfigService
+    private config: ConfigService,
+    private el: ElementRef
   ) {
     this.userModality();
     this.language();
@@ -112,6 +113,16 @@ export class AppComponent {
 
   public get globalBannerActivated() {
     return this.config.globalBanner;
+  }
+
+  public setBannerHeight() {
+    const banner = document.querySelector<HTMLElement>('.global-banner');
+    if (banner) {
+      (this.el.nativeElement as HTMLElement).style.setProperty(
+        '--banner-height',
+        `${banner.offsetHeight}px`
+      );
+    }
   }
 
   public userModality() {

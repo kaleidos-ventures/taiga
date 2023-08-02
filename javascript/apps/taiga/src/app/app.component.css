@@ -9,11 +9,7 @@ Copyright (c) 2023-present Kaleidos INC
 .app-content {
   display: grid;
   grid-template-rows: min-content 1fr;
-  min-block-size: 100vh;
-
-  &.banner {
-    min-block-size: calc(100vh - 75px);
-  }
+  min-block-size: calc(100vh - var(--banner-height));
 }
 
 .no-header .app-content {

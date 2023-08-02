@@ -24,6 +24,7 @@ import {
   HostListener,
   Input,
   OnInit,
+  AfterViewInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { RxState } from '@rx-angular/state';
@@ -138,7 +139,7 @@ const translateMenuSelector = '.main-nav-container-inner';
     ]),
   ],
 })
-export class ProjectNavigationComponent implements OnInit {
+export class ProjectNavigationComponent implements OnInit, AfterViewInit {
   @Input()
   public project!: Project;
 
@@ -198,9 +199,7 @@ export class ProjectNavigationComponent implements OnInit {
     private el: ElementRef,
     private localStorage: LocalStorageService,
     private router: Router
-  ) {
-    this.updateBlockSize('calc(100vh - 48px)');
-  }
+  ) {}
 
   public ngOnInit() {
     this.collapsed = !!LocalStorageService.get('projectnav-collapsed');
@@ -217,6 +216,17 @@ export class ProjectNavigationComponent implements OnInit {
         fragment: 'ignored',
         matrixParams: 'ignored',
       }
+    );
+  }
+
+  public ngAfterViewInit() {
+    const el = this.el.nativeElement as HTMLElement;
+    const header = getComputedStyle(el).getPropertyValue('--header-height');
+    const banner = getComputedStyle(el).getPropertyValue('--banner-height');
+    this.updateBlockSize(
+      `calc(100vh - ${header.length ? header : '0px'} - ${
+        banner.length ? banner : '0px'
+      })`
     );
   }
 

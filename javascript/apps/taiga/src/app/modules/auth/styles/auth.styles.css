@@ -132,8 +132,8 @@ Copyright (c) 2023-present Kaleidos INC
     );
   background-position: calc(50% + 300px) 50%;
   background-repeat: no-repeat, no-repeat;
-  background-size: auto 100vh;
-  block-size: 100vh;
+  background-size: auto calc(100vh - var(--banner-height));
+  block-size: calc(100vh - var(--banner-height));
   display: flex;
   flex-direction: column;
   justify-content: center;

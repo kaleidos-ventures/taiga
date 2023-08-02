@@ -11,4 +11,3 @@ import { zoneConfig } from '@rx-angular/cdk/zone-configurations';
 zoneConfig.global.disable.XHR();
 zoneConfig.global.disable.blocking();
 zoneConfig.global.disable.on_property();
-zoneConfig.events.disable.UNPATCHED_EVENTS(['scroll', 'wheel']);

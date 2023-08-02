@@ -23,8 +23,8 @@ When adding a new dependency, be aware of the different locations to place it, a
 pip install --upgrade pip-tools
 ```
 ```bash
-python -m piptools compile requirements/devel.in --resolver=backtracking  --upgrade
-python -m piptools compile requirements/prod.in --resolver=backtracking  --upgrade
+python -m piptools compile requirements/devel.in --resolver=backtracking --upgrade
+python -m piptools compile requirements/prod.in --resolver=backtracking --upgrade
 ```
 
 3. Check changes with git diff

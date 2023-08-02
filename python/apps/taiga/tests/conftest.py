@@ -36,7 +36,8 @@ def event_loop():
     except RuntimeError:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-    return loop
+    yield loop
+    loop.close()
 
 
 #

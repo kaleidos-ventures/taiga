@@ -25,9 +25,10 @@ DEFAULT_QUERYSET = WorkspaceInvitation.objects.all()
 class WorkspaceInvitationFilters(TypedDict, total=False):
     id: UUID
     username_or_email: str
+    user: User
     workspace_id: UUID
-    statuses: list[WorkspaceInvitationStatus]
     status: WorkspaceInvitationStatus
+    statuses: list[WorkspaceInvitationStatus]
 
 
 def _apply_filters_to_queryset(

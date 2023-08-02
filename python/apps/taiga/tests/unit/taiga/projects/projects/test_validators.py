@@ -99,8 +99,7 @@ def test_validate_logo_content_type():
 def test_validate_logo_content():
     name = "Project test"
     color = 1
-    logo = f.build_string_uploadfile()
-    logo.content_type = "image/png"
+    logo = f.build_string_uploadfile(content_type="image/png")
 
     with pytest.raises(ValidationError) as validations_errors:
         ProjectValidator(name=name, color=color, logo=logo)

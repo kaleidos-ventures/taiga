@@ -10,7 +10,7 @@ from taiga.workspaces.workspaces.serializers import WorkspaceDetailSerializer, W
 from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerializer
 
 
-def serialize_workspace(workspace: Workspace, user_role: str, total_projects: str) -> WorkspaceSerializer:
+def serialize_workspace(workspace: Workspace, user_role: str, total_projects: int) -> WorkspaceSerializer:
     return WorkspaceSerializer(
         id=workspace.id,
         name=workspace.name,

@@ -6,7 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 from uuid import UUID
 
-from fastapi import Depends, Query, Response, status
+from fastapi import Depends, Response, status
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api import responses
@@ -42,12 +42,13 @@ LIST_WS_GUESTS_DETAIL_200 = responses.http_status_200(model=list[WorkspaceGuestD
     name="workspace.memberships.list",
     summary="List workspace memberships",
     responses=LIST_WS_MEMBERSHIP_DETAIL_200 | ERROR_404 | ERROR_422,
+    response_model=None,
 )
 async def list_workspace_memberships(
+    id: B64UUID,
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
-    id: B64UUID = Query(None, description="the workspace id (B64UUID)"),
 ) -> list[WorkspaceMembershipDetailSerializer]:
     """
     List workspace memberships
@@ -73,12 +74,13 @@ async def list_workspace_memberships(
     name="workspace.guests.list",
     summary="List workspace guests",
     responses=LIST_WS_GUESTS_DETAIL_200 | ERROR_404 | ERROR_422,
+    response_model=None,
 )
 async def list_workspace_guests(
+    id: B64UUID,
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
-    id: B64UUID = Query(None, description="the workspace id (B64UUID)"),
 ) -> list[WorkspaceGuestDetailSerializer]:
     """
     List workspace guests
@@ -107,9 +109,9 @@ async def list_workspace_guests(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_workspace_membership(
+    id: B64UUID,
+    username: str,
     request: AuthRequest,
-    id: B64UUID = Query(None, description="the workspace id (B64UUID)"),
-    username: str = Query(None, description="the membership username (str)"),
 ) -> None:
     """
     Delete a workspace membership

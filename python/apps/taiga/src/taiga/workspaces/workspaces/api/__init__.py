@@ -6,7 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 from uuid import UUID
 
-from fastapi import Query, status
+from fastapi import status
 from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
@@ -42,6 +42,7 @@ LIST_WORKSPACE_DETAIL_200 = responses.http_status_200(model=list[WorkspaceDetail
     name="workspaces.post",
     summary="Create workspace",
     responses=WORKSPACE_DETAIL_200 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
 async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> WorkspaceSerializer:
     """
@@ -60,6 +61,7 @@ async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> Wo
     name="my.workspaces.list",
     summary="List the overview of the workspaces to which I belong",
     responses=LIST_WORKSPACE_DETAIL_200 | ERROR_403,
+    response_model=None,
 )
 async def list_my_workspaces(request: AuthRequest) -> list[WorkspaceDetailSerializer]:
     """
@@ -79,10 +81,9 @@ async def list_my_workspaces(request: AuthRequest) -> list[WorkspaceDetailSerial
     name="workspaces.get",
     summary="Get workspace",
     responses=WORKSPACE_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
-async def get_workspace(
-    request: AuthRequest, id: B64UUID = Query("", description="the workspace id(B64UUID)")
-) -> WorkspaceSerializer:
+async def get_workspace(id: B64UUID, request: AuthRequest) -> WorkspaceSerializer:
     """
     Get workspace detail by id.
     """
@@ -96,10 +97,9 @@ async def get_workspace(
     name="my.workspaces.get",
     summary="Get the overview of a workspace to which I belong",
     responses=WORKSPACE_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
-async def get_my_workspace(
-    request: AuthRequest, id: B64UUID = Query("", description="the workspace id(B64UUID)")
-) -> WorkspaceDetailSerializer:
+async def get_my_workspace(id: B64UUID, request: AuthRequest) -> WorkspaceDetailSerializer:
     """
     Get the workspaces overview for the logged user.
     """
@@ -120,11 +120,12 @@ async def get_my_workspace(
     name="workspace.update",
     summary="Update workspace",
     responses=WORKSPACE_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
 async def update_workspace(
+    id: B64UUID,
     request: AuthRequest,
     form: UpdateWorkspaceValidator,
-    id: B64UUID = Query("", description="the workspace id(B64UUID)"),
 ) -> WorkspaceSerializer:
     """
     Update workspace
@@ -148,10 +149,7 @@ async def update_workspace(
     responses=ERROR_400 | ERROR_404 | ERROR_403,
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_workspace(
-    request: AuthRequest,
-    id: B64UUID = Query(None, description="the workspace id (B64UUID)"),
-) -> None:
+async def delete_workspace(id: B64UUID, request: AuthRequest) -> None:
     """
     Delete a workspace
     """

@@ -48,12 +48,21 @@ async def test_create_project_being_anonymous(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_create_project_validation_error(client):
+async def test_create_project_invalid_b64uuid_error(client):
     workspace = await f.create_workspace()
-    data = {"name": "My pro#%&乕شject", "color": 1, "workspace_id": "ws-invalid"}
+    data = {"name": "My pro#%&乕شject", "color": 1, "workspaceId": "ws-invalid"}
 
     client.login(workspace.created_by)
-    response = client.post("/projects", json=data)
+    response = client.post("/projects", data=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_create_project_invalid_validation_error(client):
+    workspace = await f.create_workspace()
+    data = {"name": "My project", "color": 12, "workspaceId": workspace.b64id}
+
+    client.login(workspace.created_by)
+    response = client.post("/projects", data=data)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
@@ -246,7 +255,7 @@ async def test_update_project_delete_description(client):
     assert response.status_code == status.HTTP_200_OK, response.text
     updated_project = response.json()
     assert updated_project["name"] == project.name
-    assert updated_project["description"] is None
+    assert updated_project["description"] == ""
 
 
 async def test_update_project_not_found(client):

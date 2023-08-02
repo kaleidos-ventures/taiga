@@ -40,9 +40,9 @@ async def load_demo_data() -> None:
 
 async def _create_scenario_freelance_working_for_herself() -> None:
     # USERS
-    usera0 = await factories.create_user_with_kwargs(username="usera0")
-    usera1 = await factories.create_user_with_kwargs(username="usera1")
-    userd0 = await factories.create_user_with_kwargs(username="userd0")
+    usera0 = await factories.create_user(username="usera0")
+    usera1 = await factories.create_user(username="usera1")
+    userd0 = await factories.create_user(username="userd0")
 
     # WORKSPACES
     # member role is created by default
@@ -85,14 +85,18 @@ async def _create_scenario_freelance_working_for_herself() -> None:
 
 async def _create_scenario_freelance_working_for_others() -> None:
     # USERS
-    userb0 = await factories.create_user_with_kwargs(username="userb0")
-    userb1 = await factories.create_user_with_kwargs(username="userb1")
-    userb2 = await factories.create_user_with_kwargs(username="userb2")
-    userb3 = await factories.create_user_with_kwargs(username="userb3")
+    userb0 = await factories.create_user(username="userb0")
+    userb1 = await factories.create_user(username="userb1")
+    userb2 = await factories.create_user(username="userb2")
+    userb3 = await factories.create_user(username="userb3")
     usera1 = await users_repositories.get_user(filters={"username_or_email": "usera1"})
+    if not usera1:
+        raise Exception("User usera1 not found")
     userd0 = await users_repositories.get_user(filters={"username_or_email": "userd0"})
-    userd1 = await factories.create_user_with_kwargs(username="userd1")
-    userf0 = await factories.create_user_with_kwargs(username="userf0")
+    if not userd0:
+        raise Exception("User userd0 not found")
+    userd1 = await factories.create_user(username="userd1")
+    userf0 = await factories.create_user(username="userf0")
 
     # WORKSPACES
     # member role is created by default
@@ -165,7 +169,7 @@ async def _create_scenario_freelance_working_for_others() -> None:
 
 async def _create_scenario_user_in_society_working_for_others() -> None:
     # USERS
-    userc0 = await factories.create_user_with_kwargs(username="userc0")
+    userc0 = await factories.create_user(username="userc0")
 
     # WORKSPACES
     # member role is created by default
@@ -192,11 +196,13 @@ async def _create_scenario_user_in_society_working_for_others() -> None:
 async def _create_scenario_manager_in_society_working_for_others() -> None:
     # USERS
     userd0 = await users_repositories.get_user(filters={"username_or_email": "userd0"})
+    if not userd0:
+        raise Exception("User userd0 not found")
     userc0 = await users_repositories.get_user(filters={"username_or_email": "userc0"})
+    if not userc0:
+        raise Exception("User userc0 not found")
     # usersdx total 150
-    usersdx = [
-        await factories.create_user_with_kwargs(username=f"userd{i+1}") for i in range(1, 150)
-    ]  # userd1 already exist
+    usersdx = [await factories.create_user(username=f"userd{i+1}") for i in range(1, 150)]  # userd1 already exist
 
     # WORKSPACES
     # member role is created by default
@@ -267,13 +273,13 @@ async def _create_scenario_manager_in_society_working_for_others() -> None:
 
 async def _create_scenario_manager_in_society_with_big_client() -> None:
     # USERS
-    usere0 = await factories.create_user_with_kwargs(username="usere0")
+    usere0 = await factories.create_user(username="usere0")
     userc0 = await users_repositories.get_user(filters={"username_or_email": "userc0"})
-    usere1 = await factories.create_user_with_kwargs(username="usere1")
+    if not userc0:
+        raise Exception("User userc0 not found")
+    usere1 = await factories.create_user(username="usere1")
     # usersex total 50
-    usersex = [
-        await factories.create_user_with_kwargs(username=f"usere{i+1}") for i in range(1, 50)
-    ]  # usere1 already exist
+    usersex = [await factories.create_user(username=f"usere{i+1}") for i in range(1, 50)]  # usere1 already exist
 
     # WORKSPACES
     # member role is created by default
@@ -368,12 +374,14 @@ async def _create_scenario_manager_in_society_with_big_client() -> None:
 async def _create_scenario_manager_in_society_with_own_product() -> None:
     # USERS
     userf0 = await users_repositories.get_user(filters={"username_or_email": "userf0"})
-    userf1 = await factories.create_user_with_kwargs(username="userf1")
-    userf2 = await factories.create_user_with_kwargs(username="userf2")
-    userf3 = await factories.create_user_with_kwargs(username="userf3")
+    if not userf0:
+        raise Exception("User userf0 not found")
+    userf1 = await factories.create_user(username="userf1")
+    userf2 = await factories.create_user(username="userf2")
+    userf3 = await factories.create_user(username="userf3")
     # usersfx total 40
     usersfx = [
-        await factories.create_user_with_kwargs(username=f"userf{i+1}") for i in range(3, 40)
+        await factories.create_user(username=f"userf{i+1}") for i in range(3, 40)
     ]  # userf1, userf2, userf3 already exist
 
     # WORKSPACES
@@ -429,9 +437,9 @@ async def _create_scenario_manager_in_society_with_own_product() -> None:
 
 async def _create_scenario_manager_in_big_society_with_own_product() -> None:
     # USERS
-    userg0 = await factories.create_user_with_kwargs(username="userg0")
+    userg0 = await factories.create_user(username="userg0")
     # usersgx total 100
-    usersgx = [await factories.create_user_with_kwargs(username=f"userg{i+1}") for i in range(0, 100)]
+    usersgx = [await factories.create_user(username=f"userg{i+1}") for i in range(0, 100)]
 
     # WORKSPACES
     # member role is created by default

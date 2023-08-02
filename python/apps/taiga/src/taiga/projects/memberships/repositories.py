@@ -23,10 +23,12 @@ DEFAULT_QUERYSET = ProjectMembership.objects.all()
 
 
 class ProjectMembershipFilters(TypedDict, total=False):
+    id: UUID
     project_id: UUID
     username: str
     user_id: UUID
     workspace_id: UUID
+    role_id: UUID
     permissions: list[str]
 
 
@@ -65,11 +67,7 @@ def _apply_select_related_to_queryset(
     return qs.select_related(*select_related)
 
 
-ProjectMembershipOrderBy = list[
-    Literal[
-        "full_name",
-    ]
-]
+ProjectMembershipOrderBy = list[Literal["full_name",]]
 
 
 def _apply_order_by_to_queryset(

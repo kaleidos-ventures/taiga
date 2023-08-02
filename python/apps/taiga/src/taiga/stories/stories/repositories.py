@@ -28,8 +28,9 @@ class StoryFilters(TypedDict, total=False):
     id: UUID
     ref: int
     refs: list[int]
-    workflow_slug: str
     project_id: UUID
+    workflow_id: UUID
+    workflow_slug: str
     status_id: UUID
 
 
@@ -68,11 +69,7 @@ def _apply_select_related_to_queryset(
     return qs.select_related(*select_related_data)
 
 
-StoryPrefetchRelated = list[
-    Literal[
-        "assignees",
-    ]
-]
+StoryPrefetchRelated = list[Literal["assignees",]]
 
 
 def _apply_prefetch_related_to_queryset(qs: QuerySet[Story], prefetch_related: StoryPrefetchRelated) -> QuerySet[Story]:
@@ -107,7 +104,6 @@ def create_story(
     order: Decimal,
     description: str | None = None,
 ) -> Story:
-
     return Story.objects.create(
         title=title,
         description=description,
@@ -133,7 +129,6 @@ def list_stories(
     select_related: StorySelectRelated = ["status"],
     prefetch_related: StoryPrefetchRelated = [],
 ) -> list[Story]:
-
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_select_related_to_queryset(qs=qs, select_related=select_related)
     qs = _apply_prefetch_related_to_queryset(qs=qs, prefetch_related=prefetch_related)

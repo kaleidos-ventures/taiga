@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 from taiga.auth import services as auth_services
@@ -20,6 +20,7 @@ from taiga.projects.invitations import events as invitations_events
 from taiga.projects.invitations import repositories as invitations_repositories
 from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.invitations.models import ProjectInvitation
+from taiga.projects.invitations.repositories import ProjectInvitationFilters
 from taiga.projects.invitations.serializers import CreateProjectInvitationsSerializer, PublicProjectInvitationSerializer
 from taiga.projects.invitations.serializers import services as serializers_services
 from taiga.projects.invitations.services import exceptions as ex
@@ -142,7 +143,7 @@ async def create_project_invitations(
     if len(invitations_to_update) > 0:
         objs = list(invitations_to_update.values())
         await invitations_repositories.bulk_update_project_invitations(
-            objs_to_update=invitations_to_update.values(),
+            objs_to_update=objs,
             fields_to_update=["role", "num_emails_sent", "resent_at", "resent_by", "status"],
         )
 
@@ -213,15 +214,15 @@ async def get_project_invitation(token: str) -> ProjectInvitation | None:
     except TokenError:
         raise ex.BadInvitationTokenError("Invalid token")
 
+    invitation_data = cast(ProjectInvitationFilters, invitation_token.object_data)
     return await invitations_repositories.get_project_invitation(
-        filters=invitation_token.object_data,
+        filters=invitation_data,
         select_related=["user", "project", "workspace", "role"],
     )
 
 
 async def get_public_project_invitation(token: str) -> PublicProjectInvitationSerializer | None:
     if invitation := await get_project_invitation(token=token):
-
         available_logins = (
             await auth_services.get_available_user_logins(user=invitation.user) if invitation.user else []
         )
@@ -269,8 +270,8 @@ async def update_project_invitation(invitation: ProjectInvitation, role_slug: st
     if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation has already been revoked")
 
-    project_role = await (
-        pj_roles_repositories.get_project_role(filters={"project_id": invitation.project_id, "slug": role_slug})
+    project_role = await pj_roles_repositories.get_project_role(
+        filters={"project_id": invitation.project_id, "slug": role_slug}
     )
 
     if not project_role:
@@ -296,6 +297,9 @@ async def accept_project_invitation(invitation: ProjectInvitation) -> ProjectInv
 
     if invitation.status == ProjectInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation is revoked")
+
+    if not invitation.user:
+        raise ex.InvitationHasNoUserYetError("The invitation does not have a user yet")
 
     accepted_invitation = await invitations_repositories.update_project_invitation(
         invitation=invitation,

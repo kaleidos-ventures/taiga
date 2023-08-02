@@ -18,8 +18,8 @@ class ProjectRole(models.BaseModel):
     slug = models.LowerSlugField(max_length=250, null=False, blank=True, verbose_name="slug")
     permissions = models.ArrayField(
         models.TextField(null=False, blank=False, choices=ProjectPermissions.choices),
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         default=list,
         verbose_name="permissions",
     )

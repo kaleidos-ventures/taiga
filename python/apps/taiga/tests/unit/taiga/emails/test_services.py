@@ -36,7 +36,6 @@ async def test_email_message_creation():
     with patch("taiga.emails.sender.EmailMultiAlternatives", autospec=True) as fake_email_message, patch(
         "taiga.emails.sender._get_mail_connection", return_value=dummy_email_connection
     ):
-
         await send_email_message(
             subject=SUBJECT,
             to_emails=TO_EMAILS,
@@ -74,7 +73,6 @@ async def test_email_message_attach_file():
     ) as txt, patch(
         "taiga.emails.sender._get_mail_connection", return_value=dummy_email_connection
     ):
-
         await send_email_message(
             subject=SUBJECT,
             to_emails=TO_EMAILS,

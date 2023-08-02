@@ -22,10 +22,10 @@ get_project_logo_file_path = functools.partial(get_obfuscated_file_path, base_pa
 
 class Project(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin):
     name = models.CharField(max_length=80, null=False, blank=False, verbose_name="name")
-    description = models.CharField(max_length=220, null=True, blank=True, verbose_name="description")
-    color = models.IntegerField(default=1, null=False, blank=True, verbose_name="color")
+    description = models.CharField(max_length=220, null=False, blank=True, default="", verbose_name="description")
+    color = models.IntegerField(null=False, blank=True, default=1, verbose_name="color")
     logo = models.FileField(
-        upload_to=get_project_logo_file_path, max_length=500, null=True, blank=True, verbose_name="logo"
+        max_length=500, null=True, blank=True, upload_to=get_project_logo_file_path, verbose_name="logo"
     )
 
     workspace = models.ForeignKey(
@@ -47,8 +47,8 @@ class Project(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin):
 
     public_permissions = models.ArrayField(
         models.TextField(null=False, blank=False, choices=ProjectPermissions.choices),
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         default=list,
         verbose_name="public permissions",
     )

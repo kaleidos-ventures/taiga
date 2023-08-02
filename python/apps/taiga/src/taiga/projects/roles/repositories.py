@@ -38,11 +38,7 @@ def _apply_filters_to_queryset(
     return qs.filter(**filter_data)
 
 
-ProjectRoleSelectRelated = list[
-    Literal[
-        "project",
-    ]
-]
+ProjectRoleSelectRelated = list[Literal["project",]]
 
 
 def _apply_select_related_to_queryset(
@@ -65,7 +61,6 @@ def create_project_role_sync(
     permissions: list[str],
     is_admin: bool,
 ) -> ProjectRole:
-
     return ProjectRole.objects.create(
         name=name,
         slug=slug,

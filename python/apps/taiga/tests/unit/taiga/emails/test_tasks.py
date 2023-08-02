@@ -48,7 +48,6 @@ async def test_send_email_ok_all_params():
     ) as jpg, tempfile.NamedTemporaryFile(
         mode="wb"
     ) as txt:
-
         await send_email(
             email_name=EMAIL_NAME,
             context=CONTEXT,
@@ -71,7 +70,6 @@ async def test_send_email_ok_single_recipient():
     ), patch("taiga.emails.tasks.render_email_html", return_value=BODY_HTML), patch(
         "taiga.emails.tasks.render_subject", return_value=SUBJECT
     ):
-
         await send_email(email_name=EMAIL_NAME, context=CONTEXT, to=TO_EMAILS[0])
 
         fake_send_email_message.assert_called_once_with(
@@ -92,7 +90,6 @@ async def test_send_email_no_recipients():
 
 async def test_send_email_wrong_template():
     with patch("taiga.emails.tasks.send_email_message", autospec=True), pytest.raises(EmailTemplateError):
-
         await send_email(email_name="not_a_valid_email_template", context=CONTEXT, to=TO_EMAILS[0])
 
 
@@ -100,7 +97,6 @@ async def test_send_email_wrong_attachments():
     with patch("taiga.emails.tasks.send_email_message", autospec=True, side_effect=FileNotFoundError()), pytest.raises(
         EmailAttachmentError
     ):
-
         await send_email(
             email_name=EMAIL_NAME,
             context=CONTEXT,
@@ -113,7 +109,6 @@ async def test_send_email_smtp_error():
     with patch("taiga.emails.tasks.send_email_message", autospec=True, side_effect=SMTPConnectError("")), pytest.raises(
         EmailSMTPError
     ):
-
         await send_email(email_name=EMAIL_NAME, context=CONTEXT, to=TO_EMAILS)
 
 
@@ -121,5 +116,4 @@ async def test_send_email_unknown_error():
     with patch("taiga.emails.tasks.send_email_message", autospec=True, side_effect=Exception()), pytest.raises(
         EmailDeliveryError
     ):
-
         await send_email(email_name=EMAIL_NAME, context=CONTEXT, to=TO_EMAILS)

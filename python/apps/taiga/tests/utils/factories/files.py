@@ -4,7 +4,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
-
 from contextlib import contextmanager
 from io import BytesIO
 from tempfile import SpooledTemporaryFile
@@ -42,7 +41,7 @@ def build_binary_uploadfile(
     content_type: str = "application/octet-stream",
     content: bytes = b"some initial text data",
 ) -> UploadFile:
-    return UploadFile(filename=f"{name}.{format}", content_type=content_type, file=BytesIO(content))
+    return UploadFile(filename=f"{name}.{format}", headers={"content-type": content_type}, file=BytesIO(content))
 
 
 ###########################################################
@@ -70,7 +69,9 @@ def build_string_file(
 def build_string_uploadfile(
     name: str = "test", format: str = "txt", content_type: str = "text/plain", content: str = "some initial text data"
 ) -> UploadFile:
-    return UploadFile(filename=f"{name}.{format}", content_type=content_type, file=BytesIO(content.encode()))
+    return UploadFile(
+        filename=f"{name}.{format}", headers={"content-type": content_type}, file=BytesIO(content.encode())
+    )
 
 
 ###########################################################
@@ -108,4 +109,4 @@ def build_image_uploadfile(
     pil_image = Image.new("RGBA", size=(50, 50), color=(155, 0, 0))
     pil_image.save(stream, format=format)
     stream.seek(0)
-    return UploadFile(filename=f"{name}.{format}", content_type=content_type, file=stream)
+    return UploadFile(filename=f"{name}.{format}", headers={"content-type": content_type}, file=stream)

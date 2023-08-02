@@ -7,7 +7,6 @@
 
 from uuid import UUID
 
-from fastapi import Query
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
@@ -39,9 +38,7 @@ UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
     response_model=list[ProjectRoleSerializer],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def list_project_roles(
-    request: AuthRequest, project_id: B64UUID = Query(None, description="the project id (B64UUID)")
-) -> list[ProjectRole]:
+async def list_project_roles(project_id: B64UUID, request: AuthRequest) -> list[ProjectRole]:
     """
     Get project roles and permissions
     """
@@ -64,10 +61,10 @@ async def list_project_roles(
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_project_role_permissions(
+    project_id: B64UUID,
+    role_slug: str,
     request: AuthRequest,
     form: PermissionsValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    role_slug: str = Query(None, description="the role slug (str)"),
 ) -> ProjectRole:
     """
     Edit project roles permissions

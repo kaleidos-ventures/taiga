@@ -21,11 +21,6 @@ from taiga.workspaces.memberships.serializers import services as serializer_serv
 from taiga.workspaces.memberships.services import exceptions as ex
 from taiga.workspaces.workspaces.models import Workspace
 
-WS_ROLE_NAME_MEMBER: Final = "member"
-WS_ROLE_NAME_GUEST: Final = "guest"
-WS_ROLE_NAME_NONE: Final = "none"
-
-
 ##########################################################
 # list workspace memberships
 ##########################################################
@@ -66,7 +61,6 @@ async def list_paginated_workspace_memberships(
 async def list_paginated_workspace_guests(
     workspace: Workspace, offset: int, limit: int
 ) -> tuple[Pagination, list[WorkspaceGuestDetailSerializer]]:
-
     ws_guests = await users_repositories.list_users(
         filters={"guests_in_workspace": workspace},
         offset=offset,
@@ -97,7 +91,7 @@ async def list_paginated_workspace_guests(
 async def get_workspace_membership(
     workspace_id: UUID,
     username: str,
-) -> WorkspaceMembership:
+) -> WorkspaceMembership | None:
     return await workspace_memberships_repositories.get_workspace_membership(
         filters={"workspace_id": workspace_id, "username": username}, select_related=["workspace", "user"]
     )
@@ -135,6 +129,10 @@ async def delete_workspace_membership(
 # misc
 ##########################################################
 
+WS_ROLE_NAME_MEMBER: Final = "member"
+WS_ROLE_NAME_GUEST: Final = "guest"
+WS_ROLE_NAME_NONE: Final = "none"
+
 
 async def get_workspace_role_name(
     workspace_id: UUID,
@@ -143,17 +141,12 @@ async def get_workspace_role_name(
     if not user_id:
         return WS_ROLE_NAME_NONE
 
-    ws_membership = await workspace_memberships_repositories.get_workspace_membership(
+    if await workspace_memberships_repositories.get_workspace_membership(
         filters={"workspace_id": workspace_id, "user_id": user_id},
-    )
-    if ws_membership:
+    ):
         return WS_ROLE_NAME_MEMBER
-
-    else:
-        pj_membership = await projects_memberships_repositories.exist_project_membership(
-            filters={"user_id": user_id, "project__workspace_id": workspace_id}
-        )
-        if pj_membership:
-            return WS_ROLE_NAME_GUEST
-        else:
-            return WS_ROLE_NAME_NONE
+    elif await projects_memberships_repositories.exist_project_membership(
+        filters={"user_id": user_id, "workspace_id": workspace_id}
+    ):
+        return WS_ROLE_NAME_GUEST
+    return WS_ROLE_NAME_NONE

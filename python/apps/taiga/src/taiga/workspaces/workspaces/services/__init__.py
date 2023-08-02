@@ -69,7 +69,9 @@ async def get_workspace_detail(id: UUID, user_id: UUID | None) -> WorkspaceSeria
         user_role=await ws_memberships_services.get_workspace_role_name(workspace_id=id, user_id=user_id),
         total_projects=await projects_repositories.get_total_projects(
             filters={"workspace_id": id, "project_member_id": user_id}
-        ),
+        )
+        if user_id
+        else 0,
     )
 
 

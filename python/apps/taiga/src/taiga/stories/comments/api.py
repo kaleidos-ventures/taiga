@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Depends, Query, Response
+from fastapi import Depends, Response
 from taiga.base.api import AuthRequest
 from taiga.base.api import headers as api_headers
 from taiga.base.api import pagination as api_pagination
@@ -48,10 +48,10 @@ DELETE_STORY_COMMENT = IsNotDeleted() & (
     responses=ERROR_403 | ERROR_422 | ERROR_404,
 )
 async def create_story_comments(
+    project_id: B64UUID,
+    ref: int,
     request: AuthRequest,
     form: CreateCommentValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    ref: int = Query(None, description="the unique story reference within a project (int)"),
 ) -> Comment:
     """
     Add a comment to an story
@@ -80,10 +80,10 @@ async def create_story_comments(
     responses=ERROR_403 | ERROR_422 | ERROR_404,
 )
 async def list_story_comments(
+    project_id: B64UUID,
+    ref: int,
     request: AuthRequest,
     response: Response,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    ref: int = Query(None, description="the unique story reference within a project (str)"),
     pagination_params: PaginationQuery = Depends(),
     order_params: CommentOrderQuery = Depends(),  # type: ignore
 ) -> list[Comment]:
@@ -116,11 +116,11 @@ async def list_story_comments(
     responses=ERROR_403 | ERROR_422 | ERROR_404,
 )
 async def update_story_comments(
-    request: AuthRequest,
-    form: UpdateCommentValidator,
     project_id: B64UUID,
     ref: int,
     comment_id: B64UUID,
+    request: AuthRequest,
+    form: UpdateCommentValidator,
 ) -> Comment:
     """
     Update an story's comment
@@ -151,10 +151,10 @@ async def update_story_comments(
     responses=ERROR_403 | ERROR_404,
 )
 async def delete_story_comment(
-    request: AuthRequest,
     project_id: B64UUID,
     ref: int,
     comment_id: B64UUID,
+    request: AuthRequest,
 ) -> Comment:
     """
     Delete a comment

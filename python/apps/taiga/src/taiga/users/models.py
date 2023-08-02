@@ -47,7 +47,7 @@ class User(models.BaseModel, AbstractBaseUser):
         verbose_name="superuser status",
         help_text="Designates that this user has all permissions without " "explicitly assigning them.",
     )
-    full_name = models.CharField(max_length=256, null=True, blank=True, verbose_name="full name")
+    full_name = models.CharField(max_length=256, null=False, blank=True, default="", verbose_name="full name")
     accepted_terms = models.BooleanField(null=False, blank=False, default=True, verbose_name="accepted terms")
     lang = models.CharField(max_length=20, null=False, blank=False, default=default_language, verbose_name="language")
     date_joined = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="date joined")

@@ -147,7 +147,6 @@ async def _calculate_offset(
     reorder_status: WorkflowStatus,
     reorder_place: str,
 ) -> tuple[Decimal, Decimal]:
-
     total_slots = total_statuses_to_reorder + 1
 
     neighbors = await workflows_repositories.list_workflow_status_neighbors(
@@ -180,7 +179,6 @@ async def reorder_workflow_statuses(
     statuses: list[UUID],
     reorder: dict[str, Any],
 ) -> ReorderWorkflowStatusesSerializer:
-
     if reorder["status"] in statuses:
         raise ex.InvalidWorkflowStatusError(f"Status {reorder['status']} should not be part of the statuses to reorder")
 

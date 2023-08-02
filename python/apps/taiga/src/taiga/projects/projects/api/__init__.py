@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Query, status
+from fastapi import status
 from fastapi.params import Depends
 from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
@@ -47,6 +47,7 @@ PROJECT_DETAIL_200 = responses.http_status_200(model=ProjectDetailSerializer)
     name="projects.create",
     summary="Create project",
     responses=PROJECT_DETAIL_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
 async def create_project(
     request: AuthRequest,
@@ -79,9 +80,7 @@ async def create_project(
     response_model=list[ProjectSummarySerializer],
     responses=ERROR_403 | ERROR_404,
 )
-async def list_workspace_projects(
-    request: AuthRequest, workspace_id: B64UUID = Query("", description="the workspace id (B64UUID)")
-) -> list[Project]:
+async def list_workspace_projects(workspace_id: B64UUID, request: AuthRequest) -> list[Project]:
     """
     List projects of a workspace visible by the user.
     """
@@ -97,9 +96,7 @@ async def list_workspace_projects(
     response_model=list[ProjectSummarySerializer],
     responses=ERROR_403 | ERROR_404,
 )
-async def list_workspace_invited_projects(
-    request: AuthRequest, workspace_id: B64UUID = Query(None, description="the workspace id (B64UUID)")
-) -> list[Project]:
+async def list_workspace_invited_projects(workspace_id: B64UUID, request: AuthRequest) -> list[Project]:
     """
     Get all the invitations to projects that  a user has in a workspace
     """
@@ -118,10 +115,9 @@ async def list_workspace_invited_projects(
     name="project.get",
     summary="Get project",
     responses=PROJECT_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
-async def get_project(
-    request: AuthRequest, id: B64UUID = Query("", description="the project id (B64UUID)")
-) -> ProjectDetailSerializer:
+async def get_project(id: B64UUID, request: AuthRequest) -> ProjectDetailSerializer:
     """
     Get project detail by id.
     """
@@ -138,9 +134,7 @@ async def get_project(
     response_model=list[str],
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
-async def list_project_public_permissions(
-    request: AuthRequest, id: B64UUID = Query(None, description="the project id (B64UUID)")
-) -> list[str]:
+async def list_project_public_permissions(id: B64UUID, request: AuthRequest) -> list[str]:
     """
     Get project public permissions
     """
@@ -160,10 +154,11 @@ async def list_project_public_permissions(
     name="project.update",
     summary="Update project",
     responses=PROJECT_DETAIL_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
 async def update_project(
+    id: B64UUID,
     request: AuthRequest,
-    id: B64UUID = Query("", description="the project id (B64UUID)"),
     form: UpdateProjectValidator = Depends(UpdateProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
 ) -> ProjectDetailSerializer:
     """
@@ -184,7 +179,9 @@ async def update_project(
     responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_project_public_permissions(
-    request: AuthRequest, form: PermissionsValidator, id: B64UUID = Query(None, description="the project id (B64UUID)")
+    id: B64UUID,
+    request: AuthRequest,
+    form: PermissionsValidator,
 ) -> list[str]:
     """
     Edit project public permissions
@@ -208,10 +205,7 @@ async def update_project_public_permissions(
     responses=ERROR_404 | ERROR_403,
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_project(
-    request: AuthRequest,
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
-) -> None:
+async def delete_project(id: B64UUID, request: AuthRequest) -> None:
     """
     Delete a project
     """
@@ -233,9 +227,7 @@ async def delete_project(
     response_model=list[str],
     responses=ERROR_404,
 )
-async def list_my_project_permissions(
-    request: AuthRequest, id: B64UUID = Query(None, description="the project id (B64UUID)")
-) -> list[str]:
+async def list_my_project_permissions(id: B64UUID, request: AuthRequest) -> list[str]:
     """
     List the computed permissions a user has over a project.
     """

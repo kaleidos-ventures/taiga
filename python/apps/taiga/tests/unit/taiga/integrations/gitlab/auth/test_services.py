@@ -40,7 +40,7 @@ async def test_gitlab_login_gitlab_not_configured():
     settings.GITLAB_CLIENT_ID = None
     settings.GITLAB_CLIENT_SECRET = None
     settings.GITLAB_URL = None
-    with (pytest.raises(ex.GitlabLoginError)):
+    with pytest.raises(ex.GitlabLoginError):
         await services.gitlab_login(code="code", redirect_uri="https://redirect.uri")
 
 

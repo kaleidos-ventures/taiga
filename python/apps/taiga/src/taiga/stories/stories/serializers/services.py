@@ -19,7 +19,6 @@ def serialize_story_detail(
     neighbors: Neighbor[Story],
     assignees: list[User] = [],
 ) -> StoryDetailSerializer:
-
     return StoryDetailSerializer(
         ref=story.ref,
         title=story.title,
@@ -43,7 +42,6 @@ def serialize_story_list(
     story: Story,
     assignees: list[User] = [],
 ) -> StorySummarySerializer:
-
     return StorySummarySerializer(
         ref=story.ref,
         title=story.title,
@@ -56,5 +54,4 @@ def serialize_story_list(
 def serialize_reorder_story(
     status: WorkflowStatus, stories: list[int], reorder: dict[str, Any] | None = None
 ) -> ReorderStoriesSerializer:
-
     return ReorderStoriesSerializer(status=status, stories=stories, reorder=reorder)

@@ -26,5 +26,4 @@ def serialize_workflow(workflow: Workflow, workflow_statuses: list[WorkflowStatu
 def serialize_reorder_workflow_statuses(
     workflow: Workflow, statuses: list[UUID], reorder: dict[str, Any] | None = None
 ) -> ReorderWorkflowStatusesSerializer:
-
     return ReorderWorkflowStatusesSerializer(workflow=workflow, statuses=statuses, reorder=reorder)

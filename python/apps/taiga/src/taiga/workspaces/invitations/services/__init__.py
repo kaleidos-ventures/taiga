@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import Any
+from typing import Any, cast
 
 from taiga.auth import services as auth_services
 from taiga.base.api.pagination import Pagination
@@ -23,6 +23,7 @@ from taiga.workspaces.invitations import events as invitations_events
 from taiga.workspaces.invitations import repositories as invitations_repositories
 from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
 from taiga.workspaces.invitations.models import WorkspaceInvitation
+from taiga.workspaces.invitations.repositories import WorkspaceInvitationFilters
 from taiga.workspaces.invitations.serializers import (
     CreateWorkspaceInvitationsSerializer,
     PublicWorkspaceInvitationSerializer,
@@ -128,7 +129,7 @@ async def create_workspace_invitations(
     if len(invitations_to_update) > 0:
         objs = list(invitations_to_update.values())
         await invitations_repositories.bulk_update_workspace_invitations(
-            objs_to_update=invitations_to_update.values(),
+            objs_to_update=objs,
             fields_to_update=["num_emails_sent", "resent_at", "resent_by", "status"],
         )
 
@@ -187,14 +188,13 @@ async def get_workspace_invitation(token: str) -> WorkspaceInvitation | None:
         raise ex.BadInvitationTokenError("Invalid token")
 
     return await invitations_repositories.get_workspace_invitation(
-        filters=invitation_token.object_data,
+        filters=cast(WorkspaceInvitationFilters, invitation_token.object_data),
         select_related=["user", "workspace"],
     )
 
 
 async def get_public_workspace_invitation(token: str) -> PublicWorkspaceInvitationSerializer | None:
     if invitation := await get_workspace_invitation(token=token):
-
         available_logins = (
             await auth_services.get_available_user_logins(user=invitation.user) if invitation.user else []
         )
@@ -230,6 +230,9 @@ async def accept_workspace_invitation(invitation: WorkspaceInvitation) -> Worksp
 
     if invitation.status == WorkspaceInvitationStatus.REVOKED:
         raise ex.InvitationRevokedError("The invitation is revoked")
+
+    if not invitation.user:
+        raise ex.InvitationHasNoUserYetError("The invitation does not have a user yet")
 
     accepted_invitation = await invitations_repositories.update_workspace_invitation(
         invitation=invitation,

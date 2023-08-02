@@ -22,7 +22,7 @@ async def test_list_workflows_ok():
     workflow_status = f.build_workflow_status()
     workflows = [f.build_workflow(statuses=[workflow_status])]
 
-    with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
+    with patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo:
         fake_workflows_repo.list_workflows.return_value = workflows
         fake_workflows_repo.list_workflow_statuses.return_value = [workflow_status]
         await services.list_workflows(project_id=workflows[0].project.id)
@@ -40,7 +40,7 @@ async def test_list_workflows_ok():
 async def test_get_workflow_ok():
     workflow = f.build_workflow()
 
-    with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo):
+    with patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo:
         fake_workflows_repo.get_workflow.return_value = workflow
         await services.get_workflow(project_id=workflow.project.id, workflow_slug=workflow.slug)
         fake_workflows_repo.get_workflow.assert_awaited_once()
@@ -222,7 +222,6 @@ async def test_reorder_workflow_statuses_ok():
 
 async def test_reorder_workflow_status_repeated():
     with (pytest.raises(ex.InvalidWorkflowStatusError),):
-
         await services.reorder_workflow_statuses(
             workflow=f.build_workflow(),
             statuses=["new"],

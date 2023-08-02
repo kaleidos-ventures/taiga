@@ -33,5 +33,9 @@ class InvitationIsNotForThisUserError(TaigaServiceException):
     ...
 
 
+class InvitationHasNoUserYetError(TaigaServiceException):
+    ...
+
+
 class NonExistingRoleError(TaigaServiceException):
     ...

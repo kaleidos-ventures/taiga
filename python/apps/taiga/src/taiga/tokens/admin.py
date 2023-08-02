@@ -99,39 +99,26 @@ class DenylistedTokenAdmin(admin.ModelAdmin[DenylistedToken]):
         "token__object_id",
     )
 
-    @admin.display(description="token type")
+    @admin.display(description="token type", ordering="token__token_type")
     def token_token_type(self, obj: DenylistedToken) -> str:
         return obj.token.token_type
 
-    token_token_type.admin_order_field = "token__token_type"
-
-    @admin.display(description="jti")
+    @admin.display(description="jti", ordering="token__jti")
     def token_jti(self, obj: DenylistedToken) -> str:
         return obj.token.jti
 
-    token_jti.short_description = "jti"
-    token_jti.admin_order_field = "token__jti"
-
-    @admin.display(description="content type")
+    @admin.display(description="content type", ordering="token__content_type")
     def token_content_type(self, obj: DenylistedToken) -> ContentType | None:
         return obj.token.content_type
 
-    token_content_type.admin_order_field = "token__content_type"
-
-    @admin.display(description="object id")
+    @admin.display(description="object id", ordering="token__object_id")
     def token_object_id(self, obj: DenylistedToken) -> UUID | None:
         return obj.token.object_id
 
-    token_object_id.admin_order_field = "token__object_id"
-
-    @admin.display(description="created at")
+    @admin.display(description="created at", ordering="token__created_at")
     def token_created_at(self, obj: DenylistedToken) -> datetime | None:
         return obj.token.created_at
 
-    token_created_at.admin_order_field = "token__created_at"
-
-    @admin.display(description="expires at")
+    @admin.display(description="expires at", ordering="token__expires_at")
     def token_expires_at(self, obj: DenylistedToken) -> datetime:
         return obj.token.expires_at
-
-    token_expires_at.admin_order_field = "token__expires_at"

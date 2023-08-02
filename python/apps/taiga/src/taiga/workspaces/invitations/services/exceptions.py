@@ -29,5 +29,9 @@ class InvitationRevokedError(TaigaServiceException):
     ...
 
 
+class InvitationHasNoUserYetError(TaigaServiceException):
+    ...
+
+
 class NonExistingUsernameError(TaigaServiceException):
     ...

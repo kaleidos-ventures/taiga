@@ -6,7 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 from uuid import UUID
 
-from fastapi import Depends, Query
+from fastapi import Depends
 from starlette import status
 from taiga.base.api import AuthRequest, Request, responses
 from taiga.base.api.permissions import check_permissions
@@ -50,11 +50,9 @@ REORDER_WORKFLOW_STATUSES_200 = responses.http_status_200(model=ReorderWorkflowS
     name="project.workflow.list",
     summary="List workflows",
     responses=LIST_WORKFLOW_200 | ERROR_404 | ERROR_403,
+    response_model=None,
 )
-async def list_workflows(
-    request: Request,
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
-) -> list[WorkflowSerializer]:
+async def list_workflows(id: B64UUID, request: Request) -> list[WorkflowSerializer]:
     """
     List the workflows of a project
     """
@@ -73,11 +71,12 @@ async def list_workflows(
     name="project.workflow.get",
     summary="Get project workflow",
     responses=GET_WORKFLOW_200 | ERROR_404 | ERROR_403,
+    response_model=None,
 )
 async def get_workflow(
+    id: B64UUID,
+    workflow_slug: str,
     request: Request,
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> WorkflowSerializer:
     """
     Get the details of a workflow
@@ -113,10 +112,10 @@ async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> Workflow:
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_workflow_status(
+    project_id: B64UUID,
+    workflow_slug: str,
     request: AuthRequest,
     form: WorkflowStatusValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> WorkflowStatus:
     """
     Creates a workflow status in the given project workflow
@@ -144,11 +143,11 @@ async def create_workflow_status(
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def update_workflow_status(
+    id: B64UUID,
+    project_id: B64UUID,
+    workflow_slug: str,
     request: AuthRequest,
     form: UpdateWorkflowStatusValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    workflow_slug: str = Query(None, description="the workflow slug (str)"),
-    id: B64UUID = Query(None, description="the workflow status id (B64UUID)"),
 ) -> WorkflowStatus:
     """
     Updates a workflow status in the given project workflow
@@ -172,12 +171,13 @@ async def update_workflow_status(
     name="project.workflowstatus.reorder",
     summary="Reorder workflow statuses",
     responses=REORDER_WORKFLOW_STATUSES_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
 async def reorder_workflow_statuses(
+    project_id: B64UUID,
+    workflow_slug: str,
     request: AuthRequest,
     form: ReorderWorkflowStatusesValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> ReorderWorkflowStatusesSerializer:
     """
     Reorder one or more workflow statuses; it may change workflow and order
@@ -205,9 +205,9 @@ async def reorder_workflow_statuses(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_workflow_status(
+    id: B64UUID,
     project_id: B64UUID,
     workflow_slug: str,
-    id: B64UUID,
     request: AuthRequest,
     query_params: DeleteWorkflowStatusQuery = Depends(),
 ) -> None:

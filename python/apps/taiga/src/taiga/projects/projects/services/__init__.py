@@ -41,13 +41,13 @@ from taiga.workspaces.workspaces.models import Workspace
 async def create_project(
     workspace: Workspace,
     name: str,
+    created_by: User,
     description: str | None,
     color: int | None,
-    created_by: User,
     logo: UploadFile | None = None,
 ) -> ProjectDetailSerializer:
     project = await _create_project(
-        workspace=workspace, name=name, description=description, color=color, created_by=created_by, logo=logo
+        workspace=workspace, name=name, created_by=created_by, description=description, color=color, logo=logo
     )
     return await get_project_detail(project=project, user=created_by)
 
@@ -55,9 +55,9 @@ async def create_project(
 async def _create_project(
     workspace: Workspace,
     name: str,
+    created_by: User,
     description: str | None,
     color: int | None,
-    created_by: User,
     logo: UploadFile | None = None,
 ) -> Project:
     logo_file = None
@@ -65,16 +65,28 @@ async def _create_project(
         logo_file = uploadfile_to_file(file=logo)
 
     project = await projects_repositories.create_project(
-        workspace=workspace, name=name, description=description, color=color, created_by=created_by, logo=logo_file
+        workspace=workspace, name=name, created_by=created_by, description=description, color=color, logo=logo_file
     )
 
     # apply template
-    template = await projects_repositories.get_project_template(filters={"slug": settings.DEFAULT_PROJECT_TEMPLATE})
-    await projects_repositories.apply_template_to_project(template=template, project=project)
+    if template := await projects_repositories.get_project_template(
+        filters={"slug": settings.DEFAULT_PROJECT_TEMPLATE}
+    ):
+        await projects_repositories.apply_template_to_project(template=template, project=project)
+    else:
+        raise Exception(
+            f"Default project template '{settings.DEFAULT_PROJECT_TEMPLATE}' not found. "
+            "Try to load fixtures again and check if the error persist."
+        )
 
     # assign 'created_by' to the project as 'admin' role
-    admin_role = await (pj_roles_repositories.get_project_role(filters={"project_id": project.id, "slug": "admin"}))
-    await pj_memberships_repositories.create_project_membership(user=created_by, project=project, role=admin_role)
+    if admin_role := await pj_roles_repositories.get_project_role(filters={"project_id": project.id, "slug": "admin"}):
+        await pj_memberships_repositories.create_project_membership(user=created_by, project=project, role=admin_role)
+    else:
+        raise Exception(
+            "Default project template does not have a role with the slug 'admin'. "
+            "Try to load fixtures again and check if the error persist."
+        )
 
     return project
 
@@ -151,7 +163,7 @@ async def get_project_detail(project: Project, user: AnyUser) -> ProjectDetailSe
     user_has_pending_invitation = (
         False
         if user.is_anonymous
-        else await (pj_invitations_services.has_pending_project_invitation(user=user, project=project))
+        else await pj_invitations_services.has_pending_project_invitation(user=user, project=project)
     )
 
     return serializers_services.serialize_project_detail(
@@ -182,6 +194,9 @@ async def _update_project(project: Project, values: dict[str, Any] = {}) -> Proj
     if "name" in values:
         if values.get("name") is None or values.get("name") == "":
             raise ex.TaigaValidationError("Name cannot be empty")
+
+    if "description" in values:
+        values["description"] = values["description"] or ""
 
     file_to_delete = None
     if "logo" in values:

@@ -5,11 +5,11 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import Any, Literal, TypedDict
+from typing import Any, Literal, TypedDict, cast
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from taiga.base.db.models import Model, QuerySet, get_contenttype_for_model
+from taiga.base.db.models import BaseModel, Model, QuerySet, get_contenttype_for_model
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.comments.models import Comment
 from taiga.users.models import User
@@ -34,9 +34,9 @@ async def _apply_filters_to_queryset(
     filter_data = dict(filters.copy())
 
     if "content_object" in filters:
-        content_object = filter_data.pop("content_object")
+        content_object = cast(BaseModel, filter_data.pop("content_object"))
         filter_data["object_content_type"] = await get_contenttype_for_model(content_object)
-        filter_data["object_id"] = content_object.id  # type: ignore[attr-defined]
+        filter_data["object_id"] = content_object.id
 
     return qs.filter(**filter_data)
 
@@ -72,11 +72,7 @@ async def _apply_select_related_to_queryset(
     return qs.select_related(*select_related)
 
 
-CommentPrefetchRelated = list[
-    Literal[
-        "content_object",
-    ]
-]
+CommentPrefetchRelated = list[Literal["content_object",]]
 
 
 async def _apply_prefetch_related_to_queryset(

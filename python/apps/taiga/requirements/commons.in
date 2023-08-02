@@ -1,6 +1,6 @@
 # Common API packages
 fastapi
-pydantic[email,dotenv]
+pydantic[email,dotenv]<2.0
 python-multipart
 uvicorn[standard]
 httpx

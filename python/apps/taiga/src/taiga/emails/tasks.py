@@ -30,7 +30,6 @@ async def send_email(
     attachment_paths: list[str] = [],
     lang: str = settings.LANG,
 ) -> None:
-
     # validate the email template
     try:
         Emails(email_name)

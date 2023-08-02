@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from fastapi import Depends, Query, Response
+from fastapi import Depends, Response
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api import responses
@@ -50,9 +50,9 @@ PUBLIC_WORKSPACE_INVITATION_200 = responses.http_status_200(model=PublicWorkspac
     responses=CREATE_WORKSPACE_INVITATIONS_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_workspace_invitations(
+    id: B64UUID,
     request: AuthRequest,
     form: WorkspaceInvitationsValidator,
-    id: B64UUID = Query(None, description="the workspace id (B64UUID)"),
 ) -> CreateWorkspaceInvitationsSerializer:
     """
     Create invitations to a workspace for a list of users (identified either by their username or their email).
@@ -78,10 +78,10 @@ async def create_workspace_invitations(
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def list_workspace_invitations(
+    id: B64UUID,
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
-    id: B64UUID = Query(None, description="the workspace id (B64UUID)"),
 ) -> list[WorkspaceInvitation]:
     """
     List (pending) workspace invitations
@@ -107,10 +107,9 @@ async def list_workspace_invitations(
     name="workspace.invitations.get",
     summary="Get public information about a workspace invitation",
     responses=PUBLIC_WORKSPACE_INVITATION_200 | ERROR_400 | ERROR_404 | ERROR_422,
+    response_model=None,
 )
-async def get_public_workspace_invitation(
-    token: str = Query(None, description="the workspace invitation token (str)")
-) -> PublicWorkspaceInvitationSerializer:
+async def get_public_workspace_invitation(token: str) -> PublicWorkspaceInvitationSerializer:
     """
     Get public information about a workspace invitation
     """
@@ -133,9 +132,7 @@ async def get_public_workspace_invitation(
     response_model=WorkspaceInvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def accept_workspace_invitation_by_token(
-    request: AuthRequest, token: str = Query(None, description="the workspace invitation token (str)")
-) -> WorkspaceInvitation:
+async def accept_workspace_invitation_by_token(token: str, request: AuthRequest) -> WorkspaceInvitation:
     """
     A user accepts a workspace invitation using an invitation token
     """

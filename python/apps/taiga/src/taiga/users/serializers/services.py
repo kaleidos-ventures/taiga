@@ -9,8 +9,11 @@
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.projects.models import Project
-from taiga.users.serializers import UserDeleteInfoSerializer, VerificationInfoSerializer
-from taiga.users.serializers.nested import _WorkspaceWithProjectsNestedSerializer
+from taiga.users.serializers import (
+    UserDeleteInfoSerializer,
+    VerificationInfoSerializer,
+    _WorkspaceWithProjectsNestedSerializer,
+)
 from taiga.workspaces.invitations.models import WorkspaceInvitation
 from taiga.workspaces.workspaces.models import Workspace
 

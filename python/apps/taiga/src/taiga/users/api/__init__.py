@@ -83,6 +83,7 @@ async def create_user(form: CreateUserValidator) -> User:
     name="users.verify",
     summary="Verify the account of a new signup user",
     responses=VERIFICATION_INFO_200 | ERROR_400 | ERROR_422,
+    response_model=None,
 )
 async def verify_user(form: VerifyTokenValidator) -> VerificationInfoSerializer:
     """
@@ -201,6 +202,7 @@ async def update_my_user(request: Request, form: UpdateUserValidator) -> User:
     "/my/user/delete-info",
     name="my.user.delete-info",
     summary="Get user delete info",
+    response_model=None,
     responses=USER_DELETE_INFO_200 | ERROR_401,
 )
 async def get_user_delete_info(request: Request) -> UserDeleteInfoSerializer:

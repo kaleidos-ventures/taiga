@@ -6,7 +6,6 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from asgiref.sync import sync_to_async
-from taiga.base.utils.datetime import aware_utcnow
 from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
 
 from .base import Factory, factory
@@ -40,10 +39,6 @@ class WorkspaceInvitationFactory(Factory):
     user = factory.SubFactory("tests.utils.factories.UserFactory")
     workspace = factory.SubFactory("tests.utils.factories.WorkspaceFactory")
     invited_by = factory.SubFactory("tests.utils.factories.UserFactory")
-    created_at = aware_utcnow()
-    num_emails_sent = 1
-    resent_at = None
-    resent_by = None
 
     class Meta:
         model = "workspaces_invitations.WorkspaceInvitation"

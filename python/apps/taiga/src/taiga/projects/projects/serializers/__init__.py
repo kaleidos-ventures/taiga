@@ -14,8 +14,8 @@ class ProjectSummarySerializer(BaseModel, ProjectLogoMixin):
     id: UUIDB64
     name: str
     slug: str
-    description: str | None = None
-    color: int | None = None
+    description: str
+    color: int
 
     class Config:
         orm_mode = True
@@ -25,8 +25,8 @@ class ProjectDetailSerializer(BaseModel, ProjectLogoMixin):
     id: UUIDB64
     name: str
     slug: str
-    description: str | None = None
-    color: int | None = None
+    description: str
+    color: int
     workspace: WorkspaceNestedSerializer
 
     # User related fields

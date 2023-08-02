@@ -25,7 +25,7 @@ async def test_create_mediafiles():
         f.build_mediafile(),
     ]
 
-    with (patch("taiga.mediafiles.services.mediafiles_repositories", autospec=True) as fake_mediafiles_repository):
+    with patch("taiga.mediafiles.services.mediafiles_repositories", autospec=True) as fake_mediafiles_repository:
         fake_mediafiles_repository.create_mediafiles.return_value = mediafiles
         data = await services.create_mediafiles(files=uploadfiles, project=project, object=None, created_by=user)
         fake_mediafiles_repository.create_mediafiles.assert_awaited_once_with(

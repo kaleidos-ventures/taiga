@@ -38,7 +38,7 @@ async def test_google_login_ok():
 async def test_google_login_google_not_configured():
     settings.GOOGLE_CLIENT_ID = None
     settings.GOOGLE_CLIENT_SECRET = None
-    with (pytest.raises(ex.GoogleLoginError)):
+    with pytest.raises(ex.GoogleLoginError):
         await services.google_login(code="code", redirect_uri="https://redirect.uri")
 
 

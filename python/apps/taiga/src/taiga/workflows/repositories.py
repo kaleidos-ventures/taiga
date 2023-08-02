@@ -5,6 +5,12 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+# Copyright (c) 2023-present Kaleidos INC
+
+from decimal import Decimal
 from typing import Any, Literal, TypedDict
 from uuid import UUID
 
@@ -34,11 +40,7 @@ def _apply_filters_to_workflow_queryset(
     return qs.filter(**filters)
 
 
-WorkflowSelectRelated = list[
-    Literal[
-        "project",
-    ]
-]
+WorkflowSelectRelated = list[Literal["project",]]
 
 
 def _apply_select_related_to_workflow_queryset(
@@ -48,11 +50,7 @@ def _apply_select_related_to_workflow_queryset(
     return qs.select_related(*select_related)
 
 
-WorkflowPrefetchRelated = list[
-    Literal[
-        "statuses",
-    ]
-]
+WorkflowPrefetchRelated = list[Literal["statuses",]]
 
 
 def _apply_prefetch_related_to_workflow_queryset(
@@ -62,11 +60,7 @@ def _apply_prefetch_related_to_workflow_queryset(
     return qs.prefetch_related(*prefetch_related)
 
 
-WorkflowOrderBy = list[
-    Literal[
-        "order",
-    ]
-]
+WorkflowOrderBy = list[Literal["order",]]
 
 
 def _apply_order_by_to_workflow_queryset(
@@ -87,7 +81,6 @@ def create_workflow_sync(
     order: int,
     project: Project,
 ) -> Workflow:
-
     return Workflow.objects.create(
         name=name,
         slug=slug,
@@ -216,17 +209,15 @@ def _apply_order_by_to_workflow_status_queryset(
 def create_workflow_status_sync(
     name: str,
     color: int,
-    order: int,
+    order: Decimal,
     workflow: Workflow,
 ) -> WorkflowStatus:
-    status = WorkflowStatus(
+    return WorkflowStatus.objects.create(
         name=name,
         color=color,
         order=order,
         workflow=workflow,
     )
-    status.save()
-    return status
 
 
 create_workflow_status = sync_to_async(create_workflow_status_sync)
@@ -244,7 +235,6 @@ def list_workflow_statuses(
     offset: int | None = None,
     limit: int | None = None,
 ) -> list[WorkflowStatus]:
-
     qs = _apply_filters_to_workflow_status_queryset(qs=DEFAULT_QUERYSET_WORKFLOW_STATUS, filters=filters)
     qs = _apply_order_by_to_workflow_status_queryset(qs=qs, order_by=order_by)
 

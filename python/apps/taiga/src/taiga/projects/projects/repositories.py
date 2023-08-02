@@ -71,11 +71,7 @@ def _apply_filters_to_project_queryset(
     return qs.filter(**filter_data)
 
 
-ProjectSelectRelated = list[
-    Literal[
-        "workspace",
-    ]
-]
+ProjectSelectRelated = list[Literal["workspace",]]
 
 
 def _apply_select_related_to_project_queryset(
@@ -85,11 +81,7 @@ def _apply_select_related_to_project_queryset(
     return qs.select_related(*select_related)
 
 
-ProjectPrefetchRelated = list[
-    Literal[
-        "workspace",
-    ]
-]
+ProjectPrefetchRelated = list[Literal["workspace",]]
 
 
 def _apply_prefetch_related_to_project_queryset(
@@ -99,11 +91,7 @@ def _apply_prefetch_related_to_project_queryset(
     return qs.prefetch_related(*prefetch_related)
 
 
-ProjectOrderBy = list[
-    Literal[
-        "-created_at",
-    ]
-]
+ProjectOrderBy = list[Literal["-created_at",]]
 
 
 def _apply_order_by_to_project_queryset(
@@ -124,18 +112,23 @@ def create_project(
     name: str,
     created_by: User,
     description: str | None = None,
-    color: int = 1,
+    color: int | None = None,
     logo: File | None = None,
 ) -> Project:
-
-    return Project.objects.create(
+    project = Project(
         name=name,
-        description=description,
-        workspace=workspace,
-        color=color,
         created_by=created_by,
+        workspace=workspace,
         logo=logo,
     )
+    if description:
+        project.description = description
+    if color:
+        project.color = color
+
+    project.save()
+
+    return project
 
 
 ##########################################################

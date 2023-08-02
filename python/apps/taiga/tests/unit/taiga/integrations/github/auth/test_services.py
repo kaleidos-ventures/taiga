@@ -38,7 +38,7 @@ async def test_github_login_ok():
 async def test_github_login_github_not_configured():
     settings.GITHUB_CLIENT_ID = None
     settings.GITHUB_CLIENT_SECRET = None
-    with (pytest.raises(ex.GithubLoginError)):
+    with pytest.raises(ex.GithubLoginError):
         await services.github_login(code="code")
 
 

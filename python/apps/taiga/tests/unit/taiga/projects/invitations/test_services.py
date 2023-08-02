@@ -1033,7 +1033,6 @@ async def test_revoke_project_invitation_already_accepted() -> None:
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         pytest.raises(ex.InvitationAlreadyAcceptedError),
     ):
-
         await services.revoke_project_invitation(invitation=invitation, revoked_by=project.created_by)
 
         fake_invitations_repo.update_project_invitation.assert_not_awaited()
@@ -1051,7 +1050,6 @@ async def test_revoke_project_invitation_revoked() -> None:
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         pytest.raises(ex.InvitationRevokedError),
     ):
-
         await services.revoke_project_invitation(invitation=invitation, revoked_by=project.created_by)
 
         fake_invitations_repo.update_project_invitation.assert_not_awaited()
@@ -1075,7 +1073,6 @@ async def test_update_project_invitation_role_invitation_accepted() -> None:
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         pytest.raises(ex.InvitationAlreadyAcceptedError),
     ):
-
         await services.update_project_invitation(invitation=invitation, role_slug=general_role)
 
         fake_invitations_repo.update_project_invitation.assert_not_awaited()
@@ -1094,7 +1091,6 @@ async def test_update_project_invitation_role_invitation_revoked() -> None:
         patch("taiga.projects.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
         pytest.raises(ex.InvitationRevokedError),
     ):
-
         await services.update_project_invitation(invitation=invitation, role_slug=general_role)
 
         fake_invitations_repo.update_project_invitation.assert_not_awaited()
@@ -1158,8 +1154,8 @@ async def test_has_pending_project_invitation() -> None:
     user = f.build_user()
     project = f.build_project()
 
-    with (
-        patch("taiga.projects.invitations.services.invitations_repositories", autospec=True)
+    with patch(
+        "taiga.projects.invitations.services.invitations_repositories", autospec=True
     ) as fake_pj_invitations_repo:
         invitation = f.build_project_invitation(email=user.email, user=user, project=project)
         fake_pj_invitations_repo.get_project_invitation.return_value = invitation

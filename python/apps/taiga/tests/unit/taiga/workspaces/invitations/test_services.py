@@ -48,37 +48,6 @@ async def test_create_workspace_invitations_already_member(tqmanager):
         fake_invitations_events.emit_event_when_workspace_invitations_are_created.assert_not_awaited()
 
 
-async def test_create_workspace_invitations_with_pending_invitations(tqmanager):
-    workspace = f.build_workspace()
-    created_at = aware_utcnow() - timedelta(days=1)  # to avoid time spam
-    invitation = f.build_workspace_invitation(
-        workspace=workspace,
-        user=None,
-        email="test@email.com",
-        created_at=created_at,
-        invited_by=workspace.created_by,
-    )
-    invitations = [{"username_or_email": invitation.email}]
-
-    with (
-        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
-        patch("taiga.workspaces.invitations.services.users_services", autospec=True) as fake_users_services,
-        patch("taiga.workspaces.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
-    ):
-        fake_invitations_repo.get_workspace_invitation.return_value = invitation
-        fake_users_services.list_users_emails_as_dict.return_value = {}
-        fake_users_services.list_users_usernames_as_dict.return_value = {}
-
-        await services.create_workspace_invitations(
-            workspace=workspace, invitations=invitations, invited_by=workspace.created_by
-        )
-
-        fake_invitations_repo.bulk_update_workspace_invitations.assert_awaited_once()
-
-        assert len(tqmanager.pending_jobs) == 1
-        fake_invitations_events.emit_event_when_workspace_invitations_are_created.assert_awaited_once()
-
-
 async def test_create_workspace_invitations_with_pending_invitations_time_spam(tqmanager, override_settings):
     workspace = f.build_workspace()
     invitation = f.build_workspace_invitation(
@@ -103,6 +72,38 @@ async def test_create_workspace_invitations_with_pending_invitations_time_spam(t
         fake_invitations_repo.bulk_update_workspace_invitations.assert_awaited_once()
 
         assert len(tqmanager.pending_jobs) == 0
+        fake_invitations_events.emit_event_when_workspace_invitations_are_created.assert_awaited_once()
+
+
+async def test_create_workspace_invitations_with_pending_invitations(tqmanager, override_settings):
+    workspace = f.build_workspace()
+    created_at = aware_utcnow() - timedelta(days=1)  # to avoid time spam
+    invitation = f.build_workspace_invitation(
+        workspace=workspace,
+        user=None,
+        email="test@email.com",
+        created_at=created_at,
+        invited_by=workspace.created_by,
+    )
+    invitations = [{"username_or_email": invitation.email}]
+
+    with (
+        patch("taiga.workspaces.invitations.services.invitations_repositories", autospec=True) as fake_invitations_repo,
+        patch("taiga.workspaces.invitations.services.users_services", autospec=True) as fake_users_services,
+        patch("taiga.workspaces.invitations.services.invitations_events", autospec=True) as fake_invitations_events,
+        override_settings({"INVITATION_RESEND_TIME": 10}),
+    ):
+        fake_invitations_repo.get_workspace_invitation.return_value = invitation
+        fake_users_services.list_users_emails_as_dict.return_value = {}
+        fake_users_services.list_users_usernames_as_dict.return_value = {}
+
+        await services.create_workspace_invitations(
+            workspace=workspace, invitations=invitations, invited_by=workspace.created_by
+        )
+
+        fake_invitations_repo.bulk_update_workspace_invitations.assert_awaited_once()
+
+        assert len(tqmanager.pending_jobs) == 1
         fake_invitations_events.emit_event_when_workspace_invitations_are_created.assert_awaited_once()
 
 

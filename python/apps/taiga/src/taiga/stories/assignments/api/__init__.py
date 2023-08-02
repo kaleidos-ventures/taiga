@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Query, status
+from fastapi import status
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
@@ -39,10 +39,10 @@ DELETE_STORY_ASSIGNMENT = HasPerm("modify_story")
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def create_story_assignment(
+    project_id: B64UUID,
+    ref: int,
     request: AuthRequest,
     form: StoryAssignmentValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    ref: int = Query(None, description="the unique story reference within a project (str)"),
 ) -> StoryAssignment:
     """
     Create a story assignment
@@ -68,10 +68,10 @@ async def create_story_assignment(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_story_assignment(
+    project_id: B64UUID,
+    ref: int,
+    username: str,
     request: AuthRequest,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    ref: int = Query(None, description="the unique story reference within a project (str)"),
-    username: str = Query(None, description="the username of the assigned user"),
 ) -> None:
     """
     Delete a story assignment

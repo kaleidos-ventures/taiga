@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Depends, Query, status
+from fastapi import Depends, status
 from starlette.responses import Response
 from taiga.base.api import AuthRequest, PaginationQuery, responses, set_pagination
 from taiga.base.api.permissions import check_permissions
@@ -48,12 +48,13 @@ REORDER_STORIES_200 = responses.http_status_200(model=ReorderStoriesSerializer)
     name="project.stories.create",
     summary="Create an story",
     responses=STORY_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
 async def create_story(
+    project_id: B64UUID,
+    workflow_slug: str,
     request: AuthRequest,
     form: StoryValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> StoryDetailSerializer:
     """
     Creates a story in the given project workflow
@@ -81,13 +82,14 @@ async def create_story(
     name="project.stories.list",
     summary="List stories",
     responses=LIST_STORY_SUMMARY_200 | ERROR_404 | ERROR_403,
+    response_model=None,
 )
 async def list_stories(
+    project_id: B64UUID,
+    workflow_slug: str,
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> list[StorySummarySerializer]:
     """
     List all the stories for a project workflow
@@ -117,12 +119,9 @@ async def list_stories(
     name="project.stories.get",
     summary="Get story",
     responses=STORY_DETAIL_200 | ERROR_404 | ERROR_403,
+    response_model=None,
 )
-async def get_story(
-    request: AuthRequest,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    ref: int = Query(None, description="the unique story reference within a project (str)"),
-) -> StoryDetailSerializer:
+async def get_story(project_id: B64UUID, ref: int, request: AuthRequest) -> StoryDetailSerializer:
     """
     Get the detailed information of an story.
     """
@@ -142,12 +141,13 @@ async def get_story(
     name="project.stories.update",
     summary="Update story",
     responses=STORY_DETAIL_200 | ERROR_404 | ERROR_403,
+    response_model=None,
 )
 async def update_story(
+    project_id: B64UUID,
+    ref: int,
     request: AuthRequest,
     form: UpdateStoryValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    ref: int = Query(None, description="the unique story reference within a project (str)"),
 ) -> StoryDetailSerializer:
     """
     Update an story from a project.
@@ -178,12 +178,13 @@ async def update_story(
     name="project.stories.reorder",
     summary="Reorder stories",
     responses=REORDER_STORIES_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    response_model=None,
 )
 async def reorder_stories(
+    project_id: B64UUID,
+    workflow_slug: str,
     request: AuthRequest,
     form: ReorderStoriesValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    workflow_slug: str = Query(None, description="the workflow slug (str)"),
 ) -> ReorderStoriesSerializer:
     """
     Reorder one or more stories; it may change priority and/or status
@@ -213,9 +214,9 @@ async def reorder_stories(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_story(
+    project_id: B64UUID,
+    ref: int,
     request: AuthRequest,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    ref: int = Query(None, description="the unique story reference within a project (str)"),
 ) -> None:
     """
     Delete a story

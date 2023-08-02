@@ -24,9 +24,9 @@ async def create_mediafiles(
     def _create_mediafile_objects() -> list[Mediafile]:
         return [
             Mediafile(
-                name=f.filename,
+                name=f.filename or "unknown",
                 size=get_size(f.file),
-                content_type=f.content_type,
+                content_type=f.content_type or "unknown",
                 file=uploadfile_to_file(f),
                 project=project,
                 content_object=object,

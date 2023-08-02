@@ -276,9 +276,9 @@ async def test_update_project_delete_description():
     assert project.name == "Project 1"
     updated_project = await repositories.update_project(
         project,
-        values={"description": None},
+        values={"description": ""},
     )
-    assert updated_project.description is None
+    assert updated_project.description == ""
 
 
 async def test_update_project_delete_logo():

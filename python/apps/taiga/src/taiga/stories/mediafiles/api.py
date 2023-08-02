@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from fastapi import Query, UploadFile
+from fastapi import UploadFile
 from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
@@ -32,12 +32,13 @@ MEDIAFILE_DETAIL_200 = responses.http_status_200(model=MediafileSerializer)
     name="project.story.mediafiles.create",
     summary="Create mediafiles and attach to an story",
     responses=MEDIAFILE_DETAIL_200 | ERROR_403 | ERROR_422 | ERROR_404,
+    response_model=None,
 )
 async def create_story_mediafiles(
+    project_id: B64UUID,
+    ref: int,
     request: AuthRequest,
     files: list[UploadFile],
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    ref: int = Query(None, description="the unique story reference within a project (str)"),
 ) -> list[MediafileSerializer]:
     """
     Add some mediafiles to an story

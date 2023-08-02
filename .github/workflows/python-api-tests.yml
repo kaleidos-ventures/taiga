@@ -23,12 +23,12 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [ '3.10' ]
+        python-version: [ '3.11' ]
         redis-version: [7]
 
     services:
       postgres:
-        image: postgres:13
+        image: postgres:15
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -69,11 +69,6 @@ jobs:
       working-directory: ./python/apps/taiga
       run: |
         python -m taiga i18n compile-catalog
-
-    - name: Create DB migrations
-      working-directory: ./python/apps/taiga
-      run: |
-        python -m taiga db init-migrations
 
     - name: Test with pytest
       working-directory: ./python/apps/taiga

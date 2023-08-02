@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Depends, Query, Response, status
+from fastapi import Depends, Response, status
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api import responses
@@ -59,10 +59,11 @@ PUBLIC_PROJECT_INVITATION_200 = responses.http_status_200(model=PublicProjectInv
     summary="Create project invitations",
     responses=CREATE_PROJECT_INVITATIONS_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
 )
+# TODO: remove "Query" from the "id" parameter
 async def create_project_invitations(
+    id: B64UUID,
     request: AuthRequest,
     form: ProjectInvitationsValidator,
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> CreateProjectInvitationsSerializer:
     """
     Create invitations to a project for a list of users (identified either by their username or their email, and the
@@ -90,10 +91,10 @@ async def create_project_invitations(
     responses=ERROR_404 | ERROR_422 | ERROR_403,
 )
 async def list_project_invitations(
+    id: B64UUID,
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> list[ProjectInvitation]:
     """
     List (pending) project invitations
@@ -121,10 +122,9 @@ async def list_project_invitations(
     name="project.invitations.get",
     summary="Get public information about a project invitation",
     responses=PUBLIC_PROJECT_INVITATION_200 | ERROR_400 | ERROR_404 | ERROR_422,
+    response_model=None,
 )
-async def get_public_project_invitation(
-    token: str = Query(None, description="the project invitation token (str)")
-) -> PublicProjectInvitationSerializer:
+async def get_public_project_invitation(token: str) -> PublicProjectInvitationSerializer:
     """
     Get public information about a project invitation
     """
@@ -148,10 +148,10 @@ async def get_public_project_invitation(
     responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
 )
 async def update_project_invitation(
+    id: UUID,
+    project_id: B64UUID,
     request: AuthRequest,
     form: UpdateProjectInvitationValidator,
-    project_id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    id: UUID = Query(None, description="the invitation id (int)"),
 ) -> ProjectInvitation:
     """
     Update project invitation
@@ -176,9 +176,9 @@ async def update_project_invitation(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def resend_project_invitation(
+    id: B64UUID,
     request: AuthRequest,
     form: ResendProjectInvitationValidator,
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> None:
     """
     Resend invitation to a project
@@ -204,9 +204,9 @@ async def resend_project_invitation(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def revoke_project_invitation(
+    id: B64UUID,
     request: AuthRequest,
     form: RevokeProjectInvitationValidator,
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> None:
     """
     Revoke invitation in a project.
@@ -230,9 +230,7 @@ async def revoke_project_invitation(
     response_model=ProjectInvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def accept_project_invitation_by_token(
-    request: AuthRequest, token: str = Query(None, description="the project invitation token (str)")
-) -> ProjectInvitation:
+async def accept_project_invitation_by_token(request: AuthRequest, token: str) -> ProjectInvitation:
     """
     A user accepts a project invitation using an invitation token
     """
@@ -248,9 +246,7 @@ async def accept_project_invitation_by_token(
     response_model=ProjectInvitationSerializer,
     responses=ERROR_400 | ERROR_404 | ERROR_403,
 )
-async def accept_project_invitation_by_project(
-    request: AuthRequest, id: B64UUID = Query(None, description="the project id (B64UUID)")
-) -> ProjectInvitation:
+async def accept_project_invitation_by_project(id: B64UUID, request: AuthRequest) -> ProjectInvitation:
     """
     An authenticated user accepts a project invitation
     """

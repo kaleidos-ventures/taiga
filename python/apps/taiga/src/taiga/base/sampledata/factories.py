@@ -49,15 +49,16 @@ PROJECT_LOGOS_DIR: Final[Path] = MEDIA_DIR.joinpath("projects")
 
 
 @sync_to_async
-def create_user_with_kwargs(
+def create_user(
     username: str, full_name: str | None = None, email: str | None = None, color: int | None = None
 ) -> User:
-    if not full_name:
-        full_name = fake.name()
-    if not email:
-        email = f"{username}@taiga.demo"
-    color = color or fake.random_int(min=1, max=constants.NUM_USER_COLORS)
-    user = User.objects.create(username=username, email=email, full_name=full_name, color=color, is_active=True)
+    user = User.objects.create(
+        username=username,
+        full_name=full_name or fake.name(),
+        email=email or f"{username}@taiga.demo",
+        color=color or fake.random_int(min=1, max=constants.NUM_USER_COLORS),
+        is_active=True,
+    )
     user.set_password("123123")
     user.save()
     return user
@@ -69,9 +70,11 @@ def create_user_with_kwargs(
 
 
 async def create_workspace(created_by: User, name: str | None = None, color: int | None = None) -> Workspace:
-    name = name or fake.bs()[:35]
-    color = color or fake.random_int(min=1, max=constants.NUM_WORKSPACE_COLORS)
-    return await workspaces_services._create_workspace(name=name, color=color, created_by=created_by)
+    return await workspaces_services._create_workspace(
+        name=name or fake.bs()[:35],
+        color=color or fake.random_int(min=1, max=constants.NUM_WORKSPACE_COLORS),
+        created_by=created_by,
+    )
 
 
 ################################
@@ -235,7 +238,6 @@ async def create_stories(
     # Create story assignments and comments
     story_assignments = []
     async for story in Story.objects.select_related().filter(project=project):
-
         if fake.random_number(digits=2) < constants.PROB_STORY_ASSIGNMENTS.get(
             story.status.name, constants.PROB_STORY_ASSIGNMENTS_DEFAULT
         ):

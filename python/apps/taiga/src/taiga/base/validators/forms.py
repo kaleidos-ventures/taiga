@@ -34,7 +34,19 @@ def as_form(cls: type[BaseModel]) -> type[BaseModel]:
         try:
             return cls(**data)
         except ValidationError as e:
-            raise RequestValidationError(e.raw_errors)
+            raise RequestValidationError(
+                [
+                    {
+                        "type": i.get("type"),
+                        "loc": ("body", i.get("loc")),
+                        "msg": i.get("msg"),
+                        "input": {},
+                        "ctx": {"error": i.get("ctx")},
+                    }
+                    for i in e.errors()
+                ],
+                body=e,
+            ) from e
 
     sig = inspect.signature(_as_form)
     sig = sig.replace(parameters=new_params)

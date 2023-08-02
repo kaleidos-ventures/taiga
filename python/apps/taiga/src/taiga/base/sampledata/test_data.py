@@ -555,11 +555,11 @@ async def _create_scenario_with_invitations() -> None:
 async def _create_scenario_for_searches() -> None:
     # some users
     user800 = await _create_user(800)
-    elettescar = await factories.create_user_with_kwargs(username="elettescar", full_name="Martina Eaton")
-    electra = await factories.create_user_with_kwargs(username="electra", full_name="Sonia Moreno")
-    await factories.create_user_with_kwargs(username="danvers", full_name="Elena Riego")
-    await factories.create_user_with_kwargs(username="storm", full_name="Martina Elliott")
-    await factories.create_user_with_kwargs(username="elmarv", full_name="Joanna Marinari")
+    elettescar = await factories.create_user(username="elettescar", full_name="Martina Eaton")
+    electra = await factories.create_user(username="electra", full_name="Sonia Moreno")
+    await factories.create_user(username="danvers", full_name="Elena Riego")
+    await factories.create_user(username="storm", full_name="Martina Elliott")
+    await factories.create_user(username="elmarv", full_name="Joanna Marinari")
 
     # user800 is member of ws1
     ws1 = await workspaces_services._create_workspace(name="ws for searches(p)", created_by=user800, color=2)
@@ -576,16 +576,16 @@ async def _create_scenario_for_searches() -> None:
 
 async def _create_scenario_for_revoke() -> None:
     # some users
-    user1 = await factories.create_user_with_kwargs(
+    user1 = await factories.create_user(
         username="pruebastaiga1", full_name="Pruebas Taiga 1", email="pruebastaiga+1@gmail.com"
     )
-    user2 = await factories.create_user_with_kwargs(
+    user2 = await factories.create_user(
         username="pruebastaiga2", full_name="Pruebas Taiga 2", email="pruebastaiga+2@gmail.com"
     )
-    user3 = await factories.create_user_with_kwargs(
+    user3 = await factories.create_user(
         username="pruebastaiga3", full_name="Pruebas Taiga 3", email="pruebastaiga+3@gmail.com"
     )
-    user4 = await factories.create_user_with_kwargs(
+    user4 = await factories.create_user(
         username="pruebastaiga4", full_name="Pruebas Taiga 4", email="pruebastaiga+4@gmail.com"
     )
 

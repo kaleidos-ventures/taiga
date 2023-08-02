@@ -7,7 +7,7 @@
 
 from uuid import UUID
 
-from fastapi import Depends, Query, Response, status
+from fastapi import Depends, Response, status
 from taiga.base.api import AuthRequest
 from taiga.base.api import pagination as api_pagination
 from taiga.base.api.pagination import PaginationQuery
@@ -42,10 +42,10 @@ DELETE_PROJECT_MEMBERSHIP = IsProjectAdmin() | IsRelatedToTheUser("user")
     responses=ERROR_404 | ERROR_422,
 )
 async def list_project_memberships(
+    id: B64UUID,
     request: AuthRequest,
     response: Response,
     pagination_params: PaginationQuery = Depends(),
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
 ) -> list[ProjectMembership]:
     """
     List project memberships
@@ -76,10 +76,10 @@ async def list_project_memberships(
     responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
 )
 async def update_project_membership(
+    id: B64UUID,
+    username: str,
     request: AuthRequest,
     form: ProjectMembershipValidator,
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    username: str = Query(None, description="the membership username (str)"),
 ) -> ProjectMembership:
     """
     Update project membership
@@ -103,11 +103,7 @@ async def update_project_membership(
     responses=ERROR_400 | ERROR_404 | ERROR_403,
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_project_membership(
-    request: AuthRequest,
-    id: B64UUID = Query(None, description="the project id (B64UUID)"),
-    username: str = Query(None, description="the membership username (str)"),
-) -> None:
+async def delete_project_membership(id: B64UUID, username: str, request: AuthRequest) -> None:
     """
     Delete a project membership
     """

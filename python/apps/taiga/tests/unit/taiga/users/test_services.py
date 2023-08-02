@@ -192,7 +192,6 @@ async def test_verify_user():
         patch("taiga.users.services.users_repositories", autospec=True) as fake_users_repo,
         patch("taiga.users.services.aware_utcnow") as fake_aware_utcnow,
     ):
-
         fake_aware_utcnow.return_value = now
         await services.verify_user(user=user)
         fake_users_repo.update_user.assert_awaited_with(
@@ -455,7 +454,7 @@ async def test_generate_verify_ok_accept_project_invitation(
     user = f.build_user(is_active=False)
     token = {}
 
-    with (patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken):
+    with patch("taiga.users.services.VerifyUserToken", autospec=True) as FakeVerifyUserToken:
         FakeVerifyUserToken.create_for_object.return_value = token
 
         verify_user_token_str = await services._generate_verify_user_token(

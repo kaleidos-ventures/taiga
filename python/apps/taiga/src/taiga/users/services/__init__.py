@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from typing import cast
 from uuid import UUID
 
 from taiga.auth import services as auth_services
@@ -22,6 +23,7 @@ from taiga.projects.projects.models import Project
 from taiga.tokens import exceptions as tokens_ex
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
+from taiga.users.repositories import UserFilters
 from taiga.users.serializers import UserDeleteInfoSerializer, VerificationInfoSerializer
 from taiga.users.serializers import services as serializers_services
 from taiga.users.services import exceptions as ex
@@ -142,7 +144,7 @@ async def verify_user_from_token(token: str) -> VerificationInfoSerializer:
     await verify_token.denylist()
 
     # Get user and verify it
-    user = await users_repositories.get_user(filters=verify_token.object_data)
+    user = await users_repositories.get_user(filters=cast(UserFilters, verify_token.object_data))
     if not user:
         raise ex.BadVerifyUserTokenError("The user doesn't exist.")
 
@@ -190,13 +192,12 @@ async def list_guests_in_workspace_for_project(
 
 # search users
 async def list_paginated_users_by_text(
+    text: str,
     offset: int,
     limit: int,
-    text: str | None = None,
-    project_id: UUID | None = None,
     workspace_id: UUID | None = None,
+    project_id: UUID | None = None,
 ) -> tuple[Pagination, list[User]]:
-
     if workspace_id:
         total_users = await users_repositories.get_total_workspace_users_by_text(
             text_search=text, workspace_id=workspace_id

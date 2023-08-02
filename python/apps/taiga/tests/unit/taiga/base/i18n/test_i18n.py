@@ -21,7 +21,7 @@ def test_i18n_is_created_with_the_falback_lang():
 
 def test_i18n_is_initialized_with_the_config_lang(override_settings, initialize_template_env):
     settings_lang = "es-ES"
-    with (override_settings({"LANG": settings_lang}), initialize_template_env()):
+    with override_settings({"LANG": settings_lang}), initialize_template_env():
         i18n = I18N()
 
         orig_trans = i18n.translations
@@ -42,7 +42,7 @@ def test_i18n_is_initialized_with_the_config_lang(override_settings, initialize_
 def test_i18n_set_lang(override_settings, initialize_template_env):
     settings_lang = "en-US"
     lang = "es-ES"
-    with (override_settings({"LANG": settings_lang}), initialize_template_env()):
+    with override_settings({"LANG": settings_lang}), initialize_template_env():
         i18n = I18N()
         i18n.initialize()
 
@@ -65,7 +65,7 @@ def test_i18n_set_lang_with_invalid_identifier(override_settings, initialize_tem
     settings_lang = "en-US"
     invalid_lang = "invalid"
 
-    with (override_settings({"LANG": settings_lang}), initialize_template_env()):
+    with override_settings({"LANG": settings_lang}), initialize_template_env():
         i18n = I18N()
         i18n.initialize()
 

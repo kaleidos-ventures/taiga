@@ -200,7 +200,6 @@ async def _calculate_offset(
     reorder_place: str | None = None,
     reorder_story: Story | None = None,
 ) -> tuple[Decimal, Decimal]:
-
     total_slots = total_stories_to_reorder + 1
 
     if not reorder_story:

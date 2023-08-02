@@ -59,10 +59,10 @@ def test_wbr_split_with_custom_size(text, size, result):
 @pytest.mark.parametrize(
     "value, result",
     [
-        ("2022-06-22T14:53:07.351464+02:00", "June 22, 2022 at 2:53:07 PM +0200"),
+        ("2022-06-22T14:53:07.351464+02:00", "June 22, 2022, 2:53:07 PM +0200"),
         (
             datetime(2022, 6, 22, 14, 53, 7, 351464, tzinfo=timezone(timedelta(hours=2))),
-            "June 22, 2022 at 2:53:07 PM +0200",
+            "June 22, 2022, 2:53:07 PM +0200",
         ),
     ],
 )
@@ -85,17 +85,17 @@ def test_format_datetime_with_default_format(value, result):
         (
             "2022-06-22T14:53:07.351464+02:00",
             "long",
-            "June 22, 2022 at 2:53:07 PM +0200",
+            "June 22, 2022, 2:53:07 PM +0200",
         ),
         (
             datetime(2022, 6, 22, 14, 53, 7, 351464, tzinfo=timezone(timedelta(hours=2))),
-            "yyyy.MM.dd G 'at' HH:mm:ss zzz",
-            "2022.06.22 AD at 14:53:07 +0200",
+            "yyyy.MM.dd G HH:mm:ss zzz",
+            "2022.06.22 AD 14:53:07 +0200",
         ),
         (
             datetime(2022, 6, 22, 14, 53, 7, 351464, tzinfo=timezone(timedelta(hours=2))),
             "short",
-            "6/22/22, 2:53 PM",
+            "6/22/22, 2:53 PM",
         ),
     ],
 )

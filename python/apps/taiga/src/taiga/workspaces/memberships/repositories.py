@@ -56,11 +56,7 @@ def _apply_select_related_to_queryset(
     return qs.select_related(*select_related)
 
 
-WorkspaceMembershipOrderBy = list[
-    Literal[
-        "full_name",
-    ]
-]
+WorkspaceMembershipOrderBy = list[Literal["full_name",]]
 
 
 def _apply_order_by_to_queryset(

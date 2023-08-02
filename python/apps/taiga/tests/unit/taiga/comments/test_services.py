@@ -86,7 +86,6 @@ async def test_list_comments():
     total_objs = 2
 
     with (patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,):
-
         fake_comments_repositories.list_comments.return_value = comments
         fake_comments_repositories.get_total_comments.side_effect = [total, total_objs]
         pagination, total_comments, comments_list = await services.list_paginated_comments(

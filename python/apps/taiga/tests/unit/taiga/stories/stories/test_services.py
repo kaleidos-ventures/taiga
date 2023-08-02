@@ -76,7 +76,6 @@ async def test_create_story_invalid_status():
         pytest.raises(ex.InvalidStatusError),
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
     ):
-
         fake_workflows_repo.get_workflow_status.return_value = None
         await services.create_story(
             project=story.project,
@@ -263,7 +262,7 @@ async def test_update_story_error_wrong_version():
         fake_validate_and_process.return_value = values
         fake_stories_repo.update_story.return_value = False
 
-        with (pytest.raises(ex.UpdatingStoryWithWrongVersionError)):
+        with pytest.raises(ex.UpdatingStoryWithWrongVersionError):
             await services.update_story(story=story, current_version=story.version, values=values)
         fake_validate_and_process.assert_awaited_once_with(
             story=story,
@@ -391,7 +390,7 @@ async def test_validate_and_process_values_to_update_error_wrong_status():
     ):
         fake_workflows_repo.get_workflow_status.return_value = None
 
-        with (pytest.raises(ex.InvalidStatusError)):
+        with pytest.raises(ex.InvalidStatusError):
             await services._validate_and_process_values_to_update(story=story, values=values)
 
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(

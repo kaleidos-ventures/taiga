@@ -16,12 +16,15 @@ from taiga.emails.tasks import send_email
 from taiga.projects.invitations import services as project_invitations_services
 from taiga.users import repositories as users_repositories
 from taiga.users import services as users_services
+from taiga.users.models import User
 from taiga.workspaces.invitations import services as workspace_invitations_services
 
 
 async def social_login(
     email: str, full_name: str, social_key: str, social_id: str, bio: str, lang: str | None = None
 ) -> AccessTokenWithRefreshSerializer:
+    user: User | None = None
+
     # check if the user exists and already has social login with the requested system
     auth_data = await users_repositories.get_auth_data(filters={"key": social_key, "value": social_id})
     if auth_data:
@@ -30,6 +33,7 @@ async def social_login(
         # check if the user exists (without social login yet)
         user = await users_repositories.get_user(filters={"email": email})
         lang = lang if lang else settings.LANG
+
         if not user:
             # create a new user with social login data and verify it
             color = generate_random_color()
@@ -39,18 +43,18 @@ async def social_login(
             await users_services.verify_user(user)
             await project_invitations_services.update_user_projects_invitations(user=user)
             await workspace_invitations_services.update_user_workspaces_invitations(user=user)
-        elif user and not user.is_active:
+        elif not user.is_active:
             # update existing (but not verified) user with social login data and verify it
             # username and email are the same
             # but full_name is got from social login, and previous password is deleted
             user.full_name = full_name
-            user.password = None
+            user.password = ""
             user.lang = lang
             user = await users_repositories.update_user(user=user)
             await users_services.verify_user(user)
             await project_invitations_services.update_user_projects_invitations(user=user)
             await workspace_invitations_services.update_user_workspaces_invitations(user=user)
-        elif user:
+        else:
             # the user existed and now is adding a new login method
             # so we send her a warning email
             await send_social_login_warning_email(

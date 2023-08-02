@@ -165,7 +165,7 @@ async def test_delete_workspace_latest_membership():
 ##########################################################
 
 
-async def test_get_workspace_role_admin():
+async def test_get_workspace_role_name_with_admin_user():
     workspace_id = uuid1()
     user_id = uuid1()
     with (
@@ -182,7 +182,7 @@ async def test_get_workspace_role_admin():
         assert ret is WS_ROLE_NAME_MEMBER
 
 
-async def test_get_workspace_role_name_guest():
+async def test_get_workspace_role_name_with_guest_user():
     workspace_id = uuid1()
     user_id = uuid1()
     with (
@@ -201,20 +201,12 @@ async def test_get_workspace_role_name_guest():
             filters={"workspace_id": workspace_id, "user_id": user_id}
         )
         fake_pj_memberships_repo.exist_project_membership.assert_awaited_once_with(
-            filters={"user_id": user_id, "project__workspace_id": workspace_id}
+            filters={"user_id": user_id, "workspace_id": workspace_id}
         )
         assert ret is WS_ROLE_NAME_GUEST
 
 
-async def test_get_workspace_role_no_user():
-    workspace_id = uuid1()
-    user_id = None
-    ret = await services.get_workspace_role_name(workspace_id=workspace_id, user_id=user_id)
-
-    assert ret is WS_ROLE_NAME_NONE
-
-
-async def test_get_workspace_role_not_a_member():
+async def test_get_workspace_role_name_with_no_related_user():
     workspace_id = uuid1()
     user_id = uuid1()
     with (
@@ -233,6 +225,14 @@ async def test_get_workspace_role_not_a_member():
             filters={"workspace_id": workspace_id, "user_id": user_id}
         )
         fake_pj_memberships_repo.exist_project_membership.assert_awaited_once_with(
-            filters={"user_id": user_id, "project__workspace_id": workspace_id}
+            filters={"user_id": user_id, "workspace_id": workspace_id}
         )
         assert ret is WS_ROLE_NAME_NONE
+
+
+async def test_get_workspace_role_name_with_no_user():
+    workspace_id = uuid1()
+    user_id = None
+    ret = await services.get_workspace_role_name(workspace_id=workspace_id, user_id=user_id)
+
+    assert ret is WS_ROLE_NAME_NONE

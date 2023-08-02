@@ -45,7 +45,7 @@ async def list_paginated_project_memberships(
 ##########################################################
 
 
-async def get_project_membership(project_id: UUID, username: str) -> ProjectMembership:
+async def get_project_membership(project_id: UUID, username: str) -> ProjectMembership | None:
     return await memberships_repositories.get_project_membership(
         filters={"project_id": project_id, "username": username},
         select_related=["user", "role", "project", "project__workspace"],
@@ -58,8 +58,8 @@ async def get_project_membership(project_id: UUID, username: str) -> ProjectMemb
 
 
 async def update_project_membership(membership: ProjectMembership, role_slug: str) -> ProjectMembership:
-    project_role = await (
-        pj_roles_repositories.get_project_role(filters={"project_id": membership.project_id, "slug": role_slug})
+    project_role = await pj_roles_repositories.get_project_role(
+        filters={"project_id": membership.project_id, "slug": role_slug}
     )
 
     if not project_role:
@@ -127,10 +127,8 @@ async def delete_project_membership(
 
 
 async def _is_membership_the_only_admin(membership_role: ProjectRole) -> bool:
-    if membership_role.is_admin:
-        num_admins = await memberships_repositories.get_total_project_memberships(
-            filters={"role_id": membership_role.id}
-        )
-        return True if num_admins == 1 else False
-    else:
+    if not membership_role.is_admin:
         return False
+
+    num_admins = await memberships_repositories.get_total_project_memberships(filters={"role_id": membership_role.id})
+    return num_admins == 1

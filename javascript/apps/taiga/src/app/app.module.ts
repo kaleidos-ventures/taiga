@@ -45,6 +45,8 @@ import { TranslocoRootModule } from './transloco/transloco-root.module';
 import { LanguageService } from './services/language/language.service';
 import { A11yModule } from '@angular/cdk/a11y';
 import { BannerComponent } from '~/app/shared/banner/banner.component';
+import { RxLet } from '@rx-angular/template/let';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -105,6 +107,8 @@ export function prefersReducedMotion(): boolean {
     TranslocoRootModule,
     A11yModule,
     BannerComponent,
+    RxLet,
+    ResizedDirective,
   ],
   bootstrap: [AppComponent],
   providers: [

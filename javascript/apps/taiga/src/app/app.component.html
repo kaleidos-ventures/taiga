@@ -6,26 +6,28 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 -->
 
-<tui-root [class.no-header]="(header$ | async) === false">
-  <ng-container *transloco="let t">
-    <tg-banner
-      *ngIf="globalBannerActivated"
-      status="warning"
-      textPosition="center"
-      icon="banner-icon">
-      <ng-container text>
-        {{ t('banner.alpha') }}
-      </ng-container>
-    </tg-banner>
-    <div
-      class="app-content"
-      [class.banner]="globalBannerActivated">
-      <tg-navigation *ngIf="header$ | async"></tg-navigation>
-      <div
-        aria-labelledby="main-area-title"
-        id="fallback-main-area-focus">
-        <router-outlet></router-outlet>
+<ng-container *rxLet="header$; let header">
+  <tui-root [class.no-header]="!header">
+    <ng-container *transloco="let t">
+      <tg-banner
+        *ngIf="globalBannerActivated"
+        (resized)="setBannerHeight()"
+        class="global-banner"
+        status="warning"
+        textPosition="center"
+        icon="banner-icon">
+        <ng-container text>
+          {{ t('banner.alpha') }}
+        </ng-container>
+      </tg-banner>
+      <div class="app-content">
+        <tg-navigation *ngIf="header"></tg-navigation>
+        <div
+          aria-labelledby="main-area-title"
+          id="fallback-main-area-focus">
+          <router-outlet></router-outlet>
+        </div>
       </div>
-    </div>
-  </ng-container>
-</tui-root>
+    </ng-container>
+  </tui-root>
+</ng-container>

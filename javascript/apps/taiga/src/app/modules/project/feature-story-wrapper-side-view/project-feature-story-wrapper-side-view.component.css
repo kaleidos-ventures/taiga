@@ -18,7 +18,7 @@ Copyright (c) 2023-present Kaleidos INC
   box-shadow: -4px 4px 8px var(--color-box-shadow);
   display: flex;
   inline-size: 500px;
-  max-block-size: calc(100vh - var(--header-height));
+  max-block-size: calc(100vh - var(--header-height) - var(--banner-height));
   position: relative;
   transition: border-inline-start 0.3s ease-in, box-shadow 0.3s ease-in;
 

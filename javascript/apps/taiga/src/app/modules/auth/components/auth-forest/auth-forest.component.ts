@@ -7,7 +7,6 @@
  */
 
 import { Component } from '@angular/core';
-import { ConfigService } from '@taiga/core';
 
 @Component({
   selector: 'tg-auth-forest',
@@ -15,10 +14,4 @@ import { ConfigService } from '@taiga/core';
   templateUrl: './auth-forest.component.html',
   styleUrls: ['./auth-forest.component.css'],
 })
-export class AuthForestComponent {
-  constructor(private config: ConfigService) {}
-
-  public get globalBannerActivated() {
-    return this.config.globalBanner;
-  }
-}
+export class AuthForestComponent {}

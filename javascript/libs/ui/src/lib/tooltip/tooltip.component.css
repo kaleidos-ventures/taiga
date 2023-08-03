@@ -1,0 +1,113 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@define-mixin pointer {
+  aspect-ratio: 1;
+  background: inherit;
+  block-size: var(--spacing-8);
+  content: "";
+  inset-block-start: 0;
+  position: absolute;
+}
+
+/* this extra space prevent the tooltip from hidding */
+@define-mixin spaceBetweenContent {
+  content: "";
+  inset-inline-end: 0;
+  inset-inline-start: 0;
+  position: absolute;
+}
+
+:host {
+  --tooltip-color: var(--color-white);
+  --tooltip-background-color: var(--color-gray100);
+  --tooltip-radius: 4px;
+  --arrow-position: var(--spacing-16);
+  --empty-space-with-trigger: var(--spacing-12);
+  --max-width: 300px;
+
+  max-inline-size: var(--max-width);
+  pointer-events: none;
+
+  &.pointer-events {
+    pointer-events: auto;
+  }
+
+  &[class*="bottom"] {
+    &::before {
+      @mixin spaceBetweenContent;
+
+      inset-block-end: 0;
+      inset-block-start: calc(var(--empty-space-with-trigger) * -1);
+    }
+
+    & .container {
+      &::before {
+        @mixin pointer;
+
+        inset-block-end: initial;
+        inset-block-start: 0;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+    }
+  }
+
+  &[class*="top"] {
+    &::before {
+      @mixin spaceBetweenContent;
+
+      inset-block-end: calc(var(--empty-space-with-trigger) * -1);
+      inset-block-start: 0;
+    }
+
+    & .container {
+      &::before {
+        @mixin pointer;
+
+        inset-block-end: var(--spacing-4);
+        inset-block-start: initial;
+        transform: translate(-50%, 100%) rotate(45deg);
+      }
+    }
+  }
+
+  &.bottom,
+  &.top {
+    .container::before {
+      inset-inline-start: calc(50% - var(--spacing-8) / 2);
+    }
+  }
+
+  &.bottom-left,
+  &.top-left {
+    .container::before {
+      inset-inline-start: calc(100% - var(--arrow-position));
+    }
+  }
+
+  &.bottom-right,
+  &.top-right {
+    .container::before {
+      inset-inline-start: var(--arrow-position);
+    }
+  }
+}
+
+.container {
+  background-color: var(--tooltip-background-color);
+  border-radius: var(--tooltip-radius);
+  color: var(--tooltip-color);
+  padding-block: var(--spacing-12);
+  padding-inline: var(--spacing-16);
+  position: relative;
+
+  & p {
+    white-space: pre-line;
+    word-wrap: break-word;
+  }
+}

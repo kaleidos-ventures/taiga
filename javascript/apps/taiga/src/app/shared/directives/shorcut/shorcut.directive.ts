@@ -30,6 +30,9 @@ export class ShortcutDirective implements OnChanges, OnInit, OnDestroy {
   public tgShortcut!: typeof ShortcutsService.shortcuts[number]['task'];
 
   @Input()
+  public scope?: string;
+
+  @Input()
   public tgShortcutActive = true;
 
   @Output()
@@ -42,8 +45,10 @@ export class ShortcutDirective implements OnChanges, OnInit, OnDestroy {
       (scopes) => scopes.task === this.tgShortcut
     );
 
-    if (task) {
-      this.shortcutsService.setScope(task.scope);
+    const scope = task?.scope ?? this.scope;
+
+    if (scope) {
+      this.shortcutsService.setScope(scope);
     }
   }
 
@@ -52,8 +57,10 @@ export class ShortcutDirective implements OnChanges, OnInit, OnDestroy {
       (scopes) => scopes.task === this.tgShortcut
     );
 
-    if (task) {
-      this.shortcutsService.undoScope(task.scope);
+    const scope = task?.scope ?? this.scope;
+
+    if (scope) {
+      this.shortcutsService.undoScope(scope);
     }
   }
 

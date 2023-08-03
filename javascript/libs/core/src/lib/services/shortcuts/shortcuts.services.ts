@@ -27,18 +27,24 @@ export class ShortcutsService {
 
   public scopes: string[] = [];
 
-  public task(taskName: string, options: Parameters<typeof hotkeys>[1] = {}) {
+  public task(
+    taskName: string,
+    options: Parameters<typeof hotkeys>[1] = {},
+    scope?: string
+  ) {
     const subject = new Subject<{
       event: KeyboardEvent;
       handler: HotkeysEvent;
     }>();
+
     const shortcut = shortcuts.find((it) => it.task === taskName);
+    const scopeName = shortcut?.scope ?? scope ?? 'all';
 
     if (shortcut) {
       hotkeys(
         shortcut.defaultKey,
         {
-          scope: shortcut.scope,
+          scope: scopeName,
           ...options,
         },
         (event, handler) => {
@@ -55,7 +61,7 @@ export class ShortcutsService {
 
       return subject.pipe(
         finalize(() => {
-          hotkeys.unbind(shortcut.defaultKey, shortcut.scope);
+          hotkeys.unbind(shortcut.defaultKey, scopeName);
         }),
         share()
       );

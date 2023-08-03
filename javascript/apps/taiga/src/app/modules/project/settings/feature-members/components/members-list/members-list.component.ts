@@ -9,10 +9,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  AfterContentInit,
   HostListener,
   ElementRef,
   ViewChild,
+  ChangeDetectorRef,
+  inject,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -36,7 +37,7 @@ import {
   removeCell,
   showUndo,
   undoDone,
-  slideInOut,
+  conSlideInOut,
 } from '~/app/shared/utils/animations';
 import { filterNil } from '~/app/shared/utils/operators';
 
@@ -53,9 +54,9 @@ interface MemberData {
   styleUrls: ['./members-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
-  animations: [removeCell, showUndo, undoDone, slideInOut],
+  animations: [removeCell, showUndo, undoDone, conSlideInOut],
 })
-export class MembersListComponent implements AfterContentInit {
+export class MembersListComponent {
   @ViewChild('undoButton', { read: ElementRef, static: false })
   public undoButton!: ElementRef<HTMLElement>;
 
@@ -74,6 +75,8 @@ export class MembersListComponent implements AfterContentInit {
 
     return true;
   }
+
+  public cd = inject(ChangeDetectorRef);
 
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public activeMemberList: string[] = [];
@@ -124,6 +127,17 @@ export class MembersListComponent implements AfterContentInit {
     ReturnType<typeof setTimeout>
   >();
 
+  private _animationStatus: 'enabled' | 'disabled' = 'disabled';
+
+  public get animationStatus(): 'enabled' | 'disabled' {
+    return this._animationStatus;
+  }
+
+  public set animationStatus(value: 'enabled' | 'disabled') {
+    this._animationStatus = value;
+    this.cd.detectChanges();
+  }
+
   constructor(
     private store: Store,
     private state: RxState<{
@@ -164,6 +178,8 @@ export class MembersListComponent implements AfterContentInit {
   }
 
   public next() {
+    this.animationStatus = 'disabled';
+
     this.store.dispatch(
       membersActions.setMembersPage({
         offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
@@ -173,18 +189,14 @@ export class MembersListComponent implements AfterContentInit {
   }
 
   public prev() {
+    this.animationStatus = 'disabled';
+
     this.store.dispatch(
       membersActions.setMembersPage({
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
         showLoading: false,
       })
     );
-  }
-
-  public ngAfterContentInit() {
-    setTimeout(() => {
-      this.animationDisabled = false;
-    }, 1000);
   }
 
   public trackByUsername(_index: number, member: MemberData) {
@@ -213,6 +225,8 @@ export class MembersListComponent implements AfterContentInit {
   }
 
   public onConfirmRemoveMember(isSelfUserLeaving: boolean, member: Membership) {
+    this.animationStatus = 'enabled';
+
     this.store.dispatch(membersActions.cancelRemoveMemberUI({ member }));
     this.removePendingConfirmTimeouts.set(
       member,

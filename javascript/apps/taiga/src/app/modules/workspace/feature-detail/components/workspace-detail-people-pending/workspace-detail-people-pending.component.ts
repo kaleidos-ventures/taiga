@@ -8,9 +8,10 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
-  AfterContentInit,
+  inject,
 } from '@angular/core';
 import { InvitationWorkspaceMember, Workspace, User } from '@taiga/data';
 import { RxState } from '@rx-angular/state';
@@ -26,7 +27,7 @@ import {
   selectInvitationsOffset,
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
-import { slideInOut } from '~/app/shared/utils/animations';
+import { conSlideInOut } from '~/app/shared/utils/animations';
 
 @Component({
   selector: 'tg-workspace-detail-people-pending',
@@ -34,11 +35,10 @@ import { slideInOut } from '~/app/shared/utils/animations';
   styleUrls: ['./workspace-detail-people-pending.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
-  animations: [slideInOut],
+  animations: [conSlideInOut],
 })
-export class WorkspaceDetailPeoplePendingComponent
-  implements OnInit, AfterContentInit
-{
+export class WorkspaceDetailPeoplePendingComponent implements OnInit {
+  public cd = inject(ChangeDetectorRef);
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public model$ = this.state.select().pipe(
     map((model) => {
@@ -60,7 +60,17 @@ export class WorkspaceDetailPeoplePendingComponent
       };
     })
   );
-  public animationDisabled = true;
+
+  private _animationStatus: 'enabled' | 'disabled' = 'disabled';
+
+  public get animationStatus(): 'enabled' | 'disabled' {
+    return this._animationStatus;
+  }
+
+  public set animationStatus(value: 'enabled' | 'disabled') {
+    this._animationStatus = value;
+    this.cd.detectChanges();
+  }
 
   constructor(
     private state: RxState<{
@@ -87,12 +97,6 @@ export class WorkspaceDetailPeoplePendingComponent
     );
   }
 
-  public ngAfterContentInit() {
-    setTimeout(() => {
-      this.animationDisabled = false;
-    }, 1000);
-  }
-
   public trackByIndex(index: number) {
     return index;
   }
@@ -105,6 +109,7 @@ export class WorkspaceDetailPeoplePendingComponent
   }
 
   public next() {
+    this.animationStatus = 'disabled';
     this.store.dispatch(
       workspaceDetailApiActions.getWorkspaceMemberInvitations({
         id: this.state.get('workspace')!.id,
@@ -114,6 +119,7 @@ export class WorkspaceDetailPeoplePendingComponent
   }
 
   public prev() {
+    this.animationStatus = 'disabled';
     this.store.dispatch(
       workspaceDetailApiActions.getWorkspaceMemberInvitations({
         id: this.state.get('workspace')!.id,

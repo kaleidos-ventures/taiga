@@ -30,7 +30,7 @@ Copyright (c) 2023-present Kaleidos INC
               transparent: invitation.cancelled === 'active',
               active: vm.revokeDialogDisplay === invitation.data.email
             }"
-            [@.disabled]="vm.animationDisabled"
+            [@.disabled]="animationStatus === 'disabled'"
             [@settingInvitationAnimation]="vm.invitationUpdateAnimation"
             (@settingInvitationAnimation.done)="
               invitationAnimationUpdateDone($event)

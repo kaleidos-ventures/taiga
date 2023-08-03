@@ -61,6 +61,34 @@ export const slideInOut = trigger('slideInOut', [
   ]),
 ]);
 
+/** Conditional animation */
+export const conSlideInOut = trigger('conSlideInOut', [
+  transition('void => disabled', []),
+  transition('void => enabled', [
+    style({
+      blockSize: '0',
+      opacity: '0',
+    }),
+    animate(
+      '200ms ease-in',
+      style({
+        blockSize: '*',
+        opacity: '1',
+      })
+    ),
+  ]),
+  transition('disabled => void', []),
+  transition('enabled => void', [
+    animate(
+      '200ms ease-in',
+      style({
+        blockSize: '0',
+        opacity: '0',
+      })
+    ),
+  ]),
+]);
+
 export const slideInOut400 = trigger('slideInOut', [
   transition(':enter', [
     style({

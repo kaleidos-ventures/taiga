@@ -82,7 +82,6 @@ Copyright (c) 2023-present Kaleidos INC
                 [class.active-dialog]="dialog.type === 'overview'"
                 [routerLink]="['/project', project.id, project.slug]"
                 routerLinkActive
-                [state]="{ ignoreNextMainFocus: true }"
                 #overviewActive="routerLinkActive"
                 [routerLinkActiveOptions]="{ exact: true }">
                 <tui-svg
@@ -117,7 +116,6 @@ Copyright (c) 2023-present Kaleidos INC
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'kanban'"
                 [routerLink]="['/project', project.id, project.slug, 'kanban']"
-                [state]="{ ignoreNextMainFocus: true }"
                 routerLinkActive
                 #kanbanActive="routerLinkActive">
                 <tui-svg

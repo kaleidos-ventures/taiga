@@ -471,12 +471,7 @@ export class StoryDetailComponent {
     void this.router.navigateByUrl(
       `project/${this.state.get('project').id}/${
         this.state.get('project').slug
-      }/kanban`,
-      {
-        state: {
-          ignoreNextMainFocus: true,
-        },
-      }
+      }/kanban`
     );
     if (ref) {
       requestAnimationFrame(() => {

@@ -15,6 +15,7 @@ import {
 } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -183,6 +184,17 @@ export class PendingMembersListComponent {
     ReturnType<typeof setTimeout>
   >();
 
+  private _animationStatus: 'enabled' | 'disabled' = 'disabled';
+
+  public get animationStatus(): 'enabled' | 'disabled' {
+    return this._animationStatus;
+  }
+
+  public set animationStatus(value: 'enabled' | 'disabled') {
+    this._animationStatus = value;
+    this.cd.detectChanges();
+  }
+
   constructor(
     private store: Store,
     private state: RxState<{
@@ -198,7 +210,8 @@ export class PendingMembersListComponent {
       cancelled: string[];
       undo: string[];
       roles: Role[];
-    }>
+    }>,
+    private cd: ChangeDetectorRef
   ) {
     this.state.connect('invitations', this.store.select(selectInvitations));
     this.state.connect('loading', this.store.select(selectInvitationsLoading));
@@ -245,6 +258,8 @@ export class PendingMembersListComponent {
   }
 
   public next() {
+    this.animationStatus = 'disabled';
+
     this.store.dispatch(
       membersActions.setPendingPage({
         offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
@@ -254,6 +269,8 @@ export class PendingMembersListComponent {
   }
 
   public prev() {
+    this.animationStatus = 'disabled';
+
     this.store.dispatch(
       membersActions.setPendingPage({
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
@@ -291,6 +308,8 @@ export class PendingMembersListComponent {
   }
 
   public onOpenRevokeInvitation(invitation: Invitation) {
+    this.animationStatus = 'enabled';
+
     this.store.dispatch(membersActions.openRevokeInvitation({ invitation }));
   }
 
@@ -305,6 +324,8 @@ export class PendingMembersListComponent {
   }
 
   public onConfirmCancelInvitation(invitation: Invitation) {
+    this.animationStatus = 'enabled';
+
     this.store.dispatch(membersActions.cancelInvitationUI({ invitation }));
 
     this.revokePendingConfirmTimeouts.set(
@@ -351,6 +372,8 @@ export class PendingMembersListComponent {
   }
 
   private execCancelInvitation(invitation: Invitation) {
+    this.animationStatus = 'enabled';
+
     this.store.dispatch(membersActions.revokeInvitation({ invitation }));
     this.clearInvitationToCancel(invitation);
   }

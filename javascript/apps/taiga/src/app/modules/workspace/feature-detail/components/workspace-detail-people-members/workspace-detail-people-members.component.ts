@@ -11,7 +11,8 @@ import {
   Component,
   HostListener,
   OnInit,
-  AfterContentInit,
+  ChangeDetectorRef,
+  inject,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -32,10 +33,10 @@ import {
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 import { filterNil } from '~/app/shared/utils/operators';
 import {
-  slideInOut,
   removeCell,
   showUndo,
   undoDone,
+  conSlideInOut,
 } from '~/app/shared/utils/animations';
 
 @Component({
@@ -44,11 +45,9 @@ import {
   styleUrls: ['./workspace-detail-people-members.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
-  animations: [slideInOut, removeCell, showUndo, undoDone],
+  animations: [removeCell, showUndo, undoDone, conSlideInOut],
 })
-export class WorkspaceDetailPeopleMembersComponent
-  implements OnInit, AfterContentInit
-{
+export class WorkspaceDetailPeopleMembersComponent implements OnInit {
   @HostListener('window:beforeunload')
   public removePendingMembers() {
     if (this.removeMemberConfirmTimeouts.size) {
@@ -62,6 +61,8 @@ export class WorkspaceDetailPeopleMembersComponent
     }
     return true;
   }
+
+  public cd = inject(ChangeDetectorRef);
 
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public model$ = this.state.select().pipe(
@@ -107,12 +108,22 @@ export class WorkspaceDetailPeopleMembersComponent
       };
     })
   );
-  public animationDisabled = true;
 
   private removeMemberConfirmTimeouts = new Map<
     WorkspaceMembership['user']['username'],
     ReturnType<typeof setTimeout>
   >();
+
+  private _animationStatus: 'enabled' | 'disabled' = 'disabled';
+
+  public get animationStatus(): 'enabled' | 'disabled' {
+    return this._animationStatus;
+  }
+
+  public set animationStatus(value: 'enabled' | 'disabled') {
+    this._animationStatus = value;
+    this.cd.detectChanges();
+  }
 
   constructor(
     private state: RxState<{
@@ -147,12 +158,6 @@ export class WorkspaceDetailPeopleMembersComponent
     );
   }
 
-  public ngAfterContentInit() {
-    setTimeout(() => {
-      this.animationDisabled = false;
-    }, 1000);
-  }
-
   public trackByIndex(index: number) {
     return index;
   }
@@ -162,6 +167,8 @@ export class WorkspaceDetailPeopleMembersComponent
   }
 
   public next() {
+    this.animationStatus = 'disabled';
+
     this.store.dispatch(
       workspaceActions.setWorkspaceMembersPage({
         offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
@@ -170,6 +177,8 @@ export class WorkspaceDetailPeopleMembersComponent
   }
 
   public prev() {
+    this.animationStatus = 'disabled';
+
     this.store.dispatch(
       workspaceActions.setWorkspaceMembersPage({
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
@@ -214,6 +223,8 @@ export class WorkspaceDetailPeopleMembersComponent
   }
 
   public execRemoveMember(member: WorkspaceMembership) {
+    this.animationStatus = 'enabled';
+
     this.store.dispatch(
       workspaceDetailApiActions.removeMember({
         id: this.state.get('workspace')!.id,

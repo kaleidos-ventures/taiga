@@ -7,10 +7,11 @@
  */
 
 import {
-  AfterContentInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
+  inject,
 } from '@angular/core';
 import { WorkspaceMembership, Workspace } from '@taiga/data';
 import { RxState } from '@rx-angular/state';
@@ -27,7 +28,7 @@ import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/worksp
 import { map } from 'rxjs/operators';
 import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import { invitationWorkspaceActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
-import { slideInOut } from '~/app/shared/utils/animations';
+import { conSlideInOut } from '~/app/shared/utils/animations';
 
 @Component({
   selector: 'tg-workspace-detail-people-non-members',
@@ -35,11 +36,10 @@ import { slideInOut } from '~/app/shared/utils/animations';
   styleUrls: ['./workspace-detail-people-non-members.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
-  animations: [slideInOut],
+  animations: [conSlideInOut],
 })
-export class WorkspaceDetailPeopleNonMembersComponent
-  implements OnInit, AfterContentInit
-{
+export class WorkspaceDetailPeopleNonMembersComponent implements OnInit {
+  public cd = inject(ChangeDetectorRef);
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public model$ = this.state.select().pipe(
     map((model) => {
@@ -55,7 +55,17 @@ export class WorkspaceDetailPeopleNonMembersComponent
       };
     })
   );
-  public animationDisabled = true;
+
+  private _animationStatus: 'enabled' | 'disabled' = 'disabled';
+
+  public get animationStatus(): 'enabled' | 'disabled' {
+    return this._animationStatus;
+  }
+
+  public set animationStatus(value: 'enabled' | 'disabled') {
+    this._animationStatus = value;
+    this.cd.detectChanges();
+  }
 
   constructor(
     private state: RxState<{
@@ -79,17 +89,12 @@ export class WorkspaceDetailPeopleNonMembersComponent
     );
   }
 
-  public ngAfterContentInit() {
-    setTimeout(() => {
-      this.animationDisabled = false;
-    }, 1000);
-  }
-
   public trackByIndex(index: number) {
     return index;
   }
 
   public inviteToWorkspace(email: string) {
+    this.animationStatus = 'enabled';
     this.store.dispatch(
       invitationWorkspaceActions.inviteUsers({
         id: this.state.get('workspace')!.id,
@@ -99,6 +104,7 @@ export class WorkspaceDetailPeopleNonMembersComponent
   }
 
   public next() {
+    this.animationStatus = 'disabled';
     this.store.dispatch(
       workspaceDetailApiActions.getWorkspaceNonMembers({
         id: this.state.get('workspace')!.id,
@@ -108,6 +114,7 @@ export class WorkspaceDetailPeopleNonMembersComponent
   }
 
   public prev() {
+    this.animationStatus = 'disabled';
     this.store.dispatch(
       workspaceDetailApiActions.getWorkspaceNonMembers({
         id: this.state.get('workspace')!.id,

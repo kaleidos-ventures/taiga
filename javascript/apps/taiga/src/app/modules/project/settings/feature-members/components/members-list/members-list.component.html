@@ -26,8 +26,7 @@ Copyright (c) 2023-present Kaleidos INC
         <ng-container
           *ngFor="let member of vm.members; trackBy: trackByUsername">
           <tg-ui-dtable-row
-            [@.disabled]="animationDisabled"
-            [@slideInOut]
+            [@conSlideInOut]="animationStatus"
             [ngClass]="{
               transparent: member.cancelled === 'active',
               active: activeMemberList.includes(member.data.user.username)

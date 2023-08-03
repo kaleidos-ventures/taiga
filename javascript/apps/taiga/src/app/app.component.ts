@@ -14,14 +14,7 @@ import { Store } from '@ngrx/store';
 import { selectLanguages } from '@taiga/core';
 import { User } from '@taiga/data';
 import { Observable, of } from 'rxjs';
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  share,
-  skip,
-  switchMap,
-} from 'rxjs/operators';
+import { filter, map, share, switchMap } from 'rxjs/operators';
 import { WsService } from '~/app/services/ws';
 import { setUser } from './modules/auth/data-access/+state/actions/auth.actions';
 import { selectUser } from './modules/auth/data-access/+state/selectors/auth.selectors';
@@ -83,32 +76,6 @@ export class AppComponent {
     if (user) {
       this.store.dispatch(setUser({ user }));
     }
-
-    this.router.events
-      .pipe(
-        filter((evt): evt is NavigationEnd => evt instanceof NavigationEnd),
-        filter((event) => !event.url.includes('#')),
-        map(() => location.pathname),
-        distinctUntilChanged(),
-        skip(1),
-        filter(() => {
-          const navigationState =
-            this.router.getCurrentNavigation()?.extras.state;
-          if (navigationState?.ignoreNextMainFocus) {
-            return false;
-          }
-
-          return true;
-        }),
-        map(() => this.router.getCurrentNavigation()?.extras.state)
-      )
-      .subscribe((e) => {
-        requestAnimationFrame(() => {
-          this.navigationService.scrollToMainArea(
-            e?.ignoreScrollToFocus as boolean
-          );
-        });
-      });
   }
 
   public get globalBannerActivated() {

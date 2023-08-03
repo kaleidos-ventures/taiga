@@ -241,14 +241,13 @@ export class ProjectNavigationComponent implements OnInit, AfterViewInit {
 
   public openSettings() {
     this.showProjectSettings = true;
-    void this.router.navigate(
-      ['project', this.project.id, this.project.slug, 'settings', 'members'],
-      {
-        state: {
-          ignoreNextMainFocus: true,
-        },
-      }
-    );
+    void this.router.navigate([
+      'project',
+      this.project.id,
+      this.project.slug,
+      'settings',
+      'members',
+    ]);
   }
 
   public closeMenu() {

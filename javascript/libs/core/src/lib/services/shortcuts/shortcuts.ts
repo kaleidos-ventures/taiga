@@ -6,6 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { ShortcutTask } from './shortcut-task.model';
+
 export default [
   {
     task: 'modal.close',
@@ -37,4 +39,8 @@ export default [
     defaultKey: 'esc',
     scope: 'conflict',
   },
-] as const;
+  {
+    task: 'cancel',
+    defaultKey: 'esc',
+  },
+] as ShortcutTask[];

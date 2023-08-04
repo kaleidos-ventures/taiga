@@ -16,6 +16,7 @@ CREATE_PROJECT_INVITATION = "projectinvitations.create"
 UPDATE_PROJECT_INVITATION = "projectinvitations.update"
 ACCEPT_PROJECT_INVITATION = "projectmemberships.create"
 REVOKE_PROJECT_INVITATION = "projectinvitations.revoke"
+DELETE_PROJECT_INVITATION = "projectinvitations.delete"
 
 
 async def emit_event_when_project_invitations_are_created(
@@ -95,3 +96,10 @@ async def emit_event_when_project_invitation_is_revoked(invitation: ProjectInvit
                 project=invitation.project_id,
             ),
         )
+
+
+async def emit_event_when_project_invitation_is_deleted(invitation: ProjectInvitation) -> None:
+    await events_manager.publish_on_project_channel(
+        project=invitation.project,
+        type=DELETE_PROJECT_INVITATION,
+    )

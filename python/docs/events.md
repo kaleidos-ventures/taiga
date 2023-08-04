@@ -452,6 +452,26 @@ Content for:
   null
   ```
 
+#### `workspaceinvitations.update`
+
+It happens when a workspace invitation is updated.
+
+Content for:
+- workspace channel:
+  ```
+  null
+  ```
+
+#### `workspaceinvitations.delete`
+
+It happens when a pending workspace invitation is deleted.
+
+Content for:
+- workspace channel:
+  ```
+  null
+  ```
+
 #### `projects.delete`
 
 It happens when a project is deleted
@@ -522,6 +542,16 @@ Content for:
   null
   ```
 
+#### `projectinvitations.delete`
+
+It happens when a pending project invitation is deleted.
+
+Content for:
+- project channel:
+  ```
+  null
+  ```
+
 #### `projectmemberships.create`
 
 It happens when a project invitation is accepted. Because a new project membership is created.
@@ -537,6 +567,24 @@ Content for:
 - project channel:
   ```
   null
+  ```
+
+#### `projectmemberships.create`
+
+It happens when a project membership role is created.
+
+Content for:
+- user channel:
+  ```
+  {
+      "membership": {... "project membership object" ...}
+  }
+  ```
+- project channel:
+  ```
+  {
+      "membership": {... "project membership object" ...}
+  }
   ```
 
 #### `projectmemberships.update`
@@ -816,4 +864,14 @@ Content for:
       "ref": "story ref (int)"
       "comment": {... "comment object" ...}
   }
+  ```
+
+#### `users.delete`
+
+It happens when a user is deleted.
+
+Content for:
+- user channel:
+  ```
+  null
   ```

@@ -33,7 +33,7 @@ class Project(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin):
         null=False,
         blank=False,
         related_name="projects",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         verbose_name="workspace",
     )
 

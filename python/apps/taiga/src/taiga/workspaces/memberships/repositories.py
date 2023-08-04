@@ -148,6 +148,11 @@ def list_workspace_members(workspace: Workspace) -> list[User]:
 
 
 @sync_to_async
+def list_workspace_members_excluding_user(workspace: Workspace, exclude_user: User) -> list[User]:
+    return list(workspace.members.all().exclude(id=exclude_user.id))
+
+
+@sync_to_async
 def get_total_workspace_memberships(filters: WorkspaceMembershipFilters = {}) -> int:
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     return qs.count()

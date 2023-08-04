@@ -15,7 +15,7 @@ class CommentSerializer(BaseModel):
     id: UUIDB64
     text: str
     created_at: datetime
-    created_by: UserNestedSerializer
+    created_by: UserNestedSerializer | None
     modified_at: datetime | None
     deleted_at: datetime | None
     deleted_by: UserNestedSerializer | None

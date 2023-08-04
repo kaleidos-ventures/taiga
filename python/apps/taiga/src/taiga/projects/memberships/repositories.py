@@ -169,8 +169,13 @@ def delete_project_membership(filters: ProjectMembershipFilters = {}) -> int:
 
 
 @sync_to_async
-def get_project_members(project: Project) -> list[User]:
+def list_project_members(project: Project) -> list[User]:
     return list(project.members.all())
+
+
+@sync_to_async
+def list_project_members_excluding_user(project: Project, exclude_user: User) -> list[User]:
+    return list(project.members.all().exclude(id=exclude_user.id))
 
 
 @sync_to_async

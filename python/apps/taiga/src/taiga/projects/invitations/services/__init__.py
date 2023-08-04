@@ -89,7 +89,7 @@ async def create_project_invitations(
     invitations_to_create: dict[str, ProjectInvitation] = {}
     invitations_to_update: dict[str, ProjectInvitation] = {}
     invitations_to_send: dict[str, ProjectInvitation] = {}
-    project_members = await memberships_repositories.get_project_members(project=project)
+    project_members = await memberships_repositories.list_project_members(project=project)
 
     users_dict = users_emails_dict | users_usernames_dict
     # users_dict = {

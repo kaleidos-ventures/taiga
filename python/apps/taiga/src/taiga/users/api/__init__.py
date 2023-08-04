@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from fastapi import Depends, Query, Response
+from fastapi import Depends, Query, Response, status
 from taiga.auth import services as auth_services
 from taiga.auth.serializers import AccessTokenWithRefreshSerializer
 from taiga.base.api import Request
@@ -191,7 +191,31 @@ async def update_my_user(request: Request, form: UpdateUserValidator) -> User:
 #####################################################################
 
 
-# TODO
+@routes.users.delete(
+    "/my/user",
+    name="my.user.delete",
+    summary="Delete user",
+    responses=ERROR_401,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_user(request: Request) -> None:
+    """
+    Delete a user.
+
+    In this endpoint:
+    - All workspaces where the user is the only workspace member are deleted (cascade)
+    - All projects where the user is the only project member are deleted (cascade)
+    - All projects where the user is the only project admin and is not the only workspace member
+    or is not workspace member are updated with a new project admin (a workspace member)
+    - All memberships related with this user in workspaces and projects are deleted
+    - All invitations related with this user in workspaces and projects are deleted
+    - User is deleted
+    """
+    if request.user.is_anonymous:
+        # NOTE: We force a 401 instead of using the permissions system (which would return a 403)
+        raise ex.AuthorizationError("User is anonymous")
+
+    await users_services.delete_user(user=request.user)
 
 
 #####################################################################

@@ -84,7 +84,10 @@ async def create_workspace(created_by: User, name: str | None = None, color: int
 
 async def get_project_with_related_info(id: UUID) -> Project:
     return await (
-        Project.objects.select_related()
+        Project.objects.select_related(
+            "created_by",
+            "workspace",
+        )
         .prefetch_related(
             "roles",
             "members",

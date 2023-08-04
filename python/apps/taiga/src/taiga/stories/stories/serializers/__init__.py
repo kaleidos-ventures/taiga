@@ -30,7 +30,7 @@ class StoryDetailSerializer(BaseModel):
     description: str | None = None
     status: WorkflowStatusNestedSerializer
     workflow: WorkflowNestedSerializer
-    created_by: UserNestedSerializer
+    created_by: UserNestedSerializer | None
     created_at: datetime
     prev: StoryNeighborSerializer | None
     next: StoryNeighborSerializer | None

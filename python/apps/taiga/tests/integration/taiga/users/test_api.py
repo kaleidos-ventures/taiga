@@ -15,7 +15,7 @@ from taiga.users.services import _generate_reset_password_token, _generate_verif
 from taiga.workspaces.invitations.services import _generate_workspace_invitation_token
 from tests.utils import factories as f
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 ##########################################################
@@ -283,6 +283,25 @@ async def test_update_my_user_success(client):
     response = client.put("/my/user", json=data)
 
     assert response.status_code == status.HTTP_200_OK, response.text
+
+
+#####################################################################
+# DELETE /my/user
+#####################################################################
+
+
+async def test_delete_user_204_no_content(client):
+    user = await f.create_user(username="user", is_active=True)
+
+    client.login(user)
+    response = client.delete("/my/user")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_delete_user_401_unauthorized_user(client):
+    response = client.get("/my/user")
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 #####################################################################

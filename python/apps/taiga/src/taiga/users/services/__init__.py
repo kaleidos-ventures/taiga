@@ -15,12 +15,20 @@ from taiga.base.utils.datetime import aware_utcnow
 from taiga.conf import settings
 from taiga.emails.emails import Emails
 from taiga.emails.tasks import send_email
+from taiga.projects.invitations import events as pj_invitations_events
+from taiga.projects.invitations import repositories as pj_invitations_repositories
 from taiga.projects.invitations import services as project_invitations_services
+from taiga.projects.invitations.choices import ProjectInvitationStatus
 from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.invitations.services import exceptions as invitations_ex
+from taiga.projects.memberships import events as pj_memberships_events
+from taiga.projects.memberships import repositories as pj_memberships_repositories
 from taiga.projects.projects import repositories as projects_repositories
+from taiga.projects.projects import services as projects_services
 from taiga.projects.projects.models import Project
+from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.tokens import exceptions as tokens_ex
+from taiga.users import events as users_events
 from taiga.users import repositories as users_repositories
 from taiga.users.models import User
 from taiga.users.repositories import UserFilters
@@ -28,8 +36,14 @@ from taiga.users.serializers import UserDeleteInfoSerializer, VerificationInfoSe
 from taiga.users.serializers import services as serializers_services
 from taiga.users.services import exceptions as ex
 from taiga.users.tokens import ResetPasswordToken, VerifyUserToken
+from taiga.workspaces.invitations import events as ws_invitations_events
+from taiga.workspaces.invitations import repositories as ws_invitations_repositories
 from taiga.workspaces.invitations import services as workspace_invitations_services
+from taiga.workspaces.invitations.choices import WorkspaceInvitationStatus
 from taiga.workspaces.invitations.models import WorkspaceInvitation
+from taiga.workspaces.memberships import events as ws_memberships_events
+from taiga.workspaces.memberships import repositories as ws_memberships_repositories
+from taiga.workspaces.workspaces import events as workspaces_events
 from taiga.workspaces.workspaces import repositories as workspaces_repositories
 from taiga.workspaces.workspaces.models import Workspace
 
@@ -234,7 +248,119 @@ async def update_user(user: User, full_name: str, lang: str) -> User:
 #####################################################################
 
 
-# TODO
+async def delete_user(user: User) -> bool:
+    # delete workspaces where the user is the only ws member
+    # (all members, invitations, projects, pj-members, pj-invitations,
+    # pj-roles, stories, comments, etc will be deleted in cascade)
+    workspaces = await workspaces_repositories.list_workspaces(
+        filters={"workspace_member_id": user.id, "num_members": 1}
+    )
+    for ws in workspaces:
+        ws_deleted = await workspaces_repositories.delete_workspaces(filters={"id": ws.id})
+        if ws_deleted > 0:
+            await workspaces_events.emit_event_when_workspace_is_deleted(workspace=ws, deleted_by=user)
+
+    # delete projects where the user is the only pj member
+    # (all members, invitations, pj-roles, stories, comments, etc
+    # will be deleted in cascade)
+    projects = await projects_repositories.list_projects(
+        filters={"project_member_id": user.id, "is_onewoman_project": True},
+    )
+    [await projects_services.delete_project(project=pj, deleted_by=user) for pj in projects]
+
+    # update role of a workspace member as project admin in projects where the user is the only pj admin
+    # better if the workspace member is project member too
+    projects = await projects_repositories.list_projects(
+        filters={"project_member_id": user.id, "is_admin": True, "num_admins": 1, "is_onewoman_project": False},
+        select_related=["workspace"],
+    )
+    for pj in projects:
+        workspace_members = await ws_memberships_repositories.list_workspace_members_excluding_user(
+            workspace=pj.workspace, exclude_user=user
+        )
+        project_members = await pj_memberships_repositories.list_project_members_excluding_user(
+            project=pj, exclude_user=user
+        )
+
+        project_admin_role = await pj_roles_repositories.get_project_role(
+            filters={"project_id": pj.id, "slug": "admin"}
+        )
+        common_members = list(set(workspace_members).intersection(project_members))
+        if len(common_members) > 0:
+            pj_membership = await pj_memberships_repositories.get_project_membership(
+                filters={"project_id": pj.id, "user_id": common_members[0].id},
+                select_related=["user", "role", "project", "project__workspace"],
+            )
+            if pj_membership and project_admin_role:
+                updated_pj_membership = await pj_memberships_repositories.update_project_membership(
+                    membership=pj_membership,
+                    values={"role": project_admin_role},
+                )
+                await pj_memberships_events.emit_event_when_project_membership_is_updated(
+                    membership=updated_pj_membership
+                )
+        else:
+            if project_admin_role:
+                created_pj_membership = await pj_memberships_repositories.create_project_membership(
+                    project=pj, role=project_admin_role, user=workspace_members[0]
+                )
+                await pj_memberships_events.emit_event_when_project_membership_is_created(
+                    membership=created_pj_membership
+                )
+
+    # delete ws memberships
+    ws_memberships = await ws_memberships_repositories.list_workspace_memberships(
+        filters={"user_id": user.id}, select_related=["user", "workspace"]
+    )
+    for ws_membership in ws_memberships:
+        deleted = await ws_memberships_repositories.delete_workspace_memberships(
+            filters={"id": ws_membership.id},
+        )
+        if deleted > 0:
+            await ws_memberships_events.emit_event_when_workspace_membership_is_deleted(membership=ws_membership)
+
+    # delete ws invitations
+    ws_invitations = await ws_invitations_repositories.list_workspace_invitations(
+        filters={"user": user},
+        select_related=["workspace"],
+    )
+    for ws_invitation in ws_invitations:
+        is_pending = True if ws_invitation.status == WorkspaceInvitationStatus.PENDING else False
+        deleted = await ws_invitations_repositories.delete_workspace_invitation(filters={"id": ws_invitation.id})
+        if deleted > 0 and is_pending:
+            await ws_invitations_events.emit_event_when_workspace_invitation_is_deleted(invitation=ws_invitation)
+
+    # delete pj memberships
+    pj_memberships = await pj_memberships_repositories.list_project_memberships(
+        filters={"user_id": user.id},
+        select_related=["user", "project", "project__workspace"],
+    )
+    for pj_membership in pj_memberships:
+        deleted = await pj_memberships_repositories.delete_project_membership(
+            filters={"id": pj_membership.id},
+        )
+        if deleted > 0:
+            await pj_memberships_events.emit_event_when_project_membership_is_deleted(membership=pj_membership)
+
+    # delete pj invitations
+    pj_invitations = await pj_invitations_repositories.list_project_invitations(
+        filters={"user": user},
+        select_related=["project"],
+    )
+    for pj_invitation in pj_invitations:
+        is_pending = True if pj_invitation.status == ProjectInvitationStatus.PENDING else False
+        deleted = await pj_invitations_repositories.delete_project_invitation(filters={"id": pj_invitation.id})
+        if deleted > 0 and is_pending:
+            await pj_invitations_events.emit_event_when_project_invitation_is_deleted(invitation=pj_invitation)
+
+    # delete user
+    deleted_user = await users_repositories.delete_user(filters={"id": user.id})
+
+    if deleted_user > 0:
+        await users_events.emit_event_when_user_is_deleted(user=user)
+        return True
+
+    return False
 
 
 #####################################################################

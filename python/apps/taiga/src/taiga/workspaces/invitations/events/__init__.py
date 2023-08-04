@@ -15,6 +15,7 @@ from taiga.workspaces.workspaces.models import Workspace
 CREATE_WORKSPACE_INVITATION = "workspaceinvitations.create"
 UPDATE_WORKSPACE_INVITATION = "workspaceinvitations.update"
 ACCEPT_WORKSPACE_INVITATION = "workspacememberships.create"
+DELETE_WORKSPACE_INVITATION = "workspaceinvitations.delete"
 
 
 async def emit_event_when_workspace_invitations_are_created(
@@ -64,3 +65,10 @@ async def emit_event_when_workspace_invitation_is_accepted(invitation: Workspace
                 workspace=invitation.workspace_id,
             ),
         )
+
+
+async def emit_event_when_workspace_invitation_is_deleted(invitation: WorkspaceInvitation) -> None:
+    await events_manager.publish_on_workspace_channel(
+        workspace=invitation.workspace,
+        type=DELETE_WORKSPACE_INVITATION,
+    )

@@ -98,6 +98,23 @@ async def test_delete_stories() -> None:
 
 
 ##########################################################
+# misc - list_workspace_members_excluding_user
+##########################################################
+
+
+async def test_list_workspace_members_excluding_user():
+    admin = await f.create_user()
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    workspace = await f.create_workspace(created_by=admin)
+    await repositories.create_workspace_membership(user=user1, workspace=workspace)
+    await repositories.create_workspace_membership(user=user2, workspace=workspace)
+
+    list_ws_members = await repositories.list_workspace_members_excluding_user(workspace=workspace, exclude_user=admin)
+    assert len(list_ws_members) == 2
+
+
+##########################################################
 # misc - get_total_project_memberships
 ##########################################################
 

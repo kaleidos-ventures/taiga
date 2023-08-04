@@ -9,8 +9,23 @@ from taiga.events import events_manager
 from taiga.projects.memberships.events.content import DeleteProjectMembershipContent, ProjectMembershipContent
 from taiga.projects.memberships.models import ProjectMembership
 
+CREATE_PROJECT_MEMBERSHIP = "projectmemberships.create"
 UPDATE_PROJECT_MEMBERSHIP = "projectmemberships.update"
 DELETE_PROJECT_MEMBERSHIP = "projectmemberships.delete"
+
+
+async def emit_event_when_project_membership_is_created(membership: ProjectMembership) -> None:
+    await events_manager.publish_on_user_channel(
+        user=membership.user,
+        type=CREATE_PROJECT_MEMBERSHIP,
+        content=ProjectMembershipContent(membership=membership),
+    )
+
+    await events_manager.publish_on_project_channel(
+        project=membership.project,
+        type=CREATE_PROJECT_MEMBERSHIP,
+        content=ProjectMembershipContent(membership=membership),
+    )
 
 
 async def emit_event_when_project_membership_is_updated(membership: ProjectMembership) -> None:

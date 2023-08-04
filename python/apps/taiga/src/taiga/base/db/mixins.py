@@ -28,8 +28,8 @@ class CreatedAtMetaInfoMixin(models.Model):
 class CreatedByMetaInfoMixin(models.Model):
     created_by = models.ForeignKey(
         "users.User",
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         on_delete=models.SET_NULL,
         verbose_name="created by",
     )

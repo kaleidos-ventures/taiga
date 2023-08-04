@@ -294,7 +294,7 @@ async def test_create_project_invitations_already_member(tqmanager):
         fake_pj_roles_services.list_project_roles_as_dict.return_value = {role.slug: role}
         fake_users_services.list_users_emails_as_dict.return_value = {user.email: user}
         fake_users_services.list_users_usernames_as_dict.return_value = {}
-        fake_memberships_repo.get_project_members.return_value = [user]
+        fake_memberships_repo.list_project_members.return_value = [user]
 
         await services.create_project_invitations(
             project=project, invitations=invitations, invited_by=project.created_by

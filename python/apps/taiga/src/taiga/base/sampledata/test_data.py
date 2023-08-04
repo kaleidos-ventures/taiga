@@ -64,7 +64,8 @@ async def load_test_data() -> None:
     for workspace in workspaces:
         # create one project (kanban) in each workspace with the same creator
         # it applies a template and creates also admin and general roles
-        project = await factories.create_project(workspace=workspace, created_by=workspace.created_by)
+        if workspace.created_by:
+            project = await factories.create_project(workspace=workspace, created_by=workspace.created_by)
 
         # add other users to different roles (admin and general)
         await factories.create_project_memberships(project_id=project.id, users=users)
@@ -163,7 +164,7 @@ def _get_project_other_roles(project: Project) -> list[ProjectRole]:
 
 
 @sync_to_async
-def _get_project_members(project: Project) -> list[User]:
+def _list_project_members(project: Project) -> list[User]:
     return list(project.members.all())
 
 

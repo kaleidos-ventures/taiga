@@ -17,7 +17,7 @@ from taiga.routers import routes
 from taiga.stories.stories.api import get_story_or_404
 
 # PERMISSIONS
-CREATE_STORY_MEDIAFILE = HasPerm("modify_story")
+CREATE_STORY_MEDIAFILE = HasPerm("modify_story") | HasPerm("comment_story")
 
 # HTTP 200 RESPONSES
 MEDIAFILE_DETAIL_200 = responses.http_status_200(model=MediafileSerializer)

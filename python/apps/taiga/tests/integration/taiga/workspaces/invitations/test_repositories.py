@@ -80,7 +80,7 @@ async def test_list_workspace_invitations_all_pending_users():
     )
 
     response = await repositories.list_workspace_invitations(
-        filters={"workspace_id": workspace.id, "status": WorkspaceInvitationStatus.PENDING}, offset=0, limit=100
+        filters={"workspace_id": workspace.id, "status": WorkspaceInvitationStatus.PENDING}
     )
     assert len(response) == 5
     assert response[0].email == user_a.email
@@ -106,8 +106,6 @@ async def test_list_workspace_invitations_single_pending_user():
 
     response = await repositories.list_workspace_invitations(
         filters={"workspace_id": workspace.id, "user": user1, "status": WorkspaceInvitationStatus.PENDING},
-        offset=0,
-        limit=100,
     )
     assert len(response) == 1
     assert response[0].email == user1.email
@@ -127,8 +125,6 @@ async def test_list_workspace_invitations_single_pending_non_existing_user():
             "email": non_existing_email,
             "status": WorkspaceInvitationStatus.PENDING,
         },
-        offset=0,
-        limit=100,
     )
     assert len(invitations) == 1
     assert invitations[0].email == non_existing_email
@@ -143,7 +139,7 @@ async def test_list_workspace_invitations_all_accepted_users():
     )
 
     response = await repositories.list_workspace_invitations(
-        filters={"workspace_id": workspace.id, "status": WorkspaceInvitationStatus.ACCEPTED}, offset=0, limit=100
+        filters={"workspace_id": workspace.id, "status": WorkspaceInvitationStatus.ACCEPTED}
     )
     assert len(response) == 1
     assert response[0].email == user1.email

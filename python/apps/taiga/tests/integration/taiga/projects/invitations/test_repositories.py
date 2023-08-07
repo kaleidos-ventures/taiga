@@ -177,7 +177,7 @@ async def test_list_project_invitations_all_pending_users():
     )
 
     response = await repositories.list_project_invitations(
-        filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING}, offset=0, limit=100
+        filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING}
     )
     assert len(response) == 5
     assert response[0].email == user_a.email
@@ -205,8 +205,6 @@ async def test_list_project_invitations_single_pending_user():
 
     response = await repositories.list_project_invitations(
         filters={"project_id": project.id, "user": user1, "status": ProjectInvitationStatus.PENDING},
-        offset=0,
-        limit=100,
     )
     assert len(response) == 1
     assert response[0].email == user1.email
@@ -223,8 +221,6 @@ async def test_list_project_invitations_single_pending_non_existing_user():
 
     invitations = await repositories.list_project_invitations(
         filters={"project_id": project.id, "email": non_existing_email, "status": ProjectInvitationStatus.PENDING},
-        offset=0,
-        limit=100,
     )
     assert len(invitations) == 1
     assert invitations[0].email == non_existing_email
@@ -244,7 +240,7 @@ async def test_list_project_invitations_all_accepted_users():
     )
 
     response = await repositories.list_project_invitations(
-        filters={"project_id": project.id, "status": ProjectInvitationStatus.ACCEPTED}, offset=0, limit=100
+        filters={"project_id": project.id, "status": ProjectInvitationStatus.ACCEPTED},
     )
     assert len(response) == 2
     assert response[0].email == user1.email

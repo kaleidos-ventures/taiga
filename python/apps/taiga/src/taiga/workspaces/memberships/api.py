@@ -48,20 +48,13 @@ async def list_workspace_memberships(
     id: B64UUID,
     request: AuthRequest,
     response: Response,
-    pagination_params: PaginationQuery = Depends(),
 ) -> list[WorkspaceMembershipDetailSerializer]:
     """
     List workspace memberships
     """
     workspace = await get_workspace_or_404(id)
     await check_permissions(permissions=LIST_WORKSPACE_MEMBERSHIPS, user=request.user, obj=workspace)
-
-    pagination, memberships = await memberships_services.list_paginated_workspace_memberships(
-        workspace=workspace, offset=pagination_params.offset, limit=pagination_params.limit
-    )
-    api_pagination.set_pagination(response=response, pagination=pagination)
-
-    return memberships
+    return await memberships_services.list_workspace_memberships(workspace=workspace)
 
 
 ##########################################################

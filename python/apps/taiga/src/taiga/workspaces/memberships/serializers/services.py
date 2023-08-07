@@ -6,16 +6,16 @@
 # Copyright (c) 2023-present Kaleidos INC
 from taiga.projects.projects.models import Project
 from taiga.users.models import User
+from taiga.workspaces.memberships.models import WorkspaceMembership
 from taiga.workspaces.memberships.serializers import WorkspaceGuestDetailSerializer, WorkspaceMembershipDetailSerializer
-from taiga.workspaces.workspaces.models import Workspace
 
 
 def serialize_workspace_membership_detail(
-    user: User, workspace: Workspace, projects: list[Project]
+    ws_membership: WorkspaceMembership, projects: list[Project]
 ) -> WorkspaceMembershipDetailSerializer:
     return WorkspaceMembershipDetailSerializer(
-        user=user,
-        workspace=workspace,
+        user=ws_membership.user,
+        workspace=ws_membership.workspace,
         projects=projects,
     )
 

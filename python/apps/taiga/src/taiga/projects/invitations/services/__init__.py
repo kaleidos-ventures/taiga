@@ -9,7 +9,6 @@ from typing import Any, cast
 from uuid import UUID
 
 from taiga.auth import services as auth_services
-from taiga.base.api.pagination import Pagination
 from taiga.base.utils import emails
 from taiga.base.utils.datetime import aware_utcnow
 from taiga.commons.invitations import is_spam
@@ -171,36 +170,21 @@ async def create_project_invitations(
 ##########################################################
 
 
-async def list_paginated_pending_project_invitations(
-    project: Project, user: AnyUser, offset: int, limit: int
-) -> tuple[Pagination, list[ProjectInvitation]]:
-    pagination = Pagination(offset=offset, limit=limit, total=0)
-
+async def list_pending_project_invitations(project: Project, user: AnyUser) -> list[ProjectInvitation]:
     if user.is_anonymous:
-        return pagination, []
+        return []
 
     role = await pj_roles_repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id})
 
     if role and role.is_admin:
-        invitations = await invitations_repositories.list_project_invitations(
-            filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING},
-            offset=offset,
-            limit=limit,
-        )
-        total_invitations = await invitations_repositories.get_total_project_invitations(
+        return await invitations_repositories.list_project_invitations(
             filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING},
         )
+
     else:
-        invitations = await invitations_repositories.list_project_invitations(
+        return await invitations_repositories.list_project_invitations(
             filters={"project_id": project.id, "status": ProjectInvitationStatus.PENDING, "user": user},
-            offset=offset,
-            limit=limit,
         )
-        total_invitations = len(invitations)
-
-    pagination.total = total_invitations
-
-    return pagination, invitations
 
 
 ##########################################################

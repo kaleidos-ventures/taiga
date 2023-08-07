@@ -24,27 +24,8 @@ async def test_list_workspace_memberships(client):
 
     client.login(ws_member)
     response = client.get(f"/workspaces/{workspace.b64id}/memberships")
+    assert len(response.json()) == 2
     assert response.status_code == status.HTTP_200_OK, response.text
-
-
-async def test_list_workspace_memberships_with_pagination(client):
-    workspace = await f.create_workspace()
-    ws_member1 = await f.create_user()
-    ws_member2 = await f.create_user()
-    await f.create_workspace_membership(user=ws_member1, workspace=workspace)
-    await f.create_workspace_membership(user=ws_member2, workspace=workspace)
-
-    client.login(workspace.created_by)
-
-    offset = 0
-    limit = 1
-
-    response = client.get(f"/workspaces/{workspace.b64id}/memberships?offset={offset}&limit={limit}")
-    assert response.status_code == status.HTTP_200_OK, response.text
-    assert len(response.json()) == 1
-    assert response.headers["Pagination-Offset"] == "0"
-    assert response.headers["Pagination-Limit"] == "1"
-    assert response.headers["Pagination-Total"] == "3"
 
 
 async def test_list_workspace_memberships_wrong_id(client):

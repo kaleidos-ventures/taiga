@@ -20,14 +20,13 @@ pytestmark = pytest.mark.django_db
 #######################################################
 
 
-async def test_list_paginated_project_memberships():
+async def test_list_project_memberships():
     project = f.build_project()
     with patch(
         "taiga.projects.memberships.services.memberships_repositories", autospec=True
     ) as fake_membership_repository:
-        await services.list_paginated_project_memberships(project=project, offset=0, limit=10)
+        await services.list_project_memberships(project=project)
         fake_membership_repository.list_project_memberships.assert_awaited_once()
-        fake_membership_repository.get_total_project_memberships.assert_awaited_once()
 
 
 #######################################################

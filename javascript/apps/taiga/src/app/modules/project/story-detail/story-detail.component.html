@@ -40,10 +40,10 @@ Copyright (c) 2023-present Kaleidos INC
               [class.copied]="linkCopied"
               class="copy-link"
               tuiIconButton
-              [tuiHint]="
+              [tgUiTooltip]="
                 linkCopied ? t('story.link_copied') : t('story.click_to_copy')
               "
-              [tuiHintManual]="hintShown"
+              [tgManual]="hintShown"
               type="button"
               (click)="getStoryLink()"
               (mouseenter)="displayHint()"
@@ -68,8 +68,8 @@ Copyright (c) 2023-present Kaleidos INC
               appearance="tertiary"
               class="story-navigation-arrow"
               tuiIconButton
-              tuiHintDirection="top-right"
-              [tuiHint]="t('story.previous')"
+              tgUiTooltipPosition="top-right"
+              [tgUiTooltip]="t('story.previous')"
               (click)="navigateToPreviousStory(vm.story.prev!.ref)"
               type="button"></button>
             <button
@@ -86,8 +86,8 @@ Copyright (c) 2023-present Kaleidos INC
               appearance="tertiary"
               class="story-navigation-arrow"
               tuiIconButton
-              tuiHintDirection="top-right"
-              [tuiHint]="t('story.next')"
+              tgUiTooltipPosition="top-right"
+              [tgUiTooltip]="t('story.next')"
               (click)="navigateToNextStory(vm.story.next!.ref)"
               type="button"></button>
 
@@ -110,8 +110,8 @@ Copyright (c) 2023-present Kaleidos INC
                 class="change-view"
                 tuiIconButton
                 type="button"
-                tuiHintDirection="top-right"
-                [tuiHint]="t('story.change_view')"
+                tgUiTooltipPosition="top-right"
+                [tgUiTooltip]="t('story.change_view')"
                 (click)="(!dropdownState)"></button>
             </tui-hosted-dropdown>
             <tui-hosted-dropdown
@@ -129,7 +129,6 @@ Copyright (c) 2023-present Kaleidos INC
                 appearance="tertiary"
                 tuiIconButton
                 type="button"
-                tuiHintDirection="top-right"
                 (click)="(storyOptionsState)"></button>
             </tui-hosted-dropdown>
             <button

@@ -25,7 +25,6 @@ import {
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import {
-  TuiHintModule,
   TuiLinkModule,
   TuiScrollbarModule,
   TuiSvgModule,
@@ -59,7 +58,6 @@ import { leaveProject } from '~/app/modules/project/data-access/+state/actions/p
     CommonTemplateModule,
     TuiLinkModule,
     UserCardComponent,
-    TuiHintModule,
     ScrollingModule,
     BadgeModule,
     CapitalizePipeModule,

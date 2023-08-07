@@ -14,12 +14,7 @@ import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
-import {
-  TuiHintModule,
-  TuiLinkModule,
-  TuiSvgModule,
-  TuiTooltipModule,
-} from '@taiga-ui/core';
+import { TuiLinkModule, TuiSvgModule, TuiTooltipModule } from '@taiga-ui/core';
 import { TuiAvatarModule } from '@taiga-ui/kit';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
@@ -37,6 +32,7 @@ import { WorkspaceItemComponent } from './components/workspace-item/workspace-it
 import { WorkspaceSkeletonComponent } from './components/workspace-skeleton/workspace-skeleton.component';
 import { WorkspaceComponent } from './components/workspace/workspace.component';
 import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-routing.module';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 
 @NgModule({
   declarations: [
@@ -61,7 +57,7 @@ import { WorkspaceFeatureListRoutingModule } from './workspace-feature-list-rout
     TuiAutoFocusModule,
     A11yModule,
     TuiTooltipModule,
-    TuiHintModule,
+    ToolTipModule,
     ResizedDirective,
     ProjectCardComponent,
     WorkspaceFeatureListRoutingModule,

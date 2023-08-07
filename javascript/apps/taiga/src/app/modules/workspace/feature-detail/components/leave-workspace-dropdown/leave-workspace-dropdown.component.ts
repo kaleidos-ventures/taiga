@@ -16,7 +16,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { TranslocoModule } from '@ngneat/transloco';
-import { TuiButtonModule, TuiHintModule, TuiLinkModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { A11yModule } from '@angular/cdk/a11y';
 import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
 import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
@@ -32,7 +32,6 @@ import { Workspace } from '@taiga/data';
     TranslocoModule,
     TuiButtonModule,
     TuiLinkModule,
-    TuiHintModule,
     A11yModule,
     RestoreFocusTargetDirective,
     RestoreFocusDirective,

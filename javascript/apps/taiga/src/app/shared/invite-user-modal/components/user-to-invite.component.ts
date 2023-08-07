@@ -9,9 +9,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiHintModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { Role, User } from '@taiga/data';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
 import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
@@ -31,7 +32,7 @@ import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
     TuiLinkModule,
     InputsModule,
     TuiSvgModule,
-    TuiHintModule,
+    ToolTipModule,
     CommonTemplateModule,
     UserCardComponent,
     BadgeModule,

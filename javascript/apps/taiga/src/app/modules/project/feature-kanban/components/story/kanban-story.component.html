@@ -64,13 +64,9 @@ Copyright (c) 2023-present Kaleidos INC
             <button
               data-test="assign-btn"
               (click)="toggleAssignUser($event)"
-              (focus)="displayHintAssignUser()"
-              (focusout)="displayHintAssignUser()"
-              (mouseenter)="displayHintAssignUser()"
-              (mouseleave)="displayHintAssignUser()"
-              [tuiHintManual]="hintAssignUser"
-              [tuiHint]="!vm.assignees.length ? unassignedTooltip : null"
-              [tuiHintDirection]="'bottom-right'"
+              [tgUiTooltip]="unassignedTooltip"
+              [tgUiTooltipDisabled]="!!vm.assignees.length"
+              tgUiTooltipPosition="bottom-right"
               [ngClass]="{
                 'unassigned-button-perm': !vm.assignees.length,
                 'assigned-button-perm': vm.assignees.length
@@ -116,15 +112,15 @@ Copyright (c) 2023-present Kaleidos INC
           type="light"
           [rounded]="true"
           aria-hidden="true"
-          [tuiHint]="assigned.fullName"
-          [tuiHintDirection]="'bottom-right'"></tg-user-avatar>
+          [tgUiTooltip]="assigned.fullName"
+          tgUiTooltipPosition="bottom-right"></tg-user-avatar>
       </div>
       <div
         class="assigned-user-avatar-extra"
         aria-hidden="true"
         *ngIf="vm.assignees.length > 3"
-        [tuiHint]="moreAssignedTooltip"
-        [tuiHintDirection]="'bottom-right'">
+        [tgUiTooltip]="moreAssignedTooltip"
+        tgUiTooltipPosition="bottom-right">
         {{ restAssigneesLenght }}
       </div>
     </ng-template>
@@ -155,8 +151,8 @@ Copyright (c) 2023-present Kaleidos INC
     <ng-template #noAssignPermissionsTpl>
       <div
         *ngIf="!vm.assignees.length"
-        [tuiHint]="unassignedTooltip"
-        [tuiHintDirection]="'bottom-right'"
+        [tgUiTooltip]="unassignedTooltip"
+        tgUiTooltipPosition="bottom-right"
         class="unassigned-button-noperm"
         aria-labelledby="unassigned-tooltip">
         {{ t('common_story.unassigned') }}

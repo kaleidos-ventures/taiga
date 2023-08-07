@@ -45,12 +45,12 @@ Copyright (c) 2023-present Kaleidos INC
                 data-test="comment-edited"
                 class="creation-data-edited"
                 [label]="t('comments.edit.edited_comment')"
-                [tuiHint]="
+                [tgUiTooltip]="
                   t('comments.edit.edited_comment_tooltip', {
                     when: comment.modifiedAt | dateDistance
                   })
                 "
-                tuiHintDirection="top-right"
+                tgUiTooltipPosition="top-right"
                 size="s"
                 color="gray"></tg-ui-badge>
             </ng-container>

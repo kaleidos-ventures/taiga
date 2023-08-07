@@ -13,7 +13,6 @@ import { RouterModule } from '@angular/router';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiActiveZoneModule, TuiAutoFocusModule } from '@taiga-ui/cdk';
 import {
-  TuiHintModule,
   TuiLinkModule,
   TuiScrollbarModule,
   TuiSvgModule,
@@ -51,6 +50,7 @@ import { DataAccessKanbanModule } from './data-access/kanban-data-access.module'
 import { KanbanStatusKeyboardNavigationDirective } from './directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
 import { KanbanStoryKeyboardNavigationDirective } from './directives/kanban-story-keyboard-navigation/kanban-story-keyboard-navigation.directive';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 
 @NgModule({
   declarations: [
@@ -73,7 +73,7 @@ import { ProjectFeatureKanbanComponent } from './project-feature-kanban.componen
     UserAvatarComponent,
     TuiAutoFocusModule,
     TuiLinkModule,
-    TuiHintModule,
+    ToolTipModule,
     HasPermissionDirective,
     TitleComponent,
     CommonTemplateModule,

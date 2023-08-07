@@ -21,11 +21,7 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { RxState } from '@rx-angular/state';
-import {
-  TuiButtonModule,
-  TuiHintModule,
-  TuiHostedDropdownModule,
-} from '@taiga-ui/core';
+import { TuiButtonModule, TuiHostedDropdownModule } from '@taiga-ui/core';
 import { UserComment } from '@taiga/data';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
 import { Subject, of, take } from 'rxjs';
@@ -42,6 +38,7 @@ import { RealTimeDateDistanceComponent } from '~/app/shared/real-time-date-dista
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 import { DeletedCommentComponent } from '../deleted-comment/deleted-comment.component';
+import { TooltipDirective } from '@taiga/ui/tooltip/tooltip.directive';
 
 @Component({
   selector: 'tg-comment',
@@ -63,7 +60,7 @@ import { DeletedCommentComponent } from '../deleted-comment/deleted-comment.comp
     TuiButtonModule,
     BadgeModule,
     DateDistancePipe,
-    TuiHintModule,
+    TooltipDirective,
     TuiHostedDropdownModule,
     DeletedCommentComponent,
   ],

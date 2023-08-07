@@ -29,7 +29,7 @@ import {
 import { RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TuiDataListModule, TuiHintModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiDataListModule, TuiSvgModule } from '@taiga-ui/core';
 import { Project, Workspace } from '@taiga/data';
 import { AvatarModule } from '@taiga/ui/avatar';
 import { BadgeModule } from '@taiga/ui/badge/badge.module';
@@ -40,6 +40,7 @@ import { DropdownModule } from '../dropdown/dropdown.module';
 import { DataAccessInviteUserModalModule } from '../invite-user-modal/data-access/+state/invite-user-modal-data-access.module';
 import { InviteUserModalModule } from '../invite-user-modal/invite-user-modal.module';
 import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 const cssValue = getComputedStyle(document.documentElement);
 
 type CardVariant = 'project' | 'placeholder' | 'invitation';
@@ -56,12 +57,12 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
     CommonTemplateModule,
     AvatarModule,
     InviteUserModalModule,
-    TuiHintModule,
     DataAccessInviteUserModalModule,
     BadgeModule,
     CapitalizePipeModule,
     TuiDataListModule,
     DropdownModule,
+    ToolTipModule,
   ],
   animations: [
     trigger('invitationAccepted', [

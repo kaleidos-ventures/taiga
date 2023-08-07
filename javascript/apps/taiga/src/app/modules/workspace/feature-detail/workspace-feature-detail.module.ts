@@ -14,7 +14,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import {
   TuiDataListModule,
-  TuiHintModule,
   TuiLinkModule,
   TuiScrollbarModule,
   TuiSvgModule,
@@ -54,6 +53,7 @@ import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
 import { LeaveWorkspaceDropdownComponent } from './components/leave-workspace-dropdown/leave-workspace-dropdown.component';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 
 @NgModule({
   declarations: [
@@ -94,7 +94,7 @@ import { LeaveWorkspaceDropdownComponent } from './components/leave-workspace-dr
     InputsModule,
     DiscardChangesModalComponent,
     DeleteProjectComponent,
-    TuiHintModule,
+    ToolTipModule,
     DynamicTableModule,
     UserCardComponent,
     PaginationComponent,

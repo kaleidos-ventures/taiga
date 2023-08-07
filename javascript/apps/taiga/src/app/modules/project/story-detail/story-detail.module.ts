@@ -13,7 +13,6 @@ import { RouterModule } from '@angular/router';
 import { TuiActiveZoneModule } from '@taiga-ui/cdk';
 import {
   TuiDataListModule,
-  TuiHintModule,
   TuiLinkModule,
   TuiScrollbarModule,
   TuiSvgModule,
@@ -48,12 +47,13 @@ import { StoryDetailDescriptionStickyDirective } from './components/story-detail
 import { CommentsComponent } from '~/app/shared/comments/comments.component';
 import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
 import { CommentsAutoScrollDirective } from '~/app/shared/comments/directives/comments-auto-scroll.directive';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 
 @NgModule({
   imports: [
     RouterModule,
     CommonTemplateModule,
-    TuiHintModule,
+    ToolTipModule,
     TuiLinkModule,
     TuiScrollbarModule,
     DropdownModule,

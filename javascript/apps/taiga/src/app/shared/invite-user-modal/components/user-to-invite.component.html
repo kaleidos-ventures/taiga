@@ -17,8 +17,8 @@ Copyright (c) 2023-present Kaleidos INC
         invitation
         class="invitation"
         data-test="pending-tag"
-        [tuiHint]="tooltip"
-        tuiHintDirection="bottom-right"
+        [tgUiTooltip]="tooltip"
+        tgUiTooltipPosition="bottom-right"
         *ngIf="user.value.userHasPendingInvitation">
         <tg-ui-badge
           [label]="t('invitation_modal.pending') | capitalize"
@@ -60,7 +60,7 @@ Copyright (c) 2023-present Kaleidos INC
       tuiIconButton
       icon="close"
       (click)="deleteUser()"
-      [tuiHint]="t('invitation_modal.remove')"
+      [tgUiTooltip]="t('invitation_modal.remove')"
       appearance="tertiary"></button>
   </div>
 </ng-container>

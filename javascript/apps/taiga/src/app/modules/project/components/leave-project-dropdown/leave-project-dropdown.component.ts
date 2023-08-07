@@ -17,11 +17,12 @@ import { CommonModule } from '@angular/common';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { Project } from '@taiga/data';
 import { TranslocoModule } from '@ngneat/transloco';
-import { TuiButtonModule, TuiHintModule, TuiLinkModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { A11yModule } from '@angular/cdk/a11y';
 import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
 import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
 import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 
 @Component({
   selector: 'tg-leave-project-dropdown',
@@ -32,7 +33,7 @@ import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focu
     TranslocoModule,
     TuiButtonModule,
     TuiLinkModule,
-    TuiHintModule,
+    ToolTipModule,
     A11yModule,
     RestoreFocusTargetDirective,
     RestoreFocusDirective,

@@ -20,11 +20,7 @@ import { TRANSLOCO_SCOPE, TranslocoModule } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { RxFor } from '@rx-angular/template/for';
-import {
-  TuiButtonModule,
-  TuiHintModule,
-  TuiNotification,
-} from '@taiga-ui/core';
+import { TuiButtonModule, TuiNotification } from '@taiga-ui/core';
 import { User, UserComment } from '@taiga/data';
 import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
@@ -36,6 +32,7 @@ import { CommentSingleComponent } from './components/comment-single/comment-sing
 import { CommentUserInputComponent } from './components/comment-user-input/comment-user-input.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { StoryDetailApiActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 
 export type OrderComments = '-createdAt' | 'createdAt';
 
@@ -57,7 +54,7 @@ export interface CommentsComponentState {
     CodeHightlightDirective,
     TranslocoModule,
     TuiButtonModule,
-    TuiHintModule,
+    ToolTipModule,
     CommentUserInputComponent,
     CommentSkeletonComponent,
     RealTimeDateDistanceComponent,

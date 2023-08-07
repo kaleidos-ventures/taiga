@@ -9,12 +9,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import {
-  TuiDataListModule,
-  TuiHintModule,
-  TuiLinkModule,
-  TuiSvgModule,
-} from '@taiga-ui/core';
+import { TuiDataListModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiToggleModule } from '@taiga-ui/kit';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { CommonTemplateModule } from '~/app/shared/common-template.module';
@@ -32,7 +27,6 @@ import { RolePermissionRowComponent } from './role-permission-row.component';
     RoleCustomizeModule,
     RoleAdvanceRowModule,
     InputsModule,
-    TuiHintModule,
     TuiDataListModule,
   ],
   declarations: [RolePermissionRowComponent],

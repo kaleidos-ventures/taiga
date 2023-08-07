@@ -32,7 +32,6 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiFocusTrapModule } from '@taiga-ui/cdk';
 import {
-  TuiHintModule,
   TuiLinkModule,
   TuiScrollbarModule,
   TuiSvgModule,
@@ -51,6 +50,7 @@ import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.compon
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { filterNil } from '~/app/shared/utils/operators';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 
 interface AssignComponentState {
   members: Membership['user'][];
@@ -74,7 +74,7 @@ interface AssignComponentState {
     TuiScrollbarModule,
     TuiToggleModule,
     TuiSvgModule,
-    TuiHintModule,
+    ToolTipModule,
     UserCardComponent,
     InputsModule,
     A11yModule,

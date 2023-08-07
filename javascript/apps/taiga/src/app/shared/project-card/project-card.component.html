@@ -71,16 +71,17 @@ Copyright (c) 2023-present Kaleidos INC
             appearance="action-button-2"
             tuiIconButton
             type="button"
-            tuiHintDirection="top-right"
-            [tuiHint]="t('common_project.project_actions')"></button>
+            tgUiTooltipPosition="top-right"
+            [tgUiTooltip]="t('common_project.project_actions')"></button>
         </tui-hosted-dropdown>
       </div>
       <p
         *ngIf="project.description"
         #projectDescription
         class="project-card-description"
-        [tuiHint]="showTooltip && descriptionTooltip"
-        [tuiHintDirection]="'bottom-right'">
+        [tgUiTooltip]="descriptionTooltip"
+        [tgUiTooltipDisabled]="!showTooltip"
+        tgUiTooltipPosition="bottom-right">
         {{ project.description }}
       </p>
     </div>
@@ -98,7 +99,7 @@ Copyright (c) 2023-present Kaleidos INC
         *ngIf="invitationStatus !== 'accepted'"
         appearance="action-button"
         [attr.aria-label]="t('commons.close')"
-        [tuiHint]="t('common_project.card.close_card')"
+        [tgUiTooltip]="t('common_project.card.close_card')"
         icon="close"
         type="button"></button>
       <div
@@ -153,8 +154,9 @@ Copyright (c) 2023-present Kaleidos INC
           (@itemSlideOutAnimation.done)="invitationAccepted()"
           #projectDescription
           *ngIf="project.description && invitationStatus === 'accepted'"
-          [tuiHint]="showTooltip && descriptionTooltip"
-          [tuiHintDirection]="'bottom-right'">
+          [tgUiTooltip]="descriptionTooltip"
+          [tgUiTooltipDisabled]="!showTooltip"
+          [tgUiTooltipPosition]="'bottom-right'">
           {{ project.description }}
         </p>
       </div>

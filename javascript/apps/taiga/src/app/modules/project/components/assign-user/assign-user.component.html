@@ -92,26 +92,15 @@ Copyright (c) 2023-present Kaleidos INC
               <tui-svg
                 *ngIf="!viewOnly"
                 class="unassign-btn"
-                [tuiHint]="tooltip"
-                tuiHintDirection="bottom-right"
+                [tgUiTooltip]="t('project.assign_user.remove-assignee')"
+                [tgUiTooltipStaysOpenOnHover]="false"
+                tgUiTooltipPosition="bottom-right"
                 src="close">
               </tui-svg>
             </button>
           </li>
         </ul>
       </tui-scrollbar>
-
-      <ng-template #tooltipAssign>
-        <p>{{ t('project.assign_user.add-assignee') }}</p>
-      </ng-template>
-
-      <ng-template #tooltipMemberDisabled>
-        <p>{{ t('project.assign_user.member-disabled') }}</p>
-      </ng-template>
-
-      <ng-template #tooltip>
-        <p>{{ t('project.assign_user.remove-assignee') }}</p>
-      </ng-template>
 
       <ng-container *ngIf="!viewOnly">
         <form
@@ -177,15 +166,17 @@ Copyright (c) 2023-present Kaleidos INC
                   <tui-svg
                     *ngIf="vm.membersPermissions[member.username].length"
                     class="assign-btn"
-                    [tuiHint]="tooltipAssign"
-                    tuiHintDirection="bottom-right"
+                    [tgUiTooltip]="t('project.assign_user.add-assignee')"
+                    [tgUiTooltipStaysOpenOnHover]="false"
+                    tgUiTooltipPosition="bottom-right"
                     src="plus">
                   </tui-svg>
                   <tui-svg
                     *ngIf="!vm.membersPermissions[member.username].length"
                     class="disabled-btn"
-                    [tuiHint]="tooltipMemberDisabled"
-                    tuiHintDirection="bottom-right"
+                    [tgUiTooltip]="t('project.assign_user.member-disabled')"
+                    [tgUiTooltipStaysOpenOnHover]="false"
+                    tgUiTooltipPosition="bottom-right"
                     src="help">
                   </tui-svg>
                 </button>

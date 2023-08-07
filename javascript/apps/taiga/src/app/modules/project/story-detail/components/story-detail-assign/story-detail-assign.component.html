@@ -67,8 +67,8 @@ Copyright (c) 2023-present Kaleidos INC
               type="light"
               [rounded]="true"
               aria-hidden="true"
-              [tuiHint]="assignedUser.fullName"
-              [tuiHintDirection]="'bottom-right'"></tg-user-avatar>
+              [tgUiTooltip]="assignedUser.fullName"
+              tgUiTooltipPosition="bottom-right"></tg-user-avatar>
             <label
               class="assigned-name"
               [innerHtml]="
@@ -104,8 +104,8 @@ Copyright (c) 2023-present Kaleidos INC
           icon="user-plus"
           type="button"
           (click)="toggleAssignUser($event)"
-          [tuiHint]="!vm.assignees.length ? unassignedTooltip : null"
-          [tuiHintDirection]="'bottom-right'"
+          [tgUiTooltip]="!vm.assignees.length ? unassignedTooltip : null"
+          tgUiTooltipPosition="bottom-right"
           [ngClass]="{
             'unassigned-button-perm': !vm.assignees.length,
             'assigned-button-perm': vm.assignees.length
@@ -128,8 +128,8 @@ Copyright (c) 2023-present Kaleidos INC
           icon="user-plus"
           type="button"
           (click)="toggleAssignUser($event)"
-          [tuiHint]="!story.assignees.length ? unassignedTooltip : null"
-          [tuiHintDirection]="'bottom-right'"
+          [tgUiTooltip]="!story.assignees.length ? unassignedTooltip : null"
+          tgUiTooltipPosition="bottom-right"
           [attr.aria-label]="t('common_story.story_not_assigned_enter')"
           [ngClass]="{
             'unassigned-button-perm': !story.assignees.length,
@@ -157,8 +157,8 @@ Copyright (c) 2023-present Kaleidos INC
     <ng-template #noAssignPermissionsTpl>
       <div
         *ngIf="!story.assignees.length"
-        [tuiHint]="unassignedTooltip"
-        [tuiHintDirection]="'bottom-right'"
+        [tgUiTooltip]="unassignedTooltip"
+        tgUiTooltipPosition="bottom-right"
         class="unassigned-button-noperm"
         aria-labelledby="unassigned-tooltip">
         {{ t('common_story.unassigned') }}

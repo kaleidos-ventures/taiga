@@ -1,7 +1,6 @@
 {
   "api": "{{ .Env.TAIGA_BACKEND_URL }}/api/v2",
   "ws": "{{ .Env.TAIGA_EVENTS_URL }}",
-  "adminEmail": "{{ .Env.TAIGA_ADMIN_EMAIL }}",
   "supportEmail": "{{ .Env.TAIGA_SUPPORT_EMAIL }}",
   "social": {
     "github": {

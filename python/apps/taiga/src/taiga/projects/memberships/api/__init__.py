@@ -7,10 +7,8 @@
 
 from uuid import UUID
 
-from fastapi import Depends, Response, status
+from fastapi import Response, status
 from taiga.base.api import AuthRequest
-from taiga.base.api import pagination as api_pagination
-from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
@@ -45,7 +43,6 @@ async def list_project_memberships(
     id: B64UUID,
     request: AuthRequest,
     response: Response,
-    pagination_params: PaginationQuery = Depends(),
 ) -> list[ProjectMembership]:
     """
     List project memberships
@@ -53,14 +50,7 @@ async def list_project_memberships(
 
     project = await get_project_or_404(id)
     await check_permissions(permissions=LIST_PROJECT_MEMBERSHIPS, user=request.user, obj=project)
-
-    pagination, memberships = await memberships_services.list_paginated_project_memberships(
-        project=project, offset=pagination_params.offset, limit=pagination_params.limit
-    )
-
-    api_pagination.set_pagination(response=response, pagination=pagination)
-
-    return memberships
+    return await memberships_services.list_project_memberships(project=project)
 
 
 ##########################################################

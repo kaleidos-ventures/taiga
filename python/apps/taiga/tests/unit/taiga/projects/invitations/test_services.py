@@ -128,7 +128,7 @@ async def test_get_public_project_invitation_error_invitation_not_exists():
 
 
 #######################################################
-# list_paginated_pending_project_invitations
+# list_pending_project_invitations
 #######################################################
 
 
@@ -143,8 +143,8 @@ async def test_list_project_invitations_ok_admin():
         fake_invitations_repo.list_project_invitations.return_value = [invitation]
         fake_pj_roles_repo.get_project_role.return_value = role_admin
 
-        pagination, invitations = await services.list_paginated_pending_project_invitations(
-            project=invitation.project, user=invitation.project.created_by, offset=0, limit=10
+        invitations = await services.list_pending_project_invitations(
+            project=invitation.project, user=invitation.project.created_by
         )
 
         fake_invitations_repo.list_project_invitations.assert_awaited_once_with(
@@ -152,14 +152,6 @@ async def test_list_project_invitations_ok_admin():
                 "project_id": invitation.project.id,
                 "status": ProjectInvitationStatus.PENDING,
             },
-            offset=pagination.offset,
-            limit=pagination.limit,
-        )
-        fake_invitations_repo.get_total_project_invitations.assert_awaited_once_with(
-            filters={
-                "project_id": invitation.project.id,
-                "status": ProjectInvitationStatus.PENDING,
-            }
         )
         assert invitations == [invitation]
 
@@ -175,9 +167,7 @@ async def test_list_project_invitations_ok_not_admin():
         fake_invitations_repo.list_project_invitations.return_value = [invitation]
         fake_pj_roles_repo.get_project_role.return_value = not_admin_role
 
-        pagination, invitations = await services.list_paginated_pending_project_invitations(
-            project=invitation.project, user=invitation.user, offset=0, limit=10
-        )
+        invitations = await services.list_pending_project_invitations(project=invitation.project, user=invitation.user)
 
         fake_invitations_repo.list_project_invitations.assert_awaited_once_with(
             filters={
@@ -185,8 +175,6 @@ async def test_list_project_invitations_ok_not_admin():
                 "status": ProjectInvitationStatus.PENDING,
                 "user": invitation.user,
             },
-            offset=pagination.offset,
-            limit=pagination.limit,
         )
 
         assert invitations == [invitation]

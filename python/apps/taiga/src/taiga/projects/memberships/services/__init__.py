@@ -7,7 +7,6 @@
 
 from uuid import UUID
 
-from taiga.base.api.pagination import Pagination
 from taiga.permissions import services as permissions_services
 from taiga.projects.invitations import repositories as project_invitations_repositories
 from taiga.projects.memberships import events as memberships_events
@@ -24,20 +23,11 @@ from taiga.stories.assignments import repositories as story_assignments_reposito
 ##########################################################
 
 
-async def list_paginated_project_memberships(
-    project: Project, offset: int, limit: int
-) -> tuple[Pagination, list[ProjectMembership]]:
-    memberships = await memberships_repositories.list_project_memberships(
+async def list_project_memberships(project: Project) -> list[ProjectMembership]:
+    return await memberships_repositories.list_project_memberships(
         filters={"project_id": project.id},
         select_related=["user", "role", "project"],
-        offset=offset,
-        limit=limit,
     )
-    total_memberships = await memberships_repositories.get_total_project_memberships(filters={"project_id": project.id})
-
-    pagination = Pagination(offset=offset, limit=limit, total=total_memberships)
-
-    return pagination, memberships
 
 
 ##########################################################

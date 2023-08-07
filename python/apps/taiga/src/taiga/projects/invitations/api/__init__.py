@@ -7,11 +7,8 @@
 
 from uuid import UUID
 
-from fastapi import Depends, Response, status
-from taiga.base.api import AuthRequest
-from taiga.base.api import pagination as api_pagination
-from taiga.base.api import responses
-from taiga.base.api.pagination import PaginationQuery
+from fastapi import Response, status
+from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
@@ -94,22 +91,15 @@ async def list_project_invitations(
     id: B64UUID,
     request: AuthRequest,
     response: Response,
-    pagination_params: PaginationQuery = Depends(),
 ) -> list[ProjectInvitation]:
     """
     List (pending) project invitations
-    If the user is a project admin: return the paginated pending project invitation list
+    If the user is a project admin: return the pending project invitation list
     If the user is invited to the project: return a list with just her project invitation
     If the user is not invited to the project (including anonymous users): return an empty list
     """
     project = await get_project_or_404(id)
-
-    pagination, invitations = await invitations_services.list_paginated_pending_project_invitations(
-        project=project, user=request.user, offset=pagination_params.offset, limit=pagination_params.limit
-    )
-
-    api_pagination.set_pagination(response=response, pagination=pagination)
-    return invitations
+    return await invitations_services.list_pending_project_invitations(project=project, user=request.user)
 
 
 ##########################################################

@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "d8b95a15-600f-411c-8269-0a2a65ebbeab",
+		"_postman_id": "a90c0648-49d1-45f8-bea9-0be37173bdf3",
 		"name": "taiga-next e2e",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9835734"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -5383,10 +5382,6 @@
 									"",
 									"    var invitation = jsonRes[0];",
 									"",
-									"    pm.response.to.have.header(\"Pagination-Offset\");",
-									"    pm.response.to.have.header(\"Pagination-Limit\");",
-									"    pm.response.to.have.header(\"Pagination-Total\");",
-									"",
 									"    var invitationUser = jsonRes[0].user;",
 									"    var invitationRole = jsonRes[0].role;",
 									"    var invitationProject = jsonRes[0].project;",
@@ -5452,7 +5447,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations?offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -5461,16 +5456,6 @@
 								"projects",
 								"{{pj-id}}",
 								"invitations"
-							],
-							"query": [
-								{
-									"key": "offset",
-									"value": "{{offset}}"
-								},
-								{
-									"key": "limit",
-									"value": "{{limit}}"
-								}
 							]
 						}
 					},
@@ -7722,10 +7707,6 @@
 									"",
 									"    var membership = jsonRes[0];",
 									"",
-									"    pm.response.to.have.header(\"Pagination-Offset\");",
-									"    pm.response.to.have.header(\"Pagination-Limit\");",
-									"    pm.response.to.have.header(\"Pagination-Total\");",
-									"",
 									"    pm.expect(membership).to.have.property(\"user\");",
 									"    pm.expect(membership).to.have.property(\"role\");",
 									"",
@@ -7780,7 +7761,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships?offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/memberships",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -7789,16 +7770,6 @@
 								"projects",
 								"{{pj-id}}",
 								"memberships"
-							],
-							"query": [
-								{
-									"key": "offset",
-									"value": "{{offset}}"
-								},
-								{
-									"key": "limit",
-									"value": "{{limit}}"
-								}
 							]
 						}
 					},
@@ -8786,10 +8757,6 @@
 									"",
 									"    var membership = jsonRes[0];",
 									"",
-									"    pm.response.to.have.header(\"Pagination-Offset\");",
-									"    pm.response.to.have.header(\"Pagination-Limit\");",
-									"    pm.response.to.have.header(\"Pagination-Total\");",
-									"",
 									"    pm.expect(membership).to.have.property(\"user\");",
 									"    pm.expect(membership).to.have.property(\"workspace\");",
 									"    pm.expect(membership).to.have.property(\"projects\");",
@@ -8854,7 +8821,7 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/memberships?offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/memberships",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -8863,16 +8830,6 @@
 								"workspaces",
 								"{{ws-id}}",
 								"memberships"
-							],
-							"query": [
-								{
-									"key": "offset",
-									"value": "{{offset}}"
-								},
-								{
-									"key": "limit",
-									"value": "{{limit}}"
-								}
 							]
 						}
 					},
@@ -9117,10 +9074,6 @@
 									"",
 									"    var invitation = jsonRes[0];",
 									"",
-									"    pm.response.to.have.header(\"Pagination-Offset\");",
-									"    pm.response.to.have.header(\"Pagination-Limit\");",
-									"    pm.response.to.have.header(\"Pagination-Total\");",
-									"",
 									"    var invitationUser = jsonRes[0].user;",
 									"    var invitationWorkspace = jsonRes[0].workspace;",
 									"",
@@ -9177,7 +9130,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/invitations?offset={{offset}}&limit={{limit}}",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/invitations",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -9186,16 +9139,6 @@
 								"workspaces",
 								"{{ws-id}}",
 								"invitations"
-							],
-							"query": [
-								{
-									"key": "offset",
-									"value": "{{offset}}"
-								},
-								{
-									"key": "limit",
-									"value": "{{limit}}"
-								}
 							]
 						}
 					},

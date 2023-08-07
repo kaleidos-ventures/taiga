@@ -5,11 +5,8 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from fastapi import Depends, Response
-from taiga.base.api import AuthRequest
-from taiga.base.api import pagination as api_pagination
-from taiga.base.api import responses
-from taiga.base.api.pagination import PaginationQuery
+from fastapi import Response
+from taiga.base.api import AuthRequest, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
@@ -81,7 +78,6 @@ async def list_workspace_invitations(
     id: B64UUID,
     request: AuthRequest,
     response: Response,
-    pagination_params: PaginationQuery = Depends(),
 ) -> list[WorkspaceInvitation]:
     """
     List (pending) workspace invitations
@@ -89,12 +85,7 @@ async def list_workspace_invitations(
     workspace = await get_workspace_or_404(id)
     await check_permissions(permissions=LIST_WORKSPACE_INVITATIONS, user=request.user, obj=workspace)
 
-    pagination, invitations = await workspaces_invitations_services.list_paginated_pending_workspace_invitations(
-        workspace=workspace, offset=pagination_params.offset, limit=pagination_params.limit
-    )
-
-    api_pagination.set_pagination(response=response, pagination=pagination)
-    return invitations
+    return await workspaces_invitations_services.list_pending_workspace_invitations(workspace=workspace)
 
 
 ##########################################################

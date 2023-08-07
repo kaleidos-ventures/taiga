@@ -26,31 +26,22 @@ from taiga.workspaces.workspaces.models import Workspace
 ##########################################################
 
 
-async def list_paginated_workspace_memberships(
-    workspace: Workspace, offset: int, limit: int
-) -> tuple[Pagination, list[WorkspaceMembershipDetailSerializer]]:
+async def list_workspace_memberships(
+    workspace: Workspace,
+) -> list[WorkspaceMembershipDetailSerializer]:
     ws_memberships = await workspace_memberships_repositories.list_workspace_memberships(
         filters={"workspace_id": workspace.id},
         select_related=["user", "workspace"],
-        offset=offset,
-        limit=limit,
     )
-    total_memberships = await workspace_memberships_repositories.get_total_workspace_memberships(
-        filters={"workspace_id": workspace.id}
-    )
-    pagination = Pagination(offset=offset, limit=limit, total=total_memberships)
-    serialized_memberships = [
+    return [
         serializer_services.serialize_workspace_membership_detail(
-            user=ws_membership.user,
-            workspace=ws_membership.workspace,
+            ws_membership=ws_membership,
             projects=await projects_repositories.list_projects(
-                filters={"workspace_id": ws_membership.workspace.id, "project_member_id": ws_membership.user.id},
+                filters={"workspace_id": ws_membership.workspace_id, "project_member_id": ws_membership.user_id},
             ),
         )
         for ws_membership in ws_memberships
     ]
-
-    return pagination, serialized_memberships
 
 
 ##########################################################

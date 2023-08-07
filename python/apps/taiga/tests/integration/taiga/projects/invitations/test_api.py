@@ -107,14 +107,6 @@ async def test_create_project_invitations(client):
 
 async def test_list_project_invitations_admin(client):
     project = await f.create_project()
-
-    client.login(project.created_by)
-    response = client.get(f"/projects/{project.b64id}/invitations")
-    assert response.status_code == status.HTTP_200_OK, response.text
-
-
-async def test_list_project_invitations_admin_with_pagination(client):
-    project = await f.create_project()
     general_role = await sync_to_async(project.roles.get)(slug="general")
 
     user1 = await f.create_user(full_name="AAA")
@@ -139,14 +131,9 @@ async def test_list_project_invitations_admin_with_pagination(client):
 
     client.login(project.created_by)
 
-    offset = 0
-    limit = 1
-    response = client.get(f"/projects/{project.b64id}/invitations?offset={offset}&limit={limit}")
+    response = client.get(f"/projects/{project.b64id}/invitations")
     assert response.status_code == status.HTTP_200_OK, response.text
-    assert len(response.json()) == 1
-    assert response.headers["Pagination-Offset"] == "0"
-    assert response.headers["Pagination-Limit"] == "1"
-    assert response.headers["Pagination-Total"] == "3"
+    assert len(response.json()) == 3
 
 
 async def test_list_project_invitations_allowed_to_public_users(client):

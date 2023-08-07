@@ -48,7 +48,7 @@ async def test_list_project_memberships():
     await repositories.create_project_membership(user=user1, project=project, role=role)
     await repositories.create_project_membership(user=user2, project=project, role=role)
 
-    memberships = await repositories.list_project_memberships(filters={"project_id": project.id}, offset=0, limit=100)
+    memberships = await repositories.list_project_memberships(filters={"project_id": project.id})
     assert len(memberships) == 3
 
 

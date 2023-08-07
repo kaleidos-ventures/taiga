@@ -220,7 +220,7 @@ async def test_create_workspace_invitations_invalid_username(tqmanager):
 
 
 #######################################################
-# list_paginated_pending_workspace_invitations
+# list_pending_workspace_invitations
 #######################################################
 
 
@@ -232,9 +232,7 @@ async def test_list_workspace_invitations():
     ):
         fake_invitations_repo.list_workspace_invitations.return_value = [invitation]
 
-        pagination, invitations = await services.list_paginated_pending_workspace_invitations(
-            workspace=invitation.workspace, offset=0, limit=10
-        )
+        invitations = await services.list_pending_workspace_invitations(workspace=invitation.workspace)
 
         fake_invitations_repo.list_workspace_invitations.assert_awaited_once_with(
             filters={
@@ -242,14 +240,6 @@ async def test_list_workspace_invitations():
                 "status": WorkspaceInvitationStatus.PENDING,
             },
             select_related=["user", "workspace"],
-            offset=pagination.offset,
-            limit=pagination.limit,
-        )
-        fake_invitations_repo.get_total_workspace_invitations.assert_awaited_once_with(
-            filters={
-                "workspace_id": invitation.workspace.id,
-                "status": WorkspaceInvitationStatus.PENDING,
-            }
         )
         assert invitations == [invitation]
 

@@ -43,7 +43,7 @@ async def test_list_project_memberships():
     await repositories.create_workspace_membership(user=user2, workspace=workspace)
 
     memberships = await repositories.list_workspace_memberships(
-        filters={"workspace_id": workspace.id}, offset=0, limit=100
+        filters={"workspace_id": workspace.id},
     )
     assert len(memberships) == 3
 

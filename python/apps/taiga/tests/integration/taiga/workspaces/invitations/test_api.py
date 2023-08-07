@@ -113,32 +113,23 @@ async def test_list_workspaces_invitations(client):
 
     client.login(workspace.created_by)
 
-    offset = 0
-    limit = 1
-    response = client.get(f"/workspaces/{workspace.b64id}/invitations?offset={offset}&limit={limit}")
+    response = client.get(f"/workspaces/{workspace.b64id}/invitations")
     assert response.status_code == status.HTTP_200_OK, response.text
-    assert len(response.json()) == 1
-    assert response.headers["Pagination-Offset"] == "0"
-    assert response.headers["Pagination-Limit"] == "1"
-    assert response.headers["Pagination-Total"] == "3"
+    assert len(response.json()) == 3
 
 
 async def test_list_workspaces_invitations_no_permissions(client):
     workspace = await f.create_workspace()
     user1 = await f.create_user(full_name="AAA")
     client.login(user1)
-    offset = 0
-    limit = 1
-    response = client.get(f"/workspaces/{workspace.b64id}/invitations?offset={offset}&limit={limit}")
+    response = client.get(f"/workspaces/{workspace.b64id}/invitations")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
 async def test_list_workspaces_invitations_not_found(client):
     workspace = await f.create_workspace()
     client.login(workspace.created_by)
-    offset = 0
-    limit = 1
-    response = client.get(f"/workspaces/non-existing-id/invitations?offset={offset}&limit={limit}")
+    response = client.get("/workspaces/non-existing-id/invitations")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 

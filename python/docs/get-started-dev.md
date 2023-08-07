@@ -2,16 +2,16 @@
 
 ## Pre-installation requirements:
 >
-> - python >= 3.10. You can use [pyenv](https://github.com/pyenv/pyenv) tool to manage different python versions or install it in your OS.
-> - postgresql >= 13.x.
+> - python >= 3.11. You can use [pyenv](https://github.com/pyenv/pyenv) tool to manage different python versions or install it in your OS.
+> - postgresql >= 15.x.
 > - To install [psycopg2](https://www.psycopg.org/docs/install.html) in a later step, it's needed either python-dev or python3-dev, and libpq-dev packages.
-> - [Optional] redis >= 6.2. You can use `memory` PubSub backend instead.
+> - [Optional] redis >= 7.0. You can use `memory` PubSub backend instead.
 
 Create a virtualenv in `python/` directory and activate it
 
 ```bash
 $ cd python/
-$ python3.10 -m venv --prompt taiga .venv
+$ python3.11 -m venv --prompt taiga .venv
 $ source .venv/bin/activate
 (taiga)$ pip install --upgrade pip wheel setuptools
 ```

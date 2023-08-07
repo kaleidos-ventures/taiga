@@ -7,9 +7,12 @@
 
 
 from typing import Any
+from uuid import UUID
 
 from pydantic import ConstrainedStr, conint, conlist, validator
+from taiga.base.utils.uuid import decode_b64str_to_uuid
 from taiga.base.validators import B64UUID, BaseModel
+from taiga.exceptions import api as ex
 
 
 class Name(ConstrainedStr):
@@ -56,4 +59,15 @@ class ReorderWorkflowStatusesValidator(BaseModel):
 
 
 class DeleteWorkflowStatusQuery(BaseModel):
-    move_to: B64UUID | None
+    # TODO: fix to avoid double validation errors when using the B64UUID type (instead of str)
+    move_to: str | None
+
+    @validator("move_to")
+    def check_b64uuid_from_str(cls, v: str | None) -> UUID | None:
+        if v is None:
+            return None
+
+        try:
+            return decode_b64str_to_uuid(v)
+        except ValueError:
+            raise ex.ValidationError("Invalid 'moveTo' workflow status")

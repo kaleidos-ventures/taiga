@@ -217,11 +217,46 @@ async def test_200_delete_workflow_status_ok(client):
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
-async def test_404_delete_invalid_workflow_status(client):
+@pytest.mark.parametrize("project_b64id", [None, WRONG_ID])
+async def test_404_delete_invalid_project(client, project_b64id):
     project = await f.create_project()
+    wf = await f.create_workflow(project=project)
+    wf_status1 = await f.create_workflow_status(workflow=wf)
     client.login(project.created_by)
-    response = client.delete(f"/projects/{WRONG_SLUG}/workflows/{WRONG_SLUG}/statuses/{WRONG_ID}")
+    response = client.delete(f"/projects/{project_b64id}/workflows/{wf.slug}/statuses/{wf_status1.b64id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+@pytest.mark.parametrize("workflow_slug", [None, WRONG_SLUG])
+async def test_404_delete_invalid_workflow(client, workflow_slug):
+    project = await f.create_project()
+    wf = await f.create_workflow(project=project)
+    wf_status1 = await f.create_workflow_status(workflow=wf)
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{project.b64id}/workflows/{workflow_slug}/statuses/{wf_status1.b64id}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+@pytest.mark.parametrize("wf_status_b64id", [None, WRONG_ID])
+async def test_404_delete_invalid_workflow_status(client, wf_status_b64id):
+    project = await f.create_project()
+    wf = await f.create_workflow(project=project)
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{project.b64id}/workflows/{wf.slug}/statuses/{wf_status_b64id}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+@pytest.mark.parametrize("move_to_wf_status_b64id", [None, WRONG_ID])
+async def test_422_invalid_move_to_workflow_status(client, move_to_wf_status_b64id):
+    project = await f.create_project()
+    wf = await f.create_workflow(project=project)
+    wf_status1 = await f.create_workflow_status(workflow=wf)
+    await f.create_story(status=wf_status1, workflow=wf)
+    client.login(project.created_by)
+    response = client.delete(
+        f"/projects/{project.b64id}/workflows/{wf.slug}/statuses/{wf_status1.b64id}?moveTo={move_to_wf_status_b64id}"
+    )
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 async def test_403_delete_workflow_status_not_project_admin(client):

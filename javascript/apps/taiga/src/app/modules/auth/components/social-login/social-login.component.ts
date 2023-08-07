@@ -41,7 +41,7 @@ export class SocialLoginComponent implements OnInit {
   public socialError: string | null = null;
   public social: string | null = null;
   public availableLogins: string[] = [];
-  public adminEmail: string = this.config.adminEmail;
+  public supportEmail: string = this.config.supportEmail;
 
   public get isGithubActive() {
     return (

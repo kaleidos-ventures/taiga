@@ -1,7 +1,6 @@
 {
   "api": "http://127.0.0.1:8000/api/v2",
   "ws": "ws://127.0.0.1:8000/events/",
-  "adminEmail": "admin@taiga.io",
   "supportEmail": "support@taiga.io",
   "emailWs": "ws://127.0.0.1:8090",
   "social": {

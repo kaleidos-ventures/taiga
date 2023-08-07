@@ -21,6 +21,7 @@ from taiga.projects.projects.api.validators import PermissionsValidator, Project
 from taiga.projects.projects.models import Project
 from taiga.projects.projects.serializers import ProjectDetailSerializer, ProjectSummarySerializer
 from taiga.routers import routes
+from taiga.workspaces.workspaces import services as workspaces_services
 from taiga.workspaces.workspaces.api import get_workspace_or_404
 
 # PERMISSIONS
@@ -54,9 +55,12 @@ async def create_project(
     form: ProjectValidator = Depends(ProjectValidator.as_form),  # type: ignore[assignment, attr-defined]
 ) -> ProjectDetailSerializer:
     """
-    Create project for the logged user in a given workspace.
+    Create project in a given workspace.
     """
-    workspace = await get_workspace_or_404(id=form.workspace_id)
+    workspace = await workspaces_services.get_workspace(id=form.workspace_id)
+    if workspace is None:
+        raise ex.BadRequest(f"Workspace {form.workspace_id} does not exist")
+
     await check_permissions(permissions=CREATE_PROJECT, user=request.user, obj=workspace)
     return await projects_services.create_project(
         workspace=workspace,

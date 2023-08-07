@@ -48,13 +48,14 @@ async def test_create_project_being_anonymous(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_create_project_invalid_b64uuid_error(client):
+async def test_create_project_invalid_workspace_error(client):
     workspace = await f.create_workspace()
-    data = {"name": "My pro#%&乕شject", "color": 1, "workspaceId": "ws-invalid"}
+    non_existing_uuid = "6JgsbGyoEe2VExhWgGrI2w"
+    data = {"name": "My pro#%&乕شject", "color": 1, "workspaceId": non_existing_uuid}
 
     client.login(workspace.created_by)
     response = client.post("/projects", data=data)
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
 
 
 async def test_create_project_invalid_validation_error(client):

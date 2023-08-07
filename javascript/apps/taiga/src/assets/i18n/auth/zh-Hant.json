@@ -5,7 +5,7 @@
     "gitlab": "Continue with Gitlab",
     "separator": "or",
     "errors": {
-      "config": "Something went wrong with your authentication, contact with <a class='link' href='mailto:{{adminEmail}}'>the admin.</a>",
+      "config": "Something went wrong with your authentication, contact with <a class='link' href='mailto:{{email}}'>support.</a>",
       "server": "We can't connect with {{social}}, try again in a few minutes."
     }
   },

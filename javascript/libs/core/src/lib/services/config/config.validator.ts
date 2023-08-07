@@ -11,7 +11,6 @@ import * as z from 'zod';
 export const ConfigValidator = z.object({
   api: z.string(),
   ws: z.string(),
-  adminEmail: z.string(),
   supportEmail: z.string(),
   emailWs: z.string().optional(),
   social: z.object({

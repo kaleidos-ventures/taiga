@@ -131,6 +131,7 @@ describe('invite selectors', () => {
       {
         email: 'test2@test.com',
         roles: ['General'],
+        userHasPendingInvitation: false,
       },
     ]);
   });
@@ -143,8 +144,10 @@ describe('invite selectors', () => {
         fullName: 'user one',
       },
     ];
-    const userToInvite =
-      selectWorkspaceUsersToInvite(userIdentifier).projector(contacts);
+    const userToInvite = selectWorkspaceUsersToInvite(userIdentifier).projector(
+      contacts,
+      []
+    );
     expect(userToInvite).toEqual([
       {
         username: 'user1',
@@ -152,6 +155,7 @@ describe('invite selectors', () => {
       },
       {
         email: 'test2@test.com',
+        userHasPendingInvitation: false,
       },
     ]);
   });

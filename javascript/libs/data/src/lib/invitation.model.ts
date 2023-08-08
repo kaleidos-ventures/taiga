@@ -10,6 +10,8 @@ import { NumberSymbol } from '@angular/common';
 import { Membership } from './membership.model';
 import { Project } from './project.model';
 import { Workspace } from './workspace.model';
+import { Role } from './roles.model';
+
 export interface Invitation extends Partial<Membership> {
   email: string;
 }
@@ -20,6 +22,7 @@ export interface Contact {
   userIsMember?: boolean;
   userHasPendingInvitation?: boolean;
   userIsAddedToList?: boolean;
+  roles?: Role['name'][];
 }
 export interface InvitationRequest {
   email?: string;

@@ -7,7 +7,7 @@
  */
 
 import { createSelector } from '@ngrx/store';
-import { Role, User } from '@taiga/data';
+import { Contact, Role } from '@taiga/data';
 import { invitationFeature } from '../reducers/invitation.reducers';
 
 export const { selectProject, selectWorkspace, selectSearchFinished } =
@@ -83,20 +83,24 @@ export const selectProjectUsersToInvite = (inviteIdentifiers: string[]) => {
     selectMemberRolesOrdered,
     selectProjectContacts,
     selectProjectInvitations,
-    (roles, projectContacts, projectInvitations): Partial<User>[] => {
-      const users: Partial<User>[] = [];
+    (roles, projectContacts, projectInvitations): Partial<Contact>[] => {
+      const users: Partial<Contact>[] = [];
       inviteIdentifiers.forEach((identifier) => {
         const myContact = projectContacts?.find(
           (contact) => contact.username === identifier
         );
         const hasPendingInvitation = projectInvitations?.find(
-          (invitation) => invitation.user?.username === identifier
+          (invitation) =>
+            invitation.user?.username === identifier || invitation.email
         );
-        let tempUser: Partial<User> = {};
+        let tempUser: Partial<Contact> = {};
         if (myContact) {
           tempUser = { ...myContact };
         } else if (identifier.includes('@')) {
-          tempUser = { email: identifier };
+          tempUser = {
+            email: identifier,
+            userHasPendingInvitation: !!hasPendingInvitation,
+          };
         }
 
         const defaultRole = roles ? [roles[1].name] : undefined;
@@ -115,17 +119,25 @@ export const selectProjectUsersToInvite = (inviteIdentifiers: string[]) => {
 export const selectWorkspaceUsersToInvite = (inviteIdentifiers: string[]) => {
   return createSelector(
     selectWorkspaceContacts,
-    (workspaceContacts): Partial<User>[] => {
-      const users: Partial<User>[] = [];
+    selectWorkspaceInvitations,
+    (workspaceContacts, workspaceInvitations): Partial<Contact>[] => {
+      const users: Partial<Contact>[] = [];
       inviteIdentifiers.forEach((identifier) => {
         const myContact = workspaceContacts?.find(
           (contact) => contact.username === identifier
         );
-        let tempUser: Partial<User> = {};
+        const hasPendingInvitation = workspaceInvitations?.find(
+          (invitation) =>
+            invitation.user?.username === identifier || invitation.email
+        );
+        let tempUser: Partial<Contact> = {};
         if (myContact) {
           tempUser = { ...myContact };
         } else if (identifier.includes('@')) {
-          tempUser = { email: identifier };
+          tempUser = {
+            email: identifier,
+            userHasPendingInvitation: !!hasPendingInvitation,
+          };
         }
         Object.keys(tempUser).length && users.push(tempUser);
       });

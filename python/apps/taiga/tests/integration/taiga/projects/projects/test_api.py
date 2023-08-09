@@ -9,6 +9,7 @@ import pytest
 from fastapi import status
 from taiga.permissions import choices
 from tests.utils import factories as f
+from tests.utils.bad_params import INVALID_B64ID, NOT_EXISTING_B64ID
 
 pytestmark = pytest.mark.django_db(transaction=True)
 
@@ -18,7 +19,7 @@ pytestmark = pytest.mark.django_db(transaction=True)
 ##########################################################
 
 
-async def test_create_project_being_workspace_member(client):
+async def test_create_project_200_ok_being_workspace_member(client):
     workspace = await f.create_workspace()
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
     files = {"logo": ("logo.png", f.build_image_file("logo"), "image/png")}
@@ -28,7 +29,17 @@ async def test_create_project_being_workspace_member(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_create_project_being_no_workspace_member(client):
+async def test_create_project_400_bad_request_invalid_workspace_error(client):
+    workspace = await f.create_workspace()
+    non_existing_uuid = "6JgsbGyoEe2VExhWgGrI2w"
+    data = {"name": "My pro#%&乕شject", "color": 1, "workspaceId": non_existing_uuid}
+
+    client.login(workspace.created_by)
+    response = client.post("/projects", data=data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
+
+
+async def test_create_project_403_being_no_workspace_member(client):
     workspace = await f.create_workspace()
     user2 = await f.create_user()
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
@@ -39,7 +50,7 @@ async def test_create_project_being_no_workspace_member(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_create_project_being_anonymous(client):
+async def test_create_project_403_being_anonymous(client):
     workspace = await f.create_workspace()
     data = {"name": "Project test", "color": 1, "workspaceId": workspace.b64id}
     files = {"logo": ("logo.png", f.build_image_file("logo"), "image/png")}
@@ -48,17 +59,7 @@ async def test_create_project_being_anonymous(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_create_project_invalid_workspace_error(client):
-    workspace = await f.create_workspace()
-    non_existing_uuid = "6JgsbGyoEe2VExhWgGrI2w"
-    data = {"name": "My pro#%&乕شject", "color": 1, "workspaceId": non_existing_uuid}
-
-    client.login(workspace.created_by)
-    response = client.post("/projects", data=data)
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.text
-
-
-async def test_create_project_invalid_validation_error(client):
+async def test_create_project_422_unprocessable_color(client):
     workspace = await f.create_workspace()
     data = {"name": "My project", "color": 12, "workspaceId": workspace.b64id}
 
@@ -72,7 +73,7 @@ async def test_create_project_invalid_validation_error(client):
 ##########################################################
 
 
-async def test_list_workspace_projects_success(client):
+async def test_list_workspace_projects_200_ok(client):
     workspace = await f.create_workspace()
     await f.create_project(workspace=workspace, created_by=workspace.created_by)
 
@@ -82,13 +83,18 @@ async def test_list_workspace_projects_success(client):
     assert len(response.json()) == 1
 
 
-async def test_list_workspace_projects_workspace_not_found(client):
+async def test_list_workspace_projects_404_not_found_workspace_b64id(client):
     user = await f.create_user()
-    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
-
     client.login(user)
-    response = client.get(f"/workspaces/{non_existent_id}/projects")
+    response = client.get(f"/workspaces/{NOT_EXISTING_B64ID}/projects")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_list_workspace_projects_422_unprocessable_workspace_b64id(client):
+    user = await f.create_user()
+    client.login(user)
+    response = client.get(f"/workspaces/{INVALID_B64ID}/projects")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 ##########################################################
@@ -96,7 +102,7 @@ async def test_list_workspace_projects_workspace_not_found(client):
 ##########################################################
 
 
-async def test_list_workspace_invited_projects_success(client):
+async def test_list_workspace_invited_projects_200_ok(client):
     workspace = await f.create_workspace()
     project = await f.create_project(workspace=workspace, created_by=workspace.created_by)
     user2 = await f.create_user()
@@ -109,13 +115,18 @@ async def test_list_workspace_invited_projects_success(client):
     assert len(response.json()) == 1
 
 
-async def test_list_workspace_invited_projects_workspace_not_found(client):
+async def test_list_workspace_invited_projects_404_not_found_workspace_b64id(client):
     user = await f.create_user()
-    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
-
     client.login(user)
-    response = client.get(f"/workspaces/{non_existent_id}/invited-projects")
+    response = client.get(f"/workspaces/{NOT_EXISTING_B64ID}/invited-projects")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_list_workspace_invited_projects_422_unproccessable_workspace_b64id(client):
+    user = await f.create_user()
+    client.login(user)
+    response = client.get(f"/workspaces/{INVALID_B64ID}/invited-projects")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 ##########################################################
@@ -123,7 +134,7 @@ async def test_list_workspace_invited_projects_workspace_not_found(client):
 ##########################################################
 
 
-async def test_get_project_being_project_admin(client):
+async def test_get_project_200_ok_being_project_admin(client):
     project = await f.create_project()
 
     client.login(project.created_by)
@@ -131,7 +142,7 @@ async def test_get_project_being_project_admin(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_get_project_being_project_member(client):
+async def test_get_project_200_ok_being_project_member(client):
     project = await f.create_project()
     general_member_role = await f.create_project_role(
         permissions=choices.ProjectPermissions.values,
@@ -147,7 +158,7 @@ async def test_get_project_being_project_member(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_get_project_being_invited_user(client):
+async def test_get_project_200_ok_being_invited_user(client):
     project = await f.create_project()
     general_member_role = await f.create_project_role(
         permissions=choices.ProjectPermissions.values,
@@ -163,7 +174,7 @@ async def test_get_project_being_invited_user(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_get_project_being_no_project_member(client):
+async def test_get_project_403_forbidden_not_project_member(client):
     project = await f.create_project()
     user2 = await f.create_user()
 
@@ -172,20 +183,25 @@ async def test_get_project_being_no_project_member(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_get_project_being_anonymous(client):
+async def test_get_project_403_forbidden_being_anonymous(client):
     project = await f.create_project()
 
     response = client.get(f"/projects/{project.b64id}")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_get_project_not_found_error(client):
+async def test_get_project_404_not_found_project_b64id(client):
     user = await f.create_user()
-    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
-
     client.login(user)
-    response = client.get(f"/projects/{non_existent_id}")
+    response = client.get(f"/projects/{NOT_EXISTING_B64ID}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_get_project_422_unprocessable_project_b64id(client):
+    user = await f.create_user()
+    client.login(user)
+    response = client.get(f"/projects/{INVALID_B64ID}")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 ##########################################################
@@ -193,7 +209,7 @@ async def test_get_project_not_found_error(client):
 ##########################################################
 
 
-async def test_get_project_public_permissions_ok(client):
+async def test_get_project_public_permissions_200_ok(client):
     project = await f.create_project()
 
     client.login(project.created_by)
@@ -201,7 +217,7 @@ async def test_get_project_public_permissions_ok(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_get_project_public_permissions_no_admin(client):
+async def test_get_project_public_permissions_403_forbidden_no_admin(client):
     project = await f.create_project()
     user2 = await f.create_user()
 
@@ -210,7 +226,7 @@ async def test_get_project_public_permissions_no_admin(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_get_project_public_permissions_no_member(client):
+async def test_get_project_public_permissions_403_forbidden_no_member(client):
     project = await f.create_project()
     user = await f.create_user()
 
@@ -219,11 +235,25 @@ async def test_get_project_public_permissions_no_member(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_get_project_public_permissions_anonymous_user(client):
+async def test_get_project_public_permissions_403_forbidden_anonymous_user(client):
     project = await f.create_project()
 
     response = client.get(f"/projects/{project.b64id}/public-permissions")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_get_project_public_permissions_404_not_found_project_b64id(client):
+    user = await f.create_user()
+    client.login(user)
+    response = client.get(f"/projects/{NOT_EXISTING_B64ID}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_get_project_public_permissions_422_unprocessable_project_b64id(client):
+    user = await f.create_user()
+    client.login(user)
+    response = client.get(f"/projects/{INVALID_B64ID}")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 ##########################################################
@@ -231,7 +261,7 @@ async def test_get_project_public_permissions_anonymous_user(client):
 ##########################################################
 
 
-async def test_update_project_ok(client):
+async def test_update_project_200_ok(client):
     project = await f.create_project()
 
     data = {"name": "New name", "description": "new description"}
@@ -246,7 +276,7 @@ async def test_update_project_ok(client):
     assert "new-logo.png" in updated_project["logo"]
 
 
-async def test_update_project_delete_description(client):
+async def test_update_project_200_ok_delete_description(client):
     project = await f.create_project()
 
     data = {"description": ""}
@@ -259,16 +289,7 @@ async def test_update_project_delete_description(client):
     assert updated_project["description"] == ""
 
 
-async def test_update_project_not_found(client):
-    user = await f.create_user()
-    data = {"name": "new name"}
-
-    client.login(user)
-    response = client.patch("/projects/xxxxxxxxx", data=data)
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-async def test_update_project_no_admin(client):
+async def test_update_project_403_forbidden_no_admin(client):
     other_user = await f.create_user()
     project = await f.create_project()
 
@@ -276,6 +297,24 @@ async def test_update_project_no_admin(client):
     client.login(other_user)
     response = client.patch(f"/projects/{project.b64id}", data=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_update_project_404_not_found_project_b64id(client):
+    user = await f.create_user()
+    data = {"name": "new name"}
+
+    client.login(user)
+    response = client.patch(f"/projects/{NOT_EXISTING_B64ID}", data=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_project_422_unprocessable_project_b64id(client):
+    user = await f.create_user()
+    data = {"name": "new name"}
+
+    client.login(user)
+    response = client.patch(f"/projects/{INVALID_B64ID}", data=data)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 ##########################################################
@@ -290,7 +329,7 @@ async def test_update_project_no_admin(client):
         (["view_story", "modify_story"]),
     ],
 )
-async def test_update_project_public_permissions_ok(client, permissions):
+async def test_update_project_public_permissions_200_ok(client, permissions):
     project = await f.create_project()
     data = {"permissions": permissions}
 
@@ -299,13 +338,40 @@ async def test_update_project_public_permissions_ok(client, permissions):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_update_project_public_permissions_project_not_found(client):
+async def test_update_project_public_permissions_403_forbidden_no_admin(client):
+    project = await f.create_project()
+    user2 = await f.create_user()
+    data = {"permissions": []}
+
+    client.login(user2)
+    response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_update_project_public_permissions_403_forbidden_no_member(client):
+    project = await f.create_project()
     user = await f.create_user()
-    data = {"permissions": ["view_story"]}
-    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
+    data = {"permissions": []}
 
     client.login(user)
-    response = client.put(f"/projects/{non_existent_id}/public-permissions", json=data)
+    response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_update_project_public_permissions_403_forbidden_anonymous_user(client):
+    project = await f.create_project()
+    data = {"permissions": []}
+
+    response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_update_project_public_permissions_404_not_found_project_b64id(client):
+    user = await f.create_user()
+    data = {"permissions": ["view_story"]}
+
+    client.login(user)
+    response = client.put(f"/projects/{NOT_EXISTING_B64ID}/public-permissions", json=data)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
@@ -316,7 +382,7 @@ async def test_update_project_public_permissions_project_not_found(client):
         (["delete_story"]),
     ],
 )
-async def test_update_project_public_permissions_incompatible(client, permissions):
+async def test_update_project_public_permissions_422_unprocessable_incompatible(client, permissions):
     project = await f.create_project()
     data = {"permissions": permissions}
 
@@ -325,7 +391,7 @@ async def test_update_project_public_permissions_incompatible(client, permission
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
-async def test_update_project_public_permissions_not_valid(client):
+async def test_update_project_public_permissions_422_unprocessable_not_valid(client):
     project = await f.create_project()
     data = {"permissions": ["not_valid"]}
 
@@ -334,32 +400,11 @@ async def test_update_project_public_permissions_not_valid(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
-async def test_update_project_public_permissions_no_admin(client):
-    project = await f.create_project()
-    user2 = await f.create_user()
+async def test_update_project_public_permissions_422_unprocessable_project_b64id(client):
     data = {"permissions": []}
 
-    client.login(user2)
-    response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_update_project_public_permissions_no_member(client):
-    project = await f.create_project()
-    user = await f.create_user()
-    data = {"permissions": []}
-
-    client.login(user)
-    response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_update_project_public_permissions_anonymous_user(client):
-    project = await f.create_project()
-    data = {"permissions": []}
-
-    response = client.put(f"/projects/{project.b64id}/public-permissions", json=data)
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+    response = client.put(f"/projects/{INVALID_B64ID}/public-permissions", json=data)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 ##########################################################
@@ -367,24 +412,7 @@ async def test_update_project_public_permissions_anonymous_user(client):
 ##########################################################
 
 
-async def test_delete_project_invalid(client):
-    pj_admin = await f.create_user()
-
-    client.login(pj_admin)
-    response = client.delete("/projects/INVALID_PJ_ID")
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-async def test_delete_project_user_without_permissions(client):
-    project = await f.create_project()
-    user = await f.create_user()
-
-    client.login(user)
-    response = client.delete(f"/projects/{project.b64id}")
-    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
-
-
-async def test_delete_project_being_proj_admin(client):
+async def test_delete_project_204_no_content_being_proj_admin(client):
     project = await f.create_project()
 
     client.login(project.created_by)
@@ -392,7 +420,7 @@ async def test_delete_project_being_proj_admin(client):
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
-async def test_delete_project_being_ws_admin(client):
+async def test_delete_project_204_no_content_being_ws_admin(client):
     ws = await f.create_workspace()
     project = await f.create_project(workspace=ws)
 
@@ -401,12 +429,35 @@ async def test_delete_project_being_ws_admin(client):
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
 
 
+async def test_delete_project_403_forbidden_user_without_permissions(client):
+    project = await f.create_project()
+    user = await f.create_user()
+
+    client.login(user)
+    response = client.delete(f"/projects/{project.b64id}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_project_404_not_found_project_b64id(client):
+    pj_admin = await f.create_user()
+    client.login(pj_admin)
+    response = client.delete(f"/projects/{NOT_EXISTING_B64ID}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_project_422_unprocessable_project_b64id(client):
+    pj_admin = await f.create_user()
+    client.login(pj_admin)
+    response = client.delete(f"/projects/{INVALID_B64ID}")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
+
+
 ##########################################################
 # GET /my/projects/<id>/permissions
 ##########################################################
 
 
-async def test_get_my_project_permissions_ok(client):
+async def test_get_my_project_permissions_200_ok(client):
     project = await f.create_project()
 
     client.login(project.created_by)
@@ -414,10 +465,17 @@ async def test_get_my_project_permissions_ok(client):
     assert response.status_code == status.HTTP_200_OK, response.text
 
 
-async def test_get_my_project_permissions_no_project(client):
+async def test_get_my_project_permissions_404_not_found_project_b64id(client):
     user = await f.create_user()
-    non_existent_id = "xxxxxxxxxxxxxxxxxxxxxx"
 
     client.login(user)
-    response = client.get(f"/my/projects/{non_existent_id}/permissions")
+    response = client.get(f"/my/projects/{NOT_EXISTING_B64ID}/permissions")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_get_my_project_permissions_422_unprocessable_project_b64id(client):
+    user = await f.create_user()
+
+    client.login(user)
+    response = client.get(f"/my/projects/{INVALID_B64ID}/permissions")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text

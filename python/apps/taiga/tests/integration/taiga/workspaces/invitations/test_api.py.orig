@@ -142,7 +142,13 @@ async def test_list_workspaces_invitations_403_forbidden_no_permissions(client):
 async def test_list_workspaces_404_not_found_workspace_b64id(client):
     workspace = await f.create_workspace()
     client.login(workspace.created_by)
-    response = client.get(f"/workspaces/{NOT_EXISTING_B64ID}/invitations")
+<<<<<<< HEAD
+    response = client.get("/workspaces/non-existing-id/invitations")
+=======
+    offset = 0
+    limit = 1
+    response = client.get(f"/workspaces/{NOT_EXISTING_B64ID}/invitations?offset={offset}&limit={limit}")
+>>>>>>> 3982c48ca (issue(b64uuid): i#3907 fix returning uuids on 404 errors)
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 

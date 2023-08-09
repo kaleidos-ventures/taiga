@@ -41,7 +41,7 @@ LIST_WORKSPACE_DETAIL_200 = responses.http_status_200(model=list[WorkspaceDetail
     "/workspaces",
     name="workspaces.post",
     summary="Create workspace",
-    responses=WORKSPACE_DETAIL_200 | ERROR_422 | ERROR_403,
+    responses=WORKSPACE_DETAIL_200 | ERROR_403 | ERROR_422,
     response_model=None,
 )
 async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> WorkspaceSerializer:
@@ -80,7 +80,7 @@ async def list_my_workspaces(request: AuthRequest) -> list[WorkspaceDetailSerial
     "/workspaces/{id}",
     name="workspaces.get",
     summary="Get workspace",
-    responses=WORKSPACE_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=WORKSPACE_DETAIL_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def get_workspace(id: B64UUID, request: AuthRequest) -> WorkspaceSerializer:
@@ -96,7 +96,7 @@ async def get_workspace(id: B64UUID, request: AuthRequest) -> WorkspaceSerialize
     "/my/workspaces/{id}",
     name="my.workspaces.get",
     summary="Get the overview of a workspace to which I belong",
-    responses=WORKSPACE_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=WORKSPACE_DETAIL_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def get_my_workspace(id: B64UUID, request: AuthRequest) -> WorkspaceDetailSerializer:
@@ -119,7 +119,7 @@ async def get_my_workspace(id: B64UUID, request: AuthRequest) -> WorkspaceDetail
     "/workspaces/{id}",
     name="workspace.update",
     summary="Update workspace",
-    responses=WORKSPACE_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=WORKSPACE_200 | ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def update_workspace(
@@ -146,7 +146,7 @@ async def update_workspace(
     "/workspaces/{id}",
     name="workspace.delete",
     summary="Delete workspace",
-    responses=ERROR_400 | ERROR_404 | ERROR_403,
+    responses=ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_workspace(id: B64UUID, request: AuthRequest) -> None:

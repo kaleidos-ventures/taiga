@@ -241,7 +241,7 @@ async def delete_workflow_status(workflow_status: WorkflowStatus, target_status_
     status of the same workflow.
 
     :param workflow_status: the workflow status to delete
-    :param target_status: the workflow status's id to which move the stories from the status being deleted
+    :param target_status_id: the workflow status's id to which move the stories from the status being deleted
         - if not received, all the workflow status and its contained stories will be deleted
         - if received, the workflow status will be deleted but its contained stories won't (they will be first moved to
          the specified status)

@@ -44,7 +44,7 @@ PUBLIC_WORKSPACE_INVITATION_200 = responses.http_status_200(model=PublicWorkspac
     "/workspaces/{id}/invitations",
     name="workspace.invitations.create",
     summary="Create workspace invitations",
-    responses=CREATE_WORKSPACE_INVITATIONS_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=CREATE_WORKSPACE_INVITATIONS_200 | ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def create_workspace_invitations(
     id: B64UUID,
@@ -72,7 +72,7 @@ async def create_workspace_invitations(
     name="workspace.invitations.list",
     summary="List workspace pending invitations",
     response_model=list[WorkspaceInvitationSerializer],
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def list_workspace_invitations(
     id: B64UUID,

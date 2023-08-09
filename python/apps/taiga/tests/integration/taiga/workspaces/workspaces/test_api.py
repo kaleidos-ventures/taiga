@@ -9,6 +9,7 @@
 import pytest
 from fastapi import status
 from tests.utils import factories as f
+from tests.utils.bad_params import INVALID_B64ID, NOT_EXISTING_B64ID
 
 pytestmark = pytest.mark.django_db(transaction=True)
 
@@ -143,7 +144,7 @@ async def test_get_workspace_not_found_error(client):
 ##########################################################
 
 
-async def test_update_workspace_ok(client):
+async def test_update_workspace_200_ok(client):
     workspace = await f.create_workspace()
     data = {"name": "New name"}
 
@@ -154,16 +155,7 @@ async def test_update_workspace_ok(client):
     assert updated_workspace["name"] == "New name"
 
 
-async def test_update_workspace_not_found(client):
-    user = await f.create_user()
-    data = {"name": "new name"}
-
-    client.login(user)
-    response = client.patch("/workspaces/xxxxxxxxx", json=data)
-    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
-
-
-async def test_update_workspace_no_admin(client):
+async def test_update_workspace_403_forbidden_no_admin(client):
     other_user = await f.create_user()
     workspace = await f.create_workspace()
 
@@ -171,6 +163,24 @@ async def test_update_workspace_no_admin(client):
     client.login(other_user)
     response = client.patch(f"/workspaces/{workspace.b64id}", json=data)
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_update_workspace_404_not_found_workspace_b64id(client):
+    user = await f.create_user()
+    data = {"name": "new name"}
+
+    client.login(user)
+    response = client.patch(f"/workspaces/{NOT_EXISTING_B64ID}", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_workspace_422_unprocessable_workspace_b64id(client):
+    user = await f.create_user()
+    data = {"name": "new name"}
+
+    client.login(user)
+    response = client.patch(f"/workspaces/{INVALID_B64ID}", json=data)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
 #############################################################

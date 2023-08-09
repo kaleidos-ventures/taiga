@@ -31,7 +31,7 @@ MEDIAFILE_DETAIL_200 = responses.http_status_200(model=MediafileSerializer)
     "/projects/{project_id}/stories/{ref}/mediafiles",
     name="project.story.mediafiles.create",
     summary="Create mediafiles and attach to an story",
-    responses=MEDIAFILE_DETAIL_200 | ERROR_403 | ERROR_422 | ERROR_404,
+    responses=MEDIAFILE_DETAIL_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def create_story_mediafiles(

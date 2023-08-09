@@ -49,7 +49,7 @@ REORDER_WORKFLOW_STATUSES_200 = responses.http_status_200(model=ReorderWorkflowS
     "/projects/{id}/workflows",
     name="project.workflow.list",
     summary="List workflows",
-    responses=LIST_WORKFLOW_200 | ERROR_404 | ERROR_403,
+    responses=LIST_WORKFLOW_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def list_workflows(id: B64UUID, request: Request) -> list[WorkflowSerializer]:
@@ -70,7 +70,7 @@ async def list_workflows(id: B64UUID, request: Request) -> list[WorkflowSerializ
     "/projects/{id}/workflows/{workflow_slug}",
     name="project.workflow.get",
     summary="Get project workflow",
-    responses=GET_WORKFLOW_200 | ERROR_404 | ERROR_403,
+    responses=GET_WORKFLOW_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def get_workflow(
@@ -109,7 +109,7 @@ async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> Workflow:
     name="project.workflowstatus.create",
     summary="Create a workflow status",
     response_model=WorkflowStatusSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def create_workflow_status(
     project_id: B64UUID,
@@ -140,7 +140,7 @@ async def create_workflow_status(
     name="project.workflowstatus.update",
     summary="Update workflow status",
     response_model=WorkflowStatusSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def update_workflow_status(
     id: B64UUID,
@@ -170,7 +170,7 @@ async def update_workflow_status(
     "/projects/{project_id}/workflows/{workflow_slug}/statuses/reorder",
     name="project.workflowstatus.reorder",
     summary="Reorder workflow statuses",
-    responses=REORDER_WORKFLOW_STATUSES_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=REORDER_WORKFLOW_STATUSES_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def reorder_workflow_statuses(
@@ -201,7 +201,7 @@ async def reorder_workflow_statuses(
     "/projects/{project_id}/workflows/{workflow_slug}/statuses/{id}",
     name="project.workflowstatus.delete",
     summary="Delete a workflow status",
-    responses=ERROR_404 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_workflow_status(
@@ -227,7 +227,7 @@ async def delete_workflow_status(
 
     await workflows_services.delete_workflow_status(
         workflow_status=workflow_status,
-        target_status_id=query_params.move_to,
+        target_status_id=query_params.move_to,  # type: ignore
     )
 
 
@@ -241,6 +241,6 @@ async def get_workflow_status_or_404(project_id: UUID, workflow_slug: str, id: U
         project_id=project_id, workflow_slug=workflow_slug, id=id
     )
     if workflow_status is None:
-        raise ex.NotFoundError(f"Workflow status {id} does not exist")
+        raise ex.NotFoundError("Workflow status does not exist")
 
     return workflow_status

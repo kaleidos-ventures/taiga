@@ -54,7 +54,7 @@ PUBLIC_PROJECT_INVITATION_200 = responses.http_status_200(model=PublicProjectInv
     "/projects/{id}/invitations",
     name="project.invitations.create",
     summary="Create project invitations",
-    responses=CREATE_PROJECT_INVITATIONS_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=CREATE_PROJECT_INVITATIONS_200 | ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
 )
 # TODO: remove "Query" from the "id" parameter
 async def create_project_invitations(
@@ -85,7 +85,7 @@ async def create_project_invitations(
     name="project.invitations.list",
     summary="List project pending invitations",
     response_model=list[ProjectInvitationSerializer],
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def list_project_invitations(
     id: B64UUID,
@@ -135,7 +135,7 @@ async def get_public_project_invitation(token: str) -> PublicProjectInvitationSe
     name="project.invitations.update",
     summary="Update project invitation",
     response_model=ProjectInvitationSerializer,
-    responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
+    responses=ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def update_project_invitation(
     id: UUID,
@@ -162,7 +162,7 @@ async def update_project_invitation(
     name="project.invitations.resend",
     summary="Resend project invitation",
     response_class=Response,
-    responses=ERROR_422 | ERROR_400 | ERROR_404 | ERROR_403,
+    responses=ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def resend_project_invitation(
@@ -189,7 +189,7 @@ async def resend_project_invitation(
     "/projects/{id}/invitations/revoke",
     name="project.invitations.revoke",
     summary="Revoke project invitation",
-    responses=ERROR_422 | ERROR_400 | ERROR_403,
+    responses=ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
     response_class=Response,
     status_code=status.HTTP_204_NO_CONTENT,
 )
@@ -218,7 +218,7 @@ async def revoke_project_invitation(
     name="project.invitations.accept",
     summary="Accept a project invitation using a token",
     response_model=ProjectInvitationSerializer,
-    responses=ERROR_400 | ERROR_404 | ERROR_403,
+    responses=ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def accept_project_invitation_by_token(request: AuthRequest, token: str) -> ProjectInvitation:
     """
@@ -234,7 +234,7 @@ async def accept_project_invitation_by_token(request: AuthRequest, token: str) -
     name="project.my.invitations.accept",
     summary="Accept a project invitation for authenticated users",
     response_model=ProjectInvitationSerializer,
-    responses=ERROR_400 | ERROR_404 | ERROR_403,
+    responses=ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def accept_project_invitation_by_project(id: B64UUID, request: AuthRequest) -> ProjectInvitation:
     """

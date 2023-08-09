@@ -4,6 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
+
 from uuid import UUID
 
 import pytest
@@ -45,15 +46,22 @@ class B64UUIDValidator(BaseModel):
     b64id: B64UUID
 
 
+def test_b64id_ok():
+    validator = B64UUIDValidator(b64id="6JgsbGyoEe2VExhWgGrI2w")
+
+    assert validator.b64id == UUID("e8982c6c-6ca8-11ed-9513-1856806ac8db")
+
+
 @pytest.mark.parametrize(
     "b64id, result",
     [
         ("", None),
         ("6Jgsbshort", None),
         ("@#!", None),
-        ("6JgsbGyoEe2VExhWgGrI2w", UUID("e8982c6c-6ca8-11ed-9513-1856806ac8db")),
     ],
 )
-def test_b64id(b64id: str | None, result: UUID | None):
-    validator = B64UUIDValidator(b64id=b64id)
-    assert validator.b64id == result
+def test_b64id_validation_error(b64id: str | None, result: UUID | None):
+    with pytest.raises(ValidationError):
+        validator = B64UUIDValidator(b64id=b64id)
+
+        assert validator.b64id == result

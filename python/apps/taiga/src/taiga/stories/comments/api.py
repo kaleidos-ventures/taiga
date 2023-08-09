@@ -45,7 +45,7 @@ DELETE_STORY_COMMENT = IsNotDeleted() & (
     name="project.story.comments.create",
     summary="Create story comment",
     response_model=CommentSerializer,
-    responses=ERROR_403 | ERROR_422 | ERROR_404,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def create_story_comments(
     project_id: B64UUID,
@@ -77,7 +77,7 @@ async def create_story_comments(
     name="project.story.comments.list",
     summary="List story comments",
     response_model=list[CommentSerializer],
-    responses=ERROR_403 | ERROR_422 | ERROR_404,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def list_story_comments(
     project_id: B64UUID,
@@ -113,7 +113,7 @@ async def list_story_comments(
     name="project.story.comments.update",
     summary="Update story comment",
     response_model=CommentSerializer,
-    responses=ERROR_403 | ERROR_422 | ERROR_404,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def update_story_comments(
     project_id: B64UUID,
@@ -148,7 +148,7 @@ async def update_story_comments(
     name="project.story.comments.delete",
     summary="Delete story comment",
     response_model=CommentSerializer,
-    responses=ERROR_403 | ERROR_404,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def delete_story_comment(
     project_id: B64UUID,

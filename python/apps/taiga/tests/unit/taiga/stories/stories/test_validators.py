@@ -8,6 +8,7 @@
 import pytest
 from pydantic import ValidationError
 from taiga.stories.stories.api.validators import ReorderStoriesValidator, ReorderValidator
+from tests.utils.bad_params import NOT_EXISTING_B64ID
 
 #######################################################
 # ReorderValidator
@@ -47,13 +48,13 @@ async def test_reorder_validator_fail():
 
 async def test_reorder_stories_validator_ok():
     reorder = ReorderValidator(place="after", ref=2)
-    assert ReorderStoriesValidator(status="status", stories=[1, 2, 3], reorder=reorder)
-    assert ReorderStoriesValidator(status="status", stories=[1, 2, 3])
+    assert ReorderStoriesValidator(status=NOT_EXISTING_B64ID, stories=[1, 2, 3], reorder=reorder)
+    assert ReorderStoriesValidator(status=NOT_EXISTING_B64ID, stories=[1, 2, 3])
 
 
 async def test_reorder_stories_validator_fail():
     with pytest.raises(ValidationError) as exc_info:
-        ReorderStoriesValidator(status="status", stories=[])
+        ReorderStoriesValidator(status=NOT_EXISTING_B64ID, stories=[])
     assert exc_info.value.errors() == [
         {
             "ctx": {"limit_value": 1},
@@ -70,7 +71,7 @@ async def test_reorder_stories_validator_fail():
     ]
 
     with pytest.raises(ValidationError) as exc_info:
-        ReorderStoriesValidator(status="status", stories=[1], reorder={"place": "nope", "ref": 3})
+        ReorderStoriesValidator(status=NOT_EXISTING_B64ID, stories=[1], reorder={"place": "nope", "ref": 3})
     assert exc_info.value.errors() == [
         {"loc": ("reorder", "place"), "msg": "Place should be 'after' or 'before'", "type": "assertion_error"}
     ]

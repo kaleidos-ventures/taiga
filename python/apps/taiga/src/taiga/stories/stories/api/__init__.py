@@ -47,7 +47,7 @@ REORDER_STORIES_200 = responses.http_status_200(model=ReorderStoriesSerializer)
     "/projects/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.create",
     summary="Create an story",
-    responses=STORY_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=STORY_DETAIL_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def create_story(
@@ -81,7 +81,7 @@ async def create_story(
     "/projects/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.list",
     summary="List stories",
-    responses=LIST_STORY_SUMMARY_200 | ERROR_404 | ERROR_403,
+    responses=LIST_STORY_SUMMARY_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def list_stories(
@@ -118,7 +118,7 @@ async def list_stories(
     "/projects/{project_id}/stories/{ref}",
     name="project.stories.get",
     summary="Get story",
-    responses=STORY_DETAIL_200 | ERROR_404 | ERROR_403,
+    responses=STORY_DETAIL_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def get_story(project_id: B64UUID, ref: int, request: AuthRequest) -> StoryDetailSerializer:
@@ -140,7 +140,7 @@ async def get_story(project_id: B64UUID, ref: int, request: AuthRequest) -> Stor
     "/projects/{project_id}/stories/{ref}",
     name="project.stories.update",
     summary="Update story",
-    responses=STORY_DETAIL_200 | ERROR_404 | ERROR_403,
+    responses=STORY_DETAIL_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def update_story(
@@ -177,7 +177,7 @@ async def update_story(
     "/projects/{project_id}/workflows/{workflow_slug}/stories/reorder",
     name="project.stories.reorder",
     summary="Reorder stories",
-    responses=REORDER_STORIES_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=REORDER_STORIES_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def reorder_stories(
@@ -210,7 +210,7 @@ async def reorder_stories(
     "/projects/{project_id}/stories/{ref}",
     name="project.stories.delete",
     summary="Delete story",
-    responses=ERROR_404 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_story(
@@ -235,6 +235,6 @@ async def delete_story(
 async def get_story_or_404(project_id: UUID, ref: int) -> Story:
     story = await stories_services.get_story(project_id=project_id, ref=ref)
     if story is None:
-        raise ex.NotFoundError(f"Story {ref} does not exist in project {project_id}")
+        raise ex.NotFoundError(f"Story {ref} does not exist in the project")
 
     return story

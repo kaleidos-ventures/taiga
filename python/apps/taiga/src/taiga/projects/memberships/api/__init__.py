@@ -90,7 +90,7 @@ async def update_project_membership(
     "/projects/{id}/memberships/{username}",
     name="project.memberships.delete",
     summary="Delete project membership",
-    responses=ERROR_400 | ERROR_404 | ERROR_403,
+    responses=ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_project_membership(id: B64UUID, username: str, request: AuthRequest) -> None:

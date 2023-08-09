@@ -15,7 +15,7 @@ from taiga.base.api.pagination import PaginationQuery
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_422
+from taiga.exceptions.api.errors import ERROR_400, ERROR_401, ERROR_403, ERROR_422
 from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
 from taiga.users import services as users_services
@@ -103,6 +103,7 @@ async def verify_user(form: VerifyTokenValidator) -> VerificationInfoSerializer:
     summary="List all users matching a full text search, ordered (when provided) by their closeness"
     " to a project or a workspace.",
     response_model=list[UserSearchSerializer],
+    responses=ERROR_403 | ERROR_422,
 )
 async def list_users_by_text(
     request: Request,

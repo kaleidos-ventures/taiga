@@ -82,7 +82,7 @@ async def create_project(
     name="workspace.projects.list",
     summary="List workspace projects",
     response_model=list[ProjectSummarySerializer],
-    responses=ERROR_403 | ERROR_404,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def list_workspace_projects(workspace_id: B64UUID, request: AuthRequest) -> list[Project]:
     """
@@ -98,7 +98,7 @@ async def list_workspace_projects(workspace_id: B64UUID, request: AuthRequest) -
     name="workspace.invited-projects.list",
     summary="List of projects in a workspace where the user is invited",
     response_model=list[ProjectSummarySerializer],
-    responses=ERROR_403 | ERROR_404,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def list_workspace_invited_projects(workspace_id: B64UUID, request: AuthRequest) -> list[Project]:
     """
@@ -118,7 +118,7 @@ async def list_workspace_invited_projects(workspace_id: B64UUID, request: AuthRe
     "/projects/{id}",
     name="project.get",
     summary="Get project",
-    responses=PROJECT_DETAIL_200 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=PROJECT_DETAIL_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def get_project(id: B64UUID, request: AuthRequest) -> ProjectDetailSerializer:
@@ -136,7 +136,7 @@ async def get_project(id: B64UUID, request: AuthRequest) -> ProjectDetailSeriali
     name="project.public-permissions.list",
     summary="List project public permissions",
     response_model=list[str],
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def list_project_public_permissions(id: B64UUID, request: AuthRequest) -> list[str]:
     """
@@ -157,7 +157,7 @@ async def list_project_public_permissions(id: B64UUID, request: AuthRequest) -> 
     "/projects/{id}",
     name="project.update",
     summary="Update project",
-    responses=PROJECT_DETAIL_200 | ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=PROJECT_DETAIL_200 | ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def update_project(
@@ -180,7 +180,7 @@ async def update_project(
     name="project.public-permissions.put",
     summary="Edit project public permissions",
     response_model=list[str],
-    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def update_project_public_permissions(
     id: B64UUID,
@@ -206,7 +206,7 @@ async def update_project_public_permissions(
     "/projects/{id}",
     name="projects.delete",
     summary="Delete project",
-    responses=ERROR_404 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_project(id: B64UUID, request: AuthRequest) -> None:
@@ -229,7 +229,7 @@ async def delete_project(id: B64UUID, request: AuthRequest) -> None:
     name="my.projects.permissions.list",
     summary="List my project permissions",
     response_model=list[str],
-    responses=ERROR_404,
+    responses=ERROR_404 | ERROR_422,
 )
 async def list_my_project_permissions(id: B64UUID, request: AuthRequest) -> list[str]:
     """
@@ -247,6 +247,6 @@ async def list_my_project_permissions(id: B64UUID, request: AuthRequest) -> list
 async def get_project_or_404(id: UUID) -> Project:
     project = await projects_services.get_project(id=id)
     if project is None:
-        raise ex.NotFoundError(f"Project {id} does not exist")
+        raise ex.NotFoundError("Project does not exist")
 
     return project

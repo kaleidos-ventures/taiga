@@ -49,12 +49,8 @@ class B64UUID(UUID):
         yield cls.validate
 
     @classmethod
-    def validate(cls, value: str) -> UUID | None:
-        try:
-            return decode_b64str_to_uuid(value)
-        except ValueError:
-            # if it's not a valid base64 string return None to force a 404 (Not Found) response
-            return None
+    def validate(cls, value: str) -> UUID:
+        return decode_b64str_to_uuid(value)
 
 
 class FileField(AnyHttpUrl):

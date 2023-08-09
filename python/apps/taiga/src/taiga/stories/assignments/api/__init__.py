@@ -36,7 +36,7 @@ DELETE_STORY_ASSIGNMENT = HasPerm("modify_story")
     name="project.story.assignments.create",
     summary="Create story assignment",
     response_model=StoryAssignmentSerializer,
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def create_story_assignment(
     project_id: B64UUID,
@@ -64,7 +64,7 @@ async def create_story_assignment(
     "/projects/{project_id}/stories/{ref}/assignments/{username}",
     name="project.story.assignments.delete",
     summary="Delete story assignment",
-    responses=ERROR_404 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_story_assignment(

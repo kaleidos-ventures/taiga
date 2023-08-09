@@ -36,7 +36,7 @@ UPDATE_PROJECT_ROLE_PERMISSIONS = IsProjectAdmin()
     name="project.roles.list",
     summary="Get project roles permissions",
     response_model=list[ProjectRoleSerializer],
-    responses=ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def list_project_roles(project_id: B64UUID, request: AuthRequest) -> list[ProjectRole]:
     """
@@ -58,7 +58,7 @@ async def list_project_roles(project_id: B64UUID, request: AuthRequest) -> list[
     name="project.roles.permissions.put",
     summary="Edit project roles permissions",
     response_model=ProjectRoleSerializer,
-    responses=ERROR_400 | ERROR_404 | ERROR_422 | ERROR_403,
+    responses=ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def update_project_role_permissions(
     project_id: B64UUID,

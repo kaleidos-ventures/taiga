@@ -16,5 +16,5 @@
     }
   },
   "accessTokenLifetime": 180,
-  "globalBanner": true
+  "globalBanner": false
 }

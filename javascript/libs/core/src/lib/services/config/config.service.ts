@@ -21,9 +21,9 @@ export class ConfigService {
   #config!: Config;
 
   public setConfig(config: Config) {
-    ConfigValidator.parse(config);
+    const conf = ConfigValidator.parse(config);
 
-    this.#config = config;
+    this.#config = conf;
   }
 
   public get config(): Config {

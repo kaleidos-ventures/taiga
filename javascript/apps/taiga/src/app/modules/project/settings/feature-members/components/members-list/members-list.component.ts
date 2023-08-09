@@ -80,12 +80,21 @@ export class MembersListComponent implements AfterContentInit {
 
   public model$ = this.state.select().pipe(
     map((model) => {
-      const pageStart = model.offset + 1;
-      const pageEnd = pageStart + model.members.length - 1;
+      const currentMember = model.members.find(
+        (member) => member.user.username === model.user?.username
+      );
 
-      return {
-        ...model,
-        members: model.members.map((member) => {
+      const members = model.members.filter(
+        (member) => member.user.username !== model.user?.username
+      );
+
+      const allMembers = [currentMember, ...members].filter(
+        (it): it is Membership => !!it
+      );
+
+      const pageMembers = allMembers
+        .slice(model.offset, model.offset + MEMBERS_PAGE_SIZE)
+        .map((member) => {
           const cancelledId = model.cancelled.includes(member.user.username);
           const undoDoneActive = model.undo.includes(member.user.username);
           return {
@@ -93,7 +102,14 @@ export class MembersListComponent implements AfterContentInit {
             cancelled: cancelledId ? 'active' : 'inactive',
             undo: undoDoneActive,
           } as MemberData;
-        }),
+        });
+
+      const pageStart = model.offset + 1;
+      const pageEnd = pageStart + pageMembers.length - 1;
+
+      return {
+        ...model,
+        members: pageMembers,
         pageStart,
         pageEnd,
         hasNextPage: pageEnd < model.total,
@@ -151,7 +167,7 @@ export class MembersListComponent implements AfterContentInit {
     this.store.dispatch(
       membersActions.setMembersPage({
         offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
-        showLoading: true,
+        showLoading: false,
       })
     );
   }
@@ -160,7 +176,7 @@ export class MembersListComponent implements AfterContentInit {
     this.store.dispatch(
       membersActions.setMembersPage({
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
-        showLoading: true,
+        showLoading: false,
       })
     );
   }

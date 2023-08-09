@@ -11,6 +11,7 @@ import { Invitation, Membership, User } from '@taiga/data';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import { membersActions } from '../actions/members.actions';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-members/feature-members.constants';
 
 export type UpdateAnimation = 'create' | 'update';
 
@@ -81,14 +82,18 @@ export const reducer = createImmerReducer(
 
     return state;
   }),
-  on(membersActions.setMembersPage, (state, { showLoading }): MembersState => {
-    if (showLoading) {
-      state.membersLoading = true;
-    }
-    state.invitationUpdateAnimation = null;
+  on(
+    membersActions.setMembersPage,
+    (state, { showLoading, offset }): MembersState => {
+      if (showLoading) {
+        state.membersLoading = true;
+      }
+      state.invitationUpdateAnimation = null;
+      state.membersOffset = offset;
 
-    return state;
-  }),
+      return state;
+    }
+  ),
   on(membersActions.setPendingPage, (state, { showLoading }): MembersState => {
     if (showLoading) {
       state.invitationsLoading = true;
@@ -105,6 +110,17 @@ export const reducer = createImmerReducer(
       state.membersLoading = false;
       state.membersOffset = offset;
 
+      if (state.membersOffset) {
+        const currentPageMembers = state.members.slice(
+          state.membersOffset,
+          state.members.length + MEMBERS_PAGE_SIZE
+        );
+
+        if (!currentPageMembers.length) {
+          state.membersOffset = state.membersOffset - MEMBERS_PAGE_SIZE;
+        }
+      }
+
       return state;
     }
   ),
@@ -115,6 +131,17 @@ export const reducer = createImmerReducer(
       state.totalInvitations = totalInvitations;
       state.invitationsLoading = false;
       state.invitationsOffset = offset;
+
+      if (state.invitationsOffset) {
+        const currentPageMembers = state.invitations.slice(
+          state.invitationsOffset,
+          state.invitations.length + MEMBERS_PAGE_SIZE
+        );
+
+        if (!currentPageMembers.length) {
+          state.invitationsOffset = state.invitationsOffset - MEMBERS_PAGE_SIZE;
+        }
+      }
 
       return state;
     }
@@ -210,6 +237,7 @@ export const reducer = createImmerReducer(
       state.members = state.members.filter(
         (member) => member.user.username !== username
       );
+      state.totalMemberships = state.members.length;
       state.cancelledRemovedMember = state.cancelledRemovedMember.filter(
         (cancelled) => cancelled !== username
       );

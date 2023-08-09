@@ -36,10 +36,10 @@ export class ProjectOverviewEffects {
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
       exhaustMap(([, project]) => {
-        return this.projectApiService.getAllInvitations(project.id).pipe(
+        return this.projectApiService.getInvitations(project.id).pipe(
           map((invitationsResponse) => {
             return ProjectOverviewActions.fetchInvitationsSuccess({
-              invitations: invitationsResponse,
+              invitations: invitationsResponse.invitations,
             });
           })
         );

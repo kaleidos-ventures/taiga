@@ -54,6 +54,7 @@ import { WorkspaceDetailComponent } from './components/workspace-detail/workspac
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
 import { LeaveWorkspaceDropdownComponent } from './components/leave-workspace-dropdown/leave-workspace-dropdown.component';
 import { ToolTipModule } from '@taiga/ui/tooltip';
+import { WorkspaceDetailPeopleEffects } from './+state/effects/workspace-detail-people.effects';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,10 @@ import { ToolTipModule } from '@taiga/ui/tooltip';
     TuiDataListModule,
     TuiSvgModule,
     StoreModule.forFeature(workspaceDetailFeature),
-    EffectsModule.forFeature([WorkspaceDetailEffects]),
+    EffectsModule.forFeature([
+      WorkspaceDetailEffects,
+      WorkspaceDetailPeopleEffects,
+    ]),
     ProjectCardComponent,
     DeleteWorkspaceComponent,
     ResizedDirective,

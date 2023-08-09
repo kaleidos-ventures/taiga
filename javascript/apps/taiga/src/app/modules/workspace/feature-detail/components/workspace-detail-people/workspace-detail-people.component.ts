@@ -122,7 +122,7 @@ export class WorkspaceDetailPeopleComponent implements OnInit {
           this.store.dispatch(
             workspaceDetailEventActions.removeMember({
               id: this.id,
-              username: eventResponse.event.content.membership.user.username,
+              member: eventResponse.event.content.membership.user.username,
             })
           );
         });

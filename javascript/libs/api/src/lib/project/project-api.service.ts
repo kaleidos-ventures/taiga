@@ -169,77 +169,30 @@ export class ProjectApiService {
     );
   }
 
-  public getMembers(
-    id: string,
-    offset = 0,
-    limit = 10
-  ): Observable<MembersResponse> {
+  public getMembers(id: string): Observable<MembersResponse> {
     return this.http
-      .get<Membership[]>(`${this.config.apiUrl}/projects/${id}/memberships`, {
-        observe: 'response',
-        params: {
-          offset,
-          limit,
-        },
-      })
+      .get<Membership[]>(`${this.config.apiUrl}/projects/${id}/memberships`)
       .pipe(
         map((response) => {
           return {
-            totalMemberships: Number(response.headers.get('pagination-total')),
-            memberships: response.body ?? [],
+            totalMemberships: response.length,
+            memberships: response,
           };
         })
       );
   }
 
-  public getInvitations(
-    id: string,
-    offset = 0,
-    limit = 10
-  ): Observable<InvitationsResponse> {
+  public getInvitations(id: string): Observable<InvitationsResponse> {
     return this.http
-      .get<Invitation[]>(`${this.config.apiUrl}/projects/${id}/invitations`, {
-        observe: 'response',
-        params: {
-          offset,
-          limit,
-        },
-      })
+      .get<Invitation[]>(`${this.config.apiUrl}/projects/${id}/invitations`)
       .pipe(
         map((response) => {
           return {
-            totalInvitations: Number(response.headers.get('pagination-total')),
-            invitations: response.body ?? [],
+            totalInvitations: response.length,
+            invitations: response,
           };
         })
       );
-  }
-
-  public getAllInvitations(projectId: Project['id']): Observable<Invitation[]> {
-    return new Observable((subscriber) => {
-      const limit = 100;
-      const invitations: Invitation[] = [];
-      let offset = 0;
-
-      const nextPage = () => {
-        this.getInvitations(projectId, offset, limit).subscribe((response) => {
-          offset += response.invitations.length;
-
-          const complete = response.invitations.length < limit;
-
-          invitations.push(...response.invitations);
-
-          if (complete) {
-            subscriber.next(invitations);
-            subscriber.complete();
-          } else {
-            nextPage();
-          }
-        });
-      };
-
-      nextPage();
-    });
   }
 
   public acceptInvitationToken(token: string) {
@@ -420,33 +373,6 @@ export class ProjectApiService {
     return this.http.delete<StoryDetail>(
       `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}`
     );
-  }
-
-  public getAllMembers(projectId: Project['id']): Observable<Membership[]> {
-    return new Observable((subscriber) => {
-      const limit = 100;
-      const members: Membership[] = [];
-      let offset = 0;
-
-      const nextPage = () => {
-        this.getMembers(projectId, offset, limit).subscribe((response) => {
-          offset += response.memberships.length;
-
-          const complete = response.memberships.length < limit;
-
-          members.push(...response.memberships);
-
-          if (complete) {
-            subscriber.next(members);
-            subscriber.complete();
-          } else {
-            nextPage();
-          }
-        });
-      };
-
-      nextPage();
-    });
   }
 
   public assingStory(

@@ -149,12 +149,17 @@ export class PendingMembersListComponent {
 
   public model$ = this.state.select().pipe(
     map((model) => {
+      const invitationsList = model.invitations.slice(
+        model.offset,
+        model.offset + MEMBERS_PAGE_SIZE
+      );
+
       const pageStart = model.offset + 1;
-      const pageEnd = pageStart + model.invitations.length - 1;
+      const pageEnd = pageStart + invitationsList.length - 1;
 
       return {
         ...model,
-        invitations: model.invitations.map((invitation) => {
+        invitations: invitationsList.map((invitation) => {
           const cancelledId = model.cancelled.includes(invitation.email);
           const undoDoneActive = model.undo.includes(invitation.email);
           return {
@@ -243,7 +248,7 @@ export class PendingMembersListComponent {
     this.store.dispatch(
       membersActions.setPendingPage({
         offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
-        showLoading: true,
+        showLoading: false,
       })
     );
   }
@@ -252,7 +257,7 @@ export class PendingMembersListComponent {
     this.store.dispatch(
       membersActions.setPendingPage({
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
-        showLoading: true,
+        showLoading: false,
       })
     );
   }

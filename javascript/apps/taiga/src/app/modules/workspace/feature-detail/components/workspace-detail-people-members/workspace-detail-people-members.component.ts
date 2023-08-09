@@ -66,16 +66,21 @@ export class WorkspaceDetailPeopleMembersComponent
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public model$ = this.state.select().pipe(
     map((model) => {
-      const pageStart = model.offset + 1;
-      const pageEnd = pageStart + model.members.length - 1;
+      const currentMember = model.members.find(
+        (member) => member.user.username === model.currentUser.username
+      );
 
-      return {
-        ...model,
-        pageStart,
-        pageEnd,
-        hasNextPage: pageEnd < model.total,
-        hasPreviousPage: !!model.offset,
-        members: model.members.map((member) => {
+      const members = model.members.filter(
+        (member) => member.user.username !== model.currentUser.username
+      );
+
+      const allMembers = [currentMember, ...members].filter(
+        (it): it is WorkspaceMembership => !!it
+      );
+
+      const pageMembers = allMembers
+        .slice(model.offset, model.offset + this.MEMBERS_PAGE_SIZE)
+        .map((member) => {
           const cancelledId = model.removingMembers.includes(
             member.user.username
           );
@@ -87,7 +92,18 @@ export class WorkspaceDetailPeopleMembersComponent
             cancelled: cancelledId ? 'active' : 'inactive',
             undo: undoDoneActive,
           };
-        }),
+        });
+
+      const pageStart = model.offset + 1;
+      const pageEnd = pageStart + pageMembers.length - 1;
+
+      return {
+        ...model,
+        pageStart,
+        pageEnd,
+        hasNextPage: pageEnd < model.total,
+        hasPreviousPage: !!model.offset,
+        members: pageMembers,
       };
     })
   );
@@ -147,20 +163,16 @@ export class WorkspaceDetailPeopleMembersComponent
 
   public next() {
     this.store.dispatch(
-      workspaceDetailApiActions.getWorkspaceMembers({
-        id: this.state.get('workspace')!.id,
+      workspaceActions.setWorkspaceMembersPage({
         offset: this.state.get('offset') + MEMBERS_PAGE_SIZE,
-        showLoading: true,
       })
     );
   }
 
   public prev() {
     this.store.dispatch(
-      workspaceDetailApiActions.getWorkspaceMembers({
-        id: this.state.get('workspace')!.id,
+      workspaceActions.setWorkspaceMembersPage({
         offset: this.state.get('offset') - MEMBERS_PAGE_SIZE,
-        showLoading: true,
       })
     );
   }

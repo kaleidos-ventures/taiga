@@ -8,7 +8,6 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import {
@@ -52,32 +51,6 @@ import { filterNil } from '~/app/shared/utils/operators';
 
 @Injectable()
 export class MembersEffects {
-  public nextMembersPage$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(membersActions.setMembersPage),
-      concatLatestFrom(() =>
-        this.store.select(selectCurrentProject).pipe(filterNil())
-      ),
-      exhaustMap(([action, project]) => {
-        return this.projectApiService
-          .getMembers(project.id, action.offset, MEMBERS_PAGE_SIZE)
-          .pipe(
-            map((membersResponse) => {
-              return membersActions.fetchMembersSuccess({
-                members: membersResponse.memberships,
-                totalMemberships: membersResponse.totalMemberships,
-                offset: action.offset,
-              });
-            }),
-            catchError((httpResponse: HttpErrorResponse) => {
-              this.appService.errorManagement(httpResponse);
-              return EMPTY;
-            })
-          );
-      })
-    );
-  });
-
   public nextPendingPage$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(membersActions.setPendingPage),
@@ -85,21 +58,19 @@ export class MembersEffects {
         this.store.select(selectCurrentProject).pipe(filterNil())
       ),
       exhaustMap(([action, project]) => {
-        return this.projectApiService
-          .getInvitations(project.id, action.offset, MEMBERS_PAGE_SIZE)
-          .pipe(
-            map((invitationsResponse) => {
-              return membersActions.fetchInvitationsSuccess({
-                invitations: invitationsResponse.invitations,
-                totalInvitations: invitationsResponse.totalInvitations,
-                offset: action.offset,
-              });
-            }),
-            catchError((httpResponse: HttpErrorResponse) => {
-              this.appService.errorManagement(httpResponse);
-              return EMPTY;
-            })
-          );
+        return this.projectApiService.getInvitations(project.id).pipe(
+          map((invitationsResponse) => {
+            return membersActions.fetchInvitationsSuccess({
+              invitations: invitationsResponse.invitations,
+              totalInvitations: invitationsResponse.totalInvitations,
+              offset: action.offset,
+            });
+          }),
+          catchError((httpResponse: HttpErrorResponse) => {
+            this.appService.errorManagement(httpResponse);
+            return EMPTY;
+          })
+        );
       })
     );
   });
@@ -112,21 +83,19 @@ export class MembersEffects {
         this.store.select(selectMembersOffset).pipe(filterNil()),
       ]),
       exhaustMap(([, project, membersOffset]) => {
-        return this.projectApiService
-          .getMembers(project.id, membersOffset, MEMBERS_PAGE_SIZE)
-          .pipe(
-            map((membersResponse) => {
-              return membersActions.fetchMembersSuccess({
-                members: membersResponse.memberships,
-                totalMemberships: membersResponse.totalMemberships,
-                offset: membersOffset,
-              });
-            }),
-            catchError((httpResponse: HttpErrorResponse) => {
-              this.appService.errorManagement(httpResponse);
-              return EMPTY;
-            })
-          );
+        return this.projectApiService.getMembers(project.id).pipe(
+          map((membersResponse) => {
+            return membersActions.fetchMembersSuccess({
+              members: membersResponse.memberships,
+              totalMemberships: membersResponse.totalMemberships,
+              offset: membersOffset,
+            });
+          }),
+          catchError((httpResponse: HttpErrorResponse) => {
+            this.appService.errorManagement(httpResponse);
+            return EMPTY;
+          })
+        );
       })
     );
   });
@@ -139,21 +108,19 @@ export class MembersEffects {
         this.store.select(selectInvitationsOffset).pipe(filterNil()),
       ]),
       exhaustMap(([, project, invitationsOffset]) => {
-        return this.projectApiService
-          .getInvitations(project.id, invitationsOffset, MEMBERS_PAGE_SIZE)
-          .pipe(
-            map((invitationsResponse) => {
-              return membersActions.fetchInvitationsSuccess({
-                invitations: invitationsResponse.invitations,
-                totalInvitations: invitationsResponse.totalInvitations,
-                offset: invitationsOffset,
-              });
-            }),
-            catchError((httpResponse: HttpErrorResponse) => {
-              this.appService.errorManagement(httpResponse);
-              return EMPTY;
-            })
-          );
+        return this.projectApiService.getInvitations(project.id).pipe(
+          map((invitationsResponse) => {
+            return membersActions.fetchInvitationsSuccess({
+              invitations: invitationsResponse.invitations,
+              totalInvitations: invitationsResponse.totalInvitations,
+              offset: invitationsOffset,
+            });
+          }),
+          catchError((httpResponse: HttpErrorResponse) => {
+            this.appService.errorManagement(httpResponse);
+            return EMPTY;
+          })
+        );
       })
     );
   });
@@ -197,7 +164,12 @@ export class MembersEffects {
         this.store.select(selectInvitationsOffset).pipe(filterNil()),
       ]),
       map(([, invitations, invitationsOffset]) => {
-        if (invitations.length) {
+        const currentPageInvitations = invitations.slice(
+          invitationsOffset,
+          invitationsOffset + MEMBERS_PAGE_SIZE
+        );
+
+        if (currentPageInvitations.length) {
           return membersActions.setPendingPage({
             offset: invitationsOffset,
             showLoading: false,
@@ -225,8 +197,23 @@ export class MembersEffects {
   public initMembersTabMembers$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(membersActions.initProjectMembers),
-      map(() => {
-        return membersActions.setMembersPage({ offset: 0, showLoading: true });
+      concatLatestFrom(() =>
+        this.store.select(selectCurrentProject).pipe(filterNil())
+      ),
+      exhaustMap(([, project]) => {
+        return this.projectApiService.getMembers(project.id).pipe(
+          map((membersResponse) => {
+            return membersActions.fetchMembersSuccess({
+              members: membersResponse.memberships,
+              totalMemberships: membersResponse.totalMemberships,
+              offset: 0,
+            });
+          }),
+          catchError((httpResponse: HttpErrorResponse) => {
+            this.appService.errorManagement(httpResponse);
+            return EMPTY;
+          })
+        );
       })
     );
   });
@@ -463,7 +450,12 @@ export class MembersEffects {
         this.store.select(selectMembersOffset).pipe(filterNil()),
       ]),
       map(([, members, membersOffset]) => {
-        if (members.length) {
+        const currentPageMembers = members.slice(
+          membersOffset,
+          membersOffset + MEMBERS_PAGE_SIZE
+        );
+
+        if (currentPageMembers.length) {
           return membersActions.setMembersPage({
             offset: membersOffset,
             showLoading: false,
@@ -513,7 +505,6 @@ export class MembersEffects {
     private projectApiService: ProjectApiService,
     private store: Store,
     private buttonLoadingService: ButtonLoadingService,
-    private invitationApiService: InvitationApiService,
-    private router: Router
+    private invitationApiService: InvitationApiService
   ) {}
 }

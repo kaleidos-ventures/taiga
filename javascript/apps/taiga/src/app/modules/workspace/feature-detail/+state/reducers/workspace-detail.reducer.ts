@@ -22,6 +22,7 @@ import {
   workspaceDetailEventActions,
 } from '../actions/workspace-detail.actions';
 import { invitationWorkspaceActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/workspace/feature-detail/workspace-feature.constants';
 
 export interface WorkspaceDetailState {
   workspace: Workspace | null;
@@ -242,13 +243,13 @@ export const reducer = createImmerReducer(
     (state, { members, nonMembers, invitations }): WorkspaceDetailState => {
       state.members.membersList = members.members;
       state.members.total = members.totalMembers;
-      state.members.offset = members.offset;
+      state.members.offset = 0;
       state.nonMembers.membersList = nonMembers.members;
       state.nonMembers.total = nonMembers.totalMembers;
       state.nonMembers.offset = nonMembers.offset;
       state.invitations.membersList = invitations.members;
       state.invitations.total = invitations.totalMembers;
-      state.invitations.offset = invitations.offset;
+      state.invitations.offset = 0;
       state.members.loading = false;
       state.nonMembers.loading = false;
       state.invitations.loading = false;
@@ -258,24 +259,38 @@ export const reducer = createImmerReducer(
   ),
   on(
     workspaceDetailApiActions.getWorkspaceMembersSuccess,
-    (state, { members, totalMembers, offset }): WorkspaceDetailState => {
+    (state, { members, totalMembers }): WorkspaceDetailState => {
       state.members.membersList = members;
       state.members.total = totalMembers;
-      state.members.offset = offset;
       state.members.loading = false;
 
       return state;
     }
   ),
   on(
+    workspaceDetailEventActions.removeMember,
     workspaceDetailApiActions.removeMemberSuccess,
     (state, { member }): WorkspaceDetailState => {
-      state.members.membersList = state.members.membersList.filter(
-        (currentMember) => {
-          return currentMember.user.username !== member;
-        }
+      const removedMember = state.members.membersList.find((it) => {
+        return it.user.username !== member;
+      });
+
+      if (removedMember) {
+        state.members.membersList = state.members.membersList.filter((it) => {
+          return it.user.username !== member;
+        });
+
+        state.members.total--;
+      }
+
+      const currentPageMembers = state.members.membersList.slice(
+        state.members.offset,
+        state.members.offset + MEMBERS_PAGE_SIZE
       );
-      state.members.total = state.members.total - 1;
+
+      if (!currentPageMembers.length) {
+        state.members.offset = state.members.offset - MEMBERS_PAGE_SIZE;
+      }
 
       return state;
     }
@@ -307,26 +322,6 @@ export const reducer = createImmerReducer(
       state.invitations.membersList = members;
       state.invitations.total = totalMembers;
       state.invitations.offset = offset;
-
-      return state;
-    }
-  ),
-  on(
-    workspaceDetailEventActions.removeMember,
-    (state, { username }): WorkspaceDetailState => {
-      const member = state.members.membersList.find((member) => {
-        return member.user.username !== username;
-      });
-
-      if (member) {
-        state.members.membersList = state.members.membersList.filter(
-          (member) => {
-            return member.user.username !== username;
-          }
-        );
-
-        state.members.total--;
-      }
 
       return state;
     }
@@ -387,6 +382,14 @@ export const reducer = createImmerReducer(
       state.nonMembers.membersList = nonMembers.members;
       state.nonMembers.total = nonMembers.totalMembers;
       state.nonMembers.offset = nonMembers.offset;
+
+      return state;
+    }
+  ),
+  on(
+    workspaceActions.setWorkspaceMembersPage,
+    (state, { offset }): WorkspaceDetailState => {
+      state.members.offset = offset;
 
       return state;
     }

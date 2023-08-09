@@ -39,6 +39,7 @@ import {
   selectOpenRevokeInvitationDialog,
   selectInvitationUndoDoneAnimation,
   selectMemberUndoDoneAnimation,
+  selectMembers,
 } from '../selectors/members.selectors';
 import { MembersEffects } from './members.effects';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
@@ -77,45 +78,6 @@ describe('MembersEffects', () => {
     store = spectator.inject(MockStore);
   });
 
-  it('next members page', () => {
-    const project = ProjectMockFactory();
-
-    store.overrideSelector(selectCurrentProject, project);
-
-    const projectApiService = spectator.inject(ProjectApiService);
-    const effects = spectator.inject(MembersEffects);
-
-    const membershipResponse = {
-      memberships: [MembershipMockFactory(), MembershipMockFactory()],
-      totalMemberships: 2,
-    };
-
-    projectApiService.getMembers.mockReturnValue(
-      cold('-b|', { b: membershipResponse })
-    );
-
-    actions$ = hot('-a', {
-      a: membersActions.setMembersPage({ offset: 0, showLoading: true }),
-    });
-
-    const expected = cold('--a', {
-      a: membersActions.fetchMembersSuccess({
-        members: membershipResponse.memberships,
-        totalMemberships: membershipResponse.totalMemberships,
-        offset: 0,
-      }),
-    });
-
-    expect(effects.nextMembersPage$).toBeObservable(expected);
-    expect(effects.nextMembersPage$).toSatisfyOnFlush(() => {
-      expect(projectApiService.getMembers).toHaveBeenCalledWith(
-        project.id,
-        0,
-        20
-      );
-    });
-  });
-
   it('next invitations page', () => {
     const project = ProjectMockFactory();
 
@@ -145,13 +107,9 @@ describe('MembersEffects', () => {
       }),
     });
 
-    expect(effects.nextPendingPage$).toBeObservable(expected);
     expect(effects.nextPendingPage$).toSatisfyOnFlush(() => {
-      expect(projectApiService.getInvitations).toHaveBeenCalledWith(
-        project.id,
-        0,
-        20
-      );
+      expect(effects.nextPendingPage$).toBeObservable(expected);
+      expect(projectApiService.getInvitations).toHaveBeenCalledWith(project.id);
     });
   });
 
@@ -525,5 +483,40 @@ describe('MembersEffects', () => {
         }
       );
     });
+  });
+
+  it('shoud go to the previous page if no members are left', () => {
+    const projectApiService = spectator.inject(ProjectApiService);
+    const effects = spectator.inject(MembersEffects);
+    const project = ProjectMockFactory();
+    const member = MembershipMockFactory();
+    const offset = 40;
+
+    const store = spectator.inject(MockStore);
+    store.overrideSelector(selectMembers, []);
+    store.overrideSelector(selectMembersOffset, offset);
+    store.refreshState();
+
+    projectApiService.removeMember.mockReturnValue(cold('-b|', { b: null }));
+
+    store.overrideSelector(selectCurrentProject, project);
+
+    actions$ = hot('-a', {
+      a: projectEventActions.userLostProjectMembership({
+        username: member.user.username,
+        projectName: project.name,
+      }),
+    });
+
+    const expected = cold('-a', {
+      a: membersActions.setMembersPage({
+        offset: offset - MEMBERS_PAGE_SIZE,
+        showLoading: false,
+      }),
+    });
+
+    expect(effects.removeMemberSuccessChangeReloadPage$).toBeObservable(
+      expected
+    );
   });
 });

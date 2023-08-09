@@ -70,6 +70,9 @@ export const workspaceActions = createActionGroup({
       name: Workspace['name'];
       username: User['username'];
     }>(),
+    'Set workspace members page': props<{
+      offset: number;
+    }>(),
   },
 });
 
@@ -89,7 +92,6 @@ export const workspaceDetailApiActions = createActionGroup({
       members: {
         members: WorkspaceMembership[];
         totalMembers: number;
-        offset: number;
       };
       nonMembers: {
         members: WorkspaceMembership[];
@@ -99,18 +101,15 @@ export const workspaceDetailApiActions = createActionGroup({
       invitations: {
         members: InvitationWorkspaceMember[];
         totalMembers: number;
-        offset: number;
       };
     }>(),
     'Get workspace members': props<{
       id: Workspace['id'];
-      offset: number;
       showLoading: boolean;
     }>(),
     'Get workspace members success': props<{
       members: WorkspaceMembership[];
       totalMembers: number;
-      offset: number;
     }>(),
     'Get workspace non members': props<{
       id: Workspace['id'];
@@ -174,7 +173,7 @@ export const workspaceDetailEventActions = createActionGroup({
     }>(),
     'Remove member': props<{
       id: Workspace['id'];
-      username: WorkspaceMembership['user']['username'];
+      member: WorkspaceMembership['user']['username'];
     }>(),
     'Update members invitations list': props<{
       id: Workspace['id'];

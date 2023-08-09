@@ -77,26 +77,17 @@ export class WorkspaceApiService {
   }
 
   public getWorkspaceMembers(
-    id: Workspace['id'],
-    offset = 0,
-    limit = 10
+    id: Workspace['id']
   ): Observable<{ totalMembers: number; members: WorkspaceMembership[] }> {
     return this.http
       .get<WorkspaceMembership[]>(
-        `${this.config.apiUrl}/workspaces/${id}/memberships`,
-        {
-          observe: 'response',
-          params: {
-            offset,
-            limit,
-          },
-        }
+        `${this.config.apiUrl}/workspaces/${id}/memberships`
       )
       .pipe(
         map((response) => {
           return {
-            totalMembers: Number(response.headers.get('pagination-total')),
-            members: response.body ?? [],
+            totalMembers: response.length,
+            members: response,
           };
         })
       );
@@ -137,30 +128,19 @@ export class WorkspaceApiService {
       );
   }
 
-  public getWorkspaceInvitationMembers(
-    id: Workspace['id'],
-    offset = 0,
-    limit = 10
-  ): Observable<{
+  public getWorkspaceInvitationMembers(id: Workspace['id']): Observable<{
     totalMembers: number;
     members: InvitationWorkspaceMember[];
   }> {
     return this.http
       .get<InvitationWorkspaceMember[]>(
-        `${this.config.apiUrl}/workspaces/${id}/invitations`,
-        {
-          observe: 'response',
-          params: {
-            offset,
-            limit,
-          },
-        }
+        `${this.config.apiUrl}/workspaces/${id}/invitations`
       )
       .pipe(
         map((response) => {
           return {
-            totalMembers: Number(response.headers.get('pagination-total')),
-            members: response.body ?? [],
+            totalMembers: response.length,
+            members: response,
           };
         })
       );

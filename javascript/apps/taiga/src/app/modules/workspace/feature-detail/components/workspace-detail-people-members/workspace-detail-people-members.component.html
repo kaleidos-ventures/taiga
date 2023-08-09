@@ -39,6 +39,7 @@ Copyright (c) 2023-present Kaleidos INC
                 class="user"
                 [@removeCell]="member.cancelled">
                 <tg-user-card
+                  [isSelf]="vm.currentUser.username === member.user.username"
                   [user]="member.user"
                   [navigateToUser]="true"></tg-user-card>
               </tg-ui-dtable-cell>

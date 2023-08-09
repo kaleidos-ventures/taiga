@@ -70,12 +70,11 @@ describe('ProjectOverviewEffects', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(ProjectOverviewEffects);
 
-    const invitationsResponse = [
-      InvitationMockFactory(),
-      InvitationMockFactory(),
-    ];
+    const invitationsResponse = {
+      invitations: [InvitationMockFactory(), InvitationMockFactory()],
+    };
 
-    projectApiService.getAllInvitations.mockReturnValue(
+    projectApiService.getInvitations.mockReturnValue(
       cold('-b|', { b: invitationsResponse })
     );
 
@@ -83,15 +82,13 @@ describe('ProjectOverviewEffects', () => {
 
     const expected = cold('--a', {
       a: fetchInvitationsSuccess({
-        invitations: invitationsResponse,
+        invitations: invitationsResponse.invitations,
       }),
     });
 
     expect(effects.initMembers$).toBeObservable(expected);
     expect(effects.initMembers$).toSatisfyOnFlush(() => {
-      expect(projectApiService.getAllInvitations).toHaveBeenCalledWith(
-        project.id
-      );
+      expect(projectApiService.getInvitations).toHaveBeenCalledWith(project.id);
     });
   });
 

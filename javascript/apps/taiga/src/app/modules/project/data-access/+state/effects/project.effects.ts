@@ -178,10 +178,10 @@ export class ProjectEffects {
       }),
       fetch({
         run: (_, project) => {
-          return this.projectApiService.getAllMembers(project.id).pipe(
+          return this.projectApiService.getMembers(project.id).pipe(
             map((members) => {
               return ProjectActions.fetchProjectMembersSuccess({
-                members,
+                members: members.memberships,
               });
             })
           );
@@ -204,10 +204,10 @@ export class ProjectEffects {
       ]),
       fetch({
         run: (_, project) => {
-          return this.projectApiService.getAllMembers(project.id).pipe(
+          return this.projectApiService.getMembers(project.id).pipe(
             map((members) => {
               return ProjectActions.fetchProjectMembersSuccess({
-                members,
+                members: members.memberships,
               });
             })
           );

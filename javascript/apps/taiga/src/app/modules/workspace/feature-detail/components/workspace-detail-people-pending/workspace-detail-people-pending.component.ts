@@ -42,8 +42,13 @@ export class WorkspaceDetailPeoplePendingComponent
   public MEMBERS_PAGE_SIZE = MEMBERS_PAGE_SIZE;
   public model$ = this.state.select().pipe(
     map((model) => {
+      const invitationMembers = model.invitationMembers.slice(
+        model.offset,
+        model.offset + MEMBERS_PAGE_SIZE
+      );
+
       const pageStart = model.offset + 1;
-      const pageEnd = pageStart + model.invitationMembers.length - 1;
+      const pageEnd = pageStart + invitationMembers.length - 1;
 
       return {
         ...model,
@@ -51,6 +56,7 @@ export class WorkspaceDetailPeoplePendingComponent
         pageEnd,
         hasNextPage: pageEnd < model.total,
         hasPreviousPage: !!model.offset,
+        invitationMembers,
       };
     })
   );

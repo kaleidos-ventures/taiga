@@ -12,7 +12,7 @@ export const ConfigValidator = z.object({
   api: z.string().url().default('http://127.0.0.1:8000/api/v2'),
   ws: z.string().url().default('ws://127.0.0.1:8000/events/'),
   supportEmail: z.string().email().default('support@taiga.io'),
-  emailWs: z.string().email().optional(),
+  emailWs: z.string().url().optional(),
   social: z
     .object({
       github: z.object({

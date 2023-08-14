@@ -65,7 +65,7 @@ async def test_create_comment_and_emit_event_on_create():
             text=comment.text,
             created_by=comment.created_by,
         )
-        fake_event_on_create.assert_awaited_once_with(project=comment.project, comment=comment)
+        fake_event_on_create.assert_awaited_once_with(comment=comment)
 
 
 #####################################################
@@ -164,7 +164,7 @@ async def test_update_comment_and_emit_event_on_update():
             comment=comment, values={"text": updated_text}
         )
 
-        fake_event_on_update.assert_awaited_once_with(project=comment.project, comment=comment)
+        fake_event_on_update.assert_awaited_once_with(comment=comment)
 
 
 ##########################################################
@@ -228,4 +228,4 @@ async def test_delete_comment_and_emit_event_on_delete():
                 "deleted_at": updated_comment.deleted_at,
             },
         )
-        fake_event_on_delete.assert_awaited_once_with(project=comment.project, comment=updated_comment)
+        fake_event_on_delete.assert_awaited_once_with(comment=updated_comment)

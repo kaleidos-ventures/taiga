@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from functools import partial
 from uuid import UUID
 
 from fastapi import Depends, Response
@@ -59,11 +60,9 @@ async def create_story_comments(
     story = await get_story_or_404(project_id=project_id, ref=ref)
     await check_permissions(permissions=CREATE_STORY_COMMENT, user=request.user, obj=story)
 
+    event_on_create = partial(events.emit_event_when_story_comment_is_created, project=story.project)
     return await comments_services.create_comment(
-        text=form.text,
-        content_object=story,
-        created_by=request.user,
-        event_on_create=events.emit_event_when_story_comment_is_created,
+        text=form.text, content_object=story, created_by=request.user, event_on_create=event_on_create
     )
 
 
@@ -130,11 +129,9 @@ async def update_story_comments(
     await check_permissions(permissions=UPDATE_STORY_COMMENT, user=request.user, obj=comment)
 
     values = form.dict(exclude_unset=True)
+    event_on_update = partial(events.emit_event_when_story_comment_is_updated, project=story.project)
     return await comments_services.update_comment(
-        story=story,
-        comment=comment,
-        values=values,
-        event_on_update=events.emit_event_when_story_comment_is_updated,
+        story=story, comment=comment, values=values, event_on_update=event_on_update
     )
 
 
@@ -163,10 +160,9 @@ async def delete_story_comment(
     comment = await get_story_comment_or_404(comment_id=comment_id, story=story)
     await check_permissions(permissions=DELETE_STORY_COMMENT, user=request.user, obj=comment)
 
+    event_on_delete = partial(events.emit_event_when_story_comment_is_deleted, project=story.project)
     return await comments_services.delete_comment(
-        comment=comment,
-        deleted_by=request.user,
-        event_on_delete=events.emit_event_when_story_comment_is_deleted,
+        comment=comment, deleted_by=request.user, event_on_delete=event_on_delete
     )
 
 

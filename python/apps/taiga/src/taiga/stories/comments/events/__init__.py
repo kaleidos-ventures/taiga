@@ -23,8 +23,8 @@ DELETE_STORY_COMMENT = "stories.comments.delete"
 
 
 async def emit_event_when_story_comment_is_created(
-    project: Project,
     comment: Comment,
+    project: Project,
 ) -> None:
     story = cast(Story, comment.content_object)
 
@@ -39,8 +39,8 @@ async def emit_event_when_story_comment_is_created(
 
 
 async def emit_event_when_story_comment_is_updated(
-    project: Project,
     comment: Comment,
+    project: Project,
 ) -> None:
     story = cast(Story, comment.content_object)
 
@@ -55,8 +55,8 @@ async def emit_event_when_story_comment_is_updated(
 
 
 async def emit_event_when_story_comment_is_deleted(
-    project: Project,
     comment: Comment,
+    project: Project,
 ) -> None:
     story = cast(Story, comment.content_object)
 

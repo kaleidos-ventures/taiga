@@ -8,19 +8,18 @@
 from typing import Awaitable, Protocol
 
 from taiga.comments.models import Comment
-from taiga.projects.projects.models import Project
 
 
 class EventOnCreateCallable(Protocol):
-    def __call__(self, project: Project, comment: Comment) -> Awaitable[None]:
+    def __call__(self, comment: Comment) -> Awaitable[None]:
         ...
 
 
 class EventOnUpdateCallable(Protocol):
-    def __call__(self, project: Project, comment: Comment) -> Awaitable[None]:
+    def __call__(self, comment: Comment) -> Awaitable[None]:
         ...
 
 
 class EventOnDeleteCallable(Protocol):
-    def __call__(self, project: Project, comment: Comment) -> Awaitable[None]:
+    def __call__(self, comment: Comment) -> Awaitable[None]:
         ...

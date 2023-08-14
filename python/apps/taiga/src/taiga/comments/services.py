@@ -36,7 +36,7 @@ async def create_comment(
     )
 
     if event_on_create:
-        await event_on_create(project=comment.project, comment=comment)
+        await event_on_create(comment=comment)
 
     return comment
 
@@ -98,7 +98,7 @@ async def update_comment(
     updated_comment = await comments_repositories.update_comment(comment=comment, values=values)
 
     if event_on_update:
-        await event_on_update(project=story.project, comment=updated_comment)
+        await event_on_update(comment=updated_comment)
 
     return updated_comment
 
@@ -123,6 +123,6 @@ async def delete_comment(
     )
 
     if event_on_delete:
-        await event_on_delete(project=updated_comment.project, comment=updated_comment)
+        await event_on_delete(comment=updated_comment)
 
     return updated_comment

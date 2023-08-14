@@ -25,12 +25,12 @@ async def is_project_admin(user: AnyUser, obj: Any) -> bool:
     if user.is_anonymous:
         return False
 
+    if user.is_superuser:
+        return True
+
     project = await _get_object_project(obj)
     if project is None:
         return False
-
-    if user.is_superuser:
-        return True
 
     role = await pj_roles_repositories.get_project_role(filters={"user_id": user.id, "project_id": project.id})
     return role.is_admin if role else False
@@ -49,12 +49,12 @@ async def is_workspace_member(user: AnyUser, obj: Any) -> bool:
     if user.is_anonymous:
         return False
 
+    if user.is_superuser:
+        return True
+
     workspace = await _get_object_workspace(obj)
     if workspace is None:
         return False
-
-    if user.is_superuser:
-        return True
 
     workspace_membership = await workspace_memberships_repositories.get_workspace_membership(
         filters={"user_id": user.id, "workspace_id": workspace.id},

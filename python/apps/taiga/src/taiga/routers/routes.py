@@ -91,29 +91,33 @@ tags_metadata.append(
     }
 )
 
-# workflows and stories
-stories = AuthAPIRouter(tags=["workflows and stories"])
+# /projects/{id}/workflows
+workflows = AuthAPIRouter(tags=["workflows and workflow statuses"])
 tags_metadata.append(
     {
-        "name": "workflows and stories",
-        "description": "Endpoint for workflows and stories resources.",
+        "name": "workflows and workflow statuses",
+        "description": "Endpoint for workflows and workflow statuses resources.",
     }
 )
 
-
-# /comments
-comments = AuthAPIRouter(tags=["comments"])
+# /projects/{id}/stories
+# /projects/{id}/workflows/{slug}/stories
+stories = AuthAPIRouter(tags=["stories and assignments"])
 tags_metadata.append(
     {
-        "name": "comments",
-        "description": "Endpoint for comments.",
+        "name": "stories and assignments",
+        "description": "Endpoint for stories resources.",
     }
 )
 
-
-# /my
-my = AuthAPIRouter(tags=["my"])
-tags_metadata.append({"name": "my", "description": "Endpoints for logged-in user's resources."})
+# /projects/{id}/stories/{ref}/comments
+story_comments = AuthAPIRouter(tags=["story comments"])
+tags_metadata.append(
+    {
+        "name": "story comments",
+        "description": "Endpoint for story comments.",
+    }
+)
 
 
 # /system

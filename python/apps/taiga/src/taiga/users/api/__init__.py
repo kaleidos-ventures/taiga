@@ -141,7 +141,7 @@ async def list_users_by_text(
 #####################################################################
 
 
-@routes.my.get(
+@routes.users.get(
     "/my/user",
     name="my.user",
     summary="Get authenticated user",
@@ -164,7 +164,7 @@ async def get_my_user(request: Request) -> User:
 #####################################################################
 
 
-@routes.my.put(
+@routes.users.put(
     "/my/user",
     name="my.user.update",
     summary="Update authenticated user",
@@ -199,7 +199,7 @@ async def update_my_user(request: Request, form: UpdateUserValidator) -> User:
 #####################################################################
 
 
-@routes.my.get(
+@routes.users.get(
     "/my/user/delete-info",
     name="my.user.delete-info",
     summary="Get user delete info",

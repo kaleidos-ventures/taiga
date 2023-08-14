@@ -56,7 +56,7 @@ async def create_workspace(form: WorkspaceValidator, request: AuthRequest) -> Wo
 ##########################################################
 
 
-@routes.my.get(
+@routes.workspaces.get(
     "/my/workspaces",
     name="my.workspaces.list",
     summary="List the overview of the workspaces to which I belong",
@@ -92,7 +92,7 @@ async def get_workspace(id: B64UUID, request: AuthRequest) -> WorkspaceSerialize
     return await workspaces_services.get_workspace_detail(id=workspace.id, user_id=request.user.id)
 
 
-@routes.my.get(
+@routes.workspaces.get(
     "/my/workspaces/{id}",
     name="my.workspaces.get",
     summary="Get the overview of a workspace to which I belong",

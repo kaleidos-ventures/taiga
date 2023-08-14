@@ -77,7 +77,7 @@ async def create_project(
 ##########################################################
 
 
-@routes.workspaces.get(
+@routes.projects.get(
     "/workspaces/{workspace_id}/projects",
     name="workspace.projects.list",
     summary="List workspace projects",
@@ -93,7 +93,7 @@ async def list_workspace_projects(workspace_id: B64UUID, request: AuthRequest) -
     return await projects_services.list_workspace_projects_for_user(workspace=workspace, user=request.user)
 
 
-@routes.workspaces.get(
+@routes.projects.get(
     "/workspaces/{workspace_id}/invited-projects",
     name="workspace.invited-projects.list",
     summary="List of projects in a workspace where the user is invited",
@@ -224,7 +224,7 @@ async def delete_project(id: B64UUID, request: AuthRequest) -> None:
 ##########################################################
 
 
-@routes.my.get(
+@routes.projects.get(
     "/my/projects/{id}/permissions",
     name="my.projects.permissions.list",
     summary="List my project permissions",

@@ -40,7 +40,7 @@ DELETE_STORY_COMMENT = IsNotDeleted() & (
 ##########################################################
 
 
-@routes.comments.post(
+@routes.story_comments.post(
     "/projects/{project_id}/stories/{ref}/comments",
     name="project.story.comments.create",
     summary="Create story comment",
@@ -72,7 +72,7 @@ async def create_story_comments(
 ##########################################################
 
 
-@routes.comments.get(
+@routes.story_comments.get(
     "/projects/{project_id}/stories/{ref}/comments",
     name="project.story.comments.list",
     summary="List story comments",
@@ -108,7 +108,7 @@ async def list_story_comments(
 ##########################################################
 
 
-@routes.comments.patch(
+@routes.story_comments.patch(
     "/projects/{project_id}/stories/{ref}/comments/{comment_id}",
     name="project.story.comments.update",
     summary="Update story comment",
@@ -143,7 +143,7 @@ async def update_story_comments(
 ##########################################################
 
 
-@routes.comments.delete(
+@routes.story_comments.delete(
     "/projects/{project_id}/stories/{ref}/comments/{comment_id}",
     name="project.story.comments.delete",
     summary="Delete story comment",

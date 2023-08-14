@@ -45,7 +45,7 @@ REORDER_WORKFLOW_STATUSES_200 = responses.http_status_200(model=ReorderWorkflowS
 ################################################
 
 
-@routes.stories.get(
+@routes.workflows.get(
     "/projects/{id}/workflows",
     name="project.workflow.list",
     summary="List workflows",
@@ -66,7 +66,7 @@ async def list_workflows(id: B64UUID, request: Request) -> list[WorkflowSerializ
 ################################################
 
 
-@routes.stories.get(
+@routes.workflows.get(
     "/projects/{id}/workflows/{workflow_slug}",
     name="project.workflow.get",
     summary="Get project workflow",
@@ -104,7 +104,7 @@ async def get_workflow_or_404(project_id: UUID, workflow_slug: str) -> Workflow:
 ################################################
 
 
-@routes.stories.post(
+@routes.workflows.post(
     "/projects/{project_id}/workflows/{workflow_slug}/statuses",
     name="project.workflowstatus.create",
     summary="Create a workflow status",
@@ -135,7 +135,7 @@ async def create_workflow_status(
 ################################################
 
 
-@routes.stories.patch(
+@routes.workflows.patch(
     "/projects/{project_id}/workflows/{workflow_slug}/statuses/{id}",
     name="project.workflowstatus.update",
     summary="Update workflow status",
@@ -166,7 +166,7 @@ async def update_workflow_status(
 ################################################
 
 
-@routes.stories.post(
+@routes.workflows.post(
     "/projects/{project_id}/workflows/{workflow_slug}/statuses/reorder",
     name="project.workflowstatus.reorder",
     summary="Reorder workflow statuses",
@@ -197,7 +197,7 @@ async def reorder_workflow_statuses(
 ################################################
 
 
-@routes.stories.delete(
+@routes.workflows.delete(
     "/projects/{project_id}/workflows/{workflow_slug}/statuses/{id}",
     name="project.workflowstatus.delete",
     summary="Delete a workflow status",

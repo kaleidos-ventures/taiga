@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e17af4ed-244e-4c0d-bbd9-7764f9100c54",
+		"_postman_id": "f74873ea-773c-441c-8e0f-65c07f761ae5",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -637,7 +637,7 @@
 					"response": []
 				},
 				{
-					"name": "workspace's projects",
+					"name": "my workspaces by id",
 					"event": [
 						{
 							"listen": "test",
@@ -664,22 +664,22 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/projects",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces/{{ws-id}}",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
+								"my",
 								"workspaces",
-								"{{ws-id}}",
-								"projects"
+								"{{ws-id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "workspace's invited projects",
+					"name": "my workspaces",
 					"event": [
 						{
 							"listen": "test",
@@ -706,15 +706,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/invited-projects",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
 							],
 							"path": [
-								"workspaces",
-								"{{ws-id}}",
-								"invited-projects"
+								"my",
+								"workspaces"
 							]
 						}
 					},
@@ -1172,6 +1171,90 @@
 			"name": "projects",
 			"item": [
 				{
+					"name": "workspace's projects",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/projects",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"workspaces",
+								"{{ws-id}}",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "workspace's invited projects",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/workspaces/{{ws-id}}/invited-projects",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"workspaces",
+								"{{ws-id}}",
+								"invited-projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "create project",
 					"event": [
 						{
@@ -1615,6 +1698,49 @@
 								"projects",
 								"{{pj-id}}",
 								"public-permissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "my project permissions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/projects/{{pj-id}}/permissions",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"projects",
+								"{{pj-id}}",
+								"permissions"
 							]
 						}
 					},
@@ -3257,137 +3383,6 @@
 								"{{story_ref}}",
 								"comments",
 								"{{story_comment_id}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "my",
-			"item": [
-				{
-					"name": "my workspaces",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"my",
-								"workspaces"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "my workspaces by id",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/workspaces/{{ws-id}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"my",
-								"workspaces",
-								"{{ws-id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "my project permissions",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Post-request execution tasks",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/projects/{{pj-id}}/permissions",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{domain}}{{port}}{{api_url}}"
-							],
-							"path": [
-								"my",
-								"projects",
-								"{{pj-id}}",
-								"permissions"
 							]
 						}
 					},

@@ -12,11 +12,16 @@ import { StoreModule } from '@ngrx/store';
 import { StoryDetailEffects } from './+state/effects/story-detail.effects';
 import { storyDetailFeature } from './+state/reducers/story-detail.reducer';
 import { StoryDetailCommentsEffects } from './+state/effects/story-detail-comments.effects';
+import { StoryDetailAttachmentsEffects } from './+state/effects/story-detail-attachments.effects';
 
 @NgModule({
   imports: [
     StoreModule.forFeature(storyDetailFeature),
-    EffectsModule.forFeature([StoryDetailEffects, StoryDetailCommentsEffects]),
+    EffectsModule.forFeature([
+      StoryDetailEffects,
+      StoryDetailCommentsEffects,
+      StoryDetailAttachmentsEffects,
+    ]),
   ],
 })
 export class DataAccessStoryDetailModule {}

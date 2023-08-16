@@ -7,7 +7,14 @@
  */
 
 import { createFeature, on } from '@ngrx/store';
-import { StoryDetail, StoryView, UserComment, Workflow } from '@taiga/data';
+import {
+  Attachment,
+  LoadingAttachment,
+  StoryDetail,
+  StoryView,
+  UserComment,
+  Workflow,
+} from '@taiga/data';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   KanbanActions,
@@ -34,6 +41,8 @@ export interface StoryDetailState {
   totalComments: number | null;
   activeComments: number | null;
   commentsOrder: OrderComments;
+  attachments: Attachment[];
+  loadingAttachments: LoadingAttachment[];
 }
 
 export const initialStoryDetailState: StoryDetailState = {
@@ -47,6 +56,8 @@ export const initialStoryDetailState: StoryDetailState = {
   totalComments: null,
   activeComments: null,
   commentsOrder: LocalStorageService.get('comments_order') || '-createdAt',
+  attachments: [],
+  loadingAttachments: [],
 };
 
 export const reducer = createImmerReducer(
@@ -398,6 +409,64 @@ export const reducer = createImmerReducer(
     StoryDetailActions.newStatusOrderAfterDrag,
     (state, { workflow }): StoryDetailState => {
       state.workflow = workflow;
+
+      return state;
+    }
+  ),
+  on(
+    StoryDetailApiActions.uploadingAttachments,
+    (state, { file, progress, name, contentType }): StoryDetailState => {
+      const uploading = state.loadingAttachments.find((it) => it.file === file);
+
+      if (!uploading) {
+        state.loadingAttachments.push({
+          file,
+          progress,
+          name,
+          contentType,
+        });
+      } else {
+        state.loadingAttachments = state.loadingAttachments.map((it) => {
+          if (it.file === file) {
+            return {
+              ...it,
+              progress,
+            };
+          }
+
+          return it;
+        });
+      }
+
+      return state;
+    }
+  ),
+  on(
+    StoryDetailApiActions.uploadAttachmentSuccess,
+    (state, { attachment }): StoryDetailState => {
+      state.loadingAttachments = [];
+      state.attachments.unshift(attachment);
+
+      return state;
+    }
+  ),
+  on(
+    StoryDetailApiActions.fetchAttachmentsSuccess,
+    (state, { attachments }): StoryDetailState => {
+      state.loadingAttachments = [];
+      state.attachments = attachments;
+
+      return state;
+    }
+  ),
+  on(
+    projectEventActions.newAttachment,
+    (state, { attachment, storyRef }): StoryDetailState => {
+      if (state.story?.ref !== storyRef) {
+        return state;
+      }
+
+      state.attachments.unshift(attachment);
 
       return state;
     }

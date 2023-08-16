@@ -1,0 +1,53 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <nav
+    class="pagination"
+    role="navigation"
+    [attr.aria-label]="t('attachments.attachments_nav')">
+    <button
+      data-test="previous-page-button"
+      [attr.aria-label]="t('pagination.previous_page')"
+      [disabled]="!hasPreviousPage"
+      (click)="setPage(currentPage - 1)"
+      appearance="tertiary"
+      tuiIconButton
+      icon="chevron-left"
+      type="button"></button>
+
+    <ng-container *ngFor="let page of pages; trackBy: trackByIndex">
+      <ng-container *ngIf="page === null">
+        <span
+          data-test="more-pages"
+          class="more-pages"
+          >...</span
+        >
+      </ng-container>
+      <button
+        *ngIf="page !== null"
+        type="button"
+        class="page-button"
+        data-test="page-button"
+        [class.active]="currentPage === page"
+        (click)="setPage(page)">
+        {{ page + 1 }}
+      </button>
+    </ng-container>
+
+    <button
+      data-test="next-page-button"
+      [attr.aria-label]="t('pagination.next_page')"
+      [disabled]="!hasNextPage"
+      (click)="setPage(currentPage + 1)"
+      appearance="tertiary"
+      tuiIconButton
+      icon="chevron-right"
+      type="button"></button>
+  </nav>
+</ng-container>

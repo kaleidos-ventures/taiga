@@ -20,6 +20,7 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
 import {
+  Attachment,
   Membership,
   Project,
   Status,
@@ -282,6 +283,20 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
           projectEventActions.createComment({
             storyRef: eventResponse.event.content.ref,
             comment: eventResponse.event.content.comment,
+          })
+        );
+      });
+
+    this.wsService
+      .projectEvents<{ ref: Story['ref']; attachment: Attachment }>(
+        'stories.attachments.create'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          projectEventActions.newAttachment({
+            storyRef: eventResponse.event.content.ref,
+            attachment: eventResponse.event.content.attachment,
           })
         );
       });

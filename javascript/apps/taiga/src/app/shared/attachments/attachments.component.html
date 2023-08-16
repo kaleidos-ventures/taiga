@@ -1,0 +1,45 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <ng-container *ngIf="vm.canEdit">
+      <button
+        (click)="openFileSelector()"
+        class="uploader-button"
+        tuiButton
+        icon="paperclip"
+        type="file"
+        aria-hidden="true"
+        appearance="tertiary">
+        {{ t('attachments.action') }}
+      </button>
+
+      <input
+        #fileInput
+        class="visually-hidden"
+        data-test="upload-attachment"
+        type="file"
+        multiple
+        (change)="onFileSelected($event)"
+        [attr.aria-label]="t('attachments.action')" />
+
+      <tg-ui-context-notification
+        alertLevel="polite"
+        *ngIf="vm.showSizeError"
+        class="error"
+        [hasClose]="true"
+        status="error">
+        <p>{{ t('attachments.error_size') }}</p>
+      </tg-ui-context-notification>
+    </ng-container>
+    <tg-attachments-list
+      *ngIf="attachmentsTotal()"
+      (invokeAttachment)="openFileSelector()"></tg-attachments-list>
+  </ng-container>
+</ng-container>

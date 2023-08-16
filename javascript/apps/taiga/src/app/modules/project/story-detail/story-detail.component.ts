@@ -31,6 +31,8 @@ import {
   TuiScrollbarComponent,
 } from '@taiga-ui/core';
 import {
+  Attachment,
+  LoadingAttachment,
   Membership,
   Project,
   Role,
@@ -89,6 +91,8 @@ export interface StoryDetailState {
   commentsOrder: OrderComments;
   commentsLoading: boolean;
   user: User;
+  attachments: Attachment[];
+  loadingAttachments: LoadingAttachment[];
 }
 
 export interface StoryDetailForm {
@@ -263,6 +267,16 @@ export class StoryDetailComponent {
     this.state.connect(
       'commentsLoading',
       this.store.select(storyDetailFeature.selectLoadingComments)
+    );
+
+    this.state.connect(
+      'attachments',
+      this.store.select(storyDetailFeature.selectAttachments)
+    );
+
+    this.state.connect(
+      'loadingAttachments',
+      this.store.select(storyDetailFeature.selectLoadingAttachments)
     );
 
     this.state
@@ -575,6 +589,16 @@ export class StoryDetailComponent {
           })
         );
       });
+  }
+
+  public onUploadFiles(files: File[]) {
+    this.store.dispatch(
+      StoryDetailActions.uploadAttachments({
+        files,
+        projectId: this.state.get('project').id,
+        storyRef: this.state.get('story').ref,
+      })
+    );
   }
 
   public deleteComment(commentId: string): void {

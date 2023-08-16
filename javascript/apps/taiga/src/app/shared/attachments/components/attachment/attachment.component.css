@@ -1,0 +1,77 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import url("tools/typography.css");
+
+:host {
+  display: contents;
+}
+
+.row {
+  padding-block: var(--spacing-4);
+}
+
+.name-column {
+  @mixin ellipsis;
+
+  padding-inline-start: var(--spacing-4);
+}
+
+.date-column {
+  @mixin ellipsis;
+
+  text-align: start;
+}
+
+.size-column {
+  @mixin ellipsis;
+
+  text-align: end;
+  white-space: nowrap;
+}
+
+.progress-bar-column {
+  grid-column-start: span 2;
+}
+
+.actions-column {
+  display: flex;
+  gap: var(--spacing-8);
+  justify-content: flex-end;
+  padding-inline-end: var(--spacing-4);
+}
+
+.extension-icon {
+  margin-inline-end: var(--spacing-8);
+
+  &[data-extension="paperclip"] {
+    color: var(--color-gray60);
+  }
+
+  &[data-extension="pdf"] {
+    color: var(--color-red);
+  }
+
+  &[data-extension="img"] {
+    color: var(--color-yellow60);
+  }
+
+  &[data-extension="video"] {
+    color: var(--color-info60);
+  }
+
+  &[data-extension="zip"] {
+    color: var(--color-ok60);
+  }
+}
+
+tg-ui-dtable-cell {
+  @mixin font-small;
+
+  color: var(--color-gray80);
+}

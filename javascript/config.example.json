@@ -16,5 +16,6 @@
     }
   },
   "accessTokenLifetime": 180,
-  "globalBanner": false
+  "globalBanner": false,
+  "maxUploadFileSize": 104857600
 }

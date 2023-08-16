@@ -1,0 +1,80 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="model$ | async as vm">
+    <div class="title-wrapper">
+      <h2 class="title">
+        {{ t('attachments.title') }}
+
+        <span class="total">({{ vm.total }})</span>
+      </h2>
+
+      <div class="actions">
+        <button
+          (click)="invokeAttachment.next()"
+          class="action"
+          size="m"
+          appearance="action-button-2"
+          tuiIconButton
+          [tgUiTooltip]="t('attachments.action')"
+          icon="plus"
+          type="button"></button>
+
+        <button
+          class="action"
+          appearance="action-button-2"
+          size="m"
+          tuiIconButton
+          (click)="toggleFold()"
+          [icon]="vm.folded ? 'chevron-down' : 'chevron-up'"
+          type="button"></button>
+      </div>
+    </div>
+
+    <ng-container *ngIf="!vm.folded">
+      <tg-ui-dtable class="attachments-table">
+        <tg-ui-dtable-row class="header">
+          <tg-ui-dtable-header class="header-column">{{
+            t('attachments.column_name')
+          }}</tg-ui-dtable-header>
+          <tg-ui-dtable-header class="size-column header-column">{{
+            t('attachments.column_size')
+          }}</tg-ui-dtable-header>
+          <tg-ui-dtable-header class="date-column header-column">{{
+            t('attachments.column_date')
+          }}</tg-ui-dtable-header>
+          <tg-ui-dtable-header>
+            <span class="visually-hidden">{{
+              t('attachments.column_actions')
+            }}</span>
+          </tg-ui-dtable-header>
+        </tg-ui-dtable-row>
+
+        <tg-attachment
+          data-test="attachment"
+          [attachment]="attachment"
+          [canEdit]="vm.canEdit"
+          *ngFor="
+            let attachment of vm.list;
+            trackBy: trackById
+          "></tg-attachment>
+      </tg-ui-dtable>
+
+      <div
+        class="pagination-wrapper"
+        *ngIf="vm.pages > 1">
+        <tg-ui-numbered-pagination
+          [currentPage]="vm.page"
+          [totalPages]="vm.pages"
+          [maxPageElements]="vm.paginationItems"
+          (pageChange)="onPageChange($event)"></tg-ui-numbered-pagination>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-container>

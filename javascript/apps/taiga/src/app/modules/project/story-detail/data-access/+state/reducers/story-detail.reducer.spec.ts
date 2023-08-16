@@ -221,4 +221,53 @@ describe('Story Detail Reducer', () => {
     expect(result.totalComments).toEqual(totalComments - 1);
     expect(result.comments[0].deletedBy).toEqual(user);
   });
+
+  describe('uploadingAttachments', () => {
+    it('should add a new attachment to the loadingAttachments array if it does not exist', () => {
+      const file = 'test-file';
+      const progress = 50;
+      const name = 'test-file';
+      const contentType = 'text/plain';
+      const action = StoryDetailApiActions.uploadingAttachments({
+        file,
+        progress,
+        name,
+        contentType,
+      });
+      const result = reducer(state, action);
+
+      expect(result.loadingAttachments.length).toBe(1);
+      expect(result.loadingAttachments[0].file).toBe(file);
+      expect(result.loadingAttachments[0].progress).toBe(progress);
+      expect(result.loadingAttachments[0].name).toBe(name);
+    });
+
+    it('should update the progress of an existing attachment in the loadingAttachments array', () => {
+      const file = 'test-file';
+      const progress = 50;
+      const name = 'test-file';
+      const contentType = 'text/plain';
+      const action1 = StoryDetailApiActions.uploadingAttachments({
+        file,
+        progress,
+        name,
+        contentType,
+      });
+      const result1 = reducer(state, action1);
+
+      const newProgress = 75;
+      const action2 = StoryDetailApiActions.uploadingAttachments({
+        file,
+        progress: newProgress,
+        name,
+        contentType,
+      });
+      const result2 = reducer(result1, action2);
+
+      expect(result2.loadingAttachments.length).toBe(1);
+      expect(result2.loadingAttachments[0].file).toBe(file);
+      expect(result2.loadingAttachments[0].progress).toBe(newProgress);
+      expect(result2.loadingAttachments[0].name).toBe(name);
+    });
+  });
 });

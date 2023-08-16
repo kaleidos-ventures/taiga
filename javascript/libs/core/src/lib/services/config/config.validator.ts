@@ -41,4 +41,5 @@ export const ConfigValidator = z.object({
     }),
   accessTokenLifetime: z.number().default(180),
   globalBanner: z.boolean().default(false),
+  maxUploadFileSize: z.number().default(10485760),
 });

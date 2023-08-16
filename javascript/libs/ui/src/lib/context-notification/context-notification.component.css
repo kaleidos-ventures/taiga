@@ -19,6 +19,7 @@ Copyright (c) 2023-present Kaleidos INC
   border: solid 1px var(--color-gray20);
   border-radius: 4px;
   display: inline-block;
+  inline-size: 100%;
   line-height: 1.5;
   padding-block: var(--spacing-8);
   padding-inline: var(--spacing-16);
@@ -49,7 +50,7 @@ Copyright (c) 2023-present Kaleidos INC
     block-size: var(--spacing-24);
     color: var(--color-info80);
     inline-size: var(--spacing-24);
-    margin-inline-start: var(--spacing-8);
+    margin-inline-start: auto;
   }
 
   & tui-svg {

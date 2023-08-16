@@ -1,0 +1,73 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import url("tools/typography.css");
+
+:host {
+  display: block;
+}
+
+.title {
+  @mixin font-inline;
+
+  font-weight: var(--font-weight-medium);
+
+  & .total {
+    color: var(--color-gray70);
+  }
+}
+
+.pagination-wrapper {
+  border-block-start: 1px solid var(--color-gray20);
+  display: flex;
+  justify-content: center;
+  margin-block-start: var(--spacing-8);
+  padding-block-start: var(--spacing-8);
+}
+
+.attachments-table {
+  --cells-layout: 8fr repeat(3, minmax(75px, 1fr));
+  --row-gap: var(--spacing-24);
+
+  margin-block-start: var(--spacing-20);
+}
+
+.header {
+  border-block-end: 1px solid var(--color-gray20);
+  margin-block-end: var(--spacing-8);
+  padding-block-end: var(--spacing-4);
+}
+
+.header-column {
+  @mixin font-small;
+
+  color: var(--color-black);
+}
+
+.title-wrapper {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  & .title {
+    margin-block-end: 0;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-8);
+}
+
+.date-column {
+  text-align: start;
+}
+
+.size-column {
+  text-align: end;
+}

@@ -1,0 +1,65 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <tg-ui-dtable-row class="row">
+    <tg-ui-dtable-cell class="name-column">
+      <tui-svg
+        [src]="extension"
+        class="extension-icon"
+        [attr.data-extension]="extension"></tui-svg>
+      {{ attachment.name }}
+    </tg-ui-dtable-cell>
+    <ng-container *ngIf="isLoadingAttachments(attachment)">
+      <tg-ui-dtable-cell class="progress-bar-column">
+        <tg-ui-progress-bar
+          [attr.aria-label]="
+            t('attachments.uploading', {
+              file: attachment.name
+            })
+          "
+          [value]="attachment.progress"></tg-ui-progress-bar>
+      </tg-ui-dtable-cell>
+      <tg-ui-dtable-cell class="actions-column"></tg-ui-dtable-cell>
+    </ng-container>
+    <ng-container *ngIf="!isLoadingAttachments(attachment)">
+      <tg-ui-dtable-cell class="size-column">
+        {{ attachment.size | transformSize }}
+      </tg-ui-dtable-cell>
+      <tg-ui-dtable-cell class="date-column">
+        {{ attachment.createdAt | dateDistance }}
+      </tg-ui-dtable-cell>
+      <tg-ui-dtable-cell class="actions-column">
+        <a
+          [download]="attachment.name"
+          [href]="attachment.file"
+          target="_blank"
+          class="action"
+          size="m"
+          appearance="action-button-2"
+          tuiIconButton
+          [tgUiTooltip]="t('attachments.download')"
+          [tgUiTooltipStaysOpenOnHover]="false"
+          tgUiTooltipPosition="bottom-right"
+          icon="download"></a>
+
+        <button
+          *ngIf="canEdit"
+          class="action"
+          appearance="action-button-2"
+          size="m"
+          tuiIconButton
+          [tgUiTooltip]="t('attachments.delete')"
+          [tgUiTooltipStaysOpenOnHover]="false"
+          tgUiTooltipPosition="bottom-right"
+          icon="trash"
+          type="button"></button>
+      </tg-ui-dtable-cell>
+    </ng-container>
+  </tg-ui-dtable-row>
+</ng-container>

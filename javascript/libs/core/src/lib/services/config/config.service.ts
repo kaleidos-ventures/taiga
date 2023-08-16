@@ -54,4 +54,8 @@ export class ConfigService {
   public get globalBanner() {
     return this.config.globalBanner;
   }
+
+  public get maxUploadFileSize() {
+    return this.config.maxUploadFileSize;
+  }
 }

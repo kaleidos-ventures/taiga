@@ -1,0 +1,14 @@
+{
+  "action": "Attach file",
+  "title": "Attachments",
+  "attachments_nav": "Attachments navigation",
+  "expand_attachments": "Expand attachments",
+  "column_name": "Name",
+  "column_date": "Date",
+  "column_size": "Size",
+  "column_actions": "Attachments actions",
+  "download": "Download",
+  "delete": "Delete",
+  "error_size": "The file has not been attached because it exceeds the maximum size of 10MB",
+  "uploading": "Uploading {{file}}"
+}

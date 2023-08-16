@@ -9,7 +9,6 @@ Copyright (c) 2023-present Kaleidos INC
 @import url("tools/typography.css");
 
 :host {
-  border-block-start: 1px solid var(--color-gray20);
   display: block;
 }
 
@@ -17,6 +16,7 @@ Copyright (c) 2023-present Kaleidos INC
   @mixin font-inline;
 
   font-weight: var(--font-weight-medium);
+  margin: 0;
 
   & .total-comments {
     color: var(--color-gray70);
@@ -24,6 +24,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .header {
+  align-items: center;
   display: flex;
   justify-content: space-between;
   padding-block-end: var(--spacing-12);

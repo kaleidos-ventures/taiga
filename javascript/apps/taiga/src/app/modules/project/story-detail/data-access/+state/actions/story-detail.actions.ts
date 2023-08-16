@@ -8,6 +8,7 @@
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import {
+  Attachment,
   Membership,
   Project,
   Story,
@@ -84,6 +85,11 @@ export const StoryDetailActions = createActionGroup({
     'New status order after drag': props<{
       workflow: Workflow;
     }>(),
+    'Upload attachments': props<{
+      files: File[];
+      storyRef: Story['ref'];
+      projectId: Project['id'];
+    }>(),
   },
 });
 
@@ -131,6 +137,22 @@ export const StoryDetailApiActions = createActionGroup({
       commentId: string;
       deletedBy: Partial<User>;
       deletedAt: string;
+    }>(),
+    'Fetch attachments': props<{
+      storyRef: Story['ref'];
+      projectId: Project['id'];
+    }>(),
+    'Uploading attachments': props<{
+      file: string;
+      contentType: string;
+      name: string;
+      progress: number;
+    }>(),
+    'Fetch attachments success': props<{
+      attachments: Attachment[];
+    }>(),
+    'Upload attachment success': props<{
+      attachment: Attachment;
     }>(),
   },
 });

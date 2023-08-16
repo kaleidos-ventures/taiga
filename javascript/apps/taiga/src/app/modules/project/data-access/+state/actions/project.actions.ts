@@ -8,6 +8,7 @@
 
 import { createAction, createActionGroup, props } from '@ngrx/store';
 import {
+  Attachment,
   Membership,
   Project,
   Status,
@@ -141,5 +142,9 @@ export const projectEventActions = createActionGroup({
       };
     }>(),
     'Edit comment': props<{ storyRef: Story['ref']; comment: UserComment }>(),
+    'New attachment': props<{
+      storyRef: Story['ref'];
+      attachment: Attachment;
+    }>(),
   },
 });

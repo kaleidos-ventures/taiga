@@ -35,3 +35,5 @@ export * from './lib/media-file.model';
 export * from './lib/user-comment.model.mock';
 export * from './lib/user-comment.model';
 export * from './lib/delete-info.model';
+export * from './lib/attachment.model.mock';
+export * from './lib/attachment.model';

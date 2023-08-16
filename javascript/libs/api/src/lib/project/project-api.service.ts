@@ -6,11 +6,12 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiUtilsService } from '@taiga/api';
 import { ConfigService } from '@taiga/core';
 import {
+  Attachment,
   Contact,
   EditProject,
   Invitation,
@@ -560,5 +561,32 @@ export class ProjectApiService {
         reorder,
       }
     );
+  }
+
+  public getAttachments(projectId: Project['id'], ref: Story['ref']) {
+    return this.http.get<Attachment[]>(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${ref}/attachments`
+    );
+  }
+
+  public uploadAttachment(
+    projectId: Project['id'],
+    storyRef: Story['ref'],
+    file: File
+  ) {
+    const formData = new FormData();
+
+    formData.append('file', file);
+
+    const req = new HttpRequest(
+      'POST',
+      `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}/attachments`,
+      formData,
+      {
+        reportProgress: true,
+      }
+    );
+
+    return this.http.request<Attachment>(req);
   }
 }

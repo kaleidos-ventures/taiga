@@ -1,0 +1,24 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+:host {
+  background-color: var(--color-primary20);
+  block-size: 4px;
+  border-radius: 3px;
+  display: block;
+  inline-size: 100%;
+  overflow: hidden;
+}
+
+.bar {
+  animation: progressAnimation 1s;
+  background-color: var(--color-primary);
+  block-size: 100%;
+  transform-origin: top left;
+  transition: transform 300ms 0ms ease-out;
+}

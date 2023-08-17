@@ -77,11 +77,13 @@ import {
     trigger('workspaceInOut', [
       transition(':enter', [
         style({
+          blockSize: '0',
           opacity: '0',
         }),
         animate(
           '300ms ease-out',
           style({
+            blockSize: '*',
             opacity: '1',
           })
         ),

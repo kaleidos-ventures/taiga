@@ -103,7 +103,7 @@ export interface WorkspaceItemState {
   providers: [RxState],
   animations: [
     trigger('cardSlideOut', [
-      transition('on => void', [
+      transition(':leave', [
         style({ zIndex: 1 }),
         animate(
           '0.3s linear',
@@ -727,7 +727,7 @@ export class WorkspaceItemComponent
         });
       });
     } else {
-      this.state.set({ slideOutActive: true });
+      this.state.set({ slideOutActive: false });
 
       this.state.set({
         newInvitations,

@@ -23,6 +23,7 @@ import {
 } from '@ngneat/transloco';
 import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
 import { RealTimeDateDistanceComponent } from '~/app/shared/real-time-date-distance/real-time-date-distance.component';
+import { TuiSvgModule } from '@taiga-ui/core';
 
 @Component({
   selector: 'tg-deleted-comment',
@@ -35,6 +36,7 @@ import { RealTimeDateDistanceComponent } from '~/app/shared/real-time-date-dista
     TranslocoModule,
     DateDistancePipe,
     RealTimeDateDistanceComponent,
+    TuiSvgModule,
   ],
   providers: [
     {

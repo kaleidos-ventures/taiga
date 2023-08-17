@@ -7,13 +7,12 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 .deleted-message-wrapper {
-  border-block-end: 1px solid var(--color-gray20);
-  margin-block: var(--spacing-8);
-  margin-inline-start: var(--spacing-36);
-  padding-block-end: var(--spacing-16);
+  padding-block-end: var(--spacing-8);
+  padding-block-start: var(--spacing-8);
 }
 
 .deleted-message {
+  align-items: center;
   background-color: var(--color-gray10);
   color: var(--color-gray70);
   display: flex;
@@ -21,5 +20,16 @@ Copyright (c) 2023-present Kaleidos INC
   gap: var(--spacing-4);
   justify-content: flex-start;
   padding-block: var(--spacing-8);
-  padding-inline: var(--spacing-16);
+  padding-inline: var(--spacing-8);
+}
+
+.slash-icon {
+  block-size: var(--spacing-16);
+  inline-size: var(--spacing-16);
+}
+
+.line {
+  border-block-end: 1px solid var(--color-gray20);
+  margin-block: var(--spacing-8);
+  margin-inline-start: var(--spacing-36);
 }

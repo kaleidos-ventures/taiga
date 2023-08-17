@@ -55,7 +55,7 @@ async def create_story_comments(
     form: CreateCommentValidator,
 ) -> Comment:
     """
-    Add a comment to an story
+    Add a comment to a story
     """
     story = await get_story_or_404(project_id=project_id, ref=ref)
     await check_permissions(permissions=CREATE_STORY_COMMENT, user=request.user, obj=story)
@@ -122,7 +122,7 @@ async def update_story_comments(
     form: UpdateCommentValidator,
 ) -> Comment:
     """
-    Update an story's comment
+    Update a story's comment
     """
     story = await get_story_or_404(project_id=project_id, ref=ref)
     comment = await get_story_comment_or_404(comment_id=comment_id, story=story)

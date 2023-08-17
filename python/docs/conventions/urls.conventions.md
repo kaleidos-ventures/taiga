@@ -11,7 +11,7 @@ Nested urls are allowed. There are only a few rules that must be met:
 
 - The nesting will be the minimum necessary to be able to identify an element or a list of elements. For example:
   ```
-  # BAD, the workflow is not needed to identify an story
+  # BAD, the workflow is not needed to identify a story
   GET /projects/<pj_id>/workflows/<wf_slug>/stories/<ref>
 
   # GOOD

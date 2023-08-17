@@ -13,7 +13,6 @@ from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin
 from taiga.base.utils.files import get_obfuscated_file_path
 from taiga.base.utils.slug import slugify_uniquely
-from taiga.base.utils.uuid import encode_uuid_to_b64str
 from taiga.permissions.choices import ProjectPermissions
 from taiga.projects import references
 
@@ -70,10 +69,6 @@ class Project(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin):
     @property
     def slug(self) -> str:
         return slugify(self.name)
-
-    @functools.cached_property
-    def b64id(self) -> str:
-        return encode_uuid_to_b64str(self.id)
 
     @property
     def public_user_can_view(self) -> bool:

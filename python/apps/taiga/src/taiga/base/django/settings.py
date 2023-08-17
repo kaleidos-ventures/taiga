@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "taiga.projects.roles",
     "taiga.stories.assignments",
     "taiga.stories.stories",
+    "taiga.attachments",
     "taiga.comments",
     "taiga.tokens",
     "taiga.users",

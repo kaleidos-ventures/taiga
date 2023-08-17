@@ -824,14 +824,14 @@ Content for:
 
 #### `stories.comments.create`
 
-It happens when a new comment associated to an story is created.
+It happens when a new comment associated to a story is created.
 
 Content for:
 - project channel:
   ```
 
   {
-      "ref": "story ref (int)"
+      "ref": "story ref (int)",
       "comment": {... "comment object" ...}
   }
   ```
@@ -839,14 +839,14 @@ Content for:
 
 #### `stories.comments.update`
 
-It happens when a comment associated to an story is updated.
+It happens when a comment associated to a story is updated.
 
 Content for:
 - project channel:
   ```
 
   {
-      "ref": "story ref (int)"
+      "ref": "story ref (int)",
       "comment": {... "comment object" ...}
   }
   ```
@@ -854,14 +854,14 @@ Content for:
 
 #### `stories.comments.delete`
 
-It happens when a comment associated to an story is deleted.
+It happens when a comment associated to a story is deleted.
 
 Content for:
 - project channel:
   ```
 
   {
-      "ref": "story ref (int)"
+      "ref": "story ref (int)",
       "comment": {... "comment object" ...}
   }
   ```
@@ -874,4 +874,19 @@ Content for:
 - user channel:
   ```
   null
+  ```
+
+
+#### `stories.attachments.create`
+
+It happens when a new attachment associated to a story is created.
+
+Content for:
+- project channel:
+  ```
+
+  {
+      "ref": "story ref (int)",
+      "attachment": {... "attachment object" ...},
+  }
   ```

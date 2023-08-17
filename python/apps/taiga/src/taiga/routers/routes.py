@@ -110,6 +110,16 @@ tags_metadata.append(
     }
 )
 
+
+# /projects/{id}/stories/{ref}/attachments
+story_attachments = AuthAPIRouter(tags=["story attachments"])
+tags_metadata.append(
+    {
+        "name": "story attachments",
+        "description": "Endpoint for story attachments.",
+    }
+)
+
 # /projects/{id}/stories/{ref}/comments
 story_comments = AuthAPIRouter(tags=["story comments"])
 tags_metadata.append(

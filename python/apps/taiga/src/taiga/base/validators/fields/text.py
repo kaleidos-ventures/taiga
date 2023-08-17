@@ -5,7 +5,9 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from pydantic import ConstrainedStr
 
-from taiga.base.validators.base import BaseModel  # noqa
-from taiga.base.validators.fields import *  # noqa
-from taiga.base.validators.forms import as_form  # noqa
+
+class StrNotEmpty(ConstrainedStr):
+    strip_whitespace = True
+    min_length = 1

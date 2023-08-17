@@ -5,9 +5,16 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from taiga.mediafiles.models import Mediafile
-from taiga.mediafiles.serializers import MediafileSerializer
+
+from taiga.base.serializers import BaseModel
+from taiga.base.serializers.fields import FileField
 
 
-def serialize_mediafile(mediafile: Mediafile) -> MediafileSerializer:
-    return MediafileSerializer.from_orm(mediafile)
+class MediafileSerializer(BaseModel):
+    name: str
+    size: int
+    content_type: str
+    file: FileField
+
+    class Config:
+        orm_mode = True

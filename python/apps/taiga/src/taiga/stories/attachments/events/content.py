@@ -6,6 +6,10 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 
-from taiga.base.validators.base import BaseModel  # noqa
-from taiga.base.validators.fields import *  # noqa
-from taiga.base.validators.forms import as_form  # noqa
+from taiga.attachments.serializers import AttachmentSerializer
+from taiga.base.serializers import BaseModel
+
+
+class CreateStoryAttachmentContent(BaseModel):
+    ref: int
+    attachment: AttachmentSerializer

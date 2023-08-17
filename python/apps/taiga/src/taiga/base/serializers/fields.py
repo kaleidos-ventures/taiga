@@ -8,6 +8,8 @@
 from typing import Any, Callable, Generator
 from uuid import UUID
 
+from pydantic import AnyHttpUrl, AnyUrl, BaseConfig
+from pydantic.fields import ModelField
 from taiga.base.utils.uuid import encode_uuid_to_b64str
 
 CallableGenerator = Generator[Callable[..., Any], None, None]
@@ -25,3 +27,9 @@ class UUIDB64(UUID):
     @classmethod
     def validate(cls, value: UUID) -> str:
         return encode_uuid_to_b64str(value)
+
+
+class FileField(AnyHttpUrl):
+    @classmethod
+    def validate(cls, value: Any, field: ModelField, config: BaseConfig) -> AnyUrl:
+        return value.url

@@ -5,12 +5,10 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-import functools
 
 from slugify import slugify
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin
-from taiga.base.utils.uuid import encode_uuid_to_b64str
 
 
 class Workspace(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin):
@@ -39,7 +37,3 @@ class Workspace(models.BaseModel, CreatedMetaInfoMixin, ModifiedAtMetaInfoMixin)
     @property
     def slug(self) -> str:
         return slugify(self.name)
-
-    @functools.cached_property
-    def b64id(self) -> str:
-        return encode_uuid_to_b64str(self.id)

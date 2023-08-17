@@ -94,7 +94,7 @@ async def test_create_story_mediafile_404_not_found_story_ref(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_create_story_mediafile_422_unprocessable_project_b64id(client):
+async def test_create_story_mediafile_422_unprocessable_entity_project_b64id(client):
     project = await f.create_project()
     story = await f.create_story(project=project)
     user = project.created_by
@@ -112,7 +112,7 @@ async def test_create_story_mediafile_422_unprocessable_project_b64id(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
-async def test_create_story_mediafile_422_unprocessable_story_ref(client):
+async def test_create_story_mediafile_422_unprocessable_entity_story_ref(client):
     project = await f.create_project()
     user = project.created_by
     file = f.build_image_file("image")
@@ -129,7 +129,7 @@ async def test_create_story_mediafile_422_unprocessable_story_ref(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
-async def test_create_story_mediafile_422_unprocessable_bad_request(client):
+async def test_create_story_mediafile_422_unprocessable_entity_bad_request(client):
     project = await f.create_project()
     story = await f.create_story(project=project)
     user = project.created_by

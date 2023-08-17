@@ -6,11 +6,8 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 
-import functools
-
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin, DeletedMetaInfoMixin, ModifiedAtMetaInfoMixin
-from taiga.base.utils.uuid import encode_uuid_to_b64str
 from taiga.projects.projects.models import Project
 
 
@@ -47,10 +44,6 @@ class Comment(
 
     def __repr__(self) -> str:
         return f"<Comment {self.id} [{self.content_object}]>"
-
-    @functools.cached_property
-    def b64id(self) -> str:
-        return encode_uuid_to_b64str(self.id)
 
     @property
     def project(self) -> Project:

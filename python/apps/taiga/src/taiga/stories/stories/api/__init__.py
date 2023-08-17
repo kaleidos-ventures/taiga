@@ -46,7 +46,7 @@ REORDER_STORIES_200 = responses.http_status_200(model=ReorderStoriesSerializer)
 @routes.stories.post(
     "/projects/{project_id}/workflows/{workflow_slug}/stories",
     name="project.stories.create",
-    summary="Create an story",
+    summary="Create a story",
     responses=STORY_DETAIL_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
@@ -123,7 +123,7 @@ async def list_stories(
 )
 async def get_story(project_id: B64UUID, ref: int, request: AuthRequest) -> StoryDetailSerializer:
     """
-    Get the detailed information of an story.
+    Get the detailed information of a story.
     """
     story = await get_story_or_404(project_id=project_id, ref=ref)
     await check_permissions(permissions=GET_STORY, user=request.user, obj=story)
@@ -150,7 +150,7 @@ async def update_story(
     form: UpdateStoryValidator,
 ) -> StoryDetailSerializer:
     """
-    Update an story from a project.
+    Update a story from a project.
     """
     story = await get_story_or_404(project_id, ref)
     await check_permissions(permissions=UPDATE_STORY, user=request.user, obj=story)

@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+import functools
 import uuid
 from typing import Type
 
@@ -24,6 +25,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db.models import Model, UUIDField
 from django.db.models.functions import Coalesce, Lower, StrIndex  # noqa
 from taiga.base.db.models.fields import *  # noqa
+from taiga.base.utils.uuid import encode_uuid_to_b64str
 from taiga.conf import settings
 
 get_model = apps.get_model
@@ -39,6 +41,10 @@ class BaseModel(Model):
 
     class Meta:
         abstract = True
+
+    @functools.cached_property
+    def b64id(self) -> str:
+        return encode_uuid_to_b64str(self.id)
 
 
 @sync_to_async

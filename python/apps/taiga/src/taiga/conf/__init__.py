@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     STATIC_ROOT: Path = _BASE_DIR.parent.joinpath("static/")
     MEDIA_URL: AnyHttpUrl = _DEFAULT_MEDIA_URL
     MEDIA_ROOT: Path = _BASE_DIR.parent.joinpath("media/")
+    MAX_UPLOAD_FILE_SIZE: int = 100 * 1024 * 1024  # 100 MB
 
     # I18N
     LANG: str = "en-US"
@@ -77,9 +78,10 @@ class Settings(BaseSettings):
     WORKSPACE_INVITATION_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
 
     # Projects
+    DEFAULT_PROJECT_TEMPLATE: str = "kanban"
+
     # TODO: move this lifetime to general invitation lifetime for pj and ws
     PROJECT_INVITATION_LIFETIME: int = 4 * 24 * 60  # 4 * 24 * 60 minutes = 4 days
-    DEFAULT_PROJECT_TEMPLATE: str = "kanban"
 
     # Invitations
     INVITATION_RESEND_LIMIT: int = 10

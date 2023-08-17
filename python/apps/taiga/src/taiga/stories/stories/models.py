@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from taiga.attachments.mixins import RelatedAttachmentsMixin
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin, DescriptionUpdatedMetaInfoMixin, TitleUpdatedMetaInfoMixin
 from taiga.base.occ.models import VersionedMixin
@@ -20,8 +21,9 @@ class Story(
     CreatedMetaInfoMixin,
     TitleUpdatedMetaInfoMixin,
     DescriptionUpdatedMetaInfoMixin,
-    RelatedMediafilesMixin,
+    RelatedAttachmentsMixin,
     RelatedCommentsMixin,
+    RelatedMediafilesMixin,
 ):
     title = models.CharField(max_length=500, null=False, blank=False, verbose_name="title")
     description = models.TextField(null=True, blank=True, verbose_name="description")

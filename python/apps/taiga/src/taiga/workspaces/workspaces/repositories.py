@@ -67,11 +67,7 @@ def _apply_filters_to_queryset(
     return qs.filter(**filter_data)
 
 
-WorkspacePrefetchRelated = list[
-    Literal[
-        "projects",
-    ]
-]
+WorkspacePrefetchRelated = list[Literal["projects",]]
 
 
 def _apply_prefetch_related_to_queryset(
@@ -81,11 +77,7 @@ def _apply_prefetch_related_to_queryset(
     return qs.prefetch_related(*prefetch_related)
 
 
-WorkspaceOrderBy = list[
-    Literal[
-        "-created_at",
-    ]
-]
+WorkspaceOrderBy = list[Literal["-created_at",]]
 
 
 def _apply_order_by_to_queryset(

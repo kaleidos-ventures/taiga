@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from .attachments import AttachmentFactory, build_attachment, create_attachment  # noqa
 from .comments import CommentFactory, build_comment, create_comment  # noqa
 from .files import (  # noqa
     build_binary_file,

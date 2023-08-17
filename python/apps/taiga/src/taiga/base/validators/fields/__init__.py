@@ -5,16 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-
-from taiga.base.serializers import BaseModel
-from taiga.base.validators.fields import FileField
-
-
-class MediafileSerializer(BaseModel):
-    name: str
-    size: int
-    content_type: str
-    file: FileField
-
-    class Config:
-        orm_mode = True
+from taiga.base.validators.fields.file import UploadFile  # noqa
+from taiga.base.validators.fields.i18n import LanguageCode  # noqa
+from taiga.base.validators.fields.text import StrNotEmpty  # noqa
+from taiga.base.validators.fields.uuid import B64UUID  # noqa

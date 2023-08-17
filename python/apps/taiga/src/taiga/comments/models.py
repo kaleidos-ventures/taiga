@@ -40,9 +40,6 @@ class Comment(
         indexes = [
             models.Index(fields=["object_content_type", "object_id"]),
         ]
-        models.UniqueConstraint(
-            fields=["content_type", "object_id"], name="%(app_label)s_%(class)s_unique_content_type-object_id"
-        )
         ordering = ["object_content_type", "object_id", "-created_at"]
 
     def __str__(self) -> str:

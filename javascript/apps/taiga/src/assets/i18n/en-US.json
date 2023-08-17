@@ -220,7 +220,7 @@
     "no_longer_member": "You are no longer member of the {name} {type}."
   },
   "banner": {
-    "alpha": "Heads up! This app, while amazing, is unstable. It is still in Alpha, so the data could be erased at some point. So, embrace the wild, cherish each moment, and don't forget your bear repellent."
+    "alpha": "This app, while amazing, is unstable. It's an Alpha version, so your data could be erased at some point. Embrace the wild, cherish every moment, and don't forget your bear repellent spray."
   },
   "projects_dropdown": {
     "projects_number": "{projectsNum, plural, =0 {0 projects} one {1 project} other {# projects}}",

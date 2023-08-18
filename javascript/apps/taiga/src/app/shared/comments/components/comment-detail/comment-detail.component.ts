@@ -13,6 +13,7 @@ import {
   DestroyRef,
   EventEmitter,
   Input,
+  OnInit,
   Output,
   inject,
 } from '@angular/core';
@@ -51,7 +52,7 @@ import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
     },
   ],
 })
-export class CommentDetailComponent {
+export class CommentDetailComponent implements OnInit {
   @Input({ required: true }) public comment!: UserComment;
   @Input({ required: true }) public canComment!: boolean;
   @Input({ required: true }) public user!: User;
@@ -65,9 +66,18 @@ export class CommentDetailComponent {
   public project = this.store.selectSignal(selectCurrentProject);
   public storyView = this.store.selectSignal(selectStoryView);
   public sideView: StoryView = 'side-view';
+  public deleteLabel!: string;
 
   public showDeleteCommentConfirm = false;
   public commentOptionsState = false;
+
+  public ngOnInit(): void {
+    if (this.user.username !== this.comment.createdBy?.username) {
+      this.deleteLabel = 'comments.delete.confirm_other';
+    } else {
+      this.deleteLabel = 'comments.delete.confirm';
+    }
+  }
 
   public deleteConfirm(): void {
     this.showDeleteCommentConfirm = true;

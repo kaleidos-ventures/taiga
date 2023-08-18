@@ -87,7 +87,7 @@ Copyright (c) 2023-present Kaleidos INC
             id="delete-comment-confirm"
             class="delete-comment-confirm-title"
             data-test="delete-comment-confirm-title">
-            {{ t('comments.delete.confirm') }}
+            {{ t(deleteLabel, { fullName: comment.createdBy?.fullName }) }}
           </h3>
           <p
             class="delete-comment-description"

@@ -16,7 +16,8 @@
   },
   "delete": {
     "delete_comment": "Delete",
-    "confirm": "Delete this comment?",
+    "confirm": "Delete your comment?",
+    "confirm_other": "Delete {{ fullName }}'s comment?",
     "confirm_info": "This action can not be undone.",
     "cancel": "No, cancel",
     "confirm_action": "Yes, delete"

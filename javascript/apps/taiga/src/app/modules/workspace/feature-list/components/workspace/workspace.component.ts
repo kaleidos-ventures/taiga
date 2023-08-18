@@ -18,6 +18,8 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  AfterViewInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { User } from '@ngneat/falso';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -102,7 +104,7 @@ import {
     ]),
   ],
 })
-export class WorkspaceComponent implements OnDestroy, OnInit {
+export class WorkspaceComponent implements OnDestroy, OnInit, AfterViewInit {
   public eventsSubject: Subject<{
     event: string;
     project: string;
@@ -138,10 +140,12 @@ export class WorkspaceComponent implements OnDestroy, OnInit {
   );
 
   public amountOfProjectsToShow = 4;
+  public animationDisabled = true;
 
   constructor(
     private wsService: WsService,
     private store: Store,
+    private cd: ChangeDetectorRef,
     private state: RxState<{
       creatingWorkspace: boolean;
       showCreate: boolean;
@@ -173,6 +177,13 @@ export class WorkspaceComponent implements OnDestroy, OnInit {
 
   public ngOnInit(): void {
     this.events();
+  }
+
+  public ngAfterViewInit() {
+    setTimeout(() => {
+      this.animationDisabled = false;
+      this.cd.detectChanges();
+    }, 1000);
   }
 
   public toggleActivity(showActivity: boolean) {

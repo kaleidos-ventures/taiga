@@ -98,6 +98,7 @@ Copyright (c) 2023-present Kaleidos INC
           <div
             *ngIf="workspaceItemVisibility(workspace)"
             class="workspace-item-container-inner"
+            [@.disabled]="animationDisabled"
             @workspaceInOut>
             <tg-workspace-item
               data-test="workspace-item"

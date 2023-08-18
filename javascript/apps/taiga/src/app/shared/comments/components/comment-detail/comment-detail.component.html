@@ -24,19 +24,20 @@ Copyright (c) 2023-present Kaleidos INC
         aria-haspopup="true"
         [attr.aria-expanded]="commentOptionsState"
         tabindex="0"
-        [attr.aria-label]="t('comments.comment_options')"
+        [attr.aria-label]="t('comments.comment_actions')"
         icon="more-vertical"
         data-test="comment-options"
         tuiIconButton
         type="button"
-        size="m"></button>
+        size="m"
+        [tgUiTooltip]="t('comments.comment_actions')"></button>
     </tui-hosted-dropdown>
 
     <ng-template #commentOptions>
       <tui-data-list
         class="comment-options-list"
         data-test="comment-options-list"
-        [attr.aria-label]="t('comments.comment_options')">
+        [attr.aria-label]="t('comments.comment_actions')">
         <button
           *ngIf="user.username === comment.createdBy?.username && canComment"
           role="menuitem"

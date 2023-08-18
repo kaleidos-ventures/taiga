@@ -17,6 +17,7 @@ import {
   trigger,
 } from '@angular/animations';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -24,7 +25,6 @@ import {
   HostListener,
   Input,
   OnInit,
-  AfterViewInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { RxState } from '@rx-angular/state';
@@ -180,15 +180,11 @@ export class ProjectNavigationComponent implements OnInit, AfterViewInit {
 
   @HostListener('window:scroll', [])
   public onWindowScroll() {
-    if (window.scrollY > 48) {
-      this.updateBlockSize('100vh');
-    } else {
-      this.updateBlockSize(
-        `calc(100vh - ${
-          (this.el.nativeElement as HTMLElement).getBoundingClientRect().top
-        }px)`
-      );
-    }
+    this.updateBlockSize(
+      `calc(100vh - ${
+        (this.el.nativeElement as HTMLElement).getBoundingClientRect().top
+      }px)`
+    );
   }
 
   public showProjectSettings = false;
@@ -220,14 +216,17 @@ export class ProjectNavigationComponent implements OnInit, AfterViewInit {
   }
 
   public ngAfterViewInit() {
+    const size = this.calcBlockSize();
+    this.updateBlockSize(size);
+  }
+
+  public calcBlockSize() {
     const el = this.el.nativeElement as HTMLElement;
     const header = getComputedStyle(el).getPropertyValue('--header-height');
     const banner = getComputedStyle(el).getPropertyValue('--banner-height');
-    this.updateBlockSize(
-      `calc(100vh - ${header.length ? header : '0px'} - ${
-        banner.length ? banner : '0px'
-      })`
-    );
+    return `calc(100vh - ${header.length ? header : '0px'} - ${
+      banner.length ? banner : '0px'
+    })`;
   }
 
   public updateBlockSize(value: string) {

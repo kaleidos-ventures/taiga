@@ -10,7 +10,7 @@
   "next": "Navigate to next story",
   "change_view": "Change story view",
   "change_view_sr": "Current view: {{ currentView }}.Change story view",
-  "story_options": "Story options",
+  "story_actions": "Story actions",
   "close": "Close story modal",
   "modal_view": "Modal view",
   "side_panel_view": "Side panel view",

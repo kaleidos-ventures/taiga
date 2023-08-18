@@ -10,12 +10,19 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule } from '@taiga-ui/core';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 import { PolymorpheusModule } from '@tinkoff/ng-polymorpheus';
 import { ModalComponent } from './components/modal/modal.component';
 import { ModalWrapperComponent } from './components/wrapper/modal-wrapper.component';
 
 @NgModule({
-  imports: [CommonModule, TuiButtonModule, TranslocoModule, PolymorpheusModule],
+  imports: [
+    CommonModule,
+    TuiButtonModule,
+    ToolTipModule,
+    TranslocoModule,
+    PolymorpheusModule,
+  ],
   declarations: [ModalComponent, ModalWrapperComponent],
   exports: [ModalComponent, ModalWrapperComponent],
 })

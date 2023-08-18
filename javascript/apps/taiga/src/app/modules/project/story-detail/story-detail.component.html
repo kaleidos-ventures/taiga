@@ -128,7 +128,9 @@ Copyright (c) 2023-present Kaleidos INC
                 aria-haspopup="true"
                 [attr.aria-expanded]="storyOptionsState"
                 tabindex="0"
-                [attr.aria-label]="t('story.story_options')"
+                [attr.aria-label]="t('story.story_actions')"
+                [tgUiTooltip]="t('story.story_actions')"
+                tgUiTooltipPosition="top-right"
                 icon="more-vertical"
                 data-test="story-options"
                 appearance="tertiary"
@@ -144,6 +146,8 @@ Copyright (c) 2023-present Kaleidos INC
               (click)="closeStory()"
               tuiIconButton
               class="close-button"
+              [tgUiTooltip]="t('story.close')"
+              tgUiTooltipPosition="top-right"
               type="button"></button>
           </div>
           <ng-template #changeView>
@@ -179,7 +183,7 @@ Copyright (c) 2023-present Kaleidos INC
             <tui-data-list
               class="story-options-list"
               data-test="story-options-list"
-              [attr.aria-label]="t('story.story_options')">
+              [attr.aria-label]="t('story.story_actions')">
               <button
                 role="menuitem"
                 data-test="delete-story-button"

@@ -29,6 +29,7 @@ import { StoryView, User, UserComment } from '@taiga/data';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { selectStoryView } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
+import { ToolTipModule } from '@taiga/ui/tooltip';
 
 @Component({
   selector: 'tg-comment-detail',
@@ -44,6 +45,7 @@ import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
     TuiDataListModule,
     TuiButtonModule,
     TuiAutoFocusModule,
+    ToolTipModule,
   ],
   providers: [
     {

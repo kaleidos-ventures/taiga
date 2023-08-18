@@ -16,12 +16,17 @@ Copyright (c) 2023-present Kaleidos INC
         *ngIf="vm.story">
         <div class="story-header">
           <div class="start">
-            <a
-              href="#"
-              *ngIf="vm.selectedStoryView === 'full-view'"
-              class="workflow"
-              >{{ vm.story.workflow.name }}</a
-            >
+            <ng-container *ngIf="vm.selectedStoryView === 'full-view'">
+              <a
+                href="#"
+                class="workflow"
+                >{{ vm.story.workflow.name }}</a
+              >
+              <tui-svg
+                aria-hidden="true"
+                class="chevron-right-icon"
+                src="chevron-right"></tui-svg>
+            </ng-container>
             <span
               #storyRef
               tabindex="0"
@@ -36,7 +41,7 @@ Copyright (c) 2023-present Kaleidos INC
             <button
               [attr.aria-label]="t('story.copy_story')"
               [icon]="linkCopied ? 'check' : 'link'"
-              appearance="tertiary"
+              appearance="action-button-2"
               [class.copied]="linkCopied"
               class="copy-link"
               tuiIconButton

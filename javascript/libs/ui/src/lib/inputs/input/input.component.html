@@ -14,7 +14,6 @@ Copyright (c) 2023-present Kaleidos INC
     [attr.for]="id"
     >{{ label }}</label
   >
-  <ng-content select="[adjacentLabelContent]"></ng-content>
 </div>
 <div
   class="input-container"
@@ -44,5 +43,8 @@ Copyright (c) 2023-present Kaleidos INC
     <tui-svg [src]="icon"></tui-svg>
   </button>
 </div>
-<ng-content select="[inputError]"></ng-content>
+<div class="extra-info">
+  <ng-content select="[inputError]"></ng-content>
+  <ng-content select="[adjacentLabelContent]"></ng-content>
+</div>
 <ng-content select="[passwordStrength]"></ng-content>

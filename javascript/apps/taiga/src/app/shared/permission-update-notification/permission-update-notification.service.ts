@@ -46,8 +46,16 @@ export class PermissionUpdateNotificationService {
         ['comment'],
         'OR'
       );
+      const lostOnePermission =
+        previousProject?.userPermissions.length -
+          currentProject?.userPermissions.length ===
+        1;
 
-      if (hadStoryCommentPermissions && !hasStoryCommentPermissions) {
+      if (
+        hadStoryCommentPermissions &&
+        !hasStoryCommentPermissions &&
+        lostOnePermission
+      ) {
         this.notify('lost_comment_permissions');
       } else if (hasStoryPermissions) {
         this.notify('edit_story_lost_some_permission');

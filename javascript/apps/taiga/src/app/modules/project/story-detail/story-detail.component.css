@@ -24,20 +24,23 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .workflow {
-  @mixin font-small;
+  @mixin font-inline;
 
   color: var(--color-secondary);
-  margin-inline-end: var(--spacing-16);
+  font-weight: var(--font-weight-medium);
   position: relative;
-  text-decoration: underline;
-  text-transform: uppercase;
 
-  &::after {
-    color: var(--color-gray30);
-    content: "\\";
-    inset-inline-end: -10px;
-    position: absolute;
+  &:hover {
+    text-decoration: underline;
   }
+}
+
+.chevron-right-icon {
+  block-size: var(--spacing-8);
+  color: var(--color-gray60);
+  inline-size: var(--spacing-8);
+  margin-block: 0;
+  margin-inline: var(--spacing-4);
 }
 
 .story {
@@ -47,20 +50,15 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .story-ref {
-  @mixin font-small;
+  @mixin font-inline;
 
   color: var(--color-gray80);
   font-weight: var(--font-weight-medium);
-  margin-inline-end: var(--spacing-12);
-  text-transform: uppercase;
+  margin-inline-end: var(--spacing-4);
 
   &::ng-deep .hash {
     color: var(--color-secondary50);
     margin-inline-start: var(--spacing-4);
-  }
-
-  &::ng-deep .ref {
-    font-weight: var(--font-weight-bold);
   }
 }
 
@@ -181,6 +179,11 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .copy-link {
+  &::ng-deep tui-svg {
+    block-size: var(--spacing-12);
+    inline-size: var(--spacing-12);
+  }
+
   &.copied {
     &::ng-deep [tuiWrapper] {
       background-color: var(--color-ok10);

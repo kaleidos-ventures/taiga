@@ -28,15 +28,6 @@ repos:
         files: 'python/apps/'
         args: [--config=python/.black]
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.4.1
-    hooks:
-      - id: mypy
-        language: system
-        files: 'python/apps/'
-        exclude: '/tests/|/migrations/'
-        args: [--config-file=python/.mypy.ini]
-
   - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:
@@ -52,3 +43,25 @@ repos:
         args:
           - --license-filepath
           - python/.license_header_template_python.txt          # defaults to: LICENSE.txt
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.4.1
+    hooks:
+      - id: mypy
+        alias: taiga-mypy
+        name: taiga-mypy
+        language: system
+        files: 'python/apps/taiga/'
+        exclude: '/tests/|/migrations/'
+        args: [--config-file=python/apps/taiga/.mypy.ini]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.4.1
+    hooks:
+      - id: mypy
+        alias: taiga_metrics-mypy
+        name: taiga_metrics-mypy
+        language: system
+        files: 'python/apps/taiga_metrics/'
+        exclude: '/tests/|/migrations/'
+        args: [--config-file=python/apps/taiga_metrics/.mypy.ini]

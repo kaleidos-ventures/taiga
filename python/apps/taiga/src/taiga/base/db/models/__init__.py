@@ -18,7 +18,7 @@ from django.db.models import *  # noqa
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation  # noqa
 from django.contrib.contenttypes.models import ContentType  # noqa
-from django.contrib.postgres.fields import ArrayField, JSONField  # noqa
+from django.contrib.postgres.fields import ArrayField  # noqa
 from django.contrib.postgres.lookups import Unaccent  # noqa
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector  # noqa
 from django.db.models import Model, UUIDField

@@ -32,6 +32,7 @@ class CreatedByMetaInfoMixin(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         verbose_name="created by",
+        related_name="+",
     )
 
     class Meta:
@@ -61,6 +62,7 @@ class DeletedMetaInfoMixin(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         verbose_name="deleted by",
+        related_name="+",
     )
     deleted_at = models.DateTimeField(
         null=True,
@@ -84,6 +86,7 @@ class TitleUpdatedMetaInfoMixin(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         verbose_name="title updated by",
+        related_name="+",
     )
     title_updated_at = models.DateTimeField(
         null=True,
@@ -107,6 +110,7 @@ class DescriptionUpdatedMetaInfoMixin(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         verbose_name="description updated by",
+        related_name="+",
     )
     description_updated_at = models.DateTimeField(
         null=True,

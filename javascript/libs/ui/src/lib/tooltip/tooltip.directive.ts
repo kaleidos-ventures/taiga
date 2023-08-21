@@ -6,10 +6,11 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { FocusMonitor } from '@angular/cdk/a11y';
 import {
   Overlay,
-  OverlayRef,
   OverlayPositionBuilder,
+  OverlayRef,
 } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import {
@@ -26,15 +27,8 @@ import {
   TemplateRef,
   inject,
 } from '@angular/core';
-import { ToolipComponent } from './tooltip.component';
-import { TooltipPosition } from './tooltip-position.model';
-import {
-  calculateTooltipPositionByPreference,
-  positionMapping,
-} from './calculate-tooltip-position';
-import { ShortcutsService } from '@taiga/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FocusMonitor } from '@angular/cdk/a11y';
+import { ShortcutsService } from '@taiga/core';
 import {
   BehaviorSubject,
   Subject,
@@ -47,6 +41,12 @@ import {
   takeUntil,
   timer,
 } from 'rxjs';
+import {
+  calculateTooltipPositionByPreference,
+  positionMapping,
+} from './calculate-tooltip-position';
+import { TooltipPosition } from './tooltip-position.model';
+import { TooltipComponent } from './tooltip.component';
 import { AccesibleTooltipService } from './tooltip.service';
 
 let nextId = 0;
@@ -153,13 +153,13 @@ export class TooltipDirective implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    this.tootltipVisibility$.next({ show: false });
+    this.tooltipVisibility$.next({ show: false });
   }
 
   private overlayRef?: OverlayRef;
   private contentString?: string;
   private contentTemplateRef?: TemplateRef<unknown>;
-  private tootltipVisibility$ = new Subject<{
+  private tooltipVisibility$ = new Subject<{
     delay?: number;
     show: boolean;
   }>();
@@ -167,7 +167,7 @@ export class TooltipDirective implements OnInit, OnDestroy, AfterViewInit {
   private createAccesibleTooltip$ = new BehaviorSubject<boolean>(true);
   private disabled$ = new BehaviorSubject<boolean>(false);
   private finalPosition: TooltipPosition = this.tgUiTooltipPosition;
-  private tooltipRef?: ComponentRef<ToolipComponent>;
+  private tooltipRef?: ComponentRef<TooltipComponent>;
   private manualControl = false;
 
   public ngOnInit() {
@@ -181,7 +181,7 @@ export class TooltipDirective implements OnInit, OnDestroy, AfterViewInit {
         }
       });
 
-    this.tootltipVisibility$
+    this.tooltipVisibility$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         filter(() => this.showTooltip()),
@@ -205,7 +205,7 @@ export class TooltipDirective implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public ngOnDestroy() {
-    this.tootltipVisibility$.next({ show: false });
+    this.tooltipVisibility$.next({ show: false });
     this.destroyAccesibleTooltip();
   }
 
@@ -262,7 +262,7 @@ export class TooltipDirective implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((origin) => {
         if (!origin) {
           this.ngZone.run(() => {
-            this.tootltipVisibility$.next({ show: false });
+            this.tooltipVisibility$.next({ show: false });
           });
         } else if (origin === 'keyboard') {
           this.ngZone.run(() => this.showWithDelay());
@@ -281,7 +281,7 @@ export class TooltipDirective implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    const tooltipPortal = new ComponentPortal(ToolipComponent);
+    const tooltipPortal = new ComponentPortal(TooltipComponent);
     const tooltipRef = this.overlayRef.attach(tooltipPortal);
 
     if (this.contentString) {
@@ -327,14 +327,14 @@ export class TooltipDirective implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private showWithDelay() {
-    this.tootltipVisibility$.next({
+    this.tooltipVisibility$.next({
       show: true,
       delay: this.tgUiTooltipDelayOpen,
     });
   }
 
   private hideWithDeleay() {
-    this.tootltipVisibility$.next({
+    this.tooltipVisibility$.next({
       show: false,
       delay: this.tgUiTooltipDelayClose,
     });
@@ -369,13 +369,13 @@ export class TooltipDirective implements OnInit, OnDestroy, AfterViewInit {
       .task('cancel', {}, 'tooltip')
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        takeUntil(this.tootltipVisibility$.pipe(filter(({ show }) => !show))),
+        takeUntil(this.tooltipVisibility$.pipe(filter(({ show }) => !show))),
         finalize(() => {
           this.shortcutsService.deleteScope('tooltip');
         })
       )
       .subscribe(() => {
-        this.tootltipVisibility$.next({ show: false });
+        this.tooltipVisibility$.next({ show: false });
       });
   }
 }

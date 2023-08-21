@@ -16,7 +16,7 @@ import {
   inject,
 } from '@angular/core';
 import { v4 } from 'uuid';
-import { ToolipComponent } from './tooltip.component';
+import { TooltipComponent } from './tooltip.component';
 import { TooltipDirective } from './tooltip.directive';
 
 export const CORRELATION_ID = v4();
@@ -39,7 +39,7 @@ export class AccesibleTooltipService {
   private tooltips: {
     id: string;
     content: string | TemplateRef<unknown>;
-    component: ComponentPortal<ToolipComponent>;
+    component: ComponentPortal<TooltipComponent>;
     references: TooltipDirective[];
     portal: DomPortalOutlet;
   }[] = [];
@@ -56,13 +56,13 @@ export class AccesibleTooltipService {
 
     const id = `tg-ui-tooltip-${nextId++}`;
     const accesiblePortal = new DomPortalOutlet(
-      document.body,
+      document.body.getElementsByClassName('app-content')[0],
       this.cfr,
       this.appRef,
       this.injector
     );
 
-    const tooltipPortal = new ComponentPortal(ToolipComponent);
+    const tooltipPortal = new ComponentPortal(TooltipComponent);
     const tooltipRef = accesiblePortal.attach(tooltipPortal);
 
     if (typeof content === 'string') {

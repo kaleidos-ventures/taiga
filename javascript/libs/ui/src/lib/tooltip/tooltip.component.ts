@@ -31,7 +31,7 @@ import { TooltipPosition } from './tooltip-position.model';
   styleUrls: ['./tooltip.component.css'],
   standalone: true,
 })
-export class ToolipComponent {
+export class TooltipComponent {
   @Input()
   public text?: string;
 

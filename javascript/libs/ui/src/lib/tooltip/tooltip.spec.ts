@@ -6,21 +6,21 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import {
-  createDirectiveFactory,
-  SpectatorDirective,
-} from '@ngneat/spectator/jest';
-import { TooltipDirective } from './tooltip.directive';
-import { OverlayModule } from '@angular/cdk/overlay';
-import { ShortcutsService } from '@taiga/core';
-import { ToolipComponent } from './tooltip.component';
 import { FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
-import { Subject } from 'rxjs';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { fakeAsync } from '@angular/core/testing';
+import {
+  SpectatorDirective,
+  createDirectiveFactory,
+} from '@ngneat/spectator/jest';
+import { ShortcutsService } from '@taiga/core';
+import { Subject } from 'rxjs';
 import {
   calculateTooltipPositionByPreference,
   positionMapping,
 } from './calculate-tooltip-position';
+import { TooltipComponent } from './tooltip.component';
+import { TooltipDirective } from './tooltip.directive';
 
 describe('TooltipDirective', () => {
   let spectator: SpectatorDirective<TooltipDirective>;
@@ -30,7 +30,7 @@ describe('TooltipDirective', () => {
 
   const createDirective = createDirectiveFactory({
     directive: TooltipDirective,
-    imports: [OverlayModule, ToolipComponent, TooltipDirective],
+    imports: [OverlayModule, TooltipComponent, TooltipDirective],
     mocks: [ShortcutsService, FocusMonitor],
     declarations: [],
   });
@@ -90,7 +90,9 @@ describe('TooltipDirective', () => {
   }
 
   it('create accesible tooltip', () => {
-    createDirectiveWithTemplate(`<button tgUiTooltip="test"></button>`);
+    createDirectiveWithTemplate(
+      `<div class="app-content"><button tgUiTooltip="test"></button></div>`
+    );
 
     const id = tooltipDescribedBy();
 
@@ -106,10 +108,10 @@ describe('TooltipDirective', () => {
   });
 
   it('tgUiTooltipCreateAccesibleTooltip false', () => {
-    createDirectiveWithTemplate(`<button
+    createDirectiveWithTemplate(`<div class="app-content"><button
       tgUiTooltip="test"
       [tgUiTooltipCreateAccesibleTooltip]="false">
-    </button>`);
+    </button></div>`);
 
     const id = tooltipDescribedBy();
 
@@ -117,11 +119,11 @@ describe('TooltipDirective', () => {
   });
 
   it('show tooltip with delay in the correct position, hide on mouseleave', fakeAsync(() => {
-    createDirectiveWithTemplate(`<button
+    createDirectiveWithTemplate(`<div class="app-content"><button
       tgUiTooltip="test"
       [tgUiTooltipDelayOpen]="100"
       tgUiTooltipPosition="top-right">
-    </button>`);
+    </button></div>`);
 
     mouseEnterTooltipTrigger();
 
@@ -141,10 +143,10 @@ describe('TooltipDirective', () => {
   }));
 
   it('show/hide tooltip manually', () => {
-    createDirectiveWithTemplate(`<button
+    createDirectiveWithTemplate(`<div class="app-content"><button
       tgUiTooltip="test"
       [tgUiTooltipDelayOpen]="0">
-    </button>`);
+    </button></div>`);
 
     spectator.directive.tgManual = true;
     spectator.detectChanges();
@@ -161,11 +163,11 @@ describe('TooltipDirective', () => {
   });
 
   it('tooltip disabled', () => {
-    createDirectiveWithTemplate(`<button
+    createDirectiveWithTemplate(`<div class="app-content"><button
     tgUiTooltip="test"
     [tgUiTooltipDelayOpen]="0"
     [tgUiTooltipDisabled]="true">
-  </button>`);
+  </button></div>`);
     mouseEnterTooltipTrigger();
 
     expect(getTooltip()).toBeFalsy();
@@ -176,10 +178,10 @@ describe('TooltipDirective', () => {
   });
 
   it('show tooltip. hover on tooltip, mouseleave tooltip', () => {
-    createDirectiveWithTemplate(`<button
+    createDirectiveWithTemplate(`<div class="app-content"><button
       tgUiTooltip="test"
       [tgUiTooltipDelayOpen]="0">
-    </button>`);
+    </button></div>`);
 
     mouseEnterTooltipTrigger();
     expect(checkIfTooltipIsVisible()).toBeTruthy();
@@ -198,11 +200,11 @@ describe('TooltipDirective', () => {
   });
 
   it('close tooltip on esc', () => {
-    createDirectiveWithTemplate(`<button
+    createDirectiveWithTemplate(`<div class="app-content"><button
       tgUiTooltip="test"
       [tgUiTooltipDelayOpen]="0"
       [tgUiTooltipDelayClose]="0">
-    </button>`);
+    </button></div>`);
     mouseEnterTooltipTrigger();
     expect(checkIfTooltipIsVisible()).toBeTruthy();
 
@@ -213,11 +215,11 @@ describe('TooltipDirective', () => {
   });
 
   it('show/hide tooltip on focus', () => {
-    createDirectiveWithTemplate(`<button
+    createDirectiveWithTemplate(`<div class="app-content"><button
       tgUiTooltip="test"
       [tgUiTooltipDelayOpen]="0"
       [tgUiTooltipDelayClose]="0">
-    </button>`);
+    </button></div>`);
 
     focusSubject.next('keyboard');
     spectator.detectChanges();

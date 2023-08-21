@@ -84,6 +84,8 @@ export class AppComponent {
       .subscribe(() => {
         void this.router.navigate(['/logout']);
       });
+
+    this.setBannerHeight();
   }
 
   public get globalBannerActivated() {
@@ -92,12 +94,10 @@ export class AppComponent {
 
   public setBannerHeight() {
     const banner = document.querySelector<HTMLElement>('.global-banner');
-    if (banner) {
-      (this.el.nativeElement as HTMLElement).style.setProperty(
-        '--banner-height',
-        `${banner.offsetHeight}px`
-      );
-    }
+    (this.el.nativeElement as HTMLElement).style.setProperty(
+      '--banner-height',
+      `${banner ? banner.offsetHeight : '0'}px`
+    );
   }
 
   public userModality() {

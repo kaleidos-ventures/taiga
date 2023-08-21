@@ -8,10 +8,16 @@
     "old": "Oldest first",
     "reverse": "Reverse order"
   },
-  "comment_options": "Comment Options",
+  "comment_actions": "Comment actions",
+  "edit": {
+    "edit_comment": "Edit",
+    "edited_comment": "Edited",
+    "edited_comment_tooltip": "Edited {{when}}"
+  },
   "delete": {
     "delete_comment": "Delete",
-    "confirm": "Delete this comment?",
+    "confirm": "Delete your comment?",
+    "confirm_other": "Delete {{ fullName }}'s comment?",
     "confirm_info": "This action can not be undone.",
     "cancel": "No, cancel",
     "confirm_action": "Yes, delete"

@@ -24,6 +24,7 @@
   "write_status": "Write a status name",
   "status_empty": "Status name can’t be empty.",
   "status_options": "Display status options",
+  "status_btn_tooltip": "Status actions",
   "edit_status_name": "Edit status name",
   "status_name": "Status name",
   "delete_status": "Delete status",

@@ -7,7 +7,7 @@
     "email": "Email",
     "change_password": "Change password",
     "billing_subscription": "Billing and subscription",
-    "delete_account": "Delete/close account",
+    "delete_account": "Delete account",
     "preferences": "Preferences",
     "language": "Language",
     "notifications": "Notifications",
@@ -20,5 +20,39 @@
   "language": {
     "select": "Select platform language",
     "default": "- Default"
+  },
+  "perefences": {
+    "page_title": "{{ username }}’s preferences settings"
+  },
+  "account": {
+    "title": "Your account",
+    "page_title": "{{ username }}’s account settings",
+    "a11y_title": "{{ username }} user account settings",
+    "subtitle": "Change basic settings about your Taiga account.",
+    "delete": {
+      "msg": "Sorry to see you go, <span class='username'>@{{ username }}</span>.",
+      "explain": {
+        "title": "What will happen:",
+        "access": "You will lose access to Taiga",
+        "delete_data": "We will delete your personal data and your name will disappear from the platform.",
+        "shared": "The content you've created shared with other people will remain in the platform."
+      },
+      "confirm_msg": "I understand that the deletion is final and there will be no way to restore your account.",
+      "delete_account_action": "Delete my account",
+      "confirm_delete_error": "Please, confirm that you understand the consequences of deleting your account.",
+      "confirmation_modal": {
+        "title": "Before deleting your account",
+        "description": "There are some issues that need your attention before deleting your accout",
+        "caution": "Caution!",
+        "keep": "Keep my account",
+        "confirm": "Delete my account",
+        "only_admin_projects": "{projects, plural, one {You are the <strong>only administrator</strong> in <strong>one project</strong>.} other {You are the <strong>only administrator</strong> in <strong>some projects</strong>.}}",
+        "only_admin_workspaces": "{workspaces, plural, one {You are the <strong>only member</strong> in <strong>one workspaces</strong>.} other {You are the <strong>only member</strong> in <strong>some workspaces</strong>.}}",
+        "project_description": "Your role as a project administrator will be moved to another member of the workspace.",
+        "workspace_description": "{workspaces, plural, one {This workspace} other {Those workspaces}} will be deleted, along with the projects within them. You can invite somebody to be ws member.",
+        "workspace_a11y_title": "Workspaces where you are the only member",
+        "project_a11y_title": "Projects where you are the only project admin"
+      }
+    }
   }
 }

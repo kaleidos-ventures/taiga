@@ -37,7 +37,8 @@
     "save": "Save",
     "next_page": "Next page",
     "now": "now",
-    "ago": "ago"
+    "ago": "ago",
+    "former_user": "Former user"
   },
   "navigation": {
     "go_home": "Go to home",
@@ -70,7 +71,7 @@
   "navigation_user": {
     "user_menu": "User menu",
     "user_profile": "See Profile",
-    "edit_profile": "Edit profile",
+    "account": "Account",
     "preferences": "Preferences",
     "account_settings": "Account",
     "accessibility_settings": "Accesibility",
@@ -107,7 +108,9 @@
       "project_icon": "Project icon",
       "max_length_error": "Project description must be 200 characters or fewer",
       "choose_image_tip": "Allowed formats: gif, png, jpg, svg and webp",
-      "format_error": "The file format is not allowed. Allowed formats: gif, png, jpg, svg or webp"
+      "format_error": "The file format is not allowed. Allowed formats: gif, png, jpg, svg or webp",
+      "choose_image_no_svg_tip": "Allowed formats: gif, png, jpg and webp",
+      "format_no_svg_error": "The file format is not allowed. Allowed formats: gif, png, jpg or webp"
     },
     "delete_modal_title": "Delete {{projectTitle}}?",
     "delete_modal_warning": "<strong class='bold'>Warning:</strong> This action cannot be undone.",
@@ -201,10 +204,6 @@
     "pending_tab": "Pending",
     "non_members_tab": "Non-members",
     "column_user": "User",
-    "column_projects": {
-      "projects_number": "{projectsNum, plural, =0 {0 projects} one {1 project} other {# projects}}",
-      "projects_list_title": "Projects in this workspace"
-    },
     "column_actions": "Actions",
     "no_pending": "There are no pending invitations to accept.",
     "leave": "Leave project",
@@ -219,5 +218,12 @@
     "remove_description": "The user will lose the permissions granted as a member of the project and will be removed from all their assignmets.",
     "remove_confirm": "Yes, remove",
     "no_longer_member": "You are no longer member of the {name} {type}."
+  },
+  "banner": {
+    "alpha": "This app, while amazing, is unstable. It's an Alpha version, so your data could be erased at some point. Embrace the wild, cherish every moment, and don't forget your bear repellent spray."
+  },
+  "projects_dropdown": {
+    "projects_number": "{projectsNum, plural, =0 {0 projects} one {1 project} other {# projects}}",
+    "projects_list_title": "Projects in this workspace"
   }
 }

@@ -16,7 +16,6 @@
   "more_projects": "{{ projects }} more projects",
   "placehoder_no_access": "You don't have access to any projects in this workspace yet. <br /> Check with your workspace admin.",
   "placehoder_no_projects": "There are no projects in the workspace.",
-  "workspace_options": "Workspace options",
   "edit_workspace_name": "Edit workspace name",
   "workspace_actions": "Workspace actions",
   "invite_workspace": "Invite to workspace",

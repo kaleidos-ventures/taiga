@@ -29,6 +29,7 @@ Copyright (c) 2023-present Kaleidos INC
     <ng-container *ngIf="fullName">
       <ng-container *ngIf="navigateToUser">
         <a
+          class="username-link"
           href=""
           [attr.aria-label]="user.fullName && user.fullName + user.username">
           <span

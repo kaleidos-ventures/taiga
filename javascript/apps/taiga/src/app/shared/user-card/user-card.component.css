@@ -21,6 +21,11 @@ Copyright (c) 2023-present Kaleidos INC
   justify-content: center;
   justify-self: stretch;
 
+  & .username-link {
+    display: flex;
+    max-inline-size: 100%;
+  }
+
   & .user-name {
     @mixin font-inline;
 

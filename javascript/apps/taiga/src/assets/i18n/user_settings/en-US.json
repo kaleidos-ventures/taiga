@@ -49,7 +49,7 @@
         "only_admin_projects": "{projects, plural, one {You are the <strong>only administrator</strong> in <strong>one project</strong>.} other {You are the <strong>only administrator</strong> in <strong>some projects</strong>.}}",
         "only_admin_workspaces": "{workspaces, plural, one {You are the <strong>only member</strong> in <strong>one workspace</strong>.} other {You are the <strong>only member</strong> in <strong>some workspaces</strong>.}}",
         "project_description": "Your role as a project administrator will be moved to another member of the workspace.",
-        "workspace_description": "{workspaces, plural, one {This workspace} other {Those workspaces}} will be deleted, along with the projects within them. You can invite somebody to be ws member.",
+        "workspace_description": "{workspaces, plural, one {This workspace} other {Those workspaces}} will be deleted, along with the projects within it. You can invite somebody to be a workspace member.",
         "workspace_a11y_title": "Workspaces where you are the only member",
         "project_a11y_title": "Projects where you are the only project admin"
       }

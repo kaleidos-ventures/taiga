@@ -82,8 +82,13 @@ export class CommentDetailComponent implements OnInit {
   }
 
   public deleteConfirm(): void {
-    this.showDeleteCommentConfirm = true;
-    this.highlightComment.emit(true);
+    // necessary to avoid dropdown microanimation
+    this.commentOptionsState = false;
+    setTimeout(() => {
+      this.showDeleteCommentConfirm = true;
+      this.commentOptionsState = true;
+      this.highlightComment.emit(true);
+    }, 10);
   }
 
   public changeCommentOptionsState(state: boolean): void {

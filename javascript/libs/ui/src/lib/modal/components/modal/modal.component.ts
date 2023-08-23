@@ -12,6 +12,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   Output,
@@ -70,6 +71,9 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
   public width = 715;
 
   @Input()
+  public closeClickOutside = false;
+
+  @Input()
   public set open(value: boolean) {
     this.open$.next(value);
   }
@@ -80,6 +84,19 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('domPortalContent')
   public domPortalContent!: PolymorpheusContent<HTMLElement>;
+
+  @HostListener('document:click', ['$event'])
+  public onDocumentClick(event: Event) {
+    if (this.closeClickOutside) {
+      const target = event.target as HTMLElement;
+      const overlay =
+        document.querySelector('tui-dialog-host')?.children[0] === target;
+      const modalInner = target.dataset.ref?.includes('modal-inner');
+      if (overlay || modalInner) {
+        this.closeTopModal();
+      }
+    }
+  }
 
   public modalSubscription$?: Subscription;
   public id = v4();
@@ -108,17 +125,21 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
       })
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        const topModal = Array.from(
-          document.querySelectorAll('tg-ui-modal-wrapper')
-        ).pop();
-
-        const modal = document.getElementById(this.id);
-
-        // closes the last open modal
-        if (modal && topModal && topModal.contains(modal)) {
-          this.close();
-        }
+        this.closeTopModal();
       });
+  }
+
+  public closeTopModal() {
+    const topModal = Array.from(
+      document.querySelectorAll('tg-ui-modal-wrapper')
+    ).pop();
+
+    const modal = document.getElementById(this.id);
+
+    // closes the last open modal
+    if (modal && topModal && topModal.contains(modal)) {
+      this.close();
+    }
   }
 
   public close() {

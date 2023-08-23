@@ -56,6 +56,7 @@ Copyright (c) 2023-present Kaleidos INC
           [noPadding]="true"
           [closeButton]="false"
           [open]="vm.showStoryDetail"
+          [closeClickOutside]="true"
           (requestClose)="closeViewModal()">
           <ng-container *ngIf="project$ | async as project">
             <tg-project-feature-story-wrapper-modal-view

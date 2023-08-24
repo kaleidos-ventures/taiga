@@ -163,7 +163,10 @@ describe('InvitationEffects', () => {
     });
 
     const expected = cold('--a', {
-      a: invitationProjectActions.acceptInvitationIdError({ projectId: id }),
+      a: invitationProjectActions.acceptInvitationIdError({
+        projectId: id,
+        error: 400,
+      }),
     });
 
     expect(effects.acceptInvitationId$).toBeObservable(expected);

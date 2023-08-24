@@ -56,7 +56,7 @@ async def get_workflow(project_id: UUID, workflow_slug: str) -> Workflow | None:
             "project_id": project_id,
             "slug": workflow_slug,
         },
-        select_related=["project"],
+        select_related=["project", "workspace"],
     )
 
 
@@ -111,7 +111,7 @@ async def get_workflow_status(project_id: UUID, workflow_slug: str, id: UUID) ->
             "workflow_slug": workflow_slug,
             "id": id,
         },
-        select_related=["workflow", "workflow_project"],
+        select_related=["workflow", "project", "workspace"],
     )
 
 

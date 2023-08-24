@@ -108,7 +108,7 @@ async def list_paginated_stories(
 async def get_story(project_id: UUID, ref: int) -> Story | None:
     return await stories_repositories.get_story(
         filters={"ref": ref, "project_id": project_id},
-        select_related=["project"],
+        select_related=["project", "workspace"],
     )
 
 

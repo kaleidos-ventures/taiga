@@ -80,7 +80,7 @@ async def get_comment(id: UUID, content_object: Model) -> Comment | None:
     return await comments_repositories.get_comment(
         filters={"id": id, "content_object": content_object},
         select_related=["created_by", "deleted_by"],
-        prefetch_related=["content_object"],
+        prefetch_related=["content_object", "project", "workspace"],
     )
 
 

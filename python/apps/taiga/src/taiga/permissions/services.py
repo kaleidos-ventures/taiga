@@ -7,7 +7,6 @@
 
 from typing import Any
 
-from asgiref.sync import sync_to_async
 from taiga.permissions import choices
 from taiga.permissions.choices import WorkspacePermissions
 from taiga.projects.invitations import services as pj_invitations_services
@@ -110,8 +109,7 @@ async def get_user_permissions(user: AnyUser, obj: Any) -> list[str]:
     return user_permissions
 
 
-@sync_to_async
-def _get_object_workspace(obj: Any) -> Workspace | None:
+async def _get_object_workspace(obj: Any) -> Workspace | None:
     if isinstance(obj, Workspace):
         return obj
     elif obj and hasattr(obj, "workspace"):
@@ -122,8 +120,7 @@ def _get_object_workspace(obj: Any) -> Workspace | None:
     return None
 
 
-@sync_to_async
-def _get_object_project(obj: Any) -> Project | None:
+async def _get_object_project(obj: Any) -> Project | None:
     if isinstance(obj, Project):
         return obj
     elif obj and hasattr(obj, "project"):

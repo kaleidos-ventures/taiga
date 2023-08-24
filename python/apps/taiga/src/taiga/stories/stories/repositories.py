@@ -50,7 +50,15 @@ def _apply_filters_to_queryset(
 
 
 StorySelectRelated = list[
-    Literal["created_by", "project", "workflow", "status", "workspace", "title_updated_by", "description_updated_by"]
+    Literal[
+        "created_by",
+        "project",
+        "workflow",
+        "status",
+        "workspace",
+        "title_updated_by",
+        "description_updated_by",
+    ]
 ]
 
 

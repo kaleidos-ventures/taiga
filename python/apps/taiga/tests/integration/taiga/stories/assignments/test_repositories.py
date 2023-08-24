@@ -40,7 +40,7 @@ async def test_get_story_assignment() -> None:
             "ref": story_assignment.story.ref,
             "username": story_assignment.user.username,
         },
-        select_related=["story", "user", "story_project"],
+        select_related=["story", "user", "project"],
     )
     assert story_assignment.user.username == story_assignment_test.user.username
     assert story_assignment.story.id == story_assignment_test.story.id

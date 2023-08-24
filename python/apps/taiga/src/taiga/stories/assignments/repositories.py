@@ -51,7 +51,14 @@ def _apply_filters_to_queryset(
     return qs.filter(**filter_data)
 
 
-StoryAssignmentSelectRelated = list[Literal["story", "user", "story_project"]]
+StoryAssignmentSelectRelated = list[
+    Literal[
+        "story",
+        "user",
+        "project",
+        "workspace",
+    ]
+]
 
 
 def _apply_select_related_to_queryset(
@@ -59,11 +66,14 @@ def _apply_select_related_to_queryset(
     select_related: StoryAssignmentSelectRelated,
 ) -> QuerySet[StoryAssignment]:
     select_related_data = []
-    for sr in select_related:
-        if sr == "story_project":
+    for key in select_related:
+        if key == "project":
             select_related_data.append("story__project")
+        elif key == "workspace":
+            select_related_data.append("story__project__workspace")
         else:
-            select_related_data.append(sr)
+            select_related_data.append(key)
+
     return qs.select_related(*select_related_data)
 
 

@@ -38,7 +38,7 @@ async def list_project_memberships(project: Project) -> list[ProjectMembership]:
 async def get_project_membership(project_id: UUID, username: str) -> ProjectMembership | None:
     return await memberships_repositories.get_project_membership(
         filters={"project_id": project_id, "username": username},
-        select_related=["user", "role", "project", "project__workspace"],
+        select_related=["user", "role", "project", "workspace"],
     )
 
 

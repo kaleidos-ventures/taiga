@@ -55,7 +55,7 @@ ProjectMembershipSelectRelated = list[
         "project",
         "role",
         "user",
-        "project__workspace",
+        "workspace",
     ]
 ]
 
@@ -64,7 +64,15 @@ def _apply_select_related_to_queryset(
     qs: QuerySet[ProjectMembership],
     select_related: ProjectMembershipSelectRelated,
 ) -> QuerySet[ProjectMembership]:
-    return qs.select_related(*select_related)
+    select_related_data = []
+
+    for key in select_related:
+        if key == "workspace":
+            select_related_data.append("project__workspace")
+        else:
+            select_related_data.append(key)
+
+    return qs.select_related(*select_related_data)
 
 
 ProjectMembershipOrderBy = list[Literal["full_name",]]

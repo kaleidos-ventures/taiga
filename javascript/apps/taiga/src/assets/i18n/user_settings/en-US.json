@@ -33,7 +33,7 @@
       "msg": "Sorry to see you go, <span class='username'>@{{ username }}</span>.",
       "explain": {
         "title": "What will happen:",
-        "access": "You will lose access to Taiga",
+        "access": "You will lose access to Taiga.",
         "delete_data": "We will delete your personal data and your name will disappear from the platform.",
         "shared": "The content you've created shared with other people will remain in the platform."
       },

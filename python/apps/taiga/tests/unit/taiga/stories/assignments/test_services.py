@@ -154,7 +154,7 @@ async def test_get_story_assignment():
 
         fake_story_assignment_repo.get_story_assignment.assert_awaited_once_with(
             filters={"project_id": story.project.id, "ref": story.ref, "username": user.username},
-            select_related=["story", "user", "story_project"],
+            select_related=["story", "user", "project", "workspace"],
         )
 
 

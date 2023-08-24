@@ -72,14 +72,30 @@ async def _apply_select_related_to_queryset(
     return qs.select_related(*select_related)
 
 
-CommentPrefetchRelated = list[Literal["content_object",]]
+CommentPrefetchRelated = list[
+    Literal[
+        "content_object",
+        "project",
+        "workspace",
+    ]
+]
 
 
 async def _apply_prefetch_related_to_queryset(
     qs: QuerySet[Comment],
     prefetch_related: CommentPrefetchRelated,
 ) -> QuerySet[Comment]:
-    return qs.prefetch_related(*prefetch_related)
+    prefetch_related_data = []
+
+    for key in prefetch_related:
+        if key == "workspace":
+            prefetch_related_data.append("content_object__project__workspace")
+        elif key == "project":
+            prefetch_related_data.append("content_object__project")
+        else:
+            prefetch_related_data.append(key)
+
+    return qs.prefetch_related(*prefetch_related_data)
 
 
 CommentOrderBy = list[

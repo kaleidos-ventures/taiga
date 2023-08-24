@@ -84,7 +84,8 @@ async def get_workspace_membership(
     username: str,
 ) -> WorkspaceMembership | None:
     return await workspace_memberships_repositories.get_workspace_membership(
-        filters={"workspace_id": workspace_id, "username": username}, select_related=["workspace", "user"]
+        filters={"workspace_id": workspace_id, "username": username},
+        select_related=["workspace", "user"],
     )
 
 

@@ -119,7 +119,7 @@ async def test_get_comment():
         fake_comments_repositories.get_comment.assert_awaited_once_with(
             filters={"id": comment_id, "content_object": story},
             select_related=["created_by", "deleted_by"],
-            prefetch_related=["content_object"],
+            prefetch_related=["content_object", "project", "workspace"],
         )
 
 

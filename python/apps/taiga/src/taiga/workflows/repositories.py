@@ -40,14 +40,22 @@ def _apply_filters_to_workflow_queryset(
     return qs.filter(**filters)
 
 
-WorkflowSelectRelated = list[Literal["project",]]
+WorkflowSelectRelated = list[Literal["project", "workspace"]]
 
 
 def _apply_select_related_to_workflow_queryset(
     qs: QuerySet[Workflow],
     select_related: WorkflowSelectRelated,
 ) -> QuerySet[Workflow]:
-    return qs.select_related(*select_related)
+    select_related_data = []
+
+    for key in select_related:
+        if key == "workspace":
+            select_related_data.append("project__workspace")
+        else:
+            select_related_data.append(key)
+
+    return qs.select_related(*select_related_data)
 
 
 WorkflowPrefetchRelated = list[Literal["statuses",]]
@@ -167,7 +175,8 @@ def _apply_filters_to_workflow_status_queryset(
 WorkflowStatusSelectRelated = list[
     Literal[
         "workflow",
-        "workflow_project",
+        "project",
+        "workspace",
     ]
 ]
 
@@ -179,8 +188,10 @@ def _apply_select_related_to_workflow_status_queryset(
     select_related_data = []
 
     for key in select_related:
-        if key == "workflow_project":
+        if key == "project":
             select_related_data.append("workflow__project")
+        elif key == "workspace":
+            select_related_data.append("workflow__project__workspace")
         else:
             select_related_data.append(key)
 

@@ -59,6 +59,7 @@ export const invitationProjectActions = createActionGroup({
     }>(),
     'Accept invitation id error': props<{
       projectId: string;
+      error?: number;
     }>(),
     'Revoke invitation banner id error': props<{
       projectId: string;

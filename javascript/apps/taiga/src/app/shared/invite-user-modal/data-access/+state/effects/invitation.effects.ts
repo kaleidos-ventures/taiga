@@ -174,6 +174,7 @@ export class InvitationEffects {
 
           return invitationProjectActions.acceptInvitationIdError({
             projectId: action.id,
+            error: httpResponse.status,
           });
         },
       })

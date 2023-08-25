@@ -205,7 +205,7 @@ export class ProjectFeatureKanbanComponent {
 
   public setCloseShortcut() {
     this.shortcutsService
-      .task('side-view.close')
+      .task('cancel', {}, 'side-view')
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.closeSideview();

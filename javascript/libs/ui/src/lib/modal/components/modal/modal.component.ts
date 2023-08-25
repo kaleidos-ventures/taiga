@@ -120,9 +120,7 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
       });
 
     this.shortcutsService
-      .task('modal.close', {
-        scope: `modal-${this.id}`,
-      })
+      .task('cancel', {}, `modal-${this.id}`)
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.closeTopModal();

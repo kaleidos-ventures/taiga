@@ -8,7 +8,8 @@ Copyright (c) 2023-present Kaleidos INC
 
 <ng-container
   *transloco="let t"
-  tgShortcut="conflict.close"
+  tgShortcut="cancel"
+  scope="conflict"
   (tgShortcutAction)="cancel.next(copyView)">
   <div (tgOutsideClick)="cancel.next(copyView)">
     <ng-container *ngIf="!copyView">

@@ -19,6 +19,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { ShortcutsService } from '@taiga/core';
 import { Membership, Project, Role, User } from '@taiga/data';
+import { finalize } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -81,8 +82,13 @@ export class RemoveMemberComponent implements OnChanges {
   public setCloseShortcut() {
     this.shortcutsService.setScope('remove-user');
     this.shortcutsService
-      .task('remove-user.close')
-      .pipe(untilDestroyed(this))
+      .task('cancel', {}, 'remove-user')
+      .pipe(
+        untilDestroyed(this),
+        finalize(() => {
+          this.shortcutsService.deleteScope('remove-user');
+        })
+      )
       .subscribe(() => {
         this.closeDropdown();
       });

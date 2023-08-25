@@ -333,7 +333,7 @@ export class AssignUserComponent implements OnInit, OnDestroy {
   public setCloseShortcut() {
     this.shortcutsService.setScope('assign-user');
     this.shortcutsService
-      .task('assign-user.close')
+      .task('cancel', {}, 'assign-user')
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.requestClose.next();

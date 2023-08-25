@@ -117,7 +117,7 @@ export class StoryDetailTitleComponent implements OnChanges, OnDestroy {
     );
 
     this.shortcutsService
-      .task('edit-field.close')
+      .task('cancel', {}, 'edit-field')
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.cancelEditTitle();

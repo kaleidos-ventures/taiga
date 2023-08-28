@@ -16,7 +16,6 @@ import {
   displayAdvancedSettingsForRole,
   displayCustomizePermissions,
   displayPublicAdvancedSettingsForRole,
-  displayWorkspaceAdvancedSettingsForRole,
   navigateToMemberPermissionsSettings,
   navigateToSettings,
   setModulePermissions,
@@ -124,7 +123,7 @@ describe('Settings > project member roles (basic)', () => {
       });
   });
 
-  it.skip('Members: Test comment permissions', () => {
+  it('Members: Test comment permissions', () => {
     const roleIndex = 0;
     const moduleIndex = 0;
 
@@ -221,7 +220,7 @@ describe('Settings > project member roles (basic)', () => {
     });
   });
 
-  it.skip('Public: Test comment permissions', () => {
+  it('Public: Test comment permissions', () => {
     const roleIndex = 0;
     const moduleIndex = 0;
 
@@ -241,119 +240,15 @@ describe('Settings > project member roles (basic)', () => {
         );
       });
 
-    // Verify that Sprints doesn't have this switch available.
+    // Verify that Stories have this switch available.
     cy.getBySel('module-permissions-row')
-      .contains('Sprints')
+      .contains('Stories')
       .closest('.permission-row-sub')
-      .within(() => {
-        cy.getBySel('permission-can-comment-switch').should('not.be.visible');
-      });
-
-    // Turn the switch OFF for an entity.
-    // Change an entity permission level to “can access” → verify that the switch is not available.
-    setModulePermissions(moduleIndex, 'no-access');
-    cy.getBySel('module-permissions-row')
-      .eq(moduleIndex)
-      .within(() => {
-        cy.getBySel('permission-can-comment-switch').should('not.be.visible');
-      });
-
-    // Change it again to “can view” → verify that the switch is ON again.
-    setModulePermissions(moduleIndex, 'can-view');
-    cy.getBySel('module-permissions-row')
-      .eq(moduleIndex)
       .within(() => {
         cy.getBySel('permission-can-comment-switch').should('be.visible');
       });
-  });
 
-  it.skip('Workspace: Test custom permissions', () => {
-    const roleIndex = 0;
-    const moduleIndex = 1;
-    const modulePermissionSelectHelper = new SelectHelper(
-      'module-permission-select'
-    );
-    const rowPermissionSelectHelper = new SelectHelper(
-      'permissions-row-select'
-    );
-
-    // Check that all permissions are checked
-    displayWorkspaceAdvancedSettingsForRole(roleIndex);
-    cy.tgCheckA11y();
-    setModulePermissions(moduleIndex, 'can-edit');
-    displayCustomizePermissions(moduleIndex);
-    cy.tgCheckA11y();
-    cy.getBySel('permissions-switch').should('have.class', '_checked');
-
-    // Turn a permission off and check module select text update
-    toggleCustomPermission('create');
-    cy.getBySel('module-permissions-row')
-      .eq(moduleIndex)
-      .within(() => {
-        modulePermissionSelectHelper
-          .getValue()
-          .should('contain.text', 'Can edit (restricted)');
-      });
-
-    // Turn all custom permissions of a module off and ensure that this module select changed to CAN VIEW and global to CUSTOM
-    toggleCustomPermission('delete');
-    toggleCustomPermission('modify');
-    cy.getBySel('module-permissions-row')
-      .eq(moduleIndex)
-      .within(() => {
-        modulePermissionSelectHelper
-          .getValue()
-          .should('contain.text', 'Can view');
-      });
-    cy.getBySel('role-permission-row')
-      .first()
-      .within(() => {
-        rowPermissionSelectHelper.getValue().should('contain.text', 'Custom');
-      });
-
-    // Turn again all ON and ensure levels are CAN EDIT on both
-    toggleCustomPermission('create');
-    toggleCustomPermission('delete');
-    toggleCustomPermission('modify');
-    cy.getBySel('module-permissions-row')
-      .eq(moduleIndex)
-      .within(() => {
-        modulePermissionSelectHelper
-          .getValue()
-          .should('contain.text', 'Can edit');
-      });
-  });
-
-  it.skip('Workspace: Test comment permissions', () => {
-    const roleIndex = 0;
-    const moduleIndex = 0;
-
-    // Set permission to can-edit to assure the can comment is visible
-    displayWorkspaceAdvancedSettingsForRole(roleIndex);
-    cy.tgCheckA11y();
-    setModulePermissions(moduleIndex, 'can-edit');
-    cy.tgCheckA11y();
-
-    // Enter a new project, verify that each entity of each role has the comment switch ON.
-    cy.getBySel('module-permissions-row')
-      .eq(moduleIndex)
-      .within(() => {
-        cy.getBySel('permission-can-comment-switch').should(
-          'have.class',
-          '_checked'
-        );
-      });
-
-    // Verify that Sprints doesn't have this switch available.
-    cy.getBySel('module-permissions-row')
-      .contains('Sprints')
-      .closest('.permission-row-sub')
-      .within(() => {
-        cy.getBySel('permission-can-comment-switch').should('not.be.visible');
-      });
-
-    // Turn the switch OFF for an entity.
-    // Change an entity permission level to “can access” → verify that the switch is not available.
+    // Change an entity permission level to “no access” → verify that the switch is not available.
     setModulePermissions(moduleIndex, 'no-access');
     cy.getBySel('module-permissions-row')
       .eq(moduleIndex)

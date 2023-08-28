@@ -9,7 +9,23 @@ Copyright (c) 2023-present Kaleidos INC
 @import url("tools/typography.css");
 
 :host {
+  container-type: inline-size;
   display: block;
+}
+
+@container (inline-size < 420px) {
+  :host {
+    &::ng-deep {
+      & .name-column {
+        grid-column-start: span 3;
+      }
+
+      & .size-column,
+      & .date-column {
+        display: none;
+      }
+    }
+  }
 }
 
 .title {
@@ -31,7 +47,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .attachments-table {
-  --cells-layout: 8fr repeat(3, minmax(75px, 1fr));
+  --cells-layout: 8fr minmax(75px, 1fr) minmax(90px, 1fr) minmax(75px, 1fr);
   --row-gap: var(--spacing-24);
 
   margin-block-start: var(--spacing-20);

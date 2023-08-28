@@ -8,7 +8,9 @@ Copyright (c) 2023-present Kaleidos INC
 
 <ng-container *transloco="let t">
   <tg-ui-dtable-row class="row">
-    <tg-ui-dtable-cell class="name-column">
+    <tg-ui-dtable-cell
+      class="name-column"
+      [attr.title]="attachment.name">
       <tui-svg
         [src]="extension"
         class="extension-icon"
@@ -31,7 +33,9 @@ Copyright (c) 2023-present Kaleidos INC
       <tg-ui-dtable-cell class="size-column">
         {{ attachment.size | transformSize }}
       </tg-ui-dtable-cell>
-      <tg-ui-dtable-cell class="date-column">
+      <tg-ui-dtable-cell
+        class="date-column"
+        [attr.title]="attachment.createdAt | dateDistance">
         {{ attachment.createdAt | dateDistance }}
       </tg-ui-dtable-cell>
       <tg-ui-dtable-cell class="actions-column">

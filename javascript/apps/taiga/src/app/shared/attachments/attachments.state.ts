@@ -18,11 +18,11 @@ interface State {
   page: number;
   folded: boolean;
   paginationItems: number;
-  showSizeError: boolean;
+  showSizeError: string[];
   canEdit: boolean;
 }
 
-const ATTACHMENTS_PER_PAGE = 5;
+const ATTACHMENTS_PER_PAGE = 10;
 
 @Injectable()
 export class AttachmentsState extends RxState<State> {

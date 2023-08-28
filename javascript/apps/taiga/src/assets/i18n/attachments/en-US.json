@@ -2,6 +2,7 @@
   "action": "Attach file",
   "title": "Attachments",
   "attachments_nav": "Attachments navigation",
+  "collapse_attachments": "Collapse attachments",
   "expand_attachments": "Expand attachments",
   "column_name": "Name",
   "column_date": "Date",
@@ -9,6 +10,6 @@
   "column_actions": "Attachments actions",
   "download": "Download",
   "delete": "Delete",
-  "error_size": "The file has not been attached because it exceeds the maximum size of 10MB",
+  "error_size": "The file {{filename}} has not been attached because it exceeds the maximum size of 10MB",
   "uploading": "Uploading {{file}}"
 }

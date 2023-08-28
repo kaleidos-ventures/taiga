@@ -47,10 +47,10 @@ Copyright (c) 2023-present Kaleidos INC
 
   & .close-button {
     align-self: start;
-    block-size: var(--spacing-24);
+    block-size: var(--spacing-16);
     color: var(--color-info80);
-    inline-size: var(--spacing-24);
-    margin-inline-start: auto;
+    inline-size: var(--spacing-16);
+    margin-block-start: 2px;
   }
 
   & tui-svg {
@@ -143,7 +143,7 @@ Copyright (c) 2023-present Kaleidos INC
 :host([status="error"]) .wrapper {
   background: var(--color-red20);
   border-color: var(--color-red30);
-  color: var(--color-red80);
+  color: var(--color-red90);
 
   &::after {
     background: none;

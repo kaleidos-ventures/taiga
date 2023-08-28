@@ -8,7 +8,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 :host {
   display: block;
-  padding-inline: var(--spacing-16);
+  padding-inline: var(--spacing-8);
 }
 
 tg-attachments-list {
@@ -22,6 +22,7 @@ tg-attachments-list {
 
   p {
     font-weight: var(--font-weight-regular);
+    inline-size: 100%;
     margin: 0;
   }
 }

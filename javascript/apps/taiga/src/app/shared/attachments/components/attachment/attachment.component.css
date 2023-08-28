@@ -47,6 +47,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .extension-icon {
+  inline-size: var(--spacing-16);
   margin-inline-end: var(--spacing-8);
 
   &[data-extension="paperclip"] {

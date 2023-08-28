@@ -26,6 +26,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { ConfigService } from '@taiga/core';
 import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+import { trackByValue } from '../utils/track-by-value';
 
 @Component({
   selector: 'tg-attachments',
@@ -88,6 +89,8 @@ export class AttachmentsComponent {
 
   public configService = inject(ConfigService);
 
+  public trackByName = trackByValue();
+
   public openFileSelector() {
     this.fileInput.nativeElement.click();
   }
@@ -99,13 +102,20 @@ export class AttachmentsComponent {
       return file.size <= this.configService.maxUploadFileSize;
     });
 
+    const invalidFiles = Array.from(target.files ?? []).filter((file) => {
+      return file.size > this.configService.maxUploadFileSize;
+    });
+
     if (validFiles) {
+      this.state.set({
+        folded: false,
+      });
       this.uploadFiles.emit(validFiles);
     }
 
-    if (validFiles.length !== target.files?.length) {
+    if (invalidFiles.length) {
       this.state.set({
-        showSizeError: true,
+        showSizeError: invalidFiles.map((file) => file.name),
       });
     }
   }

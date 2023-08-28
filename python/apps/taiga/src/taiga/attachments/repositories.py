@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from typing import TypedDict, cast
+from typing import Literal, TypedDict, cast
 from uuid import UUID
 
 from fastapi import UploadFile
@@ -41,6 +41,32 @@ async def _apply_filters_to_queryset(
     return qs.filter(**filter_data)
 
 
+AttachmentPrefetchRelated = list[
+    Literal[
+        "content_object",
+        "project",
+        "workspace",
+    ]
+]
+
+
+async def _apply_prefetch_related_to_queryset(
+    qs: QuerySet[Attachment],
+    prefetch_related: AttachmentPrefetchRelated,
+) -> QuerySet[Attachment]:
+    prefetch_related_data = []
+
+    for key in prefetch_related:
+        if key == "workspace":
+            prefetch_related_data.append("content_object__project__workspace")
+        elif key == "project":
+            prefetch_related_data.append("content_object__project")
+        else:
+            prefetch_related_data.append(key)
+
+    return qs.prefetch_related(*prefetch_related_data)
+
+
 ##########################################################
 # create comment
 ##########################################################
@@ -68,12 +94,43 @@ async def create_attachment(
 
 async def list_attachments(
     filters: AttachmentFilters = {},
+    prefetch_related: AttachmentPrefetchRelated = [],
     offset: int | None = None,
     limit: int | None = None,
 ) -> list[Attachment]:
     qs = await _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = await _apply_prefetch_related_to_queryset(qs=qs, prefetch_related=prefetch_related)
 
     if limit is not None and offset is not None:
         limit += offset
 
     return [a async for a in qs[offset:limit]]
+
+
+##########################################################
+# get attachment
+##########################################################
+
+
+async def get_attachment(
+    filters: AttachmentFilters = {},
+    prefetch_related: AttachmentPrefetchRelated = [],
+) -> Attachment | None:
+    qs = await _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = await _apply_prefetch_related_to_queryset(qs=qs, prefetch_related=prefetch_related)
+
+    try:
+        return await qs.aget()
+    except Attachment.DoesNotExist:
+        return None
+
+
+##########################################################
+# delete attachments
+##########################################################
+
+
+async def delete_attachments(filters: AttachmentFilters) -> int:
+    qs = await _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    count, _ = await qs.adelete()
+    return count

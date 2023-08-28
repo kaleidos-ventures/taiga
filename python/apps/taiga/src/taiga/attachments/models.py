@@ -15,9 +15,12 @@ from taiga.base.utils.files import get_obfuscated_file_path
 
 def get_attachment_file_path(instance: "Attachment", filename: str) -> str:
     content_object = cast(models.BaseModel, instance.content_object)
+    label = content_object._meta.app_label
+    model_name = content_object._meta.model_name or content_object.__class__.__name__
+
     base_path = path.join(
         "attachments",
-        f"{content_object._meta.app_label}_{content_object._meta.model_name}",
+        f"{label.lower()}_{model_name.lower()}",
         content_object.b64id,
     )
     return get_obfuscated_file_path(instance, filename, base_path)

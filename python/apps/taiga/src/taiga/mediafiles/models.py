@@ -13,7 +13,14 @@ from taiga.base.utils.files import get_obfuscated_file_path
 
 
 def get_mediafile_file_path(instance: "Mediafile", filename: str) -> str:
-    base_path = path.join("mediafiles", "proj", instance.project.b64id)
+    label = instance.project._meta.app_label
+    model_name = instance.project._meta.model_name or instance.project.__class__.__name__
+
+    base_path = path.join(
+        "mediafiles",
+        f"{label.lower()}_{model_name.lower()}",
+        instance.project.b64id,
+    )
     return get_obfuscated_file_path(instance, filename, base_path)
 
 

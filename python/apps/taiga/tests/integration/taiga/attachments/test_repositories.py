@@ -80,3 +80,36 @@ async def test_list_attachments_paginated_by_content_object():
 
     assert len(attachments) == 1
     assert attachment12 == attachments[0]
+
+
+##########################################################
+# get_attachment
+##########################################################
+
+
+async def tests_get_attachment():
+    story1 = await f.create_story()
+    story2 = await f.create_story()
+    attachment11 = await f.create_attachment(content_object=story1)
+    attachment21 = await f.create_attachment(content_object=story2)
+    attachment22 = await f.create_attachment(content_object=story2)
+
+    assert await repositories.get_attachment(filters={"id": attachment22.id}) == attachment22
+    assert await repositories.get_attachment(filters={"content_object": story1}) == attachment11
+    assert await repositories.get_attachment(filters={"content_object": story1, "id": attachment21.id}) is None
+    assert await repositories.get_attachment(filters={"content_object": story1, "id": attachment11.id}) == attachment11
+
+
+##########################################################
+# delete_attachments
+##########################################################
+
+
+async def tests_delete_attachments():
+    story1 = await f.create_story()
+    story2 = await f.create_story()
+    await f.create_attachment(content_object=story2)
+    await f.create_attachment(content_object=story2)
+
+    assert await repositories.delete_attachments(filters={"content_object": story1}) == 0
+    assert await repositories.delete_attachments(filters={"content_object": story2}) == 2

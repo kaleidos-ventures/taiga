@@ -7,11 +7,12 @@
 
 from datetime import datetime
 
-from taiga.base.serializers import BaseModel
+from taiga.base.serializers import UUIDB64, BaseModel
 from taiga.base.serializers.fields import FileField
 
 
 class AttachmentSerializer(BaseModel):
+    id: UUIDB64
     name: str
     content_type: str
     size: int

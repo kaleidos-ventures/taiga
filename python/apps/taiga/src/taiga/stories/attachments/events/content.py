@@ -13,3 +13,8 @@ from taiga.base.serializers import BaseModel
 class CreateStoryAttachmentContent(BaseModel):
     ref: int
     attachment: AttachmentSerializer
+
+
+class DeleteStoryAttachmentContent(BaseModel):
+    ref: int
+    attachment: AttachmentSerializer

@@ -890,3 +890,18 @@ Content for:
       "attachment": {... "attachment object" ...},
   }
   ```
+
+
+#### `stories.attachments.delete`
+
+It happens when a attachment associated to a story is deleted.
+
+Content for:
+- project channel:
+  ```
+
+  {
+      "ref": "story ref (int)",
+      "attachment": {... "attachment object" ...}
+  }
+  ```

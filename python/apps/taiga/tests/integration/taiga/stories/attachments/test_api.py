@@ -6,7 +6,9 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 import pytest
+from asgiref.sync import sync_to_async
 from fastapi import status
+from taiga.attachments import repositories as attachments_repositories
 from tests.utils import factories as f
 from tests.utils.bad_params import INVALID_B64ID, INVALID_REF, NOT_EXISTING_B64ID, NOT_EXISTING_REF
 
@@ -179,3 +181,67 @@ async def test_list_story_attachments_403_forbidden_no_permissions(client):
     client.login(not_allowed_user)
     response = client.get(f"/projects/{project.b64id}/stories/{story.ref}/attachments")
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+##########################################################
+# DELETE projects/<id>/stories/<ref>/attachments/<id>
+##########################################################
+
+
+async def test_delete_story_attachments_204_no_content(client):
+    project = await f.create_project()
+    user = project.created_by
+    story = await f.create_story(project=project)
+    attachment = await f.create_attachment(content_object=story, created_by=user)
+
+    assert await attachments_repositories.get_attachment(filters={"id": attachment.id}) == attachment
+    client.login(user)
+    response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/attachments/{attachment.b64id}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_delete_story_attachment_403_forbidden_no_permissions(client):
+    project = await f.create_project()
+    generic_role = await project.roles.aget(is_admin=False)
+    member_user = await f.create_user()
+    await f.create_project_membership(user=member_user, role=generic_role)
+    story = await f.create_story(project=project)
+    attachment = await f.create_attachment(content_object=story, created_by=member_user)
+
+    assert await attachments_repositories.get_attachment(filters={"id": attachment.id}) == attachment
+
+    # now member_user can't modify story permissions
+    generic_role.permissions = ["view_story"]
+    await sync_to_async(generic_role.save)()
+
+    client.login(member_user)
+    response = client.delete(f"/projects/{story.project.b64id}/stories/{story.ref}/attachments/{attachment.b64id}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+    assert await attachments_repositories.get_attachment(filters={"id": attachment.id}) == attachment
+
+
+async def test_delete_story_attachments_404_not_found_nonexistent_project(client):
+    user = await f.create_user()
+
+    client.login(user)
+    response = client.delete(
+        f"/projects/{NOT_EXISTING_B64ID}/stories/{NOT_EXISTING_REF}/attachments/{NOT_EXISTING_B64ID}"
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_story_attachments_404_not_found_nonexistent_story(client):
+    project = await f.create_project()
+
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{project.b64id}/stories/{NOT_EXISTING_REF}/attachments/{NOT_EXISTING_B64ID}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_story_attachments_404_not_found_nonexistent_attachment(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project)
+
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{project.b64id}/stories/{story.ref}/attachments/{NOT_EXISTING_B64ID}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

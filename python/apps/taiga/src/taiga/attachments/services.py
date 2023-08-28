@@ -5,9 +5,11 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from uuid import UUID
+
 from fastapi import UploadFile
 from taiga.attachments import repositories as attachments_repositories
-from taiga.attachments.events import EventOnCreateCallable
+from taiga.attachments.events import EventOnCreateCallable, EventOnDeleteCallable
 from taiga.attachments.models import Attachment
 from taiga.base.db.models import Model
 from taiga.users.models import User
@@ -46,3 +48,36 @@ async def list_attachments(
     return await attachments_repositories.list_attachments(
         filters={"content_object": content_object},
     )
+
+
+##########################################################
+# get attachment
+##########################################################
+
+
+async def get_attachment(id: UUID, content_object: Model) -> Attachment | None:
+    return await attachments_repositories.get_attachment(
+        filters={"id": id, "content_object": content_object},
+        prefetch_related=[
+            "content_object",
+        ],
+    )
+
+
+##########################################################
+# delete comment
+##########################################################
+
+
+async def delete_attachment(
+    attachment: Attachment,
+    event_on_delete: EventOnDeleteCallable | None = None,
+) -> bool:
+    was_deleted = await attachments_repositories.delete_attachments(
+        filters={"id": attachment.id},
+    )
+
+    if was_deleted and event_on_delete:
+        await event_on_delete(attachment=attachment)
+
+    return bool(was_deleted)

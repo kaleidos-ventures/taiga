@@ -198,7 +198,6 @@ async def test_delete_comment():
 
 async def test_delete_comment_and_emit_event_on_delete():
     now = aware_utcnow()
-    project = f.build_project()
     comment = f.build_comment()
     updated_comment = f.build_comment(id=comment.id, text="", deleted_by=comment.created_by, deleted_at=now)
     fake_event_on_delete = AsyncMock()
@@ -206,7 +205,6 @@ async def test_delete_comment_and_emit_event_on_delete():
     with (
         patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
         patch("taiga.comments.services.aware_utcnow", autospec=True) as fake_aware_utcnow,
-        patch("taiga.comments.models.Comment.project", new_callable=PropertyMock, return_value=project),
     ):
         fake_aware_utcnow.return_value = now
         fake_comments_repositories.update_comment.return_value = updated_comment

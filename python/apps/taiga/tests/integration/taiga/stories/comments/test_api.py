@@ -247,7 +247,7 @@ async def test_update_story_comment_error_deleted_comment(client):
 ##########################################################
 
 
-async def test_delete_story_comments_success_with_admin_user(client):
+async def test_delete_story_comments_200_ok_with_admin_user(client):
     project = await f.create_project()
     admin_user = project.created_by
     owner_user = await f.create_user()
@@ -261,7 +261,7 @@ async def test_delete_story_comments_success_with_admin_user(client):
     assert response.json()["text"] == ""
 
 
-async def test_delete_story_comments_success_with_owner_user(client):
+async def test_delete_story_comments_200_ok_with_owner_user(client):
     project = await f.create_project()
     generic_role = await project.roles.aget(is_admin=False)
     owner_user = await f.create_user()
@@ -276,7 +276,7 @@ async def test_delete_story_comments_success_with_owner_user(client):
     assert response.json()["text"] == ""
 
 
-async def test_delete_story_comment_error_no_permissions(client):
+async def test_delete_story_comment_403_forbidden_because_no_owner_or_admin(client):
     project = await f.create_project()
     generic_role = await project.roles.aget(is_admin=False)
     owner_user = await f.create_user()
@@ -292,7 +292,7 @@ async def test_delete_story_comment_error_no_permissions(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_delete_story_comments_error_deleted_comment(client):
+async def test_delete_story_comments_403_forbidden_because_comment_was_deleted(client):
     project = await f.create_project()
     admin_user = project.created_by
     owner_user = await f.create_user()
@@ -313,7 +313,7 @@ async def test_delete_story_comments_error_deleted_comment(client):
     assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
 
 
-async def test_delete_story_comment_error_no_comment_permissions(client):
+async def test_delete_story_comment_error_403_forbbiden_because_owner_witout_permissions(client):
     project = await f.create_project()
     generic_role = await project.roles.aget(is_admin=False)
     member_user = await f.create_user()
@@ -332,7 +332,7 @@ async def test_delete_story_comment_error_no_comment_permissions(client):
     assert await comments_repositories.get_comment(filters={"id": comment.id}) == comment
 
 
-async def test_delete_story_comments_error_nonexistent_project(client):
+async def test_delete_story_comments_404_not_found_nonexistent_project(client):
     user = await f.create_user()
 
     client.login(user)
@@ -340,7 +340,7 @@ async def test_delete_story_comments_error_nonexistent_project(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_delete_story_comments_error_nonexistent_404_story(client):
+async def test_delete_story_comments_404_not_found_nonexistent_story(client):
     project = await f.create_project()
 
     client.login(project.created_by)
@@ -348,7 +348,7 @@ async def test_delete_story_comments_error_nonexistent_404_story(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
 
 
-async def test_delete_story_comments_error_nonexistent_404_comment(client):
+async def test_delete_story_comments_404_not_found_nonexistent_comment(client):
     project = await f.create_project()
     story = await f.create_story(project=project)
 

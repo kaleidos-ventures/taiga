@@ -26,3 +26,7 @@ tg-attachments-list {
     margin: 0;
   }
 }
+
+.input-file {
+  display: none;
+}

@@ -12,7 +12,7 @@ import {
   StoryDetailActions,
   StoryDetailApiActions,
 } from '../actions/story-detail.actions';
-import { EMPTY, catchError, concatMap, map, merge } from 'rxjs';
+import { EMPTY, catchError, map, merge, mergeMap } from 'rxjs';
 import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { ProjectApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
@@ -62,7 +62,7 @@ export class StoryDetailAttachmentsEffects {
   public uploadAttachments$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(StoryDetailActions.uploadAttachments),
-      concatMap((action) => {
+      mergeMap((action) => {
         const uploadObservables = action.files.map((file) => {
           const uploadingId = v4();
           return this.projectApiService

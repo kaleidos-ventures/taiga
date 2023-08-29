@@ -419,7 +419,7 @@ export const reducer = createImmerReducer(
       const uploading = state.loadingAttachments.find((it) => it.file === file);
 
       if (!uploading) {
-        state.loadingAttachments.push({
+        state.loadingAttachments.unshift({
           file,
           progress,
           name,

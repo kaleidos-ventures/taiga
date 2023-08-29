@@ -15,19 +15,17 @@ Copyright (c) 2023-present Kaleidos INC
         tuiButton
         icon="paperclip"
         type="file"
-        aria-hidden="true"
         appearance="tertiary">
         {{ t('attachments.action') }}
       </button>
 
       <input
+        class="input-file"
         #fileInput
-        class="visually-hidden"
         data-test="upload-attachment"
         type="file"
         multiple
-        (change)="onFileSelected($event)"
-        [attr.aria-label]="t('attachments.action')" />
+        (change)="onFileSelected($event)" />
 
       <tg-ui-context-notification
         *ngFor="let error of vm.showSizeError; trackBy: trackByName"

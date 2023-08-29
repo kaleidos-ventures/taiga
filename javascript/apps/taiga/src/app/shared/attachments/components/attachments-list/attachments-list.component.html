@@ -17,6 +17,7 @@ Copyright (c) 2023-present Kaleidos INC
 
       <div class="actions">
         <button
+          *ngIf="vm.canEdit"
           (click)="invokeAttachment.next()"
           class="action"
           size="m"

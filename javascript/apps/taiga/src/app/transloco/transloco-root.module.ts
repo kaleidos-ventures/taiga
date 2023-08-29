@@ -10,13 +10,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, NgModule } from '@angular/core';
 import {
   Translation,
-  translocoConfig,
   TranslocoLoader,
   TranslocoModule,
-  TRANSLOCO_CONFIG,
-  TRANSLOCO_LOADER,
+  provideTransloco,
 } from '@ngneat/transloco';
-import { TranslocoMessageFormatModule } from '@ngneat/transloco-messageformat';
+import { provideTranslocoMessageformat } from '@ngneat/transloco-messageformat';
 import cacheBusting from '~/assets/i18n/i18n-cache-busting.json';
 import { environment } from '~/environments/environment';
 
@@ -34,12 +32,11 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 }
 
 @NgModule({
-  imports: [TranslocoMessageFormatModule.forRoot()],
   exports: [TranslocoModule],
   providers: [
-    {
-      provide: TRANSLOCO_CONFIG,
-      useValue: translocoConfig({
+    provideTranslocoMessageformat(),
+    provideTransloco({
+      config: {
         availableLangs: ['en-US'],
         defaultLang: 'en-US',
         fallbackLang: 'en-US',
@@ -48,9 +45,9 @@ export class TranslocoHttpLoader implements TranslocoLoader {
         flatten: {
           aot: environment.production,
         },
-      }),
-    },
-    { provide: TRANSLOCO_LOADER, useClass: TranslocoHttpLoader },
+      },
+      loader: TranslocoHttpLoader,
+    }),
   ],
 })
 export class TranslocoRootModule {}

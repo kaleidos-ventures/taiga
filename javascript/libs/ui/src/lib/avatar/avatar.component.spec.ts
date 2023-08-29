@@ -9,6 +9,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { AvatarComponent } from './avatar.component';
 import { RandomColorService } from '../services/random-color/random-color.service';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('AvatarComponent', () => {
   let spectator: Spectator<AvatarComponent>;
@@ -16,6 +17,7 @@ describe('AvatarComponent', () => {
     component: AvatarComponent,
     mocks: [RandomColorService],
     providers: [],
+    schemas: [NO_ERRORS_SCHEMA],
   });
 
   beforeEach(() => {

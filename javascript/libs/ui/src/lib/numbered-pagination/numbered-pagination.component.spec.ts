@@ -8,10 +8,14 @@
 
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { NumberedPaginationComponent } from './numbered-pagination.component';
+import { getTranslocoModule } from '../transloco/transloco-testing.module';
 
 describe('TooltipDirective', () => {
   let spectator: Spectator<NumberedPaginationComponent>;
-  const createComponent = createComponentFactory(NumberedPaginationComponent);
+  const createComponent = createComponentFactory({
+    component: NumberedPaginationComponent,
+    imports: [getTranslocoModule()],
+  });
 
   it('disable next / previous buttons', () => {
     spectator = createComponent({

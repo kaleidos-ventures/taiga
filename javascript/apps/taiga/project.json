@@ -9,7 +9,18 @@
       "executor": "@nx/angular:webpack-browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "allowedCommonJsDependencies": ["angular2-text-mask"],
+        "allowedCommonJsDependencies": [
+          "angular2-text-mask",
+          "copy-to-clipboard",
+          "diacritic",
+          "check-password-strength",
+          "text-mask-core",
+          "dompurify",
+          "@messageformat/core",
+          "flat",
+          "seedrandom",
+          "apps/taiga/src/assets/editor/prism.js"
+        ],
         "customWebpackConfig": {
           "path": "./extra-webpack.config.ts"
         },

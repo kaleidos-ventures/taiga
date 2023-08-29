@@ -250,12 +250,14 @@ async def update_user(user: User, full_name: str, lang: str) -> User:
 
 async def delete_user(user: User) -> bool:
     # delete workspaces where the user is the only ws member
-    # (all members, invitations, projects, pj-members, pj-invitations,
-    # pj-roles, stories, comments, etc will be deleted in cascade)
+    # (Whe need to delete all projects first to emit all events)
     workspaces = await workspaces_repositories.list_workspaces(
-        filters={"workspace_member_id": user.id, "num_members": 1}
+        filters={"workspace_member_id": user.id, "num_members": 1},
     )
     for ws in workspaces:
+        for pj in await workspaces_repositories.list_workspace_projects(workspace=ws):
+            await projects_services.delete_project(project=pj, deleted_by=user)
+
         ws_deleted = await workspaces_repositories.delete_workspaces(filters={"id": ws.id})
         if ws_deleted > 0:
             await workspaces_events.emit_event_when_workspace_is_deleted(workspace=ws, deleted_by=user)
@@ -266,7 +268,8 @@ async def delete_user(user: User) -> bool:
     projects = await projects_repositories.list_projects(
         filters={"project_member_id": user.id, "is_onewoman_project": True},
     )
-    [await projects_services.delete_project(project=pj, deleted_by=user) for pj in projects]
+    for pj in projects:
+        await projects_services.delete_project(project=pj, deleted_by=user)
 
     # update role of a workspace member as project admin in projects where the user is the only pj admin
     # better if the workspace member is project member too
@@ -289,7 +292,7 @@ async def delete_user(user: User) -> bool:
         if len(common_members) > 0:
             pj_membership = await pj_memberships_repositories.get_project_membership(
                 filters={"project_id": pj.id, "user_id": common_members[0].id},
-                select_related=["user", "role", "project", "project__workspace"],
+                select_related=["user", "role", "project", "workspace"],
             )
             if pj_membership and project_admin_role:
                 updated_pj_membership = await pj_memberships_repositories.update_project_membership(
@@ -333,7 +336,7 @@ async def delete_user(user: User) -> bool:
     # delete pj memberships
     pj_memberships = await pj_memberships_repositories.list_project_memberships(
         filters={"user_id": user.id},
-        select_related=["user", "project", "project__workspace"],
+        select_related=["user", "project", "workspace"],
     )
     for pj_membership in pj_memberships:
         deleted = await pj_memberships_repositories.delete_project_membership(

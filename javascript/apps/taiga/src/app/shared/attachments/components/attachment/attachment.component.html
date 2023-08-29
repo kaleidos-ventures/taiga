@@ -7,66 +7,79 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 
 <ng-container *transloco="let t">
-  <tg-ui-dtable-row class="row">
-    <tg-ui-dtable-cell
-      class="name-column"
-      [attr.title]="attachment.name">
-      <tui-svg
-        [src]="extension"
-        class="extension-icon"
-        [attr.data-extension]="extension"></tui-svg>
-      {{ attachment.name }}
-    </tg-ui-dtable-cell>
-    <ng-container *ngIf="isLoadingAttachments(attachment)">
-      <tg-ui-dtable-cell class="progress-bar-column">
-        <tg-ui-progress-bar
-          [attr.aria-label]="
-            t('attachments.uploading', {
-              file: attachment.name
-            })
-          "
-          [value]="attachment.progress"></tg-ui-progress-bar>
+  <tg-undo
+    [initUndo]="initUndo$"
+    [msg]="
+      t('attachments.deleted', {
+        filename: attachment.name
+      })
+    "
+    (confirm)="onConfirmDeleteFile()">
+    <tg-ui-dtable-row
+      class="row"
+      data-test="attachment-row">
+      <tg-ui-dtable-cell
+        class="name-column"
+        [attr.title]="attachment.name">
+        <tui-svg
+          [src]="extension"
+          class="extension-icon"
+          [attr.data-extension]="extension"></tui-svg>
+        {{ attachment.name }}
       </tg-ui-dtable-cell>
-      <tg-ui-dtable-cell class="actions-column"></tg-ui-dtable-cell>
-    </ng-container>
-    <ng-container *ngIf="!isLoadingAttachments(attachment)">
-      <tg-ui-dtable-cell class="size-column">
-        {{ attachment.size | transformSize }}
-      </tg-ui-dtable-cell>
-      <tg-ui-dtable-cell class="date-column">
-        <span
-          *ngIf="attachment.createdAt"
-          [title]="attachment.createdAt | date: 'medium'">
-          <tg-real-time-date-distance
-            [date]="attachment.createdAt"></tg-real-time-date-distance>
-        </span>
-      </tg-ui-dtable-cell>
-      <tg-ui-dtable-cell class="actions-column">
-        <a
-          [download]="attachment.name"
-          [href]="attachment.file"
-          target="_blank"
-          class="action"
-          size="m"
-          appearance="action-button-2"
-          tuiIconButton
-          [tgUiTooltip]="t('attachments.download')"
-          [tgUiTooltipStaysOpenOnHover]="false"
-          tgUiTooltipPosition="bottom-right"
-          icon="download"></a>
+      <ng-container *ngIf="isLoadingAttachments(attachment)">
+        <tg-ui-dtable-cell class="progress-bar-column">
+          <tg-ui-progress-bar
+            [attr.aria-label]="
+              t('attachments.uploading', {
+                file: attachment.name
+              })
+            "
+            [value]="attachment.progress"></tg-ui-progress-bar>
+        </tg-ui-dtable-cell>
+        <tg-ui-dtable-cell class="actions-column"></tg-ui-dtable-cell>
+      </ng-container>
+      <ng-container *ngIf="!isLoadingAttachments(attachment)">
+        <tg-ui-dtable-cell class="size-column">
+          {{ attachment.size | transformSize }}
+        </tg-ui-dtable-cell>
+        <tg-ui-dtable-cell class="date-column">
+          <span
+            *ngIf="attachment.createdAt"
+            [title]="attachment.createdAt | date: 'medium'">
+            <tg-real-time-date-distance
+              [date]="attachment.createdAt"></tg-real-time-date-distance>
+          </span>
+        </tg-ui-dtable-cell>
+        <tg-ui-dtable-cell class="actions-column">
+          <a
+            [download]="attachment.name"
+            [href]="attachment.file"
+            target="_blank"
+            class="action"
+            size="m"
+            appearance="action-button-2"
+            tuiIconButton
+            [tgUiTooltip]="t('attachments.download')"
+            [tgUiTooltipStaysOpenOnHover]="false"
+            tgUiTooltipPosition="bottom-right"
+            icon="download"></a>
 
-        <button
-          *ngIf="canEdit"
-          class="action"
-          appearance="action-button-2"
-          size="m"
-          tuiIconButton
-          [tgUiTooltip]="t('attachments.delete')"
-          [tgUiTooltipStaysOpenOnHover]="false"
-          tgUiTooltipPosition="bottom-right"
-          icon="trash"
-          type="button"></button>
-      </tg-ui-dtable-cell>
-    </ng-container>
-  </tg-ui-dtable-row>
+          <button
+            *ngIf="canEdit"
+            class="action"
+            appearance="action-button-2"
+            size="m"
+            data-test="delete-attachment"
+            tuiIconButton
+            [tgUiTooltip]="t('attachments.delete')"
+            [tgUiTooltipStaysOpenOnHover]="false"
+            tgUiTooltipPosition="bottom-right"
+            (click)="deleteAttachment()"
+            icon="trash"
+            type="button"></button>
+        </tg-ui-dtable-cell>
+      </ng-container>
+    </tg-ui-dtable-row>
+  </tg-undo>
 </ng-container>

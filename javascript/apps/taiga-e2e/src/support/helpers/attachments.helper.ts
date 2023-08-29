@@ -9,3 +9,7 @@
 export const uploadFiles = (files: string[]) => {
   cy.getBySel('upload-attachment').selectFile(files, { force: true });
 };
+
+export const initDelete = (index: number) => {
+  cy.getBySel('delete-attachment').eq(index).click();
+};

@@ -16,7 +16,7 @@ import { EMPTY, catchError, map, merge, mergeMap } from 'rxjs';
 import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { ProjectApiService } from '@taiga/api';
 import { AppService } from '~/app/services/app.service';
-import { fetch } from '@ngrx/router-store/data-persistence';
+import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { filterNil } from '~/app/shared/utils/operators';
 import { v4 } from 'uuid';
 @Injectable()
@@ -98,6 +98,28 @@ export class StoryDetailAttachmentsEffects {
             return EMPTY;
           })
         );
+      })
+    );
+  });
+
+  public deleteAttachment$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailActions.deleteAttachment),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.projectApiService
+            .deleteAttachment(action.projectId, action.storyRef, action.id)
+            .pipe(
+              map(() => {
+                return StoryDetailApiActions.deleteAttachmentSuccess({
+                  id: action.id,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          this.appService.toastGenericError(httpResponse);
+        },
       })
     );
   });

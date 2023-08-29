@@ -302,6 +302,20 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       });
 
     this.wsService
+      .projectEvents<{ ref: Story['ref']; attachment: Attachment }>(
+        'stories.attachments.delete'
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          projectEventActions.deleteAttachment({
+            storyRef: eventResponse.event.content.ref,
+            attachment: eventResponse.event.content.attachment,
+          })
+        );
+      });
+
+    this.wsService
       .projectEvents<{
         reorder: {
           reorder: { place: 'before' | 'after'; status: Status['id'] };

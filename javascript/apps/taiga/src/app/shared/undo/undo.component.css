@@ -1,0 +1,60 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import url("tools/typography.css");
+
+:host {
+  --row-inline-size: var(--undo-inline-size, 455px);
+
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+
+.msg {
+  @mixin ellipsis;
+}
+
+.countdown-wrapper {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-16);
+  inline-size: calc(100% - var(--spacing-24));
+
+  & button {
+    text-decoration: underline;
+  }
+}
+
+.countdown {
+  background: var(--color-white);
+  display: flex;
+  inline-size: 100%;
+  inset-block-start: 100%;
+  inset-inline-end: 0;
+  justify-content: flex-end;
+  position: absolute;
+}
+
+.countdown tg-ui-context-notification {
+  inline-size: var(--row-inline-size);
+}
+
+.countdown,
+.action-undo-done {
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  position: absolute;
+}
+
+.undo-action {
+  --color-secondary: var(--color-info90);
+
+  color: var(--color-info90);
+  margin-inline-start: auto;
+}

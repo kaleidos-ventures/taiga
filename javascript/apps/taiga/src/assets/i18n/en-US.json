@@ -224,5 +224,11 @@
   "projects_dropdown": {
     "projects_number": "{projectsNum, plural, =0 {0 projects} one {1 project} other {# projects}}",
     "projects_list_title": "Projects in this workspace"
+  },
+  "ui_components": {
+    "undo": {
+      "action_undone": "Action undone",
+      "action_undo": "Undo"
+    }
   }
 }

@@ -279,13 +279,19 @@ Copyright (c) 2023-present Kaleidos INC
                     "></tg-story-detail-description>
 
                   <tg-attachments
+                    [class.attachments-side-view]="
+                      vm.selectedStoryView === 'side-view'
+                    "
                     [attachments]="vm.attachments"
                     [loadingAttachments]="vm.loadingAttachments"
                     [paginationItems]="
                       vm.selectedStoryView === 'side-view' ? 5 : 9
                     "
                     [canEdit]="vm.canEdit"
-                    (uploadFiles)="onUploadFiles($event)"></tg-attachments>
+                    (uploadFiles)="onUploadFiles($event)"
+                    (deleteAttachment)="
+                      onDeleteAttachment($event)
+                    "></tg-attachments>
 
                   <tg-comments
                     [comments]="vm.comments"

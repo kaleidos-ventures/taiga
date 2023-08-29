@@ -459,6 +459,13 @@ export const reducer = createImmerReducer(
       return state;
     }
   ),
+  on(StoryDetailActions.deleteAttachment, (state, { id }): StoryDetailState => {
+    state.attachments = state.attachments.filter((it) => {
+      return it.id !== id;
+    });
+
+    return state;
+  }),
   on(
     projectEventActions.newAttachment,
     (state, { attachment, storyRef }): StoryDetailState => {
@@ -467,6 +474,20 @@ export const reducer = createImmerReducer(
       }
 
       state.attachments.unshift(attachment);
+
+      return state;
+    }
+  ),
+  on(
+    projectEventActions.deleteAttachment,
+    (state, { attachment, storyRef }): StoryDetailState => {
+      if (state.story?.ref !== storyRef) {
+        return state;
+      }
+
+      state.attachments = state.attachments.filter((it) => {
+        return it.id !== attachment.id;
+      });
 
       return state;
     }

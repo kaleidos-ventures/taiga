@@ -272,3 +272,7 @@ tg-attachments,
 tg-story-detail-description {
   margin-block-end: var(--spacing-16);
 }
+
+.attachments-side-view {
+  --undo-inline-size: 100%;
+}

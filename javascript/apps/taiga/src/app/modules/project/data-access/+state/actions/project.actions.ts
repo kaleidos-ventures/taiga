@@ -146,5 +146,9 @@ export const projectEventActions = createActionGroup({
       storyRef: Story['ref'];
       attachment: Attachment;
     }>(),
+    'Delete attachment': props<{
+      storyRef: Story['ref'];
+      attachment: Attachment;
+    }>(),
   },
 });

@@ -12,6 +12,7 @@ import {
   randNumber,
   randPastDate,
   randUrl,
+  randUuid,
 } from '@ngneat/falso';
 import { Attachment } from './attachment.model';
 
@@ -19,6 +20,7 @@ export const AttachmentMockFactory = (
   params?: Partial<Attachment>
 ): Attachment => {
   return {
+    id: randUuid(),
     name: randFileName(),
     size: randNumber({ min: 1, max: 9000000 }),
     file: randUrl(),

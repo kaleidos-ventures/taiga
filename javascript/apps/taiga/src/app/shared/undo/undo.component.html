@@ -1,0 +1,71 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<div
+  class="content"
+  [@undoSteps]="state()">
+  <ng-content></ng-content>
+</div>
+
+<div
+  *ngIf="state() === 'waitUndo'"
+  @showUndo
+  class="countdown">
+  <tg-ui-context-notification
+    size="s"
+    alertLevel="none"
+    status="info">
+    <div
+      class="countdown-wrapper"
+      data-test="countdown">
+      <span class="msg">{{ msg }}</span>
+      <button
+        (click)="undo()"
+        class="undo-action"
+        data-test="undo-action"
+        tuiLink
+        type="button"
+        appearance="tertiary">
+        <span>{{ msgActionUndo }}</span>
+      </button>
+      <button
+        data-test="close-action"
+        class="close-button"
+        tuiIconButton
+        size="m"
+        (click)="closeConfirm()"
+        appearance="action-button-2"
+        icon="close"
+        type="button"></button>
+    </div>
+  </tg-ui-context-notification>
+</div>
+
+<div
+  *ngIf="state() === 'undone'"
+  @undoDone
+  class="action-undo-done">
+  <tg-ui-context-notification
+    size="s"
+    alertLevel="none"
+    status="info">
+    <div
+      class="countdown-wrapper"
+      data-test="undone">
+      <span>{{ msgActionUndon }}</span>
+      <button
+        class="close-button"
+        tuiIconButton
+        size="m"
+        (click)="close()"
+        appearance="action-button-2"
+        icon="close"
+        type="button"></button>
+    </div>
+  </tg-ui-context-notification>
+</div>

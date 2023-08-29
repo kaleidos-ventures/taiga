@@ -591,6 +591,16 @@ export class StoryDetailComponent {
       });
   }
 
+  public onDeleteAttachment(id: Attachment['id']) {
+    this.store.dispatch(
+      StoryDetailActions.deleteAttachment({
+        id,
+        projectId: this.state.get('project').id,
+        storyRef: this.state.get('story').ref,
+      })
+    );
+  }
+
   public onUploadFiles(files: File[]) {
     this.store.dispatch(
       StoryDetailActions.uploadAttachments({

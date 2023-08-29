@@ -43,8 +43,8 @@ MAX_STORY_COMMENTS_DEFAULT = 5
 PROB_STORY_COMMENTS = {  # 0-99 prob of a story to be commented by its workflow status
     "New": 10,
     "Ready": 20,
-    "In Progress": 60,
-    "Done": 95,
+    "In Progress": 40,
+    "Done": 80,
 }
 PROB_STORY_COMMENTS_DEFAULT = 25
 PROB_MODIFIED_COMMENT = 10  # 0-99 prob of a comment to be modified

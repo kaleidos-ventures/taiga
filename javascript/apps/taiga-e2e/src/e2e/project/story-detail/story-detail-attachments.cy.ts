@@ -13,14 +13,17 @@ import {
   Story,
   WorkspaceMockFactory,
 } from '@taiga/data';
-import { uploadFiles } from '@test/support/helpers/attachments.helper';
-import * as commentsHelper from '@test/support/helpers/comments.helper';
+import {
+  uploadFiles,
+  initDelete,
+} from '@test/support/helpers/attachments.helper';
 import {
   createFullProjectInWSRequest,
   createStoryRequest,
   getProjectWorkflows,
 } from '@test/support/helpers/project.helpers';
 import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
+import * as commentsHelper from '@test/support/helpers/comments.helper';
 
 const workspace = WorkspaceMockFactory();
 const projectMock = ProjectMockFactory();
@@ -28,6 +31,7 @@ const projectMock = ProjectMockFactory();
 describe('StoryDetail attachments', () => {
   let story!: Story;
   let project!: Project;
+  const undoTime = 5000;
 
   before(() => {
     cy.login();
@@ -73,7 +77,26 @@ describe('StoryDetail attachments', () => {
     cy.getBySel('attachment').should('have.length', 2);
   });
 
+  it('delete', () => {
+    cy.getBySel('attachment-row')
+      .its('length')
+      .then((attachments) => {
+        initDelete(0);
+
+        cy.getBySel('undo-action').should('be.visible');
+
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(undoTime);
+
+        cy.getBySel('attachment-row').should('have.length', attachments - 1);
+      });
+  });
+
   it('paginate', () => {
+    uploadFiles(['cypress/fixtures/file1.txt', 'cypress/fixtures/file2.txt']);
+    uploadFiles(['cypress/fixtures/file1.txt', 'cypress/fixtures/file2.txt']);
+    uploadFiles(['cypress/fixtures/file1.txt', 'cypress/fixtures/file2.txt']);
+    uploadFiles(['cypress/fixtures/file1.txt', 'cypress/fixtures/file2.txt']);
     uploadFiles(['cypress/fixtures/file1.txt', 'cypress/fixtures/file2.txt']);
     uploadFiles(['cypress/fixtures/file1.txt', 'cypress/fixtures/file2.txt']);
 

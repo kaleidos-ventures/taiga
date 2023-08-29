@@ -9,7 +9,7 @@
 import { Injectable, inject } from '@angular/core';
 import { RxState } from '@rx-angular/state';
 import { Attachment, LoadingAttachment } from '@taiga/data';
-import { map } from 'rxjs';
+import { Subject, map } from 'rxjs';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 
 interface State {
@@ -30,8 +30,20 @@ export class AttachmentsState extends RxState<State> {
 
   public paginatedList$ = this.select().pipe(
     map((state) => {
-      const { attachments, loadingAttachments, page } = state;
+      const { attachments, loadingAttachments } = state;
       const list = [...loadingAttachments, ...attachments];
+      let { page } = state;
+
+      const totalPages = Math.ceil(list.length / ATTACHMENTS_PER_PAGE);
+
+      if (page >= totalPages) {
+        page = totalPages - 1;
+      }
+
+      const pageList = list.slice(
+        page * ATTACHMENTS_PER_PAGE,
+        (page + 1) * ATTACHMENTS_PER_PAGE
+      );
 
       return {
         page,
@@ -39,11 +51,8 @@ export class AttachmentsState extends RxState<State> {
         total: list.length,
         folded: state.folded,
         canEdit: state.canEdit,
-        pages: Math.ceil(list.length / ATTACHMENTS_PER_PAGE),
-        list: list.slice(
-          page * ATTACHMENTS_PER_PAGE,
-          (page + 1) * ATTACHMENTS_PER_PAGE
-        ),
+        pages: totalPages,
+        list: pageList,
       };
     })
   );
@@ -64,4 +73,6 @@ export class AttachmentsState extends RxState<State> {
       canEdit: true,
     });
   }
+
+  public deleteAttachment$ = new Subject<Attachment['id']>();
 }

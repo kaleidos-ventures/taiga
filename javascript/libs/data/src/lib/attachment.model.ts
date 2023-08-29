@@ -12,6 +12,7 @@ export interface Attachment {
   createdAt: string;
   contentType: string;
   file: string;
+  id: string;
 }
 
 export interface LoadingAttachment {

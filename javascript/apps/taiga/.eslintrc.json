@@ -39,28 +39,7 @@
             }
           }
         ],
-        "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/member-ordering": [
-          "error",
-          {
-            "default": [
-              "decorated-field",
-              "decorated-get",
-              "decorated-set",
-              "decorated-method",
-              "field",
-              "public-get",
-              "protected-get",
-              "private-get",
-              "public-set",
-              "protected-set",
-              "private-set",
-              "public-method",
-              "protected-method",
-              "private-method"
-            ]
-          }
-        ]
+        "@typescript-eslint/no-non-null-assertion": "off"
       }
     },
     {

@@ -50,11 +50,16 @@ import { trackByValue } from '../utils/track-by-value';
   ],
 })
 export class AttachmentsComponent {
+  private state = inject(AttachmentsState);
+
   @ViewChild('fileInput')
   public fileInput!: ElementRef<HTMLInputElement>;
 
   @Output()
   public uploadFiles = new EventEmitter<File[]>();
+
+  @Output()
+  public deleteAttachment = this.state.deleteAttachment$;
 
   @Input()
   public set canEdit(canEdit: boolean) {
@@ -76,7 +81,6 @@ export class AttachmentsComponent {
     this.state.set({ loadingAttachments });
   }
 
-  public state = inject(AttachmentsState);
   public attachmentsTotal = toSignal(
     this.state.select().pipe(
       map(({ attachments, loadingAttachments }) => {

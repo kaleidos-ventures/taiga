@@ -37,22 +37,39 @@ describe('StoryDetailAttachmentsEffects', () => {
     effects = spectator.service;
   });
 
-  describe('initStory$', () => {
-    it('should fetch attachments', () => {
-      const action = StoryDetailActions.initStory({
-        projectId: '1',
-        storyRef: 1,
-      });
-      const responseAction = StoryDetailApiActions.fetchAttachments({
-        projectId: '1',
-        storyRef: 1,
-      });
-
-      actions$ = hot('-a', { a: action });
-      const expected = cold('-b', { b: responseAction });
-
-      expect(effects.initStory$).toBeObservable(expected);
+  it('should fetch attachments', () => {
+    const action = StoryDetailActions.initStory({
+      projectId: '1',
+      storyRef: 1,
     });
+    const responseAction = StoryDetailApiActions.fetchAttachments({
+      projectId: '1',
+      storyRef: 1,
+    });
+
+    actions$ = hot('-a', { a: action });
+    const expected = cold('-b', { b: responseAction });
+
+    expect(effects.initStory$).toBeObservable(expected);
+  });
+
+  it('delete attachment', () => {
+    const action = StoryDetailActions.deleteAttachment({
+      projectId: '1',
+      storyRef: 1,
+      id: '1',
+    });
+    const responseAction = StoryDetailApiActions.deleteAttachmentSuccess({
+      id: '1',
+    });
+
+    const projectApiService = spectator.inject(ProjectApiService);
+    projectApiService.deleteAttachment.mockReturnValue(cold('-a', { a: null }));
+
+    actions$ = hot('-a', { a: action });
+    const expected = cold('--b', { b: responseAction });
+
+    expect(effects.deleteAttachment$).toBeObservable(expected);
   });
 
   describe('fetchAttachments$', () => {

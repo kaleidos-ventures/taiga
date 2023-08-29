@@ -90,6 +90,11 @@ export const StoryDetailActions = createActionGroup({
       storyRef: Story['ref'];
       projectId: Project['id'];
     }>(),
+    'Delete attachment': props<{
+      id: Attachment['id'];
+      storyRef: Story['ref'];
+      projectId: Project['id'];
+    }>(),
   },
 });
 
@@ -153,6 +158,9 @@ export const StoryDetailApiActions = createActionGroup({
     }>(),
     'Upload attachment success': props<{
       attachment: Attachment;
+    }>(),
+    'Delete attachment success': props<{
+      id: Attachment['id'];
     }>(),
   },
 });

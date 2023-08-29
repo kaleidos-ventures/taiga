@@ -589,4 +589,14 @@ export class ProjectApiService {
 
     return this.http.request<Attachment>(req);
   }
+
+  public deleteAttachment(
+    projectId: Project['id'],
+    storyRef: Story['ref'],
+    attachmentId: Attachment['id']
+  ) {
+    return this.http.delete(
+      `${this.config.apiUrl}/projects/${projectId}/stories/${storyRef}/attachments/${attachmentId}`
+    );
+  }
 }

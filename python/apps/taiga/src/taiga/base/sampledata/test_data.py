@@ -610,7 +610,7 @@ async def _create_scenario_with_1k_stories(workspace: Workspace, users: list[Use
     )
     await factories.create_project_memberships(project_id=project.id, users=users)
 
-    await factories.create_stories(project_id=project.id, min_stories=1000)
+    await factories.create_stories(project_id=project.id, min_stories=1000, with_comments=True)
 
 
 async def _create_scenario_with_2k_stories_and_40_workflow_statuses(
@@ -631,4 +631,4 @@ async def _create_scenario_with_2k_stories_and_40_workflow_statuses(
     for i in range(0, 40 - len(await _get_workflow_statuses(workflow=workflow))):
         await _create_workflow_status(workflow=workflow)
 
-    await factories.create_stories(project_id=project.id, min_stories=2000)
+    await factories.create_stories(project_id=project.id, min_stories=2000, with_comments=True)

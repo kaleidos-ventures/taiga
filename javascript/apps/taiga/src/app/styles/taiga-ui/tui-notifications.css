@@ -105,7 +105,7 @@ tui-notification {
     & .t-icon {
       color: var(--color-info50);
 
-      @nest .t-close & {
+      .t-close & {
         color: var(--color-info80);
       }
     }
@@ -131,7 +131,7 @@ tui-notification {
     & .t-icon {
       color: var(--color-red50);
 
-      @nest .t-close & {
+      .t-close & {
         color: var(--color-red80);
       }
     }
@@ -157,7 +157,7 @@ tui-notification {
     & .t-icon {
       color: var(--color-ok50);
 
-      @nest .t-close & {
+      .t-close & {
         color: var(--color-ok80);
       }
     }
@@ -183,7 +183,7 @@ tui-notification {
     & .t-icon {
       color: var(--color-warning50);
 
-      @nest .t-close & {
+      .t-close & {
         color: var(--color-warning80);
       }
     }

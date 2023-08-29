@@ -24,7 +24,6 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { randUserName } from '@ngneat/falso';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -493,7 +492,7 @@ export class WorkspaceItemComponent
     fake?: boolean
   ) {
     if (fake) {
-      const projectName = randUserName();
+      const projectName = 'project 123';
       const fakeInvitation: WorkspaceProject = {
         id: '123',
         logoSmall: '',

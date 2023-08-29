@@ -21,11 +21,10 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
 } from '@angular/core';
-import { User } from '@ngneat/falso';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Membership, Project, Workspace } from '@taiga/data';
+import { Membership, Project, Workspace, User } from '@taiga/data';
 import { Subject } from 'rxjs';
 import { filter, map, switchMap, take } from 'rxjs/operators';
 import {

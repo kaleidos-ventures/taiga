@@ -6,9 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { User } from '@ngneat/falso';
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { DeleteInfo, Language } from '@taiga/data';
+import { DeleteInfo, Language, User } from '@taiga/data';
 
 export const userSettingsActions = createActionGroup({
   source: 'UserSettings',

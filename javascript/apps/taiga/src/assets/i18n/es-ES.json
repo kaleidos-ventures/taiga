@@ -196,7 +196,7 @@
   "pagination": {
     "next_page": "Next page",
     "previous_page": "Previous page",
-    "page_info": "<span class='page-range'>{pageStart} - {pageEnd}</span> of {total}"
+    "page_info": "<span class='page-range'>{{pageStart}} - {{pageEnd}}</span> of {{total}}"
   },
   "common_members_tabs": {
     "resend": "Resend",

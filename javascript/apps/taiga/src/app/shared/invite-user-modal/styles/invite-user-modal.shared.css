@@ -9,7 +9,7 @@ Copyright (c) 2023-present Kaleidos INC
 @import url("tools/typography.css");
 
 .user {
-  align-items: start;
+  align-items: flex-start;
   display: grid;
   gap: var(--spacing-16);
   grid-template-columns: 32px 1fr 32px;

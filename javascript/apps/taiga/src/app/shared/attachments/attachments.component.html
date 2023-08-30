@@ -33,7 +33,14 @@ Copyright (c) 2023-present Kaleidos INC
         class="error"
         [hasClose]="true"
         status="error">
-        <p>{{ t('attachments.error_size', { filename: error }) }}</p>
+        <p>
+          {{
+            t('attachments.error_size', {
+              filename: error,
+              maxSize: maxSizeInMb
+            })
+          }}
+        </p>
       </tg-ui-context-notification>
     </ng-container>
     <tg-attachments-list

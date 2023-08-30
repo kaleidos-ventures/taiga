@@ -91,6 +91,10 @@ export class AttachmentsComponent {
 
   public trackByName = trackByValue();
 
+  public maxSizeInMb = Math.floor(
+    this.configService.maxUploadFileSize / 1024 / 1024
+  );
+
   public openFileSelector() {
     this.fileInput.nativeElement.click();
   }

@@ -10,6 +10,6 @@
   "column_actions": "Attachments actions",
   "download": "Download",
   "delete": "Delete",
-  "error_size": "The file {{filename}} has not been attached because it exceeds the maximum size of 10MB",
+  "error_size": "The file {{filename}} has not been attached because it exceeds the maximum size of {{maxSize}}MB",
   "uploading": "Uploading {{file}}"
 }

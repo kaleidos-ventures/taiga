@@ -22,7 +22,7 @@ Copyright (c) 2023-present Kaleidos INC
           (focusout)="out()"
           [attr.data-text]="'project'"
           [class.active-dialog]="dialog.type === 'project'"
-          [routerLink]="['/project', project.id, project.slug]">
+          [routerLink]="['/project', project.id, project.slug, 'overview']">
           <tg-ui-avatar
             class="project-logo-image"
             type="light"
@@ -39,7 +39,7 @@ Copyright (c) 2023-present Kaleidos INC
           <a
             class="workspace-data-project"
             data-test="project-name"
-            [routerLink]="['/project', project.id, project.slug]">
+            [routerLink]="['/project', project.id, project.slug, 'overview']">
             {{ project.name }}
           </a>
           <a
@@ -80,7 +80,12 @@ Copyright (c) 2023-present Kaleidos INC
                 [attr.aria-label]="collapsed ? t('commons.overview') : null"
                 class="menu-option-item"
                 [class.active-dialog]="dialog.type === 'overview'"
-                [routerLink]="['/project', project.id, project.slug]"
+                [routerLink]="[
+                  '/project',
+                  project.id,
+                  project.slug,
+                  'overview'
+                ]"
                 routerLinkActive
                 #overviewActive="routerLinkActive"
                 [routerLinkActiveOptions]="{ exact: true }">
@@ -224,7 +229,7 @@ Copyright (c) 2023-present Kaleidos INC
       [style.height.px]="dialog.mainLinkHeight">
       <a
         class="workspace-data-project"
-        [routerLink]="['/project', project.id, project.slug]">
+        [routerLink]="['/project', project.id, project.slug, 'overview']">
         {{ project.name }}
       </a>
       <a

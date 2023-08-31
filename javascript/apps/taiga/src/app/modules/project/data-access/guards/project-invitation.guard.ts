@@ -103,7 +103,12 @@ export const ProjectInvitationGuard = (route: ActivatedRouteSnapshot) => {
               }),
               tap((project) => {
                 if (project) {
-                  void router.navigate(['/project', project.id, project.slug]);
+                  void router.navigate([
+                    '/project',
+                    project.id,
+                    project.slug,
+                    'overview',
+                  ]);
                 }
                 return EMPTY;
               })

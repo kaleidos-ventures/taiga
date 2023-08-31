@@ -58,7 +58,12 @@ Copyright (c) 2023-present Kaleidos INC
                 class="project-data"
                 role="menuitem"
                 routerLinkActive
-                [routerLink]="['/project', project.id, project.slug]">
+                [routerLink]="[
+                  '/project',
+                  project.id,
+                  project.slug,
+                  'overview'
+                ]">
                 <tg-ui-avatar
                   class="project-data-image"
                   type="light"

@@ -19,7 +19,12 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterModule,
+  ActivatedRouteSnapshot,
+} from '@angular/router';
 import { TRANSLOCO_SCOPE, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TuiSvgModule } from '@taiga-ui/core';
@@ -100,10 +105,12 @@ export class ProjectNavigationSettingsComponent implements OnInit {
   public getHistoryNav() {
     this.previousUrl =
       this.routeHistory.getPreviousUrl() || this.getRouter().url;
-    if (this.previousUrl.includes('/settings')) {
+    if (this.previousUrl.includes('/settings') && this.isSettings()) {
       const id: string = this.route.snapshot.params.id;
-      const slug: string = this.route.snapshot.params.slug;
-      this.previousUrl = `/project/${id}/${slug}`;
+      const slug: string =
+        this.route.snapshot.params.slug ||
+        (this.route.snapshot.data.project as Project).slug;
+      this.previousUrl = `/project/${id}/${slug}/overview`;
     }
   }
 
@@ -121,5 +128,15 @@ export class ProjectNavigationSettingsComponent implements OnInit {
 
   public getRouter() {
     return this.router;
+  }
+
+  public isSettings() {
+    const getActiveRoute = (
+      route: ActivatedRouteSnapshot
+    ): ActivatedRouteSnapshot => {
+      return route.firstChild ? getActiveRoute(route.firstChild) : route;
+    };
+    const active = getActiveRoute(this.route.snapshot);
+    return !!active.data.settings;
   }
 }

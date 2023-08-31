@@ -10,14 +10,21 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   OnDestroy,
   ViewChild,
   ViewContainerRef,
   inject,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { distinctUntilChanged, filter, map, pairwise, startWith } from 'rxjs';
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  pairwise,
+  startWith,
+  combineLatest,
+} from 'rxjs';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { StoryDetailActions } from '../story-detail/data-access/+state/actions/story-detail.actions';
 import {
@@ -26,11 +33,16 @@ import {
 } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 
 import { ProjectFeatureStoryWrapperFullViewModule } from '../feature-story-wrapper-full-view/project-feature-story-wrapper-full-view.module';
-import { filterFalsy, filterNil } from '~/app/shared/utils/operators';
-import { Router } from '@angular/router';
+import { filterNil } from '~/app/shared/utils/operators';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  Router,
+} from '@angular/router';
 import { RxState } from '@rx-angular/state';
-import { StoryDetail, StoryView } from '@taiga/data';
 import { CommonModule } from '@angular/common';
+import { StoryDetail, StoryView, Project, Story } from '@taiga/data';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface ProjectFeatureViewSetterComponentState {
   storyView: StoryView;
@@ -40,7 +52,12 @@ interface ProjectFeatureViewSetterComponentState {
   url: string;
 }
 
-@UntilDestroy()
+interface StoryParams {
+  id: Project['id'];
+  slug: Project['slug'];
+  storyRef: Story['ref'];
+}
+
 @Component({
   selector: 'tg-project-feature-view-setter',
   templateUrl: './project-feature-view-setter.component.html',
@@ -61,9 +78,11 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
   ) as RxState<ProjectFeatureViewSetterComponentState>;
 
   public model$ = this.state.select();
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private store: Store,
     private routerHistory: RouteHistoryService,
     private cd: ChangeDetectorRef
@@ -73,25 +92,16 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
     this.state.connect(
       'url',
       this.routerHistory.urlChanged.pipe(
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
         map(({ url }) => url),
         startWith(this.router.url),
         distinctUntilChanged()
       )
     );
+
     this.state.connect(
       'isKanban',
-      this.state.select('url').pipe(map((url) => url.includes('kanban')))
-    );
-
-    this.state.hold(
-      this.state.select('url').pipe(
-        map((url) => url.includes('/stories')),
-        filterFalsy()
-      ),
-      () => {
-        this.fetchStory();
-      }
+      this.state.select('url').pipe(map((url) => url.endsWith('/kanban')))
     );
 
     this.state.hold(
@@ -110,30 +120,47 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
         this.store.dispatch(StoryDetailActions.leaveStoryDetail());
       }
     );
+
+    combineLatest([
+      this.state.select('url'),
+      this.route.data,
+      this.route.params,
+    ])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([url, data, params]) => {
+        if (!url.endsWith('/kanban') && !!data.stories) {
+          const storyParams = params as StoryParams;
+          const needRedirect = params.slug !== (data.project as Project).slug;
+          if (needRedirect) {
+            void this.router.navigate(
+              [
+                `project/${storyParams.id}/${
+                  (data.project as Project).slug
+                }/stories/${storyParams.storyRef}`,
+              ],
+              { replaceUrl: true }
+            );
+          }
+          this.fetchStory(storyParams);
+        }
+      });
   }
 
   public ngOnDestroy() {
     this.store.dispatch(StoryDetailActions.leaveStoryDetail());
   }
 
-  private fetchStory() {
-    const params = this.getUrlParams();
+  public getActiveRoute(route: ActivatedRouteSnapshot): ActivatedRouteSnapshot {
+    return route.firstChild ? this.getActiveRoute(route.firstChild) : route;
+  }
 
+  private fetchStory(params: StoryParams) {
     this.store.dispatch(
       StoryDetailActions.initStory({
-        projectId: params.projectId,
+        projectId: params.id,
         storyRef: params.storyRef,
       })
     );
-  }
-
-  private getUrlParams() {
-    const url = window.location.href;
-
-    return {
-      projectId: url.match(/(?<=\/project\/)[^/]+/)![0],
-      storyRef: +url.match(/(?<=\/stories\/)[^/]+/)![0],
-    };
   }
 
   private async loadKanban(viewContainerRef: ViewContainerRef) {

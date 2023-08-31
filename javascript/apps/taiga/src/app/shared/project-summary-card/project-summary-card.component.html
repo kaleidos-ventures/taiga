@@ -10,14 +10,14 @@ Copyright (c) 2023-present Kaleidos INC
   <a
     *ngIf="openInNewTab"
     target="_blank"
-    [routerLink]="['/project', project.id, project.slug]"
+    [routerLink]="['/project', project.id, project.slug, 'overview']"
     class="project">
     <ng-template [ngTemplateOutlet]="linkContent"></ng-template>
   </a>
 
   <a
     *ngIf="!openInNewTab"
-    [routerLink]="['/project', project.id, project.slug]"
+    [routerLink]="['/project', project.id, project.slug, 'overview']"
     class="project">
     <ng-template [ngTemplateOutlet]="linkContent"></ng-template>
   </a>

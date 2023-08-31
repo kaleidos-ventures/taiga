@@ -8,7 +8,7 @@
 
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   createComponentFactory,
   mockProvider,
@@ -28,12 +28,6 @@ describe('ProjectNavigationComponent', () => {
     imports: [CommonModule, getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
     mocks: [LocalStorageService],
-    providers: [
-      mockProvider(Router, {
-        events: events$,
-        url: '/settings',
-      }),
-    ],
     shallow: true,
     overrideComponents: [
       [
@@ -50,6 +44,22 @@ describe('ProjectNavigationComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
+      providers: [
+        mockProvider(Router, {
+          events: events$,
+          url: '/settings',
+        }),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              data: {
+                settings: true,
+              },
+            },
+          },
+        },
+      ],
       detectChanges: false,
     });
 

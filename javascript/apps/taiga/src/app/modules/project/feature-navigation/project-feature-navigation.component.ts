@@ -26,7 +26,7 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
 import { Subject } from 'rxjs';
@@ -203,30 +203,25 @@ export class ProjectNavigationComponent implements OnInit, AfterViewInit {
   constructor(
     private el: ElementRef,
     private localStorage: LocalStorageService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   public ngOnInit() {
     this.collapsed = !!LocalStorageService.get('projectnav-collapsed');
     this.router.events.subscribe(() => {
-      !this.router.url.includes('/settings')
-        ? (this.showProjectSettings = false)
-        : (this.showProjectSettings = true);
+      this.showProjectSettings = this.isSettings();
     });
-    this.showProjectSettings = this.router.isActive(
-      this.router.createUrlTree(['project', this.project.id, 'settings']),
-      {
-        paths: 'subset',
-        queryParams: 'ignored',
-        fragment: 'ignored',
-        matrixParams: 'ignored',
-      }
-    );
+    this.showProjectSettings = this.isSettings();
   }
 
   public ngAfterViewInit() {
     const size = this.calcBlockSize();
     this.updateBlockSize(size);
+  }
+
+  public isSettings() {
+    return !!this.route.snapshot.data.settings;
   }
 
   public calcBlockSize() {

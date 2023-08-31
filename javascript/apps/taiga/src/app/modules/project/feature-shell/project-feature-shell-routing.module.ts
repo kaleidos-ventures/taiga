@@ -27,6 +27,10 @@ const routes: Routes = [
           import(
             '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
           ).then((m) => m.ProjectFeatureViewSetterModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          kanban: true,
+        },
       },
       {
         path: 'kanban',
@@ -35,6 +39,9 @@ const routes: Routes = [
             '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
           ).then((m) => m.ProjectFeatureViewSetterModule),
         canDeactivate: [CanDeactivateGuard],
+        data: {
+          kanban: true,
+        },
       },
       {
         path: ':slug/stories/:storyRef',
@@ -43,6 +50,9 @@ const routes: Routes = [
             '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
           ).then((m) => m.ProjectFeatureViewSetterModule),
         canDeactivate: [CanDeactivateGuard],
+        data: {
+          stories: true,
+        },
       },
       {
         path: 'stories/:storyRef',
@@ -51,6 +61,9 @@ const routes: Routes = [
             '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
           ).then((m) => m.ProjectFeatureViewSetterModule),
         canDeactivate: [CanDeactivateGuard],
+        data: {
+          stories: true,
+        },
       },
       {
         path: ':slug/settings',
@@ -58,6 +71,9 @@ const routes: Routes = [
           import(
             '~/app/modules/project/settings/feature-settings/feature-settings.module'
           ).then((m) => m.ProjectSettingsFeatureSettingsModule),
+        data: {
+          settings: true,
+        },
         resolve: {
           project: ProjectAdminResolver,
         },
@@ -68,23 +84,32 @@ const routes: Routes = [
           import(
             '~/app/modules/project/settings/feature-settings/feature-settings.module'
           ).then((m) => m.ProjectSettingsFeatureSettingsModule),
+        data: {
+          settings: true,
+        },
         resolve: {
           project: ProjectAdminResolver,
         },
       },
       {
-        path: '',
+        path: 'overview',
         loadChildren: () =>
           import(
             '~/app/modules/project/feature-overview/project-feature-overview.module'
           ).then((m) => m.ProjectFeatureOverviewModule),
+        data: {
+          overview: true,
+        },
       },
       {
-        path: ':slug',
+        path: ':slug/overview',
         loadChildren: () =>
           import(
             '~/app/modules/project/feature-overview/project-feature-overview.module'
           ).then((m) => m.ProjectFeatureOverviewModule),
+        data: {
+          overview: true,
+        },
       },
     ],
   },

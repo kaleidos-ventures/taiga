@@ -7,14 +7,19 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Location, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnDestroy,
 } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import {
+  Router,
+  RouterOutlet,
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -113,8 +118,8 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       showBannerOnRevoke: boolean;
     }>,
     private userStorageService: UserStorageService,
-    private location: Location,
     private router: Router,
+    private route: ActivatedRoute,
     private appService: AppService
   ) {
     this.watchProject();
@@ -133,17 +138,46 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       .pipe(distinctUntilChanged((prev, curr) => prev.id === curr.id));
 
     this.state.hold(project$, (project) => {
-      const url = window.location.href;
-      const newUrl = `project/${project.id}/${project.slug}`;
+      const getActiveRoute = (
+        route: ActivatedRouteSnapshot
+      ): ActivatedRouteSnapshot => {
+        return route.firstChild ? getActiveRoute(route.firstChild) : route;
+      };
+      const active = getActiveRoute(this.route.snapshot);
+      const needRedirect = active.params.slug !== project.slug;
 
-      if (
-        !url.includes('/kanban') &&
-        !url.includes('/stories') &&
-        !url.includes('/settings') &&
-        !url.endsWith(newUrl) // location go when the url doesn't match
-      ) {
-        this.location.go(newUrl);
+      if (needRedirect) {
+        const isKanban = !!active.data.kanban;
+        const isOverview =
+          !!active.data.overview &&
+          active.routeConfig?.component?.name ===
+            'ProjectFeatureOverviewComponent';
+        const isSettings = !!active.data.settings;
+
+        if (isKanban) {
+          void this.router.navigate(
+            [`project/${project.id}/${project.slug}/kanban`],
+            { replaceUrl: true }
+          );
+        } else if (isOverview) {
+          void this.router.navigate(
+            [`project/${project.id}/${project.slug}/overview`],
+            { replaceUrl: true }
+          );
+        } else if (isSettings) {
+          void this.router.navigate(
+            [
+              `project/${project.id}/${project.slug}/settings/${
+                this.router.url.includes('/settings/members')
+                  ? 'members'
+                  : 'permissions'
+              }`,
+            ],
+            { replaceUrl: true }
+          );
+        }
       }
+
       this.subscribedProject = project.id;
       this.unsubscribeFromProjectEvents();
       this.wsService

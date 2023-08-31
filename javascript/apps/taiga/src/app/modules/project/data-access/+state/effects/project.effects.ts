@@ -305,6 +305,7 @@ export class ProjectEffects {
                   'project',
                   project.id,
                   project.slug,
+                  'overview',
                 ]);
               }
             }

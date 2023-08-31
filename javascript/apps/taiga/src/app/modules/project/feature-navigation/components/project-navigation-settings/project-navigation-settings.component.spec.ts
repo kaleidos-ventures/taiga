@@ -9,14 +9,9 @@
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { randDomainSuffix, randUuid, randWord } from '@ngneat/falso';
-import {
-  createComponentFactory,
-  mockProvider,
-  Spectator,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { ProjectMockFactory } from '@taiga/data';
 import { Subject } from 'rxjs';
-import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { ProjectNavigationSettingsComponent } from './project-navigation-settings.component';
@@ -33,27 +28,28 @@ describe('ProjectSettingsComponent', () => {
     imports: [getTranslocoModule(), RouterTestingModule],
     declareComponent: false,
     mocks: [RouteHistoryService],
-    providers: [
-      mockProvider(ProjectNavigationComponent, {
-        animationEvents$,
-      }),
-      {
-        provide: ActivatedRoute,
-        useValue: {
-          fragment,
-          snapshot: {
-            params: {
-              id: projectId,
-              slug: projectName,
-            },
-          },
-        },
-      },
-    ],
+    shallow: true,
   });
 
   beforeEach(() => {
     spectator = createComponent({
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            fragment,
+            snapshot: {
+              params: {
+                id: projectId,
+                slug: projectName,
+              },
+              data: {
+                settings: true,
+              },
+            },
+          },
+        },
+      ],
       detectChanges: false,
     });
     spectator.component.project = ProjectMockFactory();
@@ -70,6 +66,7 @@ describe('ProjectSettingsComponent', () => {
     spectator.component.getRouter = jest
       .fn()
       .mockReturnValue({ url: '/router' });
+    spectator.component.isSettings = jest.fn().mockReturnValue(false);
 
     const routeHistory =
       spectator.inject<RouteHistoryService>(RouteHistoryService);
@@ -88,6 +85,7 @@ describe('ProjectSettingsComponent', () => {
     spectator.component.getRouter = jest
       .fn()
       .mockReturnValue({ url: '/router' });
+    spectator.component.isSettings = jest.fn().mockReturnValue(false);
 
     const routeHistory =
       spectator.inject<RouteHistoryService>(RouteHistoryService);
@@ -106,21 +104,22 @@ describe('ProjectSettingsComponent', () => {
     spectator.component.getRouter = jest
       .fn()
       .mockReturnValue({ url: '/router' });
+    spectator.component.isSettings = jest.fn().mockReturnValue(true);
 
     const routeHistory =
       spectator.inject<RouteHistoryService>(RouteHistoryService);
     routeHistory.getPreviousUrl.mockReturnValue('');
 
-    spectator.component.getRouter = jest
-      .fn()
-      .mockReturnValue({ url: '/settings' });
+    spectator.component.getRouter = jest.fn().mockReturnValue({
+      url: `/settings`,
+    });
 
     spectator.detectChanges();
 
     spectator.component.getHistoryNav();
 
     expect(spectator.component.previousUrl).toEqual(
-      `/project/${projectId}/${projectName}`
+      `/project/${projectId}/${projectName}/overview`
     );
   });
 });

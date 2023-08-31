@@ -9,7 +9,7 @@
 import { Location, CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -28,15 +28,7 @@ import {
   Status,
   Workflow,
 } from '@taiga/data';
-import {
-  combineLatest,
-  filter,
-  map,
-  merge,
-  pairwise,
-  startWith,
-  take,
-} from 'rxjs';
+import { combineLatest, filter, map, merge, pairwise, take } from 'rxjs';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
@@ -138,6 +130,7 @@ export class ProjectFeatureKanbanComponent {
     private wsService: WsService,
     private permissionService: PermissionsService,
     private router: Router,
+    private route: ActivatedRoute,
     private appService: AppService,
     private location: Location,
     public shortcutsService: ShortcutsService,
@@ -169,11 +162,7 @@ export class ProjectFeatureKanbanComponent {
     );
     this.state.connect(
       'showStoryDetail',
-      this.routeHistoryService.urlChanged.pipe(
-        map((it) => it.url),
-        startWith(this.router.url),
-        map((url) => url.includes('/stories/'))
-      )
+      this.route.data.pipe(map((data) => !!data.stories))
     );
 
     this.state.connect(
@@ -211,7 +200,12 @@ export class ProjectFeatureKanbanComponent {
         concatLatestFrom(() => this.project$.pipe(filterNil()))
       )
       .subscribe(([, project]) => {
-        void this.router.navigate(['project', project.id, project.slug]);
+        void this.router.navigate([
+          'project',
+          project.id,
+          project.slug,
+          'overview',
+        ]);
 
         this.appService.toastNotification({
           message: 'lost_kanban_access',

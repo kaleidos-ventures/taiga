@@ -79,5 +79,9 @@ input[type="checkbox"]:disabled {
     & input {
       border-color: var(--color-red);
     }
+
+    input[type="checkbox"]:focus {
+      --inner-background-color: var(--color-white);
+    }
   }
 }

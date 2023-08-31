@@ -33,10 +33,13 @@ Copyright (c) 2023-present Kaleidos INC
       <tg-ui-dtable-cell class="size-column">
         {{ attachment.size | transformSize }}
       </tg-ui-dtable-cell>
-      <tg-ui-dtable-cell
-        class="date-column"
-        [attr.title]="attachment.createdAt | dateDistance">
-        {{ attachment.createdAt | dateDistance }}
+      <tg-ui-dtable-cell class="date-column">
+        <span
+          *ngIf="attachment.createdAt"
+          [title]="attachment.createdAt | date: 'medium'">
+          <tg-real-time-date-distance
+            [date]="attachment.createdAt"></tg-real-time-date-distance>
+        </span>
       </tg-ui-dtable-cell>
       <tg-ui-dtable-cell class="actions-column">
         <a

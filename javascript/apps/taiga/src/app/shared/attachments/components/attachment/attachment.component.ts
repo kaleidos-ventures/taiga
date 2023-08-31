@@ -6,16 +6,17 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input, OnChanges } from '@angular/core';
+import { TranslocoModule } from '@ngneat/transloco';
+import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
 import { Attachment, LoadingAttachment } from '@taiga/data';
 import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
-import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
-import { ToolTipModule } from '@taiga/ui/tooltip';
-import { TranslocoModule } from '@ngneat/transloco';
-import { TransformSizePipe } from '~/app/shared/pipes/transform-size/transform-size.pipe';
-import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
 import { ProgressBarComponent } from '@taiga/ui/progress-bar';
+import { ToolTipModule } from '@taiga/ui/tooltip';
+import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
+import { TransformSizePipe } from '~/app/shared/pipes/transform-size/transform-size.pipe';
+import { RealTimeDateDistanceComponent } from '~/app/shared/real-time-date-distance/real-time-date-distance.component';
 @Component({
   selector: 'tg-attachment',
   standalone: true,
@@ -29,6 +30,7 @@ import { ProgressBarComponent } from '@taiga/ui/progress-bar';
     DateDistancePipe,
     TuiSvgModule,
     ProgressBarComponent,
+    RealTimeDateDistanceComponent,
   ],
   templateUrl: './attachment.component.html',
   styleUrls: ['./attachment.component.css'],

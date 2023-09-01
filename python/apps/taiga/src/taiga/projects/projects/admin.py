@@ -15,6 +15,7 @@ from taiga.projects.invitations.models import ProjectInvitation
 from taiga.projects.memberships.models import ProjectMembership
 from taiga.projects.projects.models import Project, ProjectTemplate
 from taiga.projects.roles.models import ProjectRole
+from taiga.workflows.admin import WorkflowInline
 
 
 class ProjectRoleInline(admin.TabularInline[ProjectRole, Project]):
@@ -77,7 +78,12 @@ class ProjectAdmin(admin.ModelAdmin[Project]):
         "workspace__name",
     ]
     ordering = ("name",)
-    inlines = [ProjectRoleInline, ProjectMembershipInline, ProjectInvitationInline]
+    inlines = [
+        ProjectRoleInline,
+        ProjectMembershipInline,
+        ProjectInvitationInline,
+        WorkflowInline,
+    ]
 
     @admin.display(description="allow public users", boolean=True)
     def public_user_can_view(self, obj: Project) -> bool:

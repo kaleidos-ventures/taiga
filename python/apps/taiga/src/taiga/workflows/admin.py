@@ -7,6 +7,7 @@
 
 
 from taiga.base.db import admin
+from taiga.projects.projects.models import Project
 from taiga.workflows.models import Workflow, WorkflowStatus
 
 
@@ -17,9 +18,9 @@ class WorkflowStatusInline(admin.TabularInline[WorkflowStatus, Workflow]):
 
 @admin.register(Workflow)
 class WorkflowAdmin(admin.ModelAdmin[Workflow]):
-    fieldsets = ((None, {"fields": ("id", "name", "slug", "order")}),)
+    fieldsets = ((None, {"fields": ("id", "name", "slug", "order", "project")}),)
     readonly_fields = ("id", "created_at", "modified_at")
-    list_display = ["project", "name", "slug", "order"]
+    list_display = ["name", "project", "slug", "order"]
     search_fields = ["id", "name", "slug", "project__name"]
     ordering = (
         "project__name",
@@ -27,3 +28,8 @@ class WorkflowAdmin(admin.ModelAdmin[Workflow]):
         "name",
     )
     inlines = [WorkflowStatusInline]
+
+
+class WorkflowInline(admin.TabularInline[Workflow, Project]):
+    model = Workflow
+    extra = 0

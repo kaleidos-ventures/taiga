@@ -10,12 +10,15 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   FormControl,
@@ -29,6 +32,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiLinkModule } from '@taiga-ui/core';
 import { InvitationParams, SignUpError } from '@taiga/data';
+import { InlineNotificationComponent } from '@taiga/ui/inline-notification';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { PasswordStrengthComponent } from '@taiga/ui/inputs/password-strength/password-strength.component';
 import {
@@ -57,6 +61,7 @@ import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module
     ButtonLoadingModule,
     TuiLinkModule,
     ExternalLinkModule,
+    InlineNotificationComponent,
   ],
   providers: [
     {
@@ -84,7 +89,10 @@ export class SignupComponent implements OnInit {
   @Output()
   public signUpSuccess = new EventEmitter();
 
+  public destroyRef = inject(DestroyRef);
+
   public signUpForm!: FormGroup;
+  public fullNameOnlyEmojis = false;
 
   constructor(
     private fb: FormBuilder,
@@ -143,6 +151,13 @@ export class SignupComponent implements OnInit {
     if (this.data) {
       this.signUpForm.setValue(this.data);
     }
+
+    this.signUpForm
+      .get('fullName')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value: string) => {
+        this.fullNameOnlyEmojis = this.isOnlyEmojis(value);
+      });
   }
 
   public onSubmit() {
@@ -173,5 +188,12 @@ export class SignupComponent implements OnInit {
 
   public signUpDone() {
     this.signUpSuccess.next(this.signUpForm.value);
+  }
+
+  public isOnlyEmojis(str: string): boolean {
+    const regEx =
+      /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])+$/g;
+
+    return regEx.test(str.replaceAll(' ', '').trim());
   }
 }

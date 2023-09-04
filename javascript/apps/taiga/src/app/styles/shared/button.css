@@ -164,6 +164,37 @@ Used only in comment list sort button
   }
 }
 
+[data-appearance="small"]:is(button, a) {
+  @mixin button-dropdown-expanded {
+    background: var(--color-gray30);
+    color: var(--color-secondary90);
+  }
+
+  & [tuiWrapper] {
+    background: var(--color-gray10);
+    block-size: auto !important;
+    border-radius: 3px;
+    color: var(--color-secondary);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular);
+    line-height: 0.875rem;
+    padding-block: var(--spacing-4) !important;
+    padding-inline: var(--spacing-8) !important;
+
+    @mixin wrapper-hover {
+      background: var(--color-gray30);
+      color: var(--color-secondary90);
+    }
+
+    @mixin wrapper-focus {
+      &::after {
+        border-color: var(--color-secondary);
+        border-width: 1px;
+      }
+    }
+  }
+}
+
 [data-appearance="main-nav"]:is(button, a) {
   @mixin button-dropdown-expanded {
     background: var(--color-white);

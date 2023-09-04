@@ -79,7 +79,7 @@ Copyright (c) 2023-present Kaleidos INC
       <ng-template #emptyTpl>
         <div
           #descriptionContent
-          class="description-wrapper">
+          class="description-wrapper description-empty">
           <p
             class="empty"
             [ngClass]="{
@@ -106,10 +106,11 @@ Copyright (c) 2023-present Kaleidos INC
         class="edit-description"
         [attr.aria-label]="t('story.edit_description')"
         [tgUiTooltip]="t('story.edit_description')"
-        appearance="tertiary"
-        tuiIconButton
-        icon="pen"
-        type="button"></button>
+        appearance="small"
+        tuiButton
+        type="button">
+        Edit
+      </button>
     </ng-template>
 
     <tg-discard-changes-modal

@@ -17,7 +17,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .input-email {
-  margin-block-end: var(--input-gap);
+  margin-block: var(--input-gap);
 }
 
 .input-password {
@@ -35,4 +35,8 @@ Copyright (c) 2023-present Kaleidos INC
 
 .auth-options {
   justify-content: center;
+}
+
+.fullname-only-emojis {
+  display: inline;
 }

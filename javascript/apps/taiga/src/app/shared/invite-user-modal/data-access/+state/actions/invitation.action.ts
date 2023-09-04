@@ -50,11 +50,12 @@ export const invitationProjectActions = createActionGroup({
     }>(),
     'Accept invitation id': props<{
       id: string;
-      name?: string;
+      name: string;
       isBanner?: boolean;
     }>(),
     'Accept invitation id success': props<{
       projectId: string;
+      projectName: string;
       username: string;
     }>(),
     'Accept invitation id error': props<{

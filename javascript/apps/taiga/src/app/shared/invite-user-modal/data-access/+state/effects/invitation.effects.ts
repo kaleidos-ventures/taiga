@@ -153,6 +153,7 @@ export class InvitationEffects {
             map(([, user]) => {
               return invitationProjectActions.acceptInvitationIdSuccess({
                 projectId: action.id,
+                projectName: action.name,
                 username: user.username,
               });
             })

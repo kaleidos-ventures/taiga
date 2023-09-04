@@ -89,10 +89,13 @@ export class ProjectOverviewEffects {
             })
           );
         },
-        onError: (_, httpResponse: HttpErrorResponse) => {
+        onError: (action, httpResponse: HttpErrorResponse) => {
           if (httpResponse.status === 403) {
             this.appService.toastNotification({
               message: 'errors.admin_permission',
+              paramsMessage: {
+                project: action.project.name,
+              },
               status: TuiNotification.Error,
             });
           } else {

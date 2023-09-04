@@ -96,9 +96,11 @@ export class ProjectsSettingsFeatureSettingsComponent {
     projectSlug?: Project['slug']
   ) {
     this.appService.toastNotification({
-      message: 'members.no_longer_admin',
+      message: 'errors.admin_permission',
+      paramsMessage: {
+        project: this.state.get('project').name,
+      },
       status: TuiNotification.Warning,
-      scope: 'project_settings',
       closeOnNavigation: false,
     });
     void this.router.navigate([

@@ -432,6 +432,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     this.store.dispatch(
       invitationProjectActions.acceptInvitationId({
         id: this.state.get('project').id,
+        name: this.state.get('project').name,
         isBanner: true,
       })
     );

@@ -115,6 +115,9 @@ export class EditProjectComponent implements OnInit {
     if (!this.project.userIsAdmin) {
       this.appService.toastNotification({
         message: 'errors.admin_permission',
+        paramsMessage: {
+          project: this.project.name,
+        },
         status: TuiNotification.Error,
       });
 

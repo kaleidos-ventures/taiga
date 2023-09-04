@@ -358,7 +358,7 @@ export class WorkspaceDetailProjectsComponent implements OnInit {
     this.setCardAmounts(event.newRect.width);
   }
 
-  public acceptProjectInvite(id: string, name?: string) {
+  public acceptProjectInvite(id: string, name: string) {
     this.store.dispatch(
       invitationProjectActions.acceptInvitationId({
         id,

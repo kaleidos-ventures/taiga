@@ -112,9 +112,12 @@ export class ProjectEffects {
   public acceptedInvitation$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(invitationProjectActions.acceptInvitationIdSuccess),
-      tap(() => {
+      tap(({ projectName }) => {
         this.appService.toastNotification({
           message: 'invitation_accept_message',
+          paramsMessage: {
+            project: projectName,
+          },
           status: TuiNotification.Success,
           scope: 'invitation_modal',
           autoClose: true,
@@ -240,10 +243,13 @@ export class ProjectEffects {
             })
           );
         },
-        onError: (_, httpResponse: HttpErrorResponse) => {
+        onError: (action, httpResponse: HttpErrorResponse) => {
           if (httpResponse.status === 403) {
             this.appService.toastNotification({
               message: 'errors.admin_permission',
+              paramsMessage: {
+                project: action.name,
+              },
               status: TuiNotification.Error,
             });
           } else {

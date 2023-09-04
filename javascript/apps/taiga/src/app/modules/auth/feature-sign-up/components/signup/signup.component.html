@@ -29,14 +29,20 @@ Copyright (c) 2023-present Kaleidos INC
         </tg-ui-error>
       </ng-container>
     </tg-ui-input>
-    <tg-ui-inline-notification
-      aria-live="polite"
+
+    <tg-ui-context-notification
+      *ngIf="fullNameOnlyEmojis && !dismissedEmojiNotification"
       status="warning"
-      *ngIf="fullNameOnlyEmojis">
-      <p>
+      class="fullname-only-emojis"
+      data-test="fullname-only-emojis"
+      alertLevel="polite"
+      size="s"
+      [hasClose]="true"
+      (closed)="dismissedEmojiNotification = true">
+      <span>
         {{ t('signup.warnings.only_emojis') }}
-      </p>
-    </tg-ui-inline-notification>
+      </span>
+    </tg-ui-context-notification>
 
     <tg-ui-input
       class="input-email"

@@ -32,7 +32,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TuiLinkModule } from '@taiga-ui/core';
 import { InvitationParams, SignUpError } from '@taiga/data';
-import { InlineNotificationComponent } from '@taiga/ui/inline-notification';
+import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
 import { InputsModule } from '@taiga/ui/inputs/inputs.module';
 import { PasswordStrengthComponent } from '@taiga/ui/inputs/password-strength/password-strength.component';
 import {
@@ -61,7 +61,7 @@ import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module
     ButtonLoadingModule,
     TuiLinkModule,
     ExternalLinkModule,
-    InlineNotificationComponent,
+    ContextNotificationModule,
   ],
   providers: [
     {
@@ -93,6 +93,7 @@ export class SignupComponent implements OnInit {
 
   public signUpForm!: FormGroup;
   public fullNameOnlyEmojis = false;
+  public dismissedEmojiNotification = false;
 
   constructor(
     private fb: FormBuilder,

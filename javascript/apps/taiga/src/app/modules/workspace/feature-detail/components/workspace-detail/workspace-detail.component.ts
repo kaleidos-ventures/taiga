@@ -7,7 +7,6 @@
  */
 
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -62,7 +61,6 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private store: Store,
     private state: RxState<WorkspaceDetailState>,
-    private location: Location,
     private liveAnnouncer: LiveAnnouncer,
     private translocoService: TranslocoService,
     private appService: AppService,
@@ -144,6 +142,25 @@ export class WorkspaceDetailComponent implements OnInit, OnDestroy {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.userLoseMembership();
+      });
+
+    this.state
+      .select('workspace')
+      .pipe(filterNil(), take(1))
+      .subscribe((workspace) => {
+        this.wsService
+          .events<{
+            workspace: string;
+            name: string;
+            deletedBy: { username: string; fullName: string; color: number };
+          }>({
+            channel: `workspaces.${workspace.id}`,
+            type: 'workspaces.delete',
+          })
+          .pipe(untilDestroyed(this))
+          .subscribe(() => {
+            this.userLoseMembership();
+          });
       });
   }
 

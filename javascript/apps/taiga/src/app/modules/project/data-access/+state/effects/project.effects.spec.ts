@@ -7,7 +7,7 @@
  */
 
 import { Router } from '@angular/router';
-import { randUuid } from '@ngneat/falso';
+import { randUuid, randCompanyName } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -80,6 +80,7 @@ describe('ProjectEffects', () => {
 
   it('Accepted Invitation', () => {
     const id = randUuid();
+    const projectName = randCompanyName();
     const user = UserMockFactory();
     const username = user.username;
     const effects = spectator.inject(ProjectEffects);
@@ -87,6 +88,7 @@ describe('ProjectEffects', () => {
     actions$ = hot('-a', {
       a: invitationProjectActions.acceptInvitationIdSuccess({
         projectId: id,
+        projectName,
         username,
       }),
     });
@@ -96,6 +98,7 @@ describe('ProjectEffects', () => {
       actions$ = hot('-a', {
         a: invitationProjectActions.acceptInvitationIdSuccess({
           projectId: id,
+          projectName,
           username,
         }),
       });

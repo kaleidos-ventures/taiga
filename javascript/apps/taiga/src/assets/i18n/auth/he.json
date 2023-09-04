@@ -38,6 +38,9 @@
       "resend_email_label": "Sorry, something went wrong sending the email",
       "resend_email_message": "Wait a few minutes and try again"
     },
+    "warnings": {
+      "only_emojis": "Some people might not understand your full name correctly if it only has emojis."
+    },
     "delete_account_success_title": "Your account was deleted successfully.",
     "delete_account_success_subtitle": "👋 Sorry to see you go!"
   },

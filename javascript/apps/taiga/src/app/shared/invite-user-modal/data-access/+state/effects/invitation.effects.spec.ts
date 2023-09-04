@@ -13,6 +13,7 @@ import {
   randUserName,
   randUuid,
   randWord,
+  randCompanyName,
 } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -102,6 +103,7 @@ describe('InvitationEffects', () => {
     const user = UserMockFactory();
     const slug = randSlug();
     const id = randUuid();
+    const projectName = randCompanyName();
     const username = user.username;
     const acceptInvitationIdMockPayload = [
       {
@@ -125,12 +127,13 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: invitationProjectActions.acceptInvitationId({ id }),
+      a: invitationProjectActions.acceptInvitationId({ id, name: projectName }),
     });
 
     const expected = cold('--a', {
       a: invitationProjectActions.acceptInvitationIdSuccess({
         projectId: id,
+        projectName,
         username,
       }),
     });
@@ -140,6 +143,7 @@ describe('InvitationEffects', () => {
 
   it('Accept project invitation id error', () => {
     const id = randUuid();
+    const projectName = randCompanyName();
     const effects = spectator.inject(InvitationEffects);
     const appService = spectator.inject(AppService);
     const projectApiService = spectator.inject(ProjectApiService);
@@ -159,7 +163,7 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: invitationProjectActions.acceptInvitationId({ id }),
+      a: invitationProjectActions.acceptInvitationId({ id, name: projectName }),
     });
 
     const expected = cold('--a', {
@@ -178,6 +182,7 @@ describe('InvitationEffects', () => {
 
   it('Accept project invitation revoke error', () => {
     const id = randUuid();
+    const projectName = randCompanyName();
     const effects = spectator.inject(InvitationEffects);
     const appService = spectator.inject(AppService);
     const projectApiService = spectator.inject(ProjectApiService);
@@ -197,7 +202,7 @@ describe('InvitationEffects', () => {
     );
 
     actions$ = hot('-a', {
-      a: invitationProjectActions.acceptInvitationId({ id }),
+      a: invitationProjectActions.acceptInvitationId({ id, name: projectName }),
     });
 
     const expected = cold('--a', {

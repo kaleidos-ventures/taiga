@@ -10,6 +10,7 @@ Copyright (c) 2023-present Kaleidos INC
 @import url("../../styles/delete-comment-confirm.css");
 
 :host() {
+  container-type: inline-size;
   display: block;
 }
 
@@ -107,4 +108,18 @@ Copyright (c) 2023-present Kaleidos INC
 
 .former-user-avatar {
   --no-user-avatar-size: 24px;
+}
+
+@container (inline-size < 280px) {
+  .comment-top {
+    align-items: flex-start;
+  }
+
+  .creation-data {
+    flex-direction: column;
+  }
+
+  .separator {
+    display: none;
+  }
 }

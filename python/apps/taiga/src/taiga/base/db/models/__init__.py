@@ -23,7 +23,7 @@ from django.contrib.postgres.fields import ArrayField, JSONField  # noqa
 from django.contrib.postgres.lookups import Unaccent  # noqa
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector  # noqa
 from django.db.models import Model, UUIDField
-from django.db.models.functions import Coalesce, Lower, StrIndex  # noqa
+from django.db.models.functions import Coalesce, Lower, StrIndex, TruncDate  # noqa
 from taiga.base.db.models.fields import *  # noqa
 from taiga.base.utils.uuid import encode_uuid_to_b64str
 from taiga.conf import settings

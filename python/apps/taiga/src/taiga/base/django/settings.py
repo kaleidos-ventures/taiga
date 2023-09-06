@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # taiga
     "taiga.base.db",
+    "taiga.commons.storage",
     "taiga.emails",
     "taiga.mediafiles",
     "taiga.projects.invitations",

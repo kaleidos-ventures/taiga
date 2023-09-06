@@ -5,10 +5,9 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-
-from django.db.models.deletion import RestrictedError  # noqa
-from django.db.utils import IntegrityError, ProgrammingError  # noqa
+from pydantic import BaseSettings
 
 
-class SequenceDoesNotExist(Exception):
-    ...
+class StorageSettings(BaseSettings):
+    CLEAN_DELETED_STORAGE_OBJECTS_CRON: str = "0 4 * * *"  # default: once a day, at 4:00 AM
+    DAYS_TO_STORE_DELETED_STORAGED_OBJECTS: int = 90  # 90 day

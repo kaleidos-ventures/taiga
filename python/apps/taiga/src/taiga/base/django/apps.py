@@ -5,10 +5,4 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-
-from django.db.models.deletion import RestrictedError  # noqa
-from django.db.utils import IntegrityError, ProgrammingError  # noqa
-
-
-class SequenceDoesNotExist(Exception):
-    ...
+from django.apps import AppConfig  # noqa

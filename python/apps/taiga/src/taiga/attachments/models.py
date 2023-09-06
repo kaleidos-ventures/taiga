@@ -5,36 +5,18 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from os import path
-from typing import cast
 
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin
-from taiga.base.utils.files import get_obfuscated_file_path
-
-
-def get_attachment_file_path(instance: "Attachment", filename: str) -> str:
-    content_object = cast(models.BaseModel, instance.content_object)
-    label = content_object._meta.app_label
-    model_name = content_object._meta.model_name or content_object.__class__.__name__
-
-    base_path = path.join(
-        "attachments",
-        f"{label.lower()}_{model_name.lower()}",
-        content_object.b64id,
-    )
-    return get_obfuscated_file_path(instance, filename, base_path)
 
 
 class Attachment(models.BaseModel, CreatedMetaInfoMixin):
-    # TODO: We need to remove file on delete content_object. It may depend on the real life that
-    #       the files have beyond their content object (especially with history or activity timelines).
-    #       (Some inspiration https://github.com/un1t/django-cleanup)
-    file = models.FileField(
-        upload_to=get_attachment_file_path,
-        max_length=500,
+    file = models.ForeignKey(
+        "storage.StoragedObject",
         null=False,
         blank=False,
+        on_delete=models.RESTRICT,
+        related_name="attachments",
         verbose_name="file",
     )
     name = models.TextField(

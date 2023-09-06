@@ -55,9 +55,11 @@ def django_db_setup(django_db_setup, django_db_blocker):
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def connect_events_manage_on_startup():
-    from taiga.events import connect_events_manager
+    from taiga.events import connect_events_manager, disconnect_events_manager
 
     await connect_events_manager()
+    yield
+    await disconnect_events_manager()
 
 
 #

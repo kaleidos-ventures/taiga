@@ -48,7 +48,8 @@ class AttachmentAdmin(admin.ModelAdmin[Attachment]):
     list_display = (
         "b64id",
         "name",
-        "content_object_link" "created_by",
+        "content_object_link",
+        "created_by",
     )
     readonly_fields = (
         "id",

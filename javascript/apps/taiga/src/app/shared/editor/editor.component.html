@@ -16,6 +16,7 @@ Copyright (c) 2023-present Kaleidos INC
     (onBlur)="onBlur()"
     (onInit)="onReady()"
     [init]="{
+      inline_boundaries_selector: 'a[href],code,b,i,strong,em,span',
       language: vm.lan.code,
       language_url: vm.lan.url,
       menubar: '',

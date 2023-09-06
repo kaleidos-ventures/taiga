@@ -11,5 +11,6 @@
   "download": "Download",
   "delete": "Delete",
   "error_size": "The file {{filename}} has not been attached because it exceeds the maximum size of {{maxSize}}MB",
-  "uploading": "Uploading {{file}}"
+  "uploading": "Uploading {{file}}",
+  "deleted": "{{filename}} deleted"
 }

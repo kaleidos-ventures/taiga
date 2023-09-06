@@ -55,14 +55,14 @@
     "action_undone": "Action undone",
     "close_undone": "Action undone",
     "remove": {
-      "remove_member": "User {member} removed."
+      "remove_member": "User {{member}} removed."
     },
     "revoke": {
       "question": "Cancel invitation to {user}",
       "description": "The invitation will be no longer valid. You can invite them again if you want.",
       "keep_invitation": "No, keep the invitation",
       "confirm_cancel_invitation": "Yes, cancel the invitation",
-      "revoked_invitation": "Invitation to {member} canceled."
+      "revoked_invitation": "Invitation to {{member}} canceled."
     },
     "role_label": "Role",
     "admin_dialog_title": "Projects must have at least one admin.",

@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9f061dde-51a5-46f8-8e0b-502e119e91f3",
+		"_postman_id": "302d4e8d-fe62-488f-a80e-cf3520c18277",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "15018493"
+		"_exporter_id": "9835734"
 	},
 	"item": [
 		{
@@ -2348,6 +2348,57 @@
 		{
 			"name": "workflows",
 			"item": [
+				{
+					"name": "create project workflow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"new workflow\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "project workflows",
 					"event": [

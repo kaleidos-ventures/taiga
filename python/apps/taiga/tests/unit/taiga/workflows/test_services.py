@@ -14,6 +14,65 @@ from taiga.workflows.services import exceptions as ex
 from tests.utils import factories as f
 
 #######################################################
+# create_workflow
+#######################################################
+
+
+async def test_create_workflow_ok():
+    project = f.build_project()
+    workflow = f.build_workflow(project=project)
+
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.projects_repositories", autospec=True) as fake_projects_repo,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+    ):
+        fake_workflows_repo.list_workflows.return_value = None
+        fake_workflows_repo.create_workflow.return_value = workflow
+        fake_workflows_repo.list_workflow_statuses.return_value = []
+
+        workflow = await services.create_workflow(project=workflow.project, name=workflow.name)
+
+        fake_workflows_repo.list_workflows.assert_awaited_once_with(
+            filters={"project_id": project.id}, order_by=["-order"]
+        )
+        fake_workflows_repo.create_workflow.assert_awaited_once_with(project=project, name=workflow.name, order=100)
+        fake_projects_repo.get_project_template.assert_awaited_once()
+        fake_workflows_repo.apply_default_workflow_statuses.assert_awaited_once()
+        fake_workflows_repo.list_workflow_statuses.assert_awaited_once()
+
+        fake_workflows_events.emit_event_when_workflow_is_created.assert_awaited_once_with(
+            project=project, workflow=workflow
+        )
+
+
+async def test_create_workflow_reached_num_workflows_error(override_settings):
+    project = f.build_project()
+    workflow1 = f.build_workflow(project=project)
+    workflow2 = f.build_workflow(project=project)
+
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.projects_repositories", autospec=True) as fake_projects_repo,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+        override_settings({"MAX_NUM_WORKFLOWS": 1}),
+        pytest.raises(ex.MaxNumWorkflowCreatedError),
+    ):
+        fake_workflows_repo.list_workflows.return_value = [workflow1]
+
+        await services.create_workflow(project=workflow2.project, name=workflow2.name)
+
+        fake_workflows_repo.list_workflows.assert_awaited_once_with(
+            filters={"project_id": project.id}, order_by=["-order"]
+        )
+        fake_workflows_repo.create_workflow.assert_not_awaited()
+        fake_projects_repo.get_project_template.assert_not_awaited()
+        fake_workflows_repo.apply_default_workflow_statuses.assert_not_awaited()
+        fake_workflows_repo.list_workflow_statuses.assert_not_awaited()
+        fake_workflows_events.emit_event_when_workflow_is_created.assert_not_awaited()
+
+
+#######################################################
 # list_workflows
 #######################################################
 

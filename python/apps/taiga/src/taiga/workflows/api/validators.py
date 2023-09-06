@@ -15,19 +15,29 @@ from taiga.base.validators import B64UUID, BaseModel
 from taiga.exceptions import api as ex
 
 
-class Name(ConstrainedStr):
+class WorkflowStatusName(ConstrainedStr):
     strip_whitespace = True
     min_length = 1
     max_length = 30
 
 
-class WorkflowStatusValidator(BaseModel):
-    name: Name
+class WorkflowName(ConstrainedStr):
+    strip_whitespace = True
+    min_length = 1
+    max_length = 40
+
+
+class CreateWorkflowValidator(BaseModel):
+    name: WorkflowName
+
+
+class CreateWorkflowStatusValidator(BaseModel):
+    name: WorkflowStatusName
     color: conint(gt=0, lt=9)  # type: ignore
 
 
 class UpdateWorkflowStatusValidator(BaseModel):
-    name: Name | None
+    name: WorkflowStatusName | None
 
 
 class ReorderValidator(BaseModel):

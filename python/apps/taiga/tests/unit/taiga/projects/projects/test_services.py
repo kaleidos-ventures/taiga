@@ -114,7 +114,7 @@ async def test_list_workspace_projects_for_a_ws_member():
         await services.list_workspace_projects_for_user(workspace=workspace, user=workspace.created_by)
         fake_projects_repo.list_projects.assert_awaited_once_with(
             filters={"workspace_id": workspace.id},
-            prefetch_related=["workspace"],
+            select_related=["workspace"],
         )
 
 
@@ -126,7 +126,7 @@ async def test_list_workspace_projects_not_for_a_ws_member():
         await services.list_workspace_projects_for_user(workspace=workspace, user=user)
         fake_projects_repo.list_projects.assert_awaited_once_with(
             filters={"workspace_id": workspace.id, "project_member_id": user.id},
-            prefetch_related=["workspace"],
+            select_related=["workspace"],
         )
 
 

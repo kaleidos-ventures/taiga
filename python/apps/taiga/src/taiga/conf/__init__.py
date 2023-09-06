@@ -88,6 +88,9 @@ class Settings(BaseSettings):
     INVITATION_RESEND_LIMIT: int = 10
     INVITATION_RESEND_TIME: int = 10  # 10 minutes
 
+    # Workflows
+    MAX_NUM_WORKFLOWS: int = 8
+
     # Tasks (linux crontab style)
     CLEAN_EXPIRED_TOKENS_CRON: str = "0 0 * * *"  # default: once a day
     CLEAN_EXPIRED_USERS_CRON: str = "0 0 * * *"  # default: once a day

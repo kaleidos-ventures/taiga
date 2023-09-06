@@ -10,6 +10,9 @@ from decimal import Decimal
 from typing import Any, cast
 from uuid import UUID
 
+from taiga.conf import settings
+from taiga.projects.projects import repositories as projects_repositories
+from taiga.projects.projects.models import Project
 from taiga.stories.stories import repositories as stories_repositories
 from taiga.stories.stories import services as stories_services
 from taiga.workflows import events as workflows_events
@@ -19,8 +22,48 @@ from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, Workf
 from taiga.workflows.serializers import services as serializers_services
 from taiga.workflows.services import exceptions as ex
 
-DEFAULT_ORDER_OFFSET = Decimal(100)  # default offset when adding a workflow status
+DEFAULT_ORDER_OFFSET = Decimal(100)  # default offset when adding a workflow or workflow status
 DEFAULT_PRE_ORDER = Decimal(0)  # default pre_position when adding a story at the beginning
+
+
+##########################################################
+# create workflow
+##########################################################
+
+
+async def create_workflow(project: Project, name: str) -> WorkflowSerializer:
+    workflows = await workflows_repositories.list_workflows(filters={"project_id": project.id}, order_by=["-order"])
+
+    # validate num workflows
+    num_workflows = len(workflows) if workflows else 0
+    if num_workflows >= settings.MAX_NUM_WORKFLOWS:
+        raise ex.MaxNumWorkflowCreatedError("Maximum number of workflows is reached")
+
+    # calculate order
+    order = DEFAULT_ORDER_OFFSET + (workflows[0].order if workflows else 0)
+
+    workflow = await workflows_repositories.create_workflow(project=project, name=name, order=order)
+
+    # apply default workflow statuses from project template
+    if template := await projects_repositories.get_project_template(
+        filters={"slug": settings.DEFAULT_PROJECT_TEMPLATE}
+    ):
+        await workflows_repositories.apply_default_workflow_statuses(template=template, workflow=workflow)
+    else:
+        raise Exception(
+            f"Default project template '{settings.DEFAULT_PROJECT_TEMPLATE}' not found. "
+            "Try to load fixtures again and check if the error persist."
+        )
+
+    workflow_statuses = await workflows_repositories.list_workflow_statuses(filters={"workflow_id": workflow.id})
+    serialized_workflow = serializers_services.serialize_workflow(
+        workflow=workflow, workflow_statuses=workflow_statuses
+    )
+
+    # emit event
+    await workflows_events.emit_event_when_workflow_is_created(project=workflow.project, workflow=serialized_workflow)
+
+    return serialized_workflow
 
 
 ##########################################################

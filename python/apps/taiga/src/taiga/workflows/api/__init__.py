@@ -18,15 +18,17 @@ from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
 from taiga.workflows import services as workflows_services
 from taiga.workflows.api.validators import (
+    CreateWorkflowStatusValidator,
+    CreateWorkflowValidator,
     DeleteWorkflowStatusQuery,
     ReorderWorkflowStatusesValidator,
     UpdateWorkflowStatusValidator,
-    WorkflowStatusValidator,
 )
 from taiga.workflows.models import Workflow, WorkflowStatus
 from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, WorkflowSerializer, WorkflowStatusSerializer
 
 # PERMISSIONS
+CREATE_WORKFLOW = IsProjectAdmin()
 LIST_WORKFLOWS = HasPerm("view_story")
 GET_WORKFLOW = HasPerm("view_story")
 CREATE_WORKFLOW_STATUS = IsProjectAdmin()
@@ -41,24 +43,53 @@ REORDER_WORKFLOW_STATUSES_200 = responses.http_status_200(model=ReorderWorkflowS
 
 
 ################################################
+# create workflow
+################################################
+
+
+@routes.workflows.post(
+    "/projects/{project_id}/workflows",
+    name="project.workflow.create",
+    summary="Create workflows",
+    responses=GET_WORKFLOW_200 | ERROR_403 | ERROR_404 | ERROR_422,
+    response_model=None,
+)
+async def create_workflow(
+    project_id: B64UUID,
+    request: AuthRequest,
+    form: CreateWorkflowValidator,
+) -> WorkflowSerializer:
+    """
+    Creates a workflow for a project
+    """
+    project = await get_project_or_404(project_id)
+    await check_permissions(permissions=CREATE_WORKFLOW, user=request.user, obj=project)
+
+    return await workflows_services.create_workflow(
+        name=form.name,
+        project=project,
+    )
+
+
+################################################
 # list workflows
 ################################################
 
 
 @routes.workflows.get(
-    "/projects/{id}/workflows",
+    "/projects/{project_id}/workflows",
     name="project.workflow.list",
     summary="List workflows",
     responses=LIST_WORKFLOW_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
-async def list_workflows(id: B64UUID, request: Request) -> list[WorkflowSerializer]:
+async def list_workflows(project_id: B64UUID, request: Request) -> list[WorkflowSerializer]:
     """
     List the workflows of a project
     """
-    project = await get_project_or_404(id)
+    project = await get_project_or_404(project_id)
     await check_permissions(permissions=LIST_WORKFLOWS, user=request.user, obj=project)
-    return await workflows_services.list_workflows(project_id=id)
+    return await workflows_services.list_workflows(project_id=project_id)
 
 
 ################################################
@@ -67,23 +98,23 @@ async def list_workflows(id: B64UUID, request: Request) -> list[WorkflowSerializ
 
 
 @routes.workflows.get(
-    "/projects/{id}/workflows/{workflow_slug}",
+    "/projects/{project_id}/workflows/{workflow_slug}",
     name="project.workflow.get",
     summary="Get project workflow",
     responses=GET_WORKFLOW_200 | ERROR_403 | ERROR_404 | ERROR_422,
     response_model=None,
 )
 async def get_workflow(
-    id: B64UUID,
+    project_id: B64UUID,
     workflow_slug: str,
     request: Request,
 ) -> WorkflowSerializer:
     """
     Get the details of a workflow
     """
-    workflow = await get_workflow_or_404(project_id=id, workflow_slug=workflow_slug)
+    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
     await check_permissions(permissions=GET_WORKFLOW, user=request.user, obj=workflow)
-    return await workflows_services.get_workflow_detail(project_id=id, workflow_slug=workflow_slug)
+    return await workflows_services.get_workflow_detail(project_id=project_id, workflow_slug=workflow_slug)
 
 
 ################################################
@@ -115,7 +146,7 @@ async def create_workflow_status(
     project_id: B64UUID,
     workflow_slug: str,
     request: AuthRequest,
-    form: WorkflowStatusValidator,
+    form: CreateWorkflowStatusValidator,
 ) -> WorkflowStatus:
     """
     Creates a workflow status in the given project workflow

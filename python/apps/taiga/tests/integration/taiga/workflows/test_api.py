@@ -16,6 +16,48 @@ pytestmark = pytest.mark.django_db
 
 
 ##########################################################
+# Workflow POST /projects/<pj_b64id>/workflows
+##########################################################
+
+
+async def test_create_workflow_200_ok(client):
+    project = await f.create_project()
+    data = {"name": "New workflow"}
+
+    client.login(project.created_by)
+    response = client.post(f"/projects/{project.b64id}/workflows", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_create_workflow_403_forbidden_permissions(client):
+    project = await f.create_project()
+    user = await f.create_user()
+    data = {"name": "New workflow"}
+
+    client.login(user)
+    response = client.post(f"/projects/{project.b64id}/workflows", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_create_workflow_404_not_found_project_b64id(client):
+    user = await f.create_user()
+    data = {"name": "New workflow"}
+
+    client.login(user)
+    response = client.post(f"/projects/{NOT_EXISTING_B64ID}/workflows", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_create_workflow_422_unprocessable_project_b64id(client):
+    user = await f.create_user()
+    data = {"name": "New workflow"}
+
+    client.login(user)
+    response = client.post(f"/projects/{INVALID_B64ID}/workflows", json=data)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
+
+
+##########################################################
 # Workflow GET /projects/<pj_b64id>/workflows
 ##########################################################
 

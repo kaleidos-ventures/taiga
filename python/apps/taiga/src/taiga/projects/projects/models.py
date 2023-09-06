@@ -99,6 +99,7 @@ class ProjectTemplate(models.BaseModel):
     slug = models.LowerSlugField(max_length=250, null=False, blank=True, unique=True, verbose_name="slug")
     roles = models.JSONField(null=True, blank=True, verbose_name="roles")
     workflows = models.JSONField(null=True, blank=True, verbose_name="workflows")
+    workflow_statuses = models.JSONField(null=True, blank=True, verbose_name="workflow statuses")
 
     class Meta:
         verbose_name = "project template"

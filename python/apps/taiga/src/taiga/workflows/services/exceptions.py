@@ -23,3 +23,7 @@ class NonExistingMoveToStatus(TaigaServiceException):
 
 class SameMoveToStatus(TaigaServiceException):
     ...
+
+
+class MaxNumWorkflowCreatedError(TaigaServiceException):
+    ...

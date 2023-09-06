@@ -5,22 +5,21 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from typing import TYPE_CHECKING
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient as TestClientBase
-from taiga.auth.tokens import AccessToken
 from taiga.base.utils.concurrency import run_async_as_sync
-from taiga.events import app as events_app
-from taiga.main import api as api_app
-from taiga.users.models import User
 
-test_app = FastAPI()
-test_app.mount("/events/", app=events_app)
-test_app.mount("/", app=api_app)
+if TYPE_CHECKING:
+    from taiga.users.models import User
 
 
 class TestClient(TestClientBase):
-    def login(self, user: User) -> None:
+    def login(self, user: "User") -> None:
+        from taiga.auth.tokens import AccessToken
+
         token = run_async_as_sync(AccessToken.create_for_object(user))
         self.headers["Authorization"] = f"Bearer {str(token)}"
 
@@ -28,9 +27,20 @@ class TestClient(TestClientBase):
         self.headers.pop("Authorization", None)
 
 
+def _get_test_app() -> FastAPI:
+    from taiga.events import app as events_app
+    from taiga.main import api as api_app
+
+    test_app = FastAPI()
+    test_app.mount("/events/", app=events_app)
+    test_app.mount("/", app=api_app)
+
+    return test_app
+
+
 @pytest.fixture
 def client() -> TestClient:
-    return TestClient(test_app)
+    return TestClient(_get_test_app())
 
 
 @pytest.fixture

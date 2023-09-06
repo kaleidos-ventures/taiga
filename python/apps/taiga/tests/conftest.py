@@ -10,7 +10,6 @@ import asyncio
 import pytest
 import pytest_asyncio
 from taiga.base.django.commands import call_django_command
-from taiga.events import connect_events_manager
 
 from .fixtures import *  # noqa
 
@@ -56,6 +55,8 @@ def django_db_setup(django_db_setup, django_db_blocker):
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def connect_events_manage_on_startup():
+    from taiga.events import connect_events_manager
+
     await connect_events_manager()
 
 

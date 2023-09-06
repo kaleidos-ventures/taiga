@@ -34,6 +34,7 @@ from .projects import (  # noqa
     create_project_role,
     create_simple_project,
 )
+from .storage import StoragedObjectFactory, build_storaged_object, create_storaged_object  # noqa
 from .stories import (  # noqa
     StoryAssignmentFactory,
     StoryFactory,

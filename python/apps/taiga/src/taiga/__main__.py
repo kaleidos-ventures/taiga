@@ -33,6 +33,7 @@ from taiga.base.db.commands import migrate as db_migrate
 from taiga.base.django.commands import call_django_command
 from taiga.base.i18n.commands import cli as i18n_cli
 from taiga.base.sampledata.commands import cli as sampledata_cli
+from taiga.commons.storage.commands import cli as storage_cli
 from taiga.emails.commands import cli as emails_cli
 from taiga.tasksqueue.commands import cli as tasksqueue_cli
 from taiga.tasksqueue.commands import init as init_tasksqueue
@@ -70,6 +71,7 @@ cli.add_typer(emails_cli, name="emails")
 cli.add_typer(i18n_cli, name="i18n")
 cli.add_typer(sampledata_cli, name="sampledata")
 cli.add_typer(tasksqueue_cli, name="tasksqueue")
+cli.add_typer(storage_cli, name="storage")
 cli.add_typer(tokens_cli, name="tokens")
 cli.add_typer(users_cli, name="users")
 

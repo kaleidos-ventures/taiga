@@ -4,11 +4,3 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
-
-
-from django.db.models.deletion import RestrictedError  # noqa
-from django.db.utils import IntegrityError, ProgrammingError  # noqa
-
-
-class SequenceDoesNotExist(Exception):
-    ...

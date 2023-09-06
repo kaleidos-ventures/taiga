@@ -17,6 +17,7 @@ from taiga.conf.emails import EmailSettings
 from taiga.conf.events import EventsSettings
 from taiga.conf.images import ImageSettings
 from taiga.conf.logs import LOGGING_CONFIG
+from taiga.conf.storage import StorageSettings
 from taiga.conf.tasksqueue import TaskQueueSettings
 from taiga.conf.tokens import TokensSettings
 
@@ -98,6 +99,7 @@ class Settings(BaseSettings):
     EMAIL: EmailSettings = EmailSettings()
     EVENTS: EventsSettings = EventsSettings()
     IMAGES: ImageSettings = ImageSettings()
+    STORAGE: StorageSettings = StorageSettings()
     TASKQUEUE: TaskQueueSettings = TaskQueueSettings()
     TOKENS: TokensSettings = TokensSettings()
 

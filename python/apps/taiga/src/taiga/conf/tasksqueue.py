@@ -11,8 +11,9 @@ from pydantic import BaseSettings
 class TaskQueueSettings(BaseSettings):
     # We must include all the modules that define tasks.
     TASKS_MODULES_PATHS: set[str] = {
+        "taiga.commons.storage.tasks",
         "taiga.emails.tasks",
+        "taiga.projects.projects.tasks",
         "taiga.tokens.tasks",
         "taiga.users.tasks",
-        "taiga.projects.projects.tasks",
     }

@@ -54,7 +54,7 @@ class ModifiedAtMetaInfoMixin(models.Model):
         abstract = True
 
 
-class DeletedMetaInfoMixin(models.Model):
+class DeletedByMetaInfoMixin(models.Model):
     deleted_by = models.ForeignKey(
         "users.User",
         null=True,
@@ -62,12 +62,23 @@ class DeletedMetaInfoMixin(models.Model):
         on_delete=models.SET_NULL,
         verbose_name="deleted by",
     )
+
+    class Meta:
+        abstract = True
+
+
+class DeletedAtMetaInfoMixin(models.Model):
     deleted_at = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name="deleted at",
     )
 
+    class Meta:
+        abstract = True
+
+
+class DeletedMetaInfoMixin(DeletedByMetaInfoMixin, DeletedAtMetaInfoMixin):
     class Meta:
         abstract = True
 

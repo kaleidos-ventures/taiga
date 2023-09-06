@@ -8,7 +8,8 @@
 
 import os
 
-from taiga.base.django.settings import *  # noqa, pylint: disable=unused-wildcard-import
+from taiga.base.django.settings import *  # noqa
+from taiga.base.django.settings import INSTALLED_APPS
 
 DEBUG = True
 
@@ -16,7 +17,7 @@ MEDIA_ROOT = "/tmp/taiga/media"
 STATIC_ROOT = "/tmp/taiga/static"
 
 
-INSTALLED_APPS += [  # noqa: F405
+INSTALLED_APPS += [
     "tests.samples.occ",
 ]
 

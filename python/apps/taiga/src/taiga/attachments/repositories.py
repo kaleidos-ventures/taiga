@@ -12,6 +12,7 @@ from fastapi import UploadFile
 from taiga.attachments.models import Attachment
 from taiga.base.db.models import BaseModel, Model, QuerySet, get_contenttype_for_model
 from taiga.base.utils.files import get_size, uploadfile_to_file
+from taiga.commons.storage import repositories as storage_repositories
 from taiga.users.models import User
 
 ##########################################################
@@ -19,7 +20,7 @@ from taiga.users.models import User
 ##########################################################
 
 
-DEFAULT_QUERYSET = Attachment.objects.all()
+DEFAULT_QUERYSET = Attachment.objects.select_related("file").all()
 
 
 class AttachmentFilters(TypedDict, total=False):
@@ -77,11 +78,13 @@ async def create_attachment(
     created_by: User,
     object: Model,
 ) -> Attachment:
+    storaged_object = await storage_repositories.create_storaged_object(uploadfile_to_file(file))
+
     return await Attachment.objects.acreate(
+        file=storaged_object,
         name=file.filename or "unknown",
         size=get_size(file.file),
         content_type=file.content_type or "unknown",
-        file=uploadfile_to_file(file),
         content_object=object,
         created_by=created_by,
     )

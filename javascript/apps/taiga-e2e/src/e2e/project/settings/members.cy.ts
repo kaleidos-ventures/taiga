@@ -21,20 +21,57 @@ import {
 } from '@test/support/helpers/settings.helpers';
 import { createWorkspaceRequest } from '@test/support/helpers/workspace.helpers';
 
+const workspace = WorkspaceMockFactory();
+const projectMock = ProjectMockFactory();
+
 describe('Settings > members', () => {
   before(() => {
     cy.login();
     cy.visit('/');
+
+    void createWorkspaceRequest(workspace.name)
+      .then((responseCreateWorkspace) => {
+        return createFullProjectInWSRequest(
+          responseCreateWorkspace.body.id,
+          projectMock.name
+        );
+      })
+      .then((responseCreateProject) => {
+        projectMock.slug = responseCreateProject.body.slug;
+        projectMock.id = responseCreateProject.body.id;
+
+        const invitations = [
+          { username: '2user', roleSlug: 'admin' },
+          { username: '3user', roleSlug: 'admin' },
+          { username: '4user', roleSlug: 'admin' },
+          { username: '5user', roleSlug: 'general' },
+          { username: '6user', roleSlug: 'general' },
+          { username: '7user', roleSlug: 'general' },
+        ];
+
+        invitations.forEach((invitation) => {
+          void inviteToProjectRequest(
+            responseCreateProject.body.id,
+            [invitation],
+            invitation.username
+          );
+        });
+      });
   });
 
   beforeEach(() => {
     cy.login();
     cy.visit('/');
-    cy.initAxe();
-    cy.getBySel('project-card').contains('Several Roles').click();
+
+    cy.visit(`/project/${projectMock.id}/${projectMock.slug}`);
+    cy.log(`/project/${projectMock.id}/${projectMock.slug}`);
 
     navigateToSettings();
     navigateToMembersSettings();
+  });
+
+  it('is a11y', () => {
+    cy.initAxe();
     cy.tgCheckA11y();
   });
 
@@ -112,16 +149,16 @@ describe('change role', () => {
       .catch(console.error);
   });
 
-  it.skip('change own admin role', () => {
+  it('change own admin role', () => {
     cy.getBySel('project-card').contains('Several Roles').click();
 
     navigateToSettings();
     navigateToMembersSettings();
     cy.tgCheckA11y();
 
-    cy.get('[data-test=1user]').should('be.visible');
+    cy.getBySel('1user').should('be.visible');
     cy.getBySel('disabled-change-role').should('not.exist');
-    cy.get('[data-test=1user]').find('input').click();
+    cy.getBySel('1user').find('input').click();
     cy.getBySel('permissions-warning').should('be.visible');
   });
 });

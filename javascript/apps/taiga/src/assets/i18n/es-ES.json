@@ -213,10 +213,10 @@
     "leave_description": "You will lose the permissions granted as a member of the project and will be removed from all your assignments.",
     "leave_confirm": "Yes, leave",
     "no_cancel": "No, cancel",
-    "remove_title": "Remove {user_name} from the project?",
+    "remove_title": "Remove {{user_name}} from the project?",
     "remove_description": "The user will lose the permissions granted as a member of the project and will be removed from all their assignmets.",
     "remove_confirm": "Yes, remove",
-    "no_longer_member": "You are no longer member of the {name} {type}."
+    "no_longer_member": "You are no longer member of the {{name}} {{type}}."
   },
   "banner": {
     "alpha": "This app, while amazing, is unstable. It's an Alpha version, so your data could be erased at some point. Embrace the wild, cherish every moment, and don't forget your bear repellent spray."
@@ -224,5 +224,11 @@
   "projects_dropdown": {
     "projects_number": "{projectsNum, plural, =0 {0 projects} one {1 project} other {# projects}}",
     "projects_list_title": "Projects in this workspace"
+  },
+  "ui_components": {
+    "undo": {
+      "action_undone": "Action undone",
+      "action_undo": "Undo"
+    }
   }
 }

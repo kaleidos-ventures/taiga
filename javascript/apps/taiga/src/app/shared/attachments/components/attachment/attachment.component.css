@@ -15,6 +15,12 @@ Copyright (c) 2023-present Kaleidos INC
 .row {
   block-size: var(--spacing-32);
   padding-block: var(--spacing-4);
+
+  &:hover {
+    background-color: var(--color-gray20);
+    border-radius: var(--spacing-4);
+    cursor: pointer;
+  }
 }
 
 .name-column {

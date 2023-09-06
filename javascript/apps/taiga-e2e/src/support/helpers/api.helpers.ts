@@ -56,6 +56,7 @@ export function getEmails(): Cypress.Chainable<
       text: string;
       html: string;
       to: string;
+      subject: string;
     }[];
   }>
 > {

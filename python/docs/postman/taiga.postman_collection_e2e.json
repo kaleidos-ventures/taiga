@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "cc214ac7-14dc-42ad-b1c6-2beac900fe10",
+		"_postman_id": "48b40463-3f63-40a6-bfad-432eefa99e17",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "9835734"
@@ -2293,6 +2293,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"workspace\");",
+									"    pm.expect(jsonRes).to.have.property(\"workflows\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsAdmin\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsMember\");",
 									"    pm.expect(jsonRes).to.have.property(\"userPermissions\");",
@@ -2309,11 +2310,15 @@
 									"",
 									"    pm.expect(workspace.id).to.be.eql(pm.environment.get(\"ws-id\"));",
 									"",
+									"    var workflows = jsonRes.workflows;",
+									"    pm.expect(workflows[0]).to.have.property(\"name\");",
+									"    pm.expect(workflows[0]).to.have.property(\"slug\");",
+									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(13);",
+									"    pm.expect(numOfReturnedFields).to.equal(14);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2499,6 +2504,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"description\");",
 									"    pm.expect(jsonRes).to.have.property(\"workspace\");",
+									"    pm.expect(jsonRes).to.have.property(\"workflows\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsAdmin\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsMember\");",
 									"    pm.expect(jsonRes).to.have.property(\"userPermissions\");",
@@ -2510,11 +2516,15 @@
 									"    pm.expect(workspace).to.have.property(\"slug\");",
 									"    pm.expect(workspace).to.have.property(\"userRole\");",
 									"",
+									"    var workflows = jsonRes.workflows;",
+									"    pm.expect(workflows[0]).to.have.property(\"name\");",
+									"    pm.expect(workflows[0]).to.have.property(\"slug\");",
+									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(13);",
+									"    pm.expect(numOfReturnedFields).to.equal(14);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3314,6 +3324,83 @@
 							],
 							"path": [
 								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{pj}.workflows",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API contract",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
+									"    pm.expect(jsonRes).to.have.property(\"name\");",
+									"    pm.expect(jsonRes).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes).to.have.property(\"order\");",
+									"    pm.expect(jsonRes).to.have.property(\"statuses\");",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"",
+									"    // Validate second-level entries",
+									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"name\");",
+									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"color\");",
+									"    var numOfReturnedFields = Object.keys(jsonRes.statuses[0]).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"new workflow\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows"
 							]
 						}
 					},
@@ -6524,6 +6611,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"workspace\");",
+									"    pm.expect(jsonRes).to.have.property(\"workflows\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsAdmin\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsMember\");",
 									"    pm.expect(jsonRes).to.have.property(\"userPermissions\");",
@@ -6540,11 +6628,15 @@
 									"",
 									"    pm.expect(workspace.id).to.be.eql(pm.environment.get(\"ws-id\"));",
 									"",
+									"    var workflows = jsonRes.workflows;",
+									"    pm.expect(workflows[0]).to.have.property(\"name\");",
+									"    pm.expect(workflows[0]).to.have.property(\"slug\");",
+									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(13);",
+									"    pm.expect(numOfReturnedFields).to.equal(14);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -7988,6 +8080,7 @@
 									"    pm.expect(jsonRes).to.have.property(\"id\");",
 									"    pm.expect(jsonRes).to.have.property(\"slug\");",
 									"    pm.expect(jsonRes).to.have.property(\"workspace\");",
+									"    pm.expect(jsonRes).to.have.property(\"workflows\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsAdmin\");",
 									"    pm.expect(jsonRes).to.have.property(\"userIsMember\");",
 									"    pm.expect(jsonRes).to.have.property(\"userPermissions\");",
@@ -8004,11 +8097,15 @@
 									"",
 									"    pm.expect(workspace.id).to.be.eql(pm.environment.get(\"ws-id\"));",
 									"",
+									"    var workflows = jsonRes.workflows;",
+									"    pm.expect(workflows[0]).to.have.property(\"name\");",
+									"    pm.expect(workflows[0]).to.have.property(\"slug\");",
+									"",
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(workspace).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(4);",
 									"    numOfReturnedFields = Object.keys(jsonRes).length;",
-									"    pm.expect(numOfReturnedFields).to.equal(13);",
+									"    pm.expect(numOfReturnedFields).to.equal(14);",
 									"});"
 								],
 								"type": "text/javascript"

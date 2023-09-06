@@ -37,14 +37,14 @@
             {
                 "slug": "main",
                 "name": "Main",
-                "order": 1,
-                "statuses": [
-                  {"name": "New", "order": 1, "color": 1},
-                  {"name": "Ready", "order": 2, "color": 2},
-                  {"name": "In progress", "order": 3, "color": 3},
-                  {"name": "Done", "order": 4, "color": 4}
-                ]
+                "order": 1
             }
+        ],
+        "workflow_statuses": [
+            {"name": "New", "order": 1, "color": 1},
+            {"name": "Ready", "order": 2, "color": 2},
+            {"name": "In progress", "order": 3, "color": 3},
+            {"name": "Done", "order": 4, "color": 4}
         ]
     }
 }

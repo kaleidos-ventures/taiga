@@ -29,6 +29,7 @@ from taiga.projects.projects.services import exceptions as ex
 from taiga.projects.roles import repositories as pj_roles_repositories
 from taiga.users import services as users_services
 from taiga.users.models import AnyUser, User
+from taiga.workflows import repositories as workflows_repositories
 from taiga.workspaces.memberships import repositories as workspace_memberships_repositories
 from taiga.workspaces.workspaces import services as workspaces_services
 from taiga.workspaces.workspaces.models import Workspace
@@ -99,7 +100,7 @@ async def _create_project(
 async def list_projects(workspace_id: UUID) -> list[Project]:
     return await projects_repositories.list_projects(
         filters={"workspace_id": workspace_id},
-        prefetch_related=["workspace"],
+        select_related=["workspace"],
     )
 
 
@@ -113,7 +114,7 @@ async def list_workspace_projects_for_user(workspace: Workspace, user: User) -> 
 
     return await projects_repositories.list_projects(
         filters={"workspace_id": workspace.id, "project_member_id": user.id},
-        prefetch_related=["workspace"],
+        select_related=["workspace"],
     )
 
 
@@ -134,8 +135,7 @@ async def list_workspace_invited_projects_for_user(workspace: Workspace, user: U
 
 async def get_project(id: UUID) -> Project | None:
     return await projects_repositories.get_project(
-        filters={"id": id},
-        select_related=["workspace"],
+        filters={"id": id}, select_related=["workspace"], prefetch_related=["workflows"]
     )
 
 
@@ -166,9 +166,16 @@ async def get_project_detail(project: Project, user: AnyUser) -> ProjectDetailSe
         else await pj_invitations_services.has_pending_project_invitation(user=user, project=project)
     )
 
+    workflows = await workflows_repositories.list_workflows(
+        filters={
+            "project_id": project.id,
+        }
+    )
+
     return serializers_services.serialize_project_detail(
         project=project,
         workspace=workspace,
+        workflows=workflows,
         user_is_admin=is_project_admin,
         user_is_member=is_project_member,
         user_permissions=user_permissions,

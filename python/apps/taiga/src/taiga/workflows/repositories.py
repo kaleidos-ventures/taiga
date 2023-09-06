@@ -18,7 +18,7 @@ from asgiref.sync import sync_to_async
 from taiga.base.db.models import QuerySet
 from taiga.base.repositories import neighbors as neighbors_repositories
 from taiga.base.repositories.neighbors import Neighbor
-from taiga.projects.projects.models import Project
+from taiga.projects.projects.models import Project, ProjectTemplate
 from taiga.workflows.models import Workflow, WorkflowStatus
 
 ##########################################################
@@ -68,7 +68,7 @@ def _apply_prefetch_related_to_workflow_queryset(
     return qs.prefetch_related(*prefetch_related)
 
 
-WorkflowOrderBy = list[Literal["order",]]
+WorkflowOrderBy = list[Literal["order", "-order"]]
 
 
 def _apply_order_by_to_workflow_queryset(
@@ -86,7 +86,7 @@ def _apply_order_by_to_workflow_queryset(
 def create_workflow_sync(
     name: str,
     slug: str,
-    order: int,
+    order: Decimal,
     project: Project,
 ) -> Workflow:
     return Workflow.objects.create(
@@ -97,7 +97,16 @@ def create_workflow_sync(
     )
 
 
-create_workflow = sync_to_async(create_workflow_sync)
+async def create_workflow(
+    name: str,
+    order: Decimal,
+    project: Project,
+) -> Workflow:
+    return await Workflow.objects.acreate(
+        name=name,
+        order=order,
+        project=project,
+    )
 
 
 ##########################################################
@@ -324,3 +333,21 @@ async def delete_workflow_status(filters: WorkflowStatusFilters = {}) -> int:
     qs = _apply_filters_to_workflow_status_queryset(qs=DEFAULT_QUERYSET_WORKFLOW_STATUS, filters=filters)
     count, _ = await qs.adelete()
     return count
+
+
+##########################################################
+# WorkflowStatus - misc
+##########################################################
+
+
+def apply_default_workflow_statuses_sync(template: ProjectTemplate, workflow: Workflow) -> None:
+    for status in template.workflow_statuses:
+        create_workflow_status_sync(
+            name=status["name"],
+            color=status["color"],
+            order=status["order"],
+            workflow=workflow,
+        )
+
+
+apply_default_workflow_statuses = sync_to_async(apply_default_workflow_statuses_sync)

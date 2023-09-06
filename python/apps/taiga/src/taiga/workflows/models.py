@@ -5,15 +5,19 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from typing import Any
+
 from taiga.base.db import models
-from taiga.base.utils.datetime import timestamp_mics
+from taiga.base.utils.slug import generate_incremental_int_suffix, slugify_uniquely_for_queryset
 from taiga.projects.projects.models import Project
 
 
 class Workflow(models.BaseModel):
     name = models.CharField(max_length=250, null=False, blank=False, verbose_name="name")
     slug = models.LowerSlugField(max_length=250, null=False, blank=False, verbose_name="slug")
-    order = models.BigIntegerField(default=timestamp_mics, null=False, blank=False, verbose_name="order")
+    order = models.DecimalField(
+        max_digits=16, decimal_places=10, default=100, null=False, blank=False, verbose_name="order"
+    )
     project = models.ForeignKey(
         "projects.Project",
         null=False,
@@ -28,7 +32,6 @@ class Workflow(models.BaseModel):
         verbose_name_plural = "workflows"
         constraints = [
             models.UniqueConstraint(fields=["project", "slug"], name="%(app_label)s_%(class)s_unique_project_slug"),
-            models.UniqueConstraint(fields=["project", "name"], name="%(app_label)s_%(class)s_unique_project_name"),
         ]
         indexes = [
             models.Index(fields=["project", "slug"]),
@@ -40,6 +43,17 @@ class Workflow(models.BaseModel):
 
     def __repr__(self) -> str:
         return f"<Workflow {self.name}>"
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if not self.slug:
+            self.slug = slugify_uniquely_for_queryset(
+                value=self.name,
+                queryset=self.project.workflows.all(),
+                generate_suffix=generate_incremental_int_suffix(),
+                use_always_suffix=False,
+            )
+
+        super().save(*args, **kwargs)
 
 
 class WorkflowStatus(models.BaseModel):

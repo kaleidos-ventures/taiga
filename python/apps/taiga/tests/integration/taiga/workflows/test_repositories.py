@@ -26,7 +26,6 @@ async def test_create_workflow():
     project = await f.create_project()
     workflow_res = await repositories.create_workflow(
         name="workflow",
-        slug="slug",
         order=1,
         project=project,
     )

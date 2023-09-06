@@ -7,12 +7,14 @@
 
 from taiga.projects.projects.models import Project
 from taiga.projects.projects.serializers import ProjectDetailSerializer
+from taiga.workflows.models import Workflow
 from taiga.workspaces.workspaces.serializers.nested import WorkspaceNestedSerializer
 
 
 def serialize_project_detail(
     project: Project,
     workspace: WorkspaceNestedSerializer,
+    workflows: list[Workflow],
     user_is_admin: bool,
     user_is_member: bool,
     user_has_pending_invitation: bool,
@@ -26,6 +28,7 @@ def serialize_project_detail(
         color=project.color,
         logo=project.logo,
         workspace=workspace,
+        workflows=workflows,
         user_is_admin=user_is_admin,
         user_is_member=user_is_member,
         user_has_pending_invitation=user_has_pending_invitation,

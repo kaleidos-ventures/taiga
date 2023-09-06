@@ -81,7 +81,7 @@ def _apply_select_related_to_project_queryset(
     return qs.select_related(*select_related)
 
 
-ProjectPrefetchRelated = list[Literal["workspace",]]
+ProjectPrefetchRelated = list[Literal["workflows"]]
 
 
 def _apply_prefetch_related_to_project_queryset(
@@ -166,7 +166,7 @@ def list_projects(
 def get_project(
     filters: ProjectFilters = {},
     select_related: ProjectSelectRelated = ["workspace"],
-    prefetch_related: ProjectPrefetchRelated = ["workspace"],
+    prefetch_related: ProjectPrefetchRelated = [],
 ) -> Project | None:
     qs = _apply_filters_to_project_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     qs = _apply_select_related_to_project_queryset(qs=qs, select_related=select_related)
@@ -278,7 +278,7 @@ def apply_template_to_project_sync(template: ProjectTemplate, project: Project) 
             order=workflow["order"],
             project=project,
         )
-        for status in workflow["statuses"]:
+        for status in template.workflow_statuses:
             workflows_repositories.create_workflow_status_sync(
                 name=status["name"],
                 color=status["color"],

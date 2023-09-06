@@ -6,7 +6,14 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Component, Input, OnChanges, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
@@ -50,6 +57,9 @@ export class AttachmentComponent implements OnChanges {
 
   @Input()
   public canEdit = true;
+
+  @ViewChild('download', { read: ElementRef })
+  public download!: ElementRef<HTMLElement>;
 
   public extension = 'paperclip';
   public state = inject(AttachmentsState);
@@ -103,7 +113,8 @@ export class AttachmentComponent implements OnChanges {
     return 'progress' in attachment;
   };
 
-  public deleteAttachment() {
+  public deleteAttachment(event: Event) {
+    event.stopPropagation();
     this.#initUndo$.next();
   }
 
@@ -111,6 +122,10 @@ export class AttachmentComponent implements OnChanges {
     if (!this.isLoadingAttachments(this.attachment)) {
       this.state.deleteAttachment$.next(this.attachment.id);
     }
+  }
+
+  public downloadAttachment() {
+    this.download.nativeElement.click();
   }
 
   public ngOnChanges() {

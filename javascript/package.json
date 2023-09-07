@@ -84,7 +84,6 @@
     "eslint-plugin-taiga": "file:eslint-plugin-taiga",
     "hotkeys-js": "^3.12.0",
     "immer": "^10.0.2",
-    "messageformat": "^2.3.0",
     "pretty-bytes": "^6.1.1",
     "rxjs": "~7.8.1",
     "smtp-server": "^3.11.0",

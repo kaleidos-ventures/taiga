@@ -104,7 +104,6 @@ tg-kanban-story {
 }
 
 .create-story {
-  margin-block-end: var(--spacing-16);
-  margin-block-start: var(--spacing-8);
+  margin-block: var(--spacing-8);
   padding-block-end: var(--spacing-8);
 }

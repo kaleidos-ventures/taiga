@@ -34,7 +34,6 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 @NgModule({
   exports: [TranslocoModule],
   providers: [
-    provideTranslocoMessageformat(),
     provideTransloco({
       config: {
         availableLangs: ['en-US'],
@@ -48,6 +47,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
       },
       loader: TranslocoHttpLoader,
     }),
+    provideTranslocoMessageformat(),
   ],
 })
 export class TranslocoRootModule {}

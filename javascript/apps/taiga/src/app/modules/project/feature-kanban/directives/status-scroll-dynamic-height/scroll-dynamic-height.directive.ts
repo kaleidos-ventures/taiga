@@ -151,6 +151,7 @@ export class StatusScrollDynamicHeightDirective
       attributes: true,
       childList: true,
       subtree: true,
+      characterData: true,
     });
   }
 

@@ -22,7 +22,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+
 import {
   animate,
   state,
@@ -32,15 +32,16 @@ import {
 } from '@angular/animations';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { TranslocoService } from '@ngneat/transloco';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 
 @Component({
   selector: 'tg-undo',
   standalone: true,
   imports: [
     CommonModule,
-    ContextNotificationModule,
     TuiLinkModule,
     TuiButtonModule,
+    ContextNotificationComponent,
   ],
   templateUrl: './undo.component.html',
   styleUrls: ['./undo.component.css'],

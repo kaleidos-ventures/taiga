@@ -22,10 +22,17 @@ import {
   FormControl,
   FormGroup,
   Validators,
+  ReactiveFormsModule,
+  FormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TuiNotification } from '@taiga-ui/core';
+import {
+  TuiNotification,
+  TuiButtonModule,
+  TuiTextfieldControllerModule,
+  TuiDataListModule,
+} from '@taiga-ui/core';
 import { ProjectCreation, Workspace, WorkspaceMembership } from '@taiga/data';
 import { ModalComponent } from '@taiga/ui/modal/components';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
@@ -33,6 +40,15 @@ import { Subject } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { TuiDataListWrapperModule } from '@taiga-ui/kit/components/data-list-wrapper';
+import { TuiSelectModule, TuiTextAreaModule } from '@taiga-ui/kit';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+import { ImageUploadComponent } from '@taiga/ui/inputs/image-upload/image-upload.component';
+import { ButtonLoadingDirective } from '~/app/shared/directives/button-loading/button-loading.directive';
+import { InputsModule } from '@taiga/ui/inputs';
 
 export type TemplateProjectForm = Pick<
   ProjectCreation,
@@ -48,6 +64,25 @@ export type TemplateProjectForm = Pick<
     './template-step.component.css',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslocoDirective,
+    TuiButtonModule,
+    ReactiveFormsModule,
+    TuiSelectModule,
+    TuiTextfieldControllerModule,
+    TuiDataListModule,
+    TuiDataListWrapperModule,
+    AvatarComponent,
+    TuiAutoFocusModule,
+    TuiTextAreaModule,
+    ImageUploadComponent,
+    ButtonLoadingDirective,
+    ModalComponent,
+    InputsModule,
+  ],
 })
 export class TemplateStepComponent implements OnInit {
   @Input()

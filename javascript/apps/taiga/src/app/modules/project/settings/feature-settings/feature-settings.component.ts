@@ -6,8 +6,9 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -29,6 +30,8 @@ import { filterNil } from '~/app/shared/utils/operators';
   templateUrl: './feature-settings.component.html',
   styleUrls: ['./feature-settings.component.css'],
   providers: [RxState],
+  standalone: true,
+  imports: [CommonModule, RouterOutlet],
 })
 export class ProjectsSettingsFeatureSettingsComponent {
   public user$ = this.store.select(selectUser);

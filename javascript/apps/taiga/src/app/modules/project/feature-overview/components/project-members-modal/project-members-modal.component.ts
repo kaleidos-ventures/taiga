@@ -13,11 +13,16 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiScrollbarModule, TuiSvgModule } from '@taiga-ui/core';
+import { TranslocoDirective } from '@ngneat/transloco';
+import {
+  TuiButtonModule,
+  TuiScrollbarModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { Invitation, Membership, User } from '@taiga/data';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { ProjectMembersListComponent } from '../project-members-list/project-members-list.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'tg-project-members-modal',
@@ -26,19 +31,12 @@ import { ProjectMembersListComponent } from '../project-members-list/project-mem
   styleUrls: ['./project-members-modal.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     TuiSvgModule,
-    CommonTemplateModule,
     TuiScrollbarModule,
     ProjectMembersListComponent,
-  ],
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: {
-        scope: 'project_overview',
-        alias: 'project_overview',
-      },
-    },
+    TranslocoDirective,
+    TuiButtonModule,
   ],
 })
 export class ProjectMembersModalComponent {

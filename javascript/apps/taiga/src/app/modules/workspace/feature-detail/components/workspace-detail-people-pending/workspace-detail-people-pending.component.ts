@@ -28,6 +28,12 @@ import {
 } from '~/app/modules/workspace/feature-detail/+state/selectors/workspace-detail.selectors';
 import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import { conSlideInOut } from '~/app/shared/utils/animations';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
+import { UserSkeletonComponent } from '@taiga/ui/skeletons/user-skeleton/user-skeleton.component';
+import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
+import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 
 @Component({
   selector: 'tg-workspace-detail-people-pending',
@@ -36,6 +42,15 @@ import { conSlideInOut } from '~/app/shared/utils/animations';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
   animations: [conSlideInOut],
+  standalone: true,
+  imports: [
+    CommonModule,
+    DynamicTableModule,
+    TranslocoDirective,
+    UserCardComponent,
+    UserSkeletonComponent,
+    PaginationComponent,
+  ],
 })
 export class WorkspaceDetailPeoplePendingComponent implements OnInit {
   public cd = inject(ChangeDetectorRef);

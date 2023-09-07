@@ -18,7 +18,7 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Status, Workflow } from '@taiga/data';
 import { Observable } from 'rxjs';
-import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
+import { type KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 import { KanbanWorkflowComponent } from '~/app/modules/project/feature-kanban/components/workflow/kanban-workflow.component';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
 import {
@@ -45,6 +45,7 @@ export interface KanbanKeyboardNavigation {
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[tgKanbanStatusKeyboardNavigation]',
+  standalone: true,
 })
 export class KanbanStatusKeyboardNavigationDirective implements OnInit {
   @ViewChild(KanbanVirtualScrollDirective)

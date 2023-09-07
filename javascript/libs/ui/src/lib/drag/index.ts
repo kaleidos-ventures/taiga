@@ -6,7 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-export * from './drag.module';
 export * from './services/drag.service';
 export * from './services/autoscroll.service';
 export * from './drag.model';

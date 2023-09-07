@@ -20,6 +20,18 @@ import { Store } from '@ngrx/store';
 import { ShortcutsService } from '@taiga/core';
 import { Membership, Project, Role, User } from '@taiga/data';
 import { finalize } from 'rxjs';
+import { A11yModule } from '@angular/cdk/a11y';
+import { TuiActiveZoneModule } from '@taiga-ui/cdk';
+import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
+import {
+  TuiHostedDropdownModule,
+  TuiLinkModule,
+  TuiButtonModule,
+} from '@taiga-ui/core';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
 
 @UntilDestroy()
 @Component({
@@ -27,6 +39,19 @@ import { finalize } from 'rxjs';
   templateUrl: './remove-member.component.html',
   styleUrls: ['./remove-member.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TuiHostedDropdownModule,
+    TuiDropdownModule,
+    TuiActiveZoneModule,
+    TuiLinkModule,
+    RestoreFocusTargetDirective,
+    A11yModule,
+    RestoreFocusDirective,
+    TuiButtonModule,
+  ],
 })
 export class RemoveMemberComponent implements OnChanges {
   @Input() public project!: Project;

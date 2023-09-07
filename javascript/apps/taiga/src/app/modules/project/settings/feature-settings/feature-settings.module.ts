@@ -12,7 +12,10 @@ import { ProjectSettingsFeatureSettingsRoutingModule } from './feature-settings-
 import { ProjectsSettingsFeatureSettingsComponent } from './feature-settings.component';
 
 @NgModule({
-  declarations: [ProjectsSettingsFeatureSettingsComponent],
-  imports: [CommonModule, ProjectSettingsFeatureSettingsRoutingModule],
+  imports: [
+    CommonModule,
+    ProjectSettingsFeatureSettingsRoutingModule,
+    ProjectsSettingsFeatureSettingsComponent,
+  ],
 })
 export class ProjectSettingsFeatureSettingsModule {}

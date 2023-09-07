@@ -25,6 +25,7 @@ import {
 import { TuiSelectComponent } from '@taiga-ui/kit';
 import { FormDirective } from '../form/form.directive';
 import { FieldService } from '../services/field.service';
+import { NgIf, NgClass } from '@angular/common';
 
 let nextId = 0;
 
@@ -51,6 +52,8 @@ let nextId = 0;
       },
     },
   ],
+  standalone: true,
+  imports: [NgIf, NgClass],
 })
 export class SelectComponent implements AfterContentInit {
   @Input()

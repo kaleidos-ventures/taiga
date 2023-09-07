@@ -43,6 +43,16 @@ import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/settings/feature-member
 import { selectMemberRolesOrdered } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import { removeCell, showUndo, undoDone } from '~/app/shared/utils/animations';
+import { RevokeInvitationComponent } from '../revoke-invitation/revoke-invitation.component';
+import { TuiLinkModule, TuiButtonModule } from '@taiga-ui/core';
+import { RoleSelectComponent } from '../role-select/role-select.component';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+import { UserSkeletonComponent } from '@taiga/ui/skeletons/user-skeleton/user-skeleton.component';
+import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
+import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 
 const cssValue = getComputedStyle(document.documentElement);
 interface InvitationData {
@@ -126,6 +136,20 @@ interface InvitationData {
         ]
       ),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    DynamicTableModule,
+    UserCardComponent,
+    RoleSelectComponent,
+    TuiLinkModule,
+    RevokeInvitationComponent,
+    ContextNotificationComponent,
+    TuiButtonModule,
+    UserSkeletonComponent,
+    PaginationComponent,
   ],
 })
 export class PendingMembersListComponent {

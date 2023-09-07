@@ -6,4 +6,4 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-export { TooltipModule as ToolTipModule } from './tooltip.module';
+export { TooltipDirective } from './tooltip.directive';

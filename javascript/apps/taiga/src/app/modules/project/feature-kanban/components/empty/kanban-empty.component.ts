@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule } from '@taiga-ui/core';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+
 import { CommonModule } from '@angular/common';
 import { NgOptimizedImage } from '@angular/common';
 
@@ -25,13 +25,7 @@ import { NgOptimizedImage } from '@angular/common';
   styleUrls: ['./kanban-empty.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [
-    TranslocoModule,
-    TuiButtonModule,
-    InputsModule,
-    CommonModule,
-    NgOptimizedImage,
-  ],
+  imports: [TranslocoModule, TuiButtonModule, CommonModule, NgOptimizedImage],
 })
 export class KanbanEmptyComponent {
   @Input()

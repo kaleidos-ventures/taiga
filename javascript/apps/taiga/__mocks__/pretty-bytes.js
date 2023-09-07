@@ -6,4 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-export * from './modal.module';
+function prettyBytes() {
+  return '1kb';
+}
+
+module.exports = prettyBytes;

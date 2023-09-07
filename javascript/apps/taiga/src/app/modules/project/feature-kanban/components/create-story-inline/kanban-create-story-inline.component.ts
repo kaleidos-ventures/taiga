@@ -18,8 +18,8 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { TranslocoService } from '@ngneat/transloco';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { TranslocoService, TranslocoDirective } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { Status, Workflow } from '@taiga/data';
 import { v4 } from 'uuid';
@@ -28,12 +28,25 @@ import {
   StoryTitleMaxLength,
   StoryTitleValidation,
 } from '~/app/shared/story/title-validation';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { CommonModule } from '@angular/common';
+import { TuiActiveZoneModule } from '@taiga-ui/cdk';
+import { InputsModule } from '@taiga/ui/inputs';
 
 @Component({
   selector: 'tg-create-story-inline',
   templateUrl: './kanban-create-story-inline.component.html',
   styleUrls: ['./kanban-create-story-inline.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    InputsModule,
+    TranslocoDirective,
+    ReactiveFormsModule,
+    TuiActiveZoneModule,
+    TuiButtonModule,
+  ],
 })
 export class KanbanCreateStoryInlineComponent implements AfterViewInit {
   @Input()

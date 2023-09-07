@@ -9,7 +9,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { Error403Component } from './error-403.component';
 
 const routes: Routes = [
@@ -22,8 +22,7 @@ const routes: Routes = [
   },
 ];
 @NgModule({
-  declarations: [Error403Component],
-  imports: [RouterModule.forChild(routes), CommonTemplateModule],
+  imports: [RouterModule.forChild(routes), Error403Component],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

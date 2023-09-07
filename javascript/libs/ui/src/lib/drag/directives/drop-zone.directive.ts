@@ -12,6 +12,7 @@ import { Draggable, DropZone } from '../drag.model';
 
 @Directive({
   selector: '[tgUiDropZone]',
+  standalone: true,
 })
 export class DropZoneDirective implements OnDestroy, DropZone {
   @Input()

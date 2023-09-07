@@ -14,6 +14,8 @@ import {
   platformBrowserDynamicTesting,
 } from '@angular/platform-browser-dynamic/testing';
 
+import '@ng-web-apis/universal/mocks';
+
 getTestBed().resetTestEnvironment();
 getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,

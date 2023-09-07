@@ -29,18 +29,26 @@ import {
 import { RouterModule } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TuiDataListModule, TuiSvgModule } from '@taiga-ui/core';
+import {
+  TuiButtonModule,
+  TuiDataListModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { Project, Workspace } from '@taiga/data';
-import { AvatarModule } from '@taiga/ui/avatar';
-import { BadgeModule } from '@taiga/ui/badge/badge.module';
+
 import { distinctUntilChanged, map, skip } from 'rxjs/operators';
 import { selectProjectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
-import { CommonTemplateModule } from '../common-template.module';
+
 import { DropdownModule } from '../dropdown/dropdown.module';
 import { DataAccessInviteUserModalModule } from '../invite-user-modal/data-access/+state/invite-user-modal-data-access.module';
 import { InviteUserModalModule } from '../invite-user-modal/invite-user-modal.module';
-import { CapitalizePipeModule } from '../pipes/capitalize/capitalize.pipe.module';
-import { ToolTipModule } from '@taiga/ui/tooltip';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+import { BadgeComponent } from '@taiga/ui/badge/badge.component';
+import { capitalizePipe } from '../pipes/capitalize/capitalize.pipe';
+import { CommonModule } from '@angular/common';
+import { TooltipDirective } from '@taiga/ui/tooltip/tooltip.directive';
+import { TranslocoDirective } from '@ngneat/transloco';
+
 const cssValue = getComputedStyle(document.documentElement);
 
 type CardVariant = 'project' | 'placeholder' | 'invitation';
@@ -54,15 +62,17 @@ type CardVariant = 'project' | 'placeholder' | 'invitation';
   imports: [
     RouterModule,
     TuiSvgModule,
-    CommonTemplateModule,
-    AvatarModule,
     InviteUserModalModule,
     DataAccessInviteUserModalModule,
-    BadgeModule,
-    CapitalizePipeModule,
     TuiDataListModule,
     DropdownModule,
-    ToolTipModule,
+    AvatarComponent,
+    TooltipDirective,
+    BadgeComponent,
+    capitalizePipe,
+    CommonModule,
+    TranslocoDirective,
+    TuiButtonModule,
   ],
   animations: [
     trigger('invitationAccepted', [

@@ -17,8 +17,11 @@ import {
 import { TuiButtonComponent } from '@taiga-ui/core';
 import { ButtonLoadingService } from './button-loading.service';
 
-// eslint-disable-next-line @angular-eslint/directive-selector
-@Directive({ selector: 'button[loading]' })
+@Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
+  selector: 'button[loading]',
+  standalone: true,
+})
 export class ButtonLoadingDirective implements AfterViewInit {
   @Input()
   public loadingSuccess = '';

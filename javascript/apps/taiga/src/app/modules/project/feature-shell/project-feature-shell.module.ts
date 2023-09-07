@@ -8,23 +8,17 @@
 
 import { NgModule } from '@angular/core';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { AvatarModule } from '@taiga/ui/avatar';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+
 import { ProjectDataAccessModule } from '~/app/modules/project/data-access/project.module';
-import { ProjectFeatureNavigationModule } from '~/app/modules/project/feature-navigation/project-feature-navigation.module';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { ProjectFeatureShellRoutingModule } from './project-feature-shell-routing.module';
 import { ProjectFeatureShellComponent } from './project-feature-shell.component';
 
 @NgModule({
-  declarations: [ProjectFeatureShellComponent],
   imports: [
     ProjectFeatureShellRoutingModule,
-    ProjectFeatureNavigationModule,
     ProjectDataAccessModule,
-    AvatarModule,
-    ContextNotificationModule,
-    CommonTemplateModule,
+    ProjectFeatureShellComponent,
   ],
   providers: [
     {

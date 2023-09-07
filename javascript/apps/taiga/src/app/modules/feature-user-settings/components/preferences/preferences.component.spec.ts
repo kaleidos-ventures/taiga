@@ -20,6 +20,7 @@ import { userSettingsActions } from '~/app/modules/feature-user-settings/data-ac
 
 import { PreferencesComponent } from './preferences.component';
 import { LanguageService } from '~/app/services/language/language.service';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 
 describe('PreferencesComponent', () => {
   let spectator: Spectator<PreferencesComponent>;
@@ -29,7 +30,7 @@ describe('PreferencesComponent', () => {
 
   const createComponent = createComponentFactory({
     component: PreferencesComponent,
-    imports: [],
+    imports: [getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
       provideMockActions(() => actions$),

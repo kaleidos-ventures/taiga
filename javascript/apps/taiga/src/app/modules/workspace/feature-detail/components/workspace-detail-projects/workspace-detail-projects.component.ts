@@ -38,6 +38,14 @@ import { selectProjectAcceptedInvite } from '~/app/shared/invite-user-modal/data
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
+import { RouterLink } from '@angular/router';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { CardSkeletonComponent } from '@taiga/ui/skeletons/card-skeleton/card-skeleton.component';
+import { DeleteProjectComponent } from '~/app/modules/project/feature-overview/components/delete-project/delete-project.component';
+import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 
 interface ViewDetailModel {
   projects: WorkspaceProject[];
@@ -122,6 +130,17 @@ export interface WorkspaceDetailState {
     ]),
   ],
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TuiButtonModule,
+    RouterLink,
+    ResizedDirective,
+    ProjectCardComponent,
+    CardSkeletonComponent,
+    DeleteProjectComponent,
+  ],
 })
 export class WorkspaceDetailProjectsComponent implements OnInit {
   public loading$ = this.store.select(selectLoading);

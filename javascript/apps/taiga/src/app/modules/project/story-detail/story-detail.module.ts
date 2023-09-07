@@ -17,10 +17,9 @@ import {
   TuiScrollbarModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { ModalModule } from '@taiga/ui/modal';
+
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { ClickActionAreaDirective } from '~/app/shared/directives/click-action-area/click-action-area.directive';
 import { CodeHightlightDirective } from '~/app/shared/directives/code-highlight/code-highlight.directive';
@@ -47,15 +46,13 @@ import { StoryDetailDescriptionStickyDirective } from './components/story-detail
 import { CommentsComponent } from '~/app/shared/comments/comments.component';
 import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
 import { CommentsAutoScrollDirective } from '~/app/shared/comments/directives/comments-auto-scroll.directive';
-import { ToolTipModule } from '@taiga/ui/tooltip';
+
 import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.component';
 import { AttachmentsComponent } from '~/app/shared/attachments/attachments.component';
 
 @NgModule({
   imports: [
     RouterModule,
-    CommonTemplateModule,
-    ToolTipModule,
     TuiLinkModule,
     TuiScrollbarModule,
     DropdownModule,
@@ -64,7 +61,6 @@ import { AttachmentsComponent } from '~/app/shared/attachments/attachments.compo
     UserAvatarComponent,
     A11yModule,
     DateDistancePipe,
-    InputsModule,
     FormsModule,
     ReactiveFormsModule,
     DataAccessStoryDetailModule,
@@ -73,7 +69,6 @@ import { AttachmentsComponent } from '~/app/shared/attachments/attachments.compo
     TuiActiveZoneModule,
     ResizedDirective,
     HasPermissionDirective,
-    ModalModule,
     AutoFocusDirective,
     RestoreFocusDirective,
     RestoreFocusTargetDirective,
@@ -90,8 +85,6 @@ import { AttachmentsComponent } from '~/app/shared/attachments/attachments.compo
     CommentsAutoScrollDirective,
     NouserAvatarComponent,
     AttachmentsComponent,
-  ],
-  declarations: [
     StoryDetailComponent,
     StoryDetailStatusComponent,
     StoryDetailAssignComponent,

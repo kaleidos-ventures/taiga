@@ -11,6 +11,7 @@ import { DraggableDirective } from './draggable.directive';
 
 @Directive({
   selector: '[tgUiDragHandle]',
+  standalone: true,
 })
 export class DragHandleDirective {
   @HostListener('mousedown.prevent', ['$event'])

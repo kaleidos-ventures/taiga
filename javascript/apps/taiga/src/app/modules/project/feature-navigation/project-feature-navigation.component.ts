@@ -31,6 +31,9 @@ import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
 import { Subject } from 'rxjs';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { ProjectNavigationSettingsComponent } from './components/project-navigation-settings/project-navigation-settings.component';
+import { CommonModule } from '@angular/common';
+import { ProjectNavigationMenuComponent } from './components/project-navigation-menu/project-navigation-menu.component';
 
 const collapseMenuAnimation = '200ms ease-out';
 const openMenuAnimation = '200ms ease-in';
@@ -137,6 +140,12 @@ const translateMenuSelector = '.main-nav-container-inner';
         }
       ),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ProjectNavigationMenuComponent,
+    ProjectNavigationSettingsComponent,
   ],
 })
 export class ProjectNavigationComponent implements OnInit, AfterViewInit {

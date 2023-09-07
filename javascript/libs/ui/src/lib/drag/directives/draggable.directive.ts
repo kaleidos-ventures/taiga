@@ -21,6 +21,7 @@ import { DragHandleDirective } from './drag-handle.directive';
 
 @Directive({
   selector: '[tgUiDraggable]',
+  standalone: true,
 })
 export class DraggableDirective implements OnDestroy, Draggable {
   @Input()

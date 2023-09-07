@@ -6,7 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import '@ng-web-apis/universal/mocks';
 import { createHostFactory } from '@ngneat/spectator/jest';
 import { InputComponent } from './input.component';
 import { InputsModule } from '../inputs.module';

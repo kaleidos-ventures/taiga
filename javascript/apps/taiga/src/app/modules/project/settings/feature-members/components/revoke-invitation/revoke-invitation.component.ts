@@ -14,14 +14,33 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { TuiLinkComponent } from '@taiga-ui/core';
+import {
+  TuiLinkComponent,
+  TuiHostedDropdownModule,
+  TuiLinkModule,
+  TuiButtonModule,
+} from '@taiga-ui/core';
 import { Invitation } from '@taiga/data';
+import { A11yModule } from '@angular/cdk/a11y';
+import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'tg-revoke-invitation',
   templateUrl: './revoke-invitation.component.html',
   styleUrls: ['./revoke-invitation.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TuiHostedDropdownModule,
+    TuiDropdownModule,
+    TuiLinkModule,
+    A11yModule,
+    TuiButtonModule,
+  ],
 })
 export class RevokeInvitationComponent {
   @ViewChild('cancel')

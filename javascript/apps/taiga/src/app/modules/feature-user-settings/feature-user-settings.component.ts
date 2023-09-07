@@ -7,13 +7,22 @@
  */
 
 import { Component, ElementRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RxState } from '@rx-angular/state';
 import { auditTime, fromEvent, take, withLatestFrom } from 'rxjs';
 import { WatchElementService } from '~/app/shared/directives/watch-element/watch-element.service';
 import { inViewport } from '~/app/shared/utils/in-viewport';
 import { filterNil } from '~/app/shared/utils/operators';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { TitleComponent } from '~/app/shared/title/title.component';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +30,15 @@ import { filterNil } from '~/app/shared/utils/operators';
   templateUrl: './feature-user-settings.component.html',
   styleUrls: ['./feature-user-settings.component.css'],
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TitleComponent,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+  ],
 })
 export class FeatureUserSettingsComponent {
   public readonly model$ = this.state.select();

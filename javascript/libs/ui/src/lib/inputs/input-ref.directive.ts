@@ -12,6 +12,7 @@ import { NgControl, Validators } from '@angular/forms';
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[inputRef]',
+  standalone: true,
 })
 export class InputRefDirective {
   constructor(

@@ -23,13 +23,14 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { Status } from '@taiga/data';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { ModalModule } from '@taiga/ui/modal';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Observable, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+import { InputsModule } from '@taiga/ui/inputs';
+import { ModalComponent } from '@taiga/ui/modal/components';
 
 @Component({
   selector: 'tg-delete-status',
@@ -41,11 +42,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
     TranslocoModule,
     TuiButtonModule,
     TuiLinkModule,
-    ModalModule,
     TuiAutoFocusModule,
-    ContextNotificationModule,
-    InputsModule,
     CommonModule,
+    ContextNotificationComponent,
+    InputsModule,
+    ModalComponent,
   ],
 })
 export class DeleteStatusComponent implements OnInit {

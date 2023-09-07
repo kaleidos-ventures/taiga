@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { KeyValue } from '@angular/common';
+import { KeyValue, KeyValuePipe, CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,11 +15,22 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Entity } from '@taiga/data';
 import { SettingsPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/settings-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
+import { RoleAdvanceRowComponent } from '../role-advance-row/role-advance-row.component';
+import { TuiSelectModule } from '@taiga-ui/kit';
+
+import {
+  TuiLinkModule,
+  TuiTextfieldControllerModule,
+  TuiDataListModule,
+  TuiButtonModule,
+} from '@taiga-ui/core';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { InputsModule } from '@taiga/ui/inputs';
 
 let nextId = 0;
 @UntilDestroy()
@@ -28,6 +39,21 @@ let nextId = 0;
   templateUrl: './role-permission-row.component.html',
   styleUrls: ['./role-permission-row.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    ReactiveFormsModule,
+    TuiLinkModule,
+    InputsModule,
+    TuiSelectModule,
+    TuiTextfieldControllerModule,
+    FormsModule,
+    TuiDataListModule,
+    TuiButtonModule,
+    RoleAdvanceRowComponent,
+    KeyValuePipe,
+  ],
 })
 export class RolePermissionRowComponent implements OnChanges {
   @Input()

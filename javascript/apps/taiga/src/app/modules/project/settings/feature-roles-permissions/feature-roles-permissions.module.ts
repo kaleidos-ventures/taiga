@@ -13,10 +13,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiToggleModule } from '@taiga-ui/kit';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { RolesPermissionsEffects } from './+state/effects/roles-permissions.effects';
 import { rolesPermissionsFeature } from './+state/reducers/roles-permissions.reducer';
@@ -27,14 +24,10 @@ import { RolePermissionRowModule } from './components/role-permission-row/role-p
 import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles-permissions.component';
 
 @NgModule({
-  declarations: [ProjectSettingsFeatureRolesPermissionsComponent],
   imports: [
     TuiLinkModule,
     TuiSvgModule,
-    CommonTemplateModule,
     TuiToggleModule,
-    ContextNotificationModule,
-    ModalModule,
     RolePermissionRowModule,
     RoleCustomizeModule,
     RoleAdvanceRowModule,
@@ -45,10 +38,10 @@ import { ProjectSettingsFeatureRolesPermissionsComponent } from './feature-roles
         component: ProjectSettingsFeatureRolesPermissionsComponent,
       },
     ]),
-    InputsModule,
     StoreModule.forFeature(rolesPermissionsFeature),
     EffectsModule.forFeature([RolesPermissionsEffects]),
     TitleComponent,
+    ProjectSettingsFeatureRolesPermissionsComponent,
   ],
   providers: [
     {

@@ -17,6 +17,7 @@ import { KanbanStoryComponent } from './kanban-story.component';
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'tg-kanban-story',
+  standalone: true,
 })
 export class A11yDragStoryDirective {
   @HostListener('keydown.space.prevent', ['$event'])

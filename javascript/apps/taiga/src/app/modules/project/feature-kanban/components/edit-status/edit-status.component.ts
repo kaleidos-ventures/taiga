@@ -17,18 +17,41 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Status } from '@taiga/data';
 import { selectCurrentWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { EditStatus } from '~/app/modules/project/feature-kanban/models/edit-status.model';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { InputsModule } from '@taiga/ui/inputs';
+import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
+import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
+import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 
 @Component({
   selector: 'tg-edit-status',
   templateUrl: './edit-status.component.html',
   styleUrls: ['./edit-status.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    ReactiveFormsModule,
+    RestoreFocusDirective,
+    OutsideClickDirective,
+    AutoFocusDirective,
+    InputsModule,
+    TuiButtonModule,
+  ],
 })
 export class EditStatusComponent implements OnInit {
   @ViewChild('statusInput')

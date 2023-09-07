@@ -47,6 +47,17 @@ import {
   slideIn,
   slideInOut,
 } from '~/app/shared/utils/animations';
+import { WorkspaceItemComponent } from '../workspace-item/workspace-item.component';
+import { WorkspaceSkeletonComponent } from '../workspace-skeleton/workspace-skeleton.component';
+import { A11yModule } from '@angular/cdk/a11y';
+import { WorkspaceCreateComponent } from '../workspace-create/workspace-create.component';
+
+import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
+import { TRANSLOCO_SCOPE, TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { TooltipDirective } from '@taiga/ui/tooltip';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
+import { TitleComponent } from '~/app/shared/title/title.component';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +65,13 @@ import {
   templateUrl: './workspace.component.html',
   styleUrls: ['./workspace.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [RxState],
+  providers: [
+    RxState,
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: 'workspace',
+    },
+  ],
   animations: [
     slideInOut,
     fadeIntOutAnimation,
@@ -101,6 +118,20 @@ import {
         ),
       ]),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TitleComponent,
+    TuiButtonModule,
+    TooltipDirective,
+    WorkspaceCreateComponent,
+    A11yModule,
+    WorkspaceSkeletonComponent,
+    TuiLinkModule,
+    ResizedDirective,
+    WorkspaceItemComponent,
   ],
 })
 export class WorkspaceComponent implements OnDestroy, OnInit, AfterViewInit {

@@ -14,8 +14,8 @@ import { TableHeaderComponent } from './components/header/table-header.component
 import { TableRowComponent } from './components/row/table-row.component';
 
 @NgModule({
-  imports: [CommonModule],
-  declarations: [
+  imports: [
+    CommonModule,
     TableComponent,
     TableCellComponent,
     TableHeaderComponent,

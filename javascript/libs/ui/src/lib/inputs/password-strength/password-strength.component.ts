@@ -22,8 +22,11 @@ import {
 } from 'check-password-strength';
 import { Observable, map, startWith } from 'rxjs';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { RxLet } from '@rx-angular/template/let';
+import { TuiSvgModule } from '@taiga-ui/core';
+import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 
 @UntilDestroy()
 @Component({
@@ -31,6 +34,16 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   templateUrl: './password-strength.component.html',
   styleUrls: ['./password-strength.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslocoDirective,
+    NgIf,
+    TuiSvgModule,
+    RxLet,
+    NgSwitch,
+    NgSwitchCase,
+    NgSwitchDefault,
+  ],
 })
 export class PasswordStrengthComponent implements AfterViewInit {
   public static symbols = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';

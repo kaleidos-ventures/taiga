@@ -21,6 +21,9 @@ import {
 import { FormDirective } from '../form/form.directive';
 import { InputRefDirective } from '../input-ref.directive';
 import { FieldService } from '../services/field.service';
+import { TranslocoPipe } from '@ngneat/transloco';
+import { TuiSvgModule, TuiLinkModule } from '@taiga-ui/core';
+import { NgIf } from '@angular/common';
 
 let nextId = 0;
 
@@ -30,6 +33,8 @@ let nextId = 0;
   styleUrls: ['../inputs.css', './input.component.css'],
   exportAs: 'tgInput',
   providers: [FieldService],
+  standalone: true,
+  imports: [NgIf, TuiSvgModule, TuiLinkModule, TranslocoPipe],
 })
 export class InputComponent implements AfterContentInit {
   @Input()

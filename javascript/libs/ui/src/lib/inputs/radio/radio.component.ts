@@ -7,12 +7,15 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'tg-ui-radio',
   templateUrl: './radio.component.html',
   styleUrls: ['../inputs.css', './radio.component.css'],
+  standalone: true,
+  imports: [ReactiveFormsModule, NgIf],
 })
 export class RadioComponent {
   @Input({ required: true })

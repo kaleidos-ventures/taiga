@@ -29,6 +29,14 @@ import { map } from 'rxjs/operators';
 import { workspaceDetailApiActions } from '~/app/modules/workspace/feature-detail/+state/actions/workspace-detail.actions';
 import { invitationWorkspaceActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { conSlideInOut } from '~/app/shared/utils/animations';
+import { TuiLinkModule } from '@taiga-ui/core';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
+import { UserSkeletonComponent } from '@taiga/ui/skeletons/user-skeleton/user-skeleton.component';
+import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
+import { ProjectsDropdownComponent } from '~/app/shared/projects-dropdown/projects-dropdown.component';
+import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 
 @Component({
   selector: 'tg-workspace-detail-people-non-members',
@@ -37,6 +45,17 @@ import { conSlideInOut } from '~/app/shared/utils/animations';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
   animations: [conSlideInOut],
+  standalone: true,
+  imports: [
+    CommonModule,
+    DynamicTableModule,
+    TranslocoDirective,
+    UserCardComponent,
+    ProjectsDropdownComponent,
+    TuiLinkModule,
+    UserSkeletonComponent,
+    PaginationComponent,
+  ],
 })
 export class WorkspaceDetailPeopleNonMembersComponent implements OnInit {
   public cd = inject(ChangeDetectorRef);

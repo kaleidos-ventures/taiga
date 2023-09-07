@@ -24,12 +24,13 @@ import {
   selectStory,
   selectStoryView,
 } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { ProjectFeatureStoryWrapperFullViewModule } from '../feature-story-wrapper-full-view/project-feature-story-wrapper-full-view.module';
 import { filterFalsy, filterNil } from '~/app/shared/utils/operators';
 import { Router } from '@angular/router';
 import { RxState } from '@rx-angular/state';
 import { StoryDetail, StoryView } from '@taiga/data';
+import { CommonModule } from '@angular/common';
 
 interface ProjectFeatureViewSetterComponentState {
   storyView: StoryView;
@@ -46,7 +47,7 @@ interface ProjectFeatureViewSetterComponentState {
   styleUrls: ['./project-feature-view-setter.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonTemplateModule, ProjectFeatureStoryWrapperFullViewModule],
+  imports: [CommonModule, ProjectFeatureStoryWrapperFullViewModule],
   providers: [RxState],
 })
 export class ProjectFeatureViewSetterComponent implements OnDestroy {

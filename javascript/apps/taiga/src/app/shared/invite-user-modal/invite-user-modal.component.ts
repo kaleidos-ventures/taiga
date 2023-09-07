@@ -19,13 +19,26 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  FormsModule,
+} from '@angular/forms';
+import { TRANSLOCO_SCOPE, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, concatLatestFrom, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { TuiScrollbarComponent } from '@taiga-ui/core';
-import { TuiTextAreaComponent } from '@taiga-ui/kit';
+import {
+  TuiScrollbarComponent,
+  TuiSvgModule,
+  TuiTextfieldControllerModule,
+  TuiDataListModule,
+  TuiButtonModule,
+  TuiLinkModule,
+} from '@taiga-ui/core';
+import { TuiTextAreaComponent, TuiTextAreaModule } from '@taiga-ui/kit';
 import {
   Contact,
   InvitationRequest,
@@ -59,6 +72,17 @@ import { selectWorkspace } from '~/app/modules/workspace/feature-detail/+state/s
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { RxState } from '@rx-angular/state';
 import { filterNil } from '~/app/shared/utils/operators';
+import { capitalizePipe } from '../pipes/capitalize/capitalize.pipe';
+import { ButtonLoadingDirective } from '../directives/button-loading/button-loading.directive';
+import { UserToInviteComponent } from './components/user-to-invite.component';
+import { UserCardComponent } from '../user-card/user-card.component';
+import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
+import { TuiAutoFocusModule, TuiActiveZoneModule } from '@taiga-ui/cdk';
+import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
+import { CommonModule } from '@angular/common';
+import { InputsModule } from '@taiga/ui/inputs';
+import { BadgeComponent } from '@taiga/ui/badge/badge.component';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 
 interface InvitationForm {
   fullName: string;
@@ -93,6 +117,30 @@ interface InviteUserState {
         alias: 'invitation_modal',
       },
     },
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    InputsModule,
+    ReactiveFormsModule,
+    TuiScrollbarModule,
+    TuiSvgModule,
+    TuiTextAreaModule,
+    TuiAutoFocusModule,
+    TuiTextfieldControllerModule,
+    FormsModule,
+    TuiDropdownModule,
+    TuiActiveZoneModule,
+    TuiDataListModule,
+    UserCardComponent,
+    BadgeComponent,
+    TuiButtonModule,
+    UserToInviteComponent,
+    ContextNotificationComponent,
+    TuiLinkModule,
+    ButtonLoadingDirective,
+    capitalizePipe,
   ],
 })
 export class InviteUserModalComponent implements OnInit, OnChanges {

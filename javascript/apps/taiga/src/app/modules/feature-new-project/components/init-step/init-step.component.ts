@@ -21,11 +21,19 @@ import {
   FormControl,
   FormGroup,
   Validators,
+  ReactiveFormsModule,
+  FormsModule,
 } from '@angular/forms';
-import { Router } from '@angular/router';
-import { TranslocoService } from '@ngneat/transloco';
+import { Router, RouterLink } from '@angular/router';
+import { TranslocoService, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TuiNotification } from '@taiga-ui/core';
+import {
+  TuiNotification,
+  TuiButtonModule,
+  TuiTextfieldControllerModule,
+  TuiDataListModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { ProjectCreation, Workspace, WorkspaceMembership } from '@taiga/data';
 import {
   Step,
@@ -34,12 +42,36 @@ import {
 import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
+import { TuiDataListWrapperModule } from '@taiga-ui/kit/components/data-list-wrapper';
+import { TuiSelectModule } from '@taiga-ui/kit';
+import { CommonModule } from '@angular/common';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+import { TitleDirective } from '~/app/shared/title/title.directive';
+import { InputsModule } from '@taiga/ui/inputs';
+
 @UntilDestroy()
 @Component({
   selector: 'tg-init-step',
   templateUrl: './init-step.component.html',
   styleUrls: ['../../styles/project.shared.css', './init-step.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslocoDirective,
+    TuiButtonModule,
+    RouterLink,
+    TitleDirective,
+    ReactiveFormsModule,
+    TuiSelectModule,
+    TuiTextfieldControllerModule,
+    TuiDataListModule,
+    TuiDataListWrapperModule,
+    TuiSvgModule,
+    AvatarComponent,
+    InputsModule,
+  ],
 })
 export class InitStepComponent implements OnInit, OnChanges {
   @Input()

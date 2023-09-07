@@ -19,6 +19,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { InvitationParams } from '@taiga/data';
 import { AuthService } from '../services/auth.service';
 import { SignUp } from './models/sign-up.model';
+import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verify-email.component';
+import { SignupComponent } from './components/signup/signup.component';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { SocialLoginComponent } from '../components/social-login/social-login.component';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+import { InlineNotificationComponent } from '@taiga/ui/inline-notification';
+import { ExternalLinkDirective } from '~/app/shared/directives/external-link/external-link.directive';
+import { InternalLinkDirective } from '~/app/shared/directives/internal-link/internal-link.directive';
+import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
+import { TitleComponent } from '~/app/shared/title/title.component';
+
 @UntilDestroy()
 @Component({
   selector: 'tg-sign-up',
@@ -28,6 +41,21 @@ import { SignUp } from './models/sign-up.model';
     './styles/sign-up.shared.css',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslocoDirective,
+    TitleComponent,
+    CommonModule,
+    ContextNotificationComponent,
+    InlineNotificationComponent,
+    SocialLoginComponent,
+    TuiButtonModule,
+    ExternalLinkDirective,
+    SignupComponent,
+    InternalLinkDirective,
+    AuthFeatureVerifyEmailComponent,
+    getUrlPipe,
+  ],
 })
 export class AuthFeatureSignUpComponent implements OnInit {
   @HostBinding('class.verify-email') public displayVerifyEmail = false;

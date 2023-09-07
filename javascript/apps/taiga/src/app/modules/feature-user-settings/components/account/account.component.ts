@@ -18,11 +18,12 @@ import { filterNil } from '~/app/shared/utils/operators';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { WatchElementDirective } from '~/app/shared/directives/watch-element/watch-element.directive';
 import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DeletingAccountModalComponent } from '../deleting-account-modal/deleting-account-modal.component';
 import { userSettingsFeature } from '~/app/modules/feature-user-settings/data-access/+state/reducers/user-settings.reducer';
 import { userSettingsActions } from '~/app/modules/feature-user-settings/data-access/+state/actions/user-settings.actions';
+import { InputsModule } from '@taiga/ui/inputs';
 
 interface ComponentModel {
   user: User;
@@ -40,8 +41,8 @@ interface ComponentModel {
     WatchElementDirective,
     TuiSvgModule,
     TuiButtonModule,
-    InputsModule,
     DeletingAccountModalComponent,
+    InputsModule,
   ],
   templateUrl: './account.component.html',
   styleUrls: ['../../styles/user-settings.css', './account.component.css'],

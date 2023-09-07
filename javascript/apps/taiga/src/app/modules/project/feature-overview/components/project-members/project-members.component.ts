@@ -7,15 +7,14 @@
  */
 
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { Invitation, Membership, Project, User } from '@taiga/data';
-import { ModalModule } from '@taiga/ui/modal';
-import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
+
 import { Subject, merge } from 'rxjs';
 import { delay, distinctUntilChanged, map, take } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
@@ -39,12 +38,15 @@ import {
 import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 import { WaitingForToastNotification } from '~/app/modules/project/feature-overview/project-feature-overview.animation-timing';
 import { WsService } from '~/app/services/ws';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
 import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectMembersListComponent } from '../project-members-list/project-members-list.component';
 import { ProjectMembersModalComponent } from '../project-members-modal/project-members-modal.component';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { UserSkeletonComponent } from '@taiga/ui/skeletons/user-skeleton/user-skeleton.component';
+import { CommonModule } from '@angular/common';
 
 @UntilDestroy()
 @Component({
@@ -53,25 +55,18 @@ import { ProjectMembersModalComponent } from '../project-members-modal/project-m
   templateUrl: './project-members.component.html',
   styleUrls: ['./project-members.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    RxState,
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: {
-        scope: 'project_overview',
-        alias: 'project_overview',
-      },
-    },
-  ],
+  providers: [RxState],
   imports: [
+    CommonModule,
     TuiSvgModule,
-    CommonTemplateModule,
     TuiLinkModule,
-    ModalModule,
+    TuiButtonModule,
     ProjectMembersModalComponent,
-    SkeletonsModule,
     ProjectMembersListComponent,
     InviteUserModalModule,
+    UserSkeletonComponent,
+    ModalComponent,
+    TranslocoDirective,
   ],
 })
 export class ProjectMembersComponent {

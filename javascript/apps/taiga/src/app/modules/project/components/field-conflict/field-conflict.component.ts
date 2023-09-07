@@ -13,23 +13,27 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { TuiButtonModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+
 import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
 import { ShortcutDirective } from '~/app/shared/directives/shorcut/shorcut.directive';
 import copy from 'copy-to-clipboard';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'tg-field-conflict',
   standalone: true,
   imports: [
-    CommonTemplateModule,
+    CommonModule,
     TuiSvgModule,
     ShortcutDirective,
     AutoFocusDirective,
     OutsideClickDirective,
     TuiLinkModule,
+    TuiButtonModule,
+    TranslocoDirective,
   ],
   templateUrl: './field-conflict.component.html',
   styleUrls: ['./field-conflict.component.css'],

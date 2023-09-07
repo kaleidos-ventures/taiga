@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TRANSLOCO_SCOPE, TranslocoModule } from '@ngneat/transloco';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+
 import { WatchElementDirective } from '~/app/shared/directives/watch-element/watch-element.directive';
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
@@ -20,11 +20,6 @@ import { FeatureUserSettingsRoutingModule } from './feature-user-settings-routin
 import { FeatureUserSettingsComponent } from './feature-user-settings.component';
 
 @NgModule({
-  declarations: [
-    FeatureUserSettingsComponent,
-    EditProfileComponent,
-    PreferencesComponent,
-  ],
   imports: [
     ReactiveFormsModule,
     FormsModule,
@@ -33,8 +28,10 @@ import { FeatureUserSettingsComponent } from './feature-user-settings.component'
     TranslocoModule,
     WatchElementDirective,
     DataAccessUserSettingsModule,
-    InputsModule,
     TitleComponent,
+    FeatureUserSettingsComponent,
+    EditProfileComponent,
+    PreferencesComponent,
   ],
   providers: [
     {

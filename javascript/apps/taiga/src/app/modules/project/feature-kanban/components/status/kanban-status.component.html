@@ -74,6 +74,7 @@ Copyright (c) 2023-present Kaleidos INC
                 trackBy: trackByRef
               ">
               <tg-kanban-story
+                [kanbanStatus]="this"
                 [class.drag-a11y]="story.ref === vm.activeA11yDragDropStory.ref"
                 [class.small-drag-shadow]="showSmallDragShadowClass(story)"
                 [tgUiDraggable]="story.ref"

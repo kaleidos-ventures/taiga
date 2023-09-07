@@ -10,7 +10,6 @@ import { By } from '@angular/platform-browser';
 import { createDirectiveFactory, SpectatorDirective } from '@ngneat/spectator';
 import { TuiButtonComponent, TuiButtonModule } from '@taiga-ui/core';
 import { ButtonLoadingDirective } from './button-loading.directive';
-import { ButtonLoadingModule } from './button-loading.module';
 import { ButtonLoadingService } from './button-loading.service';
 
 describe('ButtonLoadingDirective', () => {
@@ -18,8 +17,7 @@ describe('ButtonLoadingDirective', () => {
 
   const createDirective = createDirectiveFactory({
     directive: ButtonLoadingDirective,
-    imports: [ButtonLoadingModule, TuiButtonModule],
-    declareDirective: false,
+    imports: [TuiButtonModule],
   });
 
   beforeEach(() => {

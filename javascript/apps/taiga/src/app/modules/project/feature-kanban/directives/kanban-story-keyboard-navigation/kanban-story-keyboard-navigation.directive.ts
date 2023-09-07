@@ -19,7 +19,7 @@ import { TranslocoService } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Status, Workflow } from '@taiga/data';
-import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
+import { type KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 import { KanbanWorkflowComponent } from '~/app/modules/project/feature-kanban/components/workflow/kanban-workflow.component';
 import { KanbanVirtualScrollDirective } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-strategy';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
@@ -54,6 +54,7 @@ export interface KanbanKeyboardNavigation {
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[tgKanbanStoryKeyboardNavigation]',
+  standalone: true,
 })
 export class KanbanStoryKeyboardNavigationDirective implements OnInit {
   @ViewChild(KanbanVirtualScrollDirective)

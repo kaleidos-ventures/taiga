@@ -22,15 +22,16 @@ import {
   TuiSelectModule,
   TuiTextAreaModule,
 } from '@taiga-ui/kit';
-import { UiErrorModule } from './error/error.module';
+
 import { FormDirective } from './form/form.directive';
 import { InputRefDirective } from './input-ref.directive';
 import { InputComponent } from './input/input.component';
-import { UiPasswordStrengthModule } from './password-strength/password-strength.module';
 import { SelectComponent } from './select/select.component';
 import { TextareaComponent } from './textarea/textarea.component';
 import { RadioComponent } from './radio/radio.component';
 import { CheckboxComponent } from './checkbox/checkbox.component';
+import { ErrorComponent } from './error/error.component';
+import { PasswordStrengthComponent } from './password-strength/password-strength.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -43,11 +44,9 @@ import { CheckboxComponent } from './checkbox/checkbox.component';
     TuiDataListWrapperModule,
     TuiTextfieldControllerModule,
     TuiTextAreaModule,
-    UiErrorModule,
-    UiPasswordStrengthModule,
+    ErrorComponent,
+    PasswordStrengthComponent,
     TuiLinkModule,
-  ],
-  declarations: [
     FormDirective,
     InputRefDirective,
     InputComponent,
@@ -70,8 +69,8 @@ import { CheckboxComponent } from './checkbox/checkbox.component';
     TuiDataListWrapperModule,
     TuiTextfieldControllerModule,
     TuiTextAreaModule,
-    UiErrorModule,
-    UiPasswordStrengthModule,
+    ErrorComponent,
+    PasswordStrengthComponent,
     CheckboxComponent,
   ],
 })

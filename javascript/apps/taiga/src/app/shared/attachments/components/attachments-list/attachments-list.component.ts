@@ -19,10 +19,11 @@ import { AttachmentsState } from '~/app/shared/attachments/attachments.state';
 import { AttachmentComponent } from '../attachment/attachment.component';
 import { Attachment, LoadingAttachment } from '@taiga/data';
 import { trackByProp } from '~/app/shared/utils/track-by-prop';
-import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
-import { ToolTipModule } from '@taiga/ui/tooltip';
+
 import { TuiButtonModule } from '@taiga-ui/core';
 import { NumberedPaginationComponent } from '@taiga/ui/numbered-pagination';
+import { TooltipDirective } from '@taiga/ui/tooltip/tooltip.directive';
+import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
 
 @Component({
   selector: 'tg-attachments-list',
@@ -31,10 +32,10 @@ import { NumberedPaginationComponent } from '@taiga/ui/numbered-pagination';
     CommonModule,
     TranslocoModule,
     AttachmentComponent,
-    DynamicTableModule,
-    ToolTipModule,
     TuiButtonModule,
     NumberedPaginationComponent,
+    TooltipDirective,
+    DynamicTableModule,
   ],
   templateUrl: './attachments-list.component.html',
   styleUrls: ['./attachments-list.component.css'],

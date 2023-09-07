@@ -18,9 +18,11 @@ import {
   FormControl,
   FormGroupDirective,
   NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { FieldService } from '../services/field.service';
 import { FormDirective } from '../form/form.directive';
+import { NgIf } from '@angular/common';
 
 let nextId = 0;
 
@@ -37,6 +39,8 @@ let nextId = 0;
     },
   ],
   exportAs: 'tgCheckbox',
+  standalone: true,
+  imports: [ReactiveFormsModule, NgIf],
 })
 export class CheckboxComponent implements AfterContentInit {
   private fieldService = inject(FieldService);

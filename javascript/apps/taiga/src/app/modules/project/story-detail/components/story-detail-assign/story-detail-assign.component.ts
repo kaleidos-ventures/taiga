@@ -20,7 +20,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -44,6 +44,17 @@ import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { filterNil } from '~/app/shared/utils/operators';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
+import { TuiActiveZoneModule } from '@taiga-ui/cdk';
+import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
+
+import { CommonModule } from '@angular/common';
+import { TooltipDirective } from '@taiga/ui/tooltip';
+import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
+import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
+import { AssignUserComponent } from '~/app/modules/project/components/assign-user/assign-user.component';
 
 export interface StoryState {
   isA11yDragInProgress: boolean;
@@ -60,6 +71,20 @@ export interface StoryState {
   templateUrl: './story-detail-assign.component.html',
   styleUrls: ['./story-detail-assign.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    HasPermissionDirective,
+    ResizedDirective,
+    TuiDropdownModule,
+    TuiActiveZoneModule,
+    TuiScrollbarModule,
+    UserAvatarComponent,
+    TooltipDirective,
+    TuiButtonModule,
+    AssignUserComponent,
+  ],
 })
 export class StoryDetailAssignComponent implements OnChanges {
   @Input()

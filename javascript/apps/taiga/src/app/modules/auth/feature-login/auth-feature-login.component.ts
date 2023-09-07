@@ -7,16 +7,32 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 import { AuthService } from '../services/auth.service';
+import { LoginComponent } from './components/login/login.component';
+import { SocialLoginComponent } from '../components/social-login/social-login.component';
+import { CommonModule } from '@angular/common';
+import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { TitleComponent } from '~/app/shared/title/title.component';
 @UntilDestroy()
 @Component({
   selector: 'tg-auth-feature-login',
   templateUrl: './auth-feature-login.component.html',
   styleUrls: ['./auth-feature-login.component.css'],
   animations: [fadeIntOutAnimation],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TitleComponent,
+    AuthForestComponent,
+    SocialLoginComponent,
+    LoginComponent,
+    RouterLink,
+  ],
 })
 export class AuthFeatureLoginComponent implements OnInit {
   public queryParams$!: typeof this.route.queryParams;

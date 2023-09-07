@@ -9,15 +9,16 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { type Project } from '@taiga/data';
-import { AvatarModule } from '@taiga/ui/avatar';
+
 import { TranslocoModule } from '@ngneat/transloco';
 import { RouterModule } from '@angular/router';
 import { booleanAttribute } from '@angular/core';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
 
 @Component({
   selector: 'tg-project-summary-card',
   standalone: true,
-  imports: [CommonModule, AvatarModule, TranslocoModule, RouterModule],
+  imports: [CommonModule, TranslocoModule, RouterModule, AvatarComponent],
   templateUrl: './project-summary-card.component.html',
   styleUrls: ['./project-summary-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

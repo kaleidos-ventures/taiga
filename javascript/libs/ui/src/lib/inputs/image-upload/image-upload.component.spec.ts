@@ -5,7 +5,6 @@
  *
  * Copyright (c) 2023-present Kaleidos INC
  */
-import '@ng-web-apis/universal/mocks';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { ImageUploadComponent } from './image-upload.component';
 import { randSentence, randNumber, randWord } from '@ngneat/falso';
@@ -15,7 +14,10 @@ import {
   FormControl,
   FormGroupDirective,
 } from '@angular/forms';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ErrorComponent } from '../error/error.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+import { TuiButtonComponent } from '@taiga-ui/core';
 
 describe('ImageUploadComponent', () => {
   let spectator: Spectator<ImageUploadComponent>;
@@ -23,8 +25,19 @@ describe('ImageUploadComponent', () => {
   const createComponent = createComponentFactory({
     component: ImageUploadComponent,
     imports: [getTranslocoModule()],
-    schemas: [NO_ERRORS_SCHEMA],
-    providers: [{ provide: ControlContainer, useValue: fgd }],
+    overrideComponents: [
+      [
+        ImageUploadComponent,
+        {
+          remove: {
+            imports: [ErrorComponent, AvatarComponent, TuiButtonComponent],
+          },
+          add: {
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
+          },
+        },
+      ],
+    ],
   });
 
   beforeEach(() => {
@@ -35,7 +48,7 @@ describe('ImageUploadComponent', () => {
         title: randSentence(),
         color: randNumber(),
       },
-      providers: [],
+      providers: [{ provide: ControlContainer, useValue: fgd }],
       detectChanges: false,
     });
   });

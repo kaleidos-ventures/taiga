@@ -17,19 +17,18 @@ import {
   TuiScrollbarModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
+
 import { ProjectFeatureStoryWrapperModalViewModule } from '~/app/modules/project//feature-story-wrapper-modal-view/project-feature-story-wrapper-modal-view.module';
 import { StatusScrollDynamicHeightDirective } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
 import { ProjectFeatureStoryWrapperSideViewModule } from '~/app/modules/project/feature-story-wrapper-side-view/project-feature-story-wrapper-side-view.module';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { InViewportDirective } from '~/app/shared/directives/in-viewport.directive';
 import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
 import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
 import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
-import { DragModule } from '@taiga/ui/drag';
+
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
@@ -50,44 +49,23 @@ import { DataAccessKanbanModule } from './data-access/kanban-data-access.module'
 import { KanbanStatusKeyboardNavigationDirective } from './directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
 import { KanbanStoryKeyboardNavigationDirective } from './directives/kanban-story-keyboard-navigation/kanban-story-keyboard-navigation.directive';
 import { ProjectFeatureKanbanComponent } from './project-feature-kanban.component';
-import { ToolTipModule } from '@taiga/ui/tooltip';
 
 @NgModule({
-  declarations: [
-    ProjectFeatureKanbanComponent,
-    KanbanStatusComponent,
-    KanbanCreateStatusComponent,
-    KanbanWorkflowComponent,
-    KanbanStoryKeyboardNavigationDirective,
-    KanbanStatusKeyboardNavigationDirective,
-    KanbanStoryComponent,
-    KanbanCreateStoryInlineComponent,
-    StatusScrollDynamicHeightDirective,
-    KanbanVirtualScrollDirective,
-    A11yDragStoryDirective,
-    EditStatusComponent,
-  ],
   exports: [ProjectFeatureKanbanComponent],
-
   imports: [
     UserAvatarComponent,
     TuiAutoFocusModule,
     TuiLinkModule,
-    ToolTipModule,
     HasPermissionDirective,
     TitleComponent,
-    CommonTemplateModule,
     TuiSvgModule,
-    ModalModule,
     InviteUserModalModule,
     DataAccessKanbanModule,
     ScrollingModule,
     TuiScrollbarModule,
     InViewportDirective,
     A11yModule,
-    InputsModule,
     TuiActiveZoneModule,
-    DragModule,
     ProjectFeatureStoryWrapperSideViewModule,
     ProjectFeatureStoryWrapperModalViewModule,
     ResizedDirective,
@@ -100,6 +78,18 @@ import { ToolTipModule } from '@taiga/ui/tooltip';
     AutoFocusDirective,
     DeleteStatusComponent,
     KanbanEmptyComponent,
+    ProjectFeatureKanbanComponent,
+    KanbanStatusComponent,
+    KanbanCreateStatusComponent,
+    KanbanWorkflowComponent,
+    KanbanStoryKeyboardNavigationDirective,
+    KanbanStatusKeyboardNavigationDirective,
+    KanbanStoryComponent,
+    KanbanCreateStoryInlineComponent,
+    StatusScrollDynamicHeightDirective,
+    KanbanVirtualScrollDirective,
+    A11yDragStoryDirective,
+    EditStatusComponent,
   ],
   providers: [
     {

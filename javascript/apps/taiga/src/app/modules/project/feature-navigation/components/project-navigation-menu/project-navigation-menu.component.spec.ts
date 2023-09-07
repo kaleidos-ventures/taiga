@@ -8,7 +8,6 @@
 
 import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import '@ng-web-apis/universal/mocks';
 import { randWord } from '@ngneat/falso';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';

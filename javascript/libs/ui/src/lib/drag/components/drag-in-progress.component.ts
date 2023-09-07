@@ -16,6 +16,7 @@ import { filter } from 'rxjs';
   selector: 'tg-ui-drag-in-progress',
   templateUrl: './drag-in-progress.component.html',
   styleUrls: ['./drag-in-progress.component.css'],
+  standalone: true,
 })
 export class DragInProgressComponent {
   public get nativeElement() {

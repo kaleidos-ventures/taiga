@@ -7,7 +7,7 @@
  */
 
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -18,6 +18,16 @@ import { userSettingsActions } from '~/app/modules/feature-user-settings/data-ac
 import { selectLanguages } from '~/app/modules/feature-user-settings/data-access/+state/selectors/user-settings.selectors';
 import { LanguageService } from '~/app/services/language/language.service';
 import { filterNil } from '~/app/shared/utils/operators';
+import {
+  TuiTextfieldControllerModule,
+  TuiDataListModule,
+} from '@taiga-ui/core';
+import { TuiSelectModule } from '@taiga-ui/kit';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { InputsModule } from '@taiga/ui/inputs';
+import { WatchElementDirective } from '~/app/shared/directives/watch-element/watch-element.directive';
+import { TitleComponent } from '~/app/shared/title/title.component';
 
 @Component({
   selector: 'tg-preferences',
@@ -25,6 +35,19 @@ import { filterNil } from '~/app/shared/utils/operators';
   styleUrls: ['../../styles/user-settings.css', './preferences.component.css'],
   providers: [RxState],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    InputsModule,
+    TranslocoDirective,
+    TitleComponent,
+    WatchElementDirective,
+    ReactiveFormsModule,
+    FormsModule,
+    TuiSelectModule,
+    TuiTextfieldControllerModule,
+    TuiDataListModule,
+  ],
 })
 export class PreferencesComponent implements OnInit {
   public readonly model$ = this.state.select();

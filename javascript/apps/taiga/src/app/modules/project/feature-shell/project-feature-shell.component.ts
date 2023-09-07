@@ -7,18 +7,18 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Location } from '@angular/common';
+import { Location, CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnDestroy,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiNotification } from '@taiga-ui/core';
+import { TuiNotification, TuiButtonModule } from '@taiga-ui/core';
 import {
   Attachment,
   Membership,
@@ -48,6 +48,10 @@ import {
   projectEventActions,
 } from '../data-access/+state/actions/project.actions';
 import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
+
+import { ProjectNavigationComponent } from '../feature-navigation/project-feature-navigation.component';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 
 @UntilDestroy()
 @Component({
@@ -84,6 +88,15 @@ import { setNotificationClosed } from '../feature-overview/data-access/+state/ac
         ),
       ]),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    ProjectNavigationComponent,
+    ContextNotificationComponent,
+    TuiButtonModule,
+    RouterOutlet,
   ],
 })
 export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {

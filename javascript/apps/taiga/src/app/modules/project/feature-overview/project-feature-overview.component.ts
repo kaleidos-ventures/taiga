@@ -34,13 +34,40 @@ import {
   resetOverview,
 } from './data-access/+state/actions/project-overview.actions';
 import { selectInvitations } from './data-access/+state/selectors/project-overview.selectors';
+import { DeleteProjectComponent } from './components/delete-project/delete-project.component';
+import { EditProjectComponent } from './components/edit-project/edit-project.component';
+import { ProjectMembersComponent } from './components/project-members/project-members.component';
+import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
+import {
+  TuiHostedDropdownModule,
+  TuiButtonModule,
+  TuiLinkModule,
+  TuiDataListModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
+
+import { CommonModule } from '@angular/common';
+import { TRANSLOCO_SCOPE, TranslocoDirective } from '@ngneat/transloco';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+import { TooltipDirective } from '@taiga/ui/tooltip';
+import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
+import { TitleComponent } from '~/app/shared/title/title.component';
 
 @UntilDestroy()
 @Component({
   selector: 'tg-project-feature-overview',
   templateUrl: './project-feature-overview.component.html',
   styleUrls: ['./project-feature-overview.component.css'],
-  providers: [RxState],
+  providers: [
+    RxState,
+    {
+      provide: TRANSLOCO_SCOPE,
+      useValue: {
+        scope: 'project_overview',
+        alias: 'project_overview',
+      },
+    },
+  ],
   animations: [
     trigger('slideOut', [
       transition(':leave', [
@@ -53,6 +80,24 @@ import { selectInvitations } from './data-access/+state/selectors/project-overvi
         ),
       ]),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TitleComponent,
+    AvatarComponent,
+    TuiHostedDropdownModule,
+    TuiDropdownModule,
+    TuiButtonModule,
+    TooltipDirective,
+    TuiLinkModule,
+    ProjectMembersComponent,
+    EditProjectComponent,
+    DeleteProjectComponent,
+    TuiDataListModule,
+    AutoFocusDirective,
+    TuiSvgModule,
   ],
 })
 export class ProjectFeatureOverviewComponent

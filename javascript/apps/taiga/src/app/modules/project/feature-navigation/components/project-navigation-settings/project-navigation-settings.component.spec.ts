@@ -8,7 +8,6 @@
 
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import '@ng-web-apis/universal/mocks';
 import { randDomainSuffix, randUuid, randWord } from '@ngneat/falso';
 import {
   createComponentFactory,

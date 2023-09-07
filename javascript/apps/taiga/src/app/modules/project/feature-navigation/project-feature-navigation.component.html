@@ -25,6 +25,7 @@ Copyright (c) 2023-present Kaleidos INC
       data-test="project-navigation-settings"
       *ngIf="showProjectSettings || settingsAnimationInProgress"
       [project]="project"
+      [projectNavigationComponent]="this"
       (closeMenu)="closeMenu()">
     </tg-project-navigation-settings>
   </div>

@@ -9,7 +9,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
-@Pipe({ name: 'getUrl' })
+@Pipe({
+  name: 'getUrl',
+  standalone: true,
+})
 export class getUrlPipe implements PipeTransform {
   constructor(private utilsService: UtilsService) {}
   public transform(commands: number[] | string[] | string) {

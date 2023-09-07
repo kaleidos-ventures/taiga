@@ -6,8 +6,8 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
 
 @Component({
   selector: 'tg-banner',
@@ -15,7 +15,7 @@ import { CommonTemplateModule } from '~/app/shared/common-template.module';
   templateUrl: './banner.component.html',
   styleUrls: ['./banner.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonTemplateModule],
+  imports: [CommonModule],
 })
 export class BannerComponent {
   @Input({ required: true })

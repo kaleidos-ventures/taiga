@@ -6,6 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,8 +18,8 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { Project } from '@taiga/data';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { ModalModule } from '@taiga/ui/modal';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+import { ModalComponent } from '@taiga/ui/modal/components';
 
 @Component({
   selector: 'tg-delete-project',
@@ -27,12 +28,13 @@ import { ModalModule } from '@taiga/ui/modal';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    CommonModule,
     TranslocoModule,
     TuiButtonModule,
     TuiLinkModule,
-    ModalModule,
     TuiAutoFocusModule,
-    ContextNotificationModule,
+    ModalComponent,
+    ContextNotificationComponent,
   ],
 })
 export class DeleteProjectComponent {

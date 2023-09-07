@@ -13,5 +13,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './card-skeleton.component.html',
   styleUrls: ['./card-skeleton.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class CardSkeletonComponent {}

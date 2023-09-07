@@ -13,11 +13,16 @@ import {
   Input,
 } from '@angular/core';
 
+import { CommonModule } from '@angular/common';
+import { CardSkeletonComponent } from '@taiga/ui/skeletons/card-skeleton/card-skeleton.component';
+
 @Component({
   selector: 'tg-workspace-skeleton',
   templateUrl: './workspace-skeleton.component.html',
   styleUrls: ['../../../styles/workspace-skeleton.shared.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CommonModule, CardSkeletonComponent],
 })
 export class WorkspaceSkeletonComponent {
   @HostBinding('class.static') @Input() public static = false;

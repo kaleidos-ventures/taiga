@@ -11,24 +11,19 @@ import { FormsModule } from '@angular/forms';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiToggleModule } from '@taiga-ui/kit';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { RoleCustomizeModule } from '../role-customize/role-customize.module';
 import { RoleAdvanceRowComponent } from './role-advance-row.component';
-import { ToolTipModule } from '@taiga/ui/tooltip';
 
 @NgModule({
   imports: [
     TuiLinkModule,
     TuiSvgModule,
-    CommonTemplateModule,
     TuiToggleModule,
     RoleCustomizeModule,
-    InputsModule,
-    ToolTipModule,
     FormsModule,
+    RoleAdvanceRowComponent,
   ],
-  declarations: [RoleAdvanceRowComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

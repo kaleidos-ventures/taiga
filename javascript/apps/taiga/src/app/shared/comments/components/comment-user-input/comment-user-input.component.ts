@@ -23,7 +23,7 @@ import { filterFalsy, filterNil } from '~/app/shared/utils/operators';
 import { RxState } from '@rx-angular/state';
 import { User } from '@taiga/data';
 import { EditorComponent } from '~/app/shared/editor/editor.component';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
 import { ComponentCanDeactivate } from '~/app/shared/can-deactivate/can-deactivate.guard';
 import { CanDeactivateService } from '~/app/shared/can-deactivate/can-deactivate.service';
@@ -33,6 +33,9 @@ import { OrderComments } from '~/app/shared/comments/comments.component';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
 import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { TuiButtonModule } from '@taiga-ui/core';
 
 interface CommentUserInputComponentState {
   user: User;
@@ -46,13 +49,15 @@ interface CommentUserInputComponentState {
   selector: 'tg-comment-user-input',
   standalone: true,
   imports: [
-    CommonTemplateModule,
+    CommonModule,
     UserAvatarComponent,
     EditorComponent,
     DiscardChangesModalComponent,
     ResizedDirective,
     RestoreFocusDirective,
     RestoreFocusTargetDirective,
+    TranslocoDirective,
+    TuiButtonModule,
   ],
   templateUrl: './comment-user-input.component.html',
   styleUrls: ['./comment-user-input.component.css'],

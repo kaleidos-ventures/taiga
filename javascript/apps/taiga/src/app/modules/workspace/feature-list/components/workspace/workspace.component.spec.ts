@@ -6,7 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import '@ng-web-apis/universal/mocks';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action, MemoizedSelector } from '@ngrx/store';
@@ -16,6 +15,8 @@ import { Observable } from 'rxjs';
 import { WorkspaceState } from '~/app/modules/workspace/feature-list/+state/reducers/workspace.reducer';
 import { selectRejectedInvites } from '~/app/modules/workspace/feature-list/+state/selectors/workspace.selectors';
 import { WorkspaceComponent } from './workspace.component';
+import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('Workspace List', () => {
   let actions$: Observable<Action>;
@@ -38,6 +39,18 @@ describe('Workspace List', () => {
     providers: [
       provideMockStore({ initialState }),
       provideMockActions(() => actions$),
+    ],
+    shallow: true,
+    overrideComponents: [
+      [
+        WorkspaceComponent,
+        {
+          set: {
+            imports: [CommonModule],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
+          },
+        },
+      ],
     ],
   });
 

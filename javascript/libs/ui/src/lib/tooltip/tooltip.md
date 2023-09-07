@@ -12,10 +12,10 @@
 
 ## Installation
 
-To use the `tgUiTooltip` module, you need to import it into your module/component:
+To use the `tgUiTooltip`, you need to import it into your module/component:
 
 ```javascript
-import { ToolTipModule } from '@taiga/ui/tooltip';
+import { TooltipDirective } from '@taiga/ui/tooltip';
 ```
 
 ## Usage

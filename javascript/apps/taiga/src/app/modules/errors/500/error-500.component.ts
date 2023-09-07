@@ -8,12 +8,17 @@
 
 import { Component } from '@angular/core';
 import { ConfigService } from '@taiga/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'tg-error-500',
   templateUrl: './error-500.component.html',
   styleUrls: ['./error-500.component.css'],
+  standalone: true,
+  imports: [CommonModule, TranslocoDirective, RouterLink, TuiButtonModule],
 })
 export class Error500Component {
   constructor(private router: Router, public config: ConfigService) {}

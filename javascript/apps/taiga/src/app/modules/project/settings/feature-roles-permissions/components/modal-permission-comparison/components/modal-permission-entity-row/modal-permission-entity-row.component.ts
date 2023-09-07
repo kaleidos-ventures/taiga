@@ -9,6 +9,9 @@
 import { Component, Input } from '@angular/core';
 import { Conflict } from '~/app/modules/project/settings/feature-roles-permissions/models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
+import { TuiSvgModule } from '@taiga-ui/core';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
 
 let nextId = 0;
 
@@ -20,6 +23,8 @@ let nextId = 0;
     './modal-permission-entity-row.component.css',
     '../../modal-permission-comparison-common.css',
   ],
+  standalone: true,
+  imports: [CommonModule, TranslocoDirective, TuiSvgModule],
 })
 export class ModalPermissionEntityRowComponent {
   @Input()

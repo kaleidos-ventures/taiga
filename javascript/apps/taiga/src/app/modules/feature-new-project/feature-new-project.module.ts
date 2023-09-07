@@ -14,12 +14,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { TuiDataListWrapperModule, TuiSelectModule } from '@taiga-ui/kit';
-import { AvatarModule } from '@taiga/ui/avatar';
-import { ModalModule } from '@taiga/ui/modal';
-import { ImageUploadModule } from 'libs/ui/src/lib/inputs/image-upload/image-upload.module';
-import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
-import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+
 import { TitleDirective } from '~/app/shared/title/title.directive';
 import { NewProjectEffects } from './+state/effects/new-project.effects';
 import { InitStepComponent } from './components/init-step/init-step.component';
@@ -28,7 +23,6 @@ import { TemplateStepComponent } from './components/template-step/template-step.
 import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.module';
 
 @NgModule({
-  declarations: [NewProjectComponent, InitStepComponent, TemplateStepComponent],
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -37,15 +31,12 @@ import { FeatureNewProjectRoutingModule } from './feature-new-project-routing.mo
     TuiSelectModule,
     TuiDataListWrapperModule,
     TuiAutoFocusModule,
-    AvatarModule,
     RouterModule,
-    CommonTemplateModule,
-    InputsModule,
-    ImageUploadModule,
-    ModalModule,
     FeatureNewProjectRoutingModule,
-    ButtonLoadingModule,
     TitleDirective,
+    NewProjectComponent,
+    InitStepComponent,
+    TemplateStepComponent,
   ],
   providers: [
     {

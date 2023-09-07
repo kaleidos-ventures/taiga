@@ -14,20 +14,21 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalModule } from '@taiga/ui/modal';
-import { CommonTemplateModule } from '../common-template.module';
+
 import { TuiLinkModule } from '@taiga-ui/core';
 import { RestoreFocusDirective } from '../directives/restore-focus/restore-focus.directive';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { TranslocoDirective } from '@ngneat/transloco';
 
 @Component({
   selector: 'tg-discard-changes-modal',
   standalone: true,
   imports: [
     CommonModule,
-    ModalModule,
-    CommonTemplateModule,
     TuiLinkModule,
     RestoreFocusDirective,
+    ModalComponent,
+    TranslocoDirective,
   ],
   templateUrl: './discard-changes-modal.component.html',
   styleUrls: ['./discard-changes-modal.component.css'],

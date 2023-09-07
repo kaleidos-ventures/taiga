@@ -18,7 +18,7 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
@@ -54,6 +54,15 @@ import {
 } from './+state/selectors/roles-permissions.selectors';
 import { EntityConflictPermission } from './models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from './services/feature-roles-permissions.service';
+import { ModalPermissionComparisonComponent } from './components/modal-permission-comparison/modal-permission-comparison.component';
+import { RolePermissionRowComponent } from './components/role-permission-row/role-permission-row.component';
+import { TuiLinkModule } from '@taiga-ui/core';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { InputsModule } from '@taiga/ui/inputs';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { TitleComponent } from '~/app/shared/title/title.component';
 
 @UntilDestroy()
 @Component({
@@ -65,6 +74,19 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from './services/featu
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TitleComponent,
+    TuiLinkModule,
+    InputsModule,
+    ReactiveFormsModule,
+    RolePermissionRowComponent,
+    ContextNotificationComponent,
+    ModalComponent,
+    ModalPermissionComparisonComponent,
+  ],
 })
 export class ProjectSettingsFeatureRolesPermissionsComponent
   implements AfterViewInit, OnInit, OnDestroy

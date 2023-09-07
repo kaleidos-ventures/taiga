@@ -25,8 +25,9 @@ import { AttachmentsState } from './attachments.state';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { ConfigService } from '@taiga/core';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+
 import { trackByValue } from '../utils/track-by-value';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 
 @Component({
   selector: 'tg-attachments',
@@ -36,7 +37,7 @@ import { trackByValue } from '../utils/track-by-value';
     TranslocoModule,
     TuiButtonModule,
     AttachmentsListComponent,
-    ContextNotificationModule,
+    ContextNotificationComponent,
   ],
   templateUrl: './attachments.component.html',
   styleUrls: ['./attachments.component.css'],

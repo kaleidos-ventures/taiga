@@ -6,16 +6,26 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { KeyValue } from '@angular/common';
+import { KeyValue, KeyValuePipe, CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
+import { TuiToggleModule } from '@taiga-ui/kit';
+import { TranslocoDirective } from '@ngneat/transloco';
 
 @Component({
   selector: 'tg-role-customize',
   templateUrl: './role-customize.component.html',
   styleUrls: ['./role-customize.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    ReactiveFormsModule,
+    TuiToggleModule,
+    KeyValuePipe,
+  ],
 })
 export class RoleCustomizeComponent {
   @Input()

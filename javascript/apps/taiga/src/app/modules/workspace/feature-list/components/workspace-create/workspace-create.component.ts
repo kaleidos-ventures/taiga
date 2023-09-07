@@ -15,7 +15,12 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
@@ -23,6 +28,13 @@ import {
   createFormHasError,
   createWorkspace,
 } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { TuiAutoFocusModule } from '@taiga-ui/cdk';
+import { TranslocoDirective, TranslocoPipe } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { InputsModule } from '@taiga/ui/inputs';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+import { FormDirective } from '@taiga/ui/inputs/form/form.directive';
 
 @Component({
   selector: 'tg-workspace-create',
@@ -30,6 +42,18 @@ import {
   styleUrls: ['./workspace-create.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    InputsModule,
+    ReactiveFormsModule,
+    FormDirective,
+    AvatarComponent,
+    TuiAutoFocusModule,
+    TuiButtonModule,
+    TranslocoPipe,
+  ],
 })
 export class WorkspaceCreateComponent implements OnInit {
   @Output()

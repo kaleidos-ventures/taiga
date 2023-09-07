@@ -7,7 +7,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   createComponentFactory,
@@ -33,6 +33,18 @@ describe('ProjectNavigationComponent', () => {
         events: events$,
         url: '/settings',
       }),
+    ],
+    shallow: true,
+    overrideComponents: [
+      [
+        ProjectNavigationComponent,
+        {
+          set: {
+            imports: [CommonModule],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
+          },
+        },
+      ],
     ],
   });
 

@@ -6,7 +6,11 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import {
+  CdkVirtualScrollViewport,
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualForOf,
+} from '@angular/cdk/scrolling';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -20,12 +24,16 @@ import {
   SimpleChanges,
   ViewChild,
   ViewChildren,
+  forwardRef,
   inject,
 } from '@angular/core';
 import { RxState } from '@rx-angular/state';
 import { Workflow } from '@taiga/data';
 import { KanbanScrollManagerService } from '~/app/modules/project/feature-kanban/custom-scroll-strategy/kanban-scroll-manager.service';
-import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
+import {
+  KanbanStatusKeyboardNavigation,
+  KanbanStatusKeyboardNavigationDirective,
+} from '~/app/modules/project/feature-kanban/directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
 import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { AutoScrollService } from '@taiga/ui/drag';
 import { KineticScrollService } from '~/app/shared/scroll/kinetic-scroll.service';
@@ -40,6 +48,15 @@ import {
 import { Store } from '@ngrx/store';
 import { kanbanFeature } from '~/app/modules/project/feature-kanban/data-access/+state/reducers/kanban.reducer';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { KanbanEmptyComponent } from '../empty/kanban-empty.component';
+import { A11yDragStoryDirective } from '../story/kanban-story-a11y-drag.directive';
+import { KanbanStoryComponent } from '../story/kanban-story.component';
+import { KanbanCreateStatusComponent } from '../create-status/kanban-create-status.component';
+import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
+import { CommonModule } from '@angular/common';
+import { DropZoneDirective } from '@taiga/ui/drag/directives/drop-zone.directive';
+import { DraggableDirective } from '@taiga/ui/drag/directives/draggable.directive';
+import { DragInProgressComponent } from '@taiga/ui/drag/components/drag-in-progress.component';
 
 @Component({
   selector: 'tg-kanban-workflow',
@@ -52,6 +69,23 @@ import { animate, style, transition, trigger } from '@angular/animations';
     trigger('dropStatusTransition', [
       transition(':leave', [animate('50ms', style({}))]),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TuiScrollbarModule,
+    DropZoneDirective,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    CdkVirtualForOf,
+    forwardRef(() => KanbanStatusComponent),
+    KanbanStatusKeyboardNavigationDirective,
+    DraggableDirective,
+    KanbanCreateStatusComponent,
+    DragInProgressComponent,
+    KanbanStoryComponent,
+    A11yDragStoryDirective,
+    KanbanEmptyComponent,
   ],
 })
 export class KanbanWorkflowComponent

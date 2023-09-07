@@ -13,12 +13,23 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslocoService } from '@ngneat/transloco';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink,
+  RouterOutlet,
+} from '@angular/router';
+import { TranslocoService, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiNotification } from '@taiga-ui/core';
+import {
+  TuiNotification,
+  TuiHostedDropdownModule,
+  TuiButtonModule,
+  TuiDataListModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
 import { Workspace, WorkspaceProject } from '@taiga/data';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, take } from 'rxjs/operators';
@@ -30,6 +41,16 @@ import {
 import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
+import { capitalizePipe } from '~/app/shared/pipes/capitalize/capitalize.pipe';
+import { DeleteWorkspaceComponent } from '../workspace-delete-modal/workspace-delete-modal.component';
+import { WorkspaceDetailEditModalComponent } from '../workspace-detail-edit-modal/workspace-detail-edit-modal.component';
+import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
+import { WorkspaceDetailSkeletonComponent } from '../workspace-detail-skeleton/workspace-detail-skeleton.component';
+import { CommonModule } from '@angular/common';
+import { TitleComponent } from '~/app/shared/title/title.component';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+import { BadgeComponent } from '@taiga/ui/badge/badge.component';
+import { TooltipDirective } from '@taiga/ui/tooltip';
 interface ViewDetailModel {
   projects: WorkspaceProject[];
   workspace: Workspace | null;
@@ -49,6 +70,26 @@ export interface WorkspaceDetailState {
   styleUrls: ['./workspace-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    WorkspaceDetailSkeletonComponent,
+    TitleComponent,
+    AvatarComponent,
+    BadgeComponent,
+    TuiHostedDropdownModule,
+    TuiDropdownModule,
+    TuiButtonModule,
+    TooltipDirective,
+    RouterLink,
+    TuiDataListModule,
+    TuiSvgModule,
+    RouterOutlet,
+    WorkspaceDetailEditModalComponent,
+    DeleteWorkspaceComponent,
+    capitalizePipe,
+  ],
 })
 export class WorkspaceDetailComponent implements OnInit, OnDestroy {
   public model$!: Observable<ViewDetailModel>;

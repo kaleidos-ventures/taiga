@@ -12,6 +12,7 @@ import { Component, HostBinding } from '@angular/core';
   selector: 'tg-ui-dtable-header',
   templateUrl: './table-header.component.html',
   styleUrls: ['table-header.component.css'],
+  standalone: true,
 })
 export class TableHeaderComponent {
   @HostBinding('attr.role') public role = 'columnheader';

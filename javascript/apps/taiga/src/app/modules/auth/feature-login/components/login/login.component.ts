@@ -7,7 +7,12 @@
  */
 
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import {
@@ -19,6 +24,13 @@ import {
 import { selectLoginError } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 import { filterNil } from '~/app/shared/utils/operators';
+import { RouterLink } from '@angular/router';
+import { TuiLinkModule, TuiButtonModule } from '@taiga-ui/core';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { InputsModule } from '@taiga/ui/inputs';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+import { ButtonLoadingDirective } from '~/app/shared/directives/button-loading/button-loading.directive';
 
 interface Login {
   username: string;
@@ -31,6 +43,18 @@ interface Login {
   styleUrls: ['./login.component.css'],
   providers: [RxState],
   animations: [fadeIntOutAnimation],
+  standalone: true,
+  imports: [
+    TranslocoDirective,
+    CommonModule,
+    InputsModule,
+    ReactiveFormsModule,
+    TuiLinkModule,
+    RouterLink,
+    ContextNotificationComponent,
+    ButtonLoadingDirective,
+    TuiButtonModule,
+  ],
 })
 export class LoginComponent implements OnInit {
   @Input() public projectInvitationToken = '';

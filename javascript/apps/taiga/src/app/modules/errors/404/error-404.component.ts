@@ -7,13 +7,18 @@
  */
 
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ConfigService } from '@taiga/core';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'tg-error-404',
   templateUrl: './error-404.component.html',
   styleUrls: ['./error-404.component.css'],
+  standalone: true,
+  imports: [CommonModule, TranslocoDirective, RouterLink, TuiButtonModule],
 })
 export class Error404Component {
   constructor(private router: Router, public config: ConfigService) {}

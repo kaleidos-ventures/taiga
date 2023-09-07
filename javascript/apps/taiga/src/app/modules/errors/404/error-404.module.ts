@@ -9,7 +9,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { Error404Component } from './error-404.component';
 
 const routes: Routes = [
@@ -22,8 +22,7 @@ const routes: Routes = [
   },
 ];
 @NgModule({
-  declarations: [Error404Component],
-  imports: [RouterModule.forChild(routes), CommonTemplateModule],
+  imports: [RouterModule.forChild(routes), Error404Component],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

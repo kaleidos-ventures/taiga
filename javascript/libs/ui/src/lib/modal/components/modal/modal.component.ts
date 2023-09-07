@@ -19,13 +19,17 @@ import {
   ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TuiDialogService } from '@taiga-ui/core';
+import { TuiDialogService, TuiButtonModule } from '@taiga-ui/core';
 import { ShortcutsService } from '@taiga/core';
 import { ModalService } from '@taiga/ui/modal/services/modal.service';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { pairwise, startWith } from 'rxjs/operators';
 import { v4 } from 'uuid';
+
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { TooltipDirective } from '@taiga/ui/tooltip';
 
 /*
 Usage example:
@@ -42,6 +46,13 @@ Usage example:
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TuiButtonModule,
+    TooltipDirective,
+  ],
 })
 export class ModalComponent implements AfterViewInit, OnDestroy {
   public open$ = new BehaviorSubject<boolean>(false);

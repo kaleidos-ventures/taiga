@@ -6,6 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -26,14 +27,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { TuiLinkModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
 import { InvitationParams, SignUpError } from '@taiga/data';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+import { InputsModule } from '@taiga/ui/inputs';
+
 import { PasswordStrengthComponent } from '@taiga/ui/inputs/password-strength/password-strength.component';
 import {
   signup,
@@ -41,10 +43,8 @@ import {
   signUpSuccess,
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
-import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
-import { ExternalLinkModule } from '~/app/shared/directives/external-link/external-link.module';
-import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module';
+import { ButtonLoadingDirective } from '~/app/shared/directives/button-loading/button-loading.directive';
+import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
 
 @UntilDestroy()
 @Component({
@@ -54,14 +54,15 @@ import { GetUrlPipeModule } from '~/app/shared/pipes/get-url/get-url.pipe.module
   styleUrls: ['./signup.component.css', '../../styles/sign-up.shared.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonTemplateModule,
+    CommonModule,
     ReactiveFormsModule,
-    InputsModule,
-    GetUrlPipeModule,
-    ButtonLoadingModule,
     TuiLinkModule,
-    ExternalLinkModule,
-    ContextNotificationModule,
+    InputsModule,
+    ButtonLoadingDirective,
+    getUrlPipe,
+    ContextNotificationComponent,
+    TranslocoDirective,
+    TuiButtonModule,
   ],
   providers: [
     {

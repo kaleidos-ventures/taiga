@@ -8,7 +8,6 @@
 
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -25,6 +24,12 @@ import {
   selectStoryView,
 } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 import { StoryDetailComponent } from '../story-detail/story-detail.component';
+import { StoryWrapperSideViewDirective } from './story-wrapper-side-view-resize.directive';
+import { StoryDetailSkeletonComponent } from '../story-detail-skeleton/story-detail-skeleton.component';
+import { A11yModule } from '@angular/cdk/a11y';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 interface WrapperSideViewState {
   selectedStoryView: StoryView;
   loadingStory: boolean;
@@ -36,6 +41,16 @@ interface WrapperSideViewState {
   styleUrls: ['./project-feature-story-wrapper-side-view.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    ResizedDirective,
+    StoryDetailComponent,
+    A11yModule,
+    StoryDetailSkeletonComponent,
+    StoryWrapperSideViewDirective,
+  ],
 })
 export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   @ViewChild(StoryDetailComponent)
@@ -61,7 +76,6 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
 
   constructor(
     private store: Store,
-    private cd: ChangeDetectorRef,
     private state: RxState<WrapperSideViewState>,
     private localStorage: LocalStorageService
   ) {

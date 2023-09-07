@@ -6,8 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-export * from './ws.module';
-
 export { WsService } from './services/ws.service';
 export { WsServiceMock } from './services/ws.service.mock';
 export * from './ws.actions';

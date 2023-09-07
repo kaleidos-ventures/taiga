@@ -8,7 +8,10 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'capitalize' })
+@Pipe({
+  name: 'capitalize',
+  standalone: true,
+})
 export class capitalizePipe implements PipeTransform {
   public transform(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();

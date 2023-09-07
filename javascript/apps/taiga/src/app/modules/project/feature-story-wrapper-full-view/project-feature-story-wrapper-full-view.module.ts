@@ -8,7 +8,7 @@
 
 import { NgModule } from '@angular/core';
 import { TuiSvgModule } from '@taiga-ui/core';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { StoryDetailSkeletonComponent } from '../story-detail-skeleton/story-detail-skeleton.component';
 import { StoryDetailModule } from '../story-detail/story-detail.module';
 import { ProjectFeatureStoryWrapperFullViewComponent } from './project-feature-story-wrapper-full-view.component';
@@ -16,11 +16,10 @@ import { ProjectFeatureStoryWrapperFullViewComponent } from './project-feature-s
 @NgModule({
   imports: [
     TuiSvgModule,
-    CommonTemplateModule,
     StoryDetailModule,
     StoryDetailSkeletonComponent,
+    ProjectFeatureStoryWrapperFullViewComponent,
   ],
-  declarations: [ProjectFeatureStoryWrapperFullViewComponent],
   providers: [],
   exports: [ProjectFeatureStoryWrapperFullViewComponent],
 })

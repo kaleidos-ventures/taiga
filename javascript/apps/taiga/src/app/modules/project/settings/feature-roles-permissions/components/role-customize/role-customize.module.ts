@@ -10,19 +10,16 @@ import { NgModule } from '@angular/core';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
 import { TuiToggleModule } from '@taiga-ui/kit';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { RoleCustomizeComponent } from './role-customize.component';
 
 @NgModule({
   imports: [
     TuiLinkModule,
     TuiSvgModule,
-    CommonTemplateModule,
     TuiToggleModule,
-    InputsModule,
+    RoleCustomizeComponent,
   ],
-  declarations: [RoleCustomizeComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

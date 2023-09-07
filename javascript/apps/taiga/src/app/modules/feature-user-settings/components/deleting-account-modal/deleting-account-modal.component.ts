@@ -15,7 +15,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalModule } from '@taiga/ui/modal';
+
 import { TranslocoModule } from '@ngneat/transloco';
 import {
   TuiButtonModule,
@@ -23,7 +23,7 @@ import {
   TuiScrollbarModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SafeHtmlPipe } from '~/app/shared/pipes/safe-html/safe-html.pipe';
 import { RxState } from '@rx-angular/state';
@@ -33,10 +33,13 @@ import {
 } from '~/app/modules/feature-user-settings/data-access/+state/reducers/user-settings.reducer';
 import { Store } from '@ngrx/store';
 import { ProjectSummaryCardComponent } from '~/app/shared/project-summary-card/project-summary-card.component';
-import { AvatarModule } from '@taiga/ui/avatar';
+
 import { ProjectsDropdownComponent } from '~/app/shared/projects-dropdown/projects-dropdown.component';
 import { InlineNotificationComponent } from '@taiga/ui/inline-notification';
 import { userSettingsActions } from '~/app/modules/feature-user-settings/data-access/+state/actions/user-settings.actions';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+import { InputsModule } from '@taiga/ui/inputs';
 
 interface ComponentModel {
   accountInfo: UserSettingsState['deleteUserInfo'];
@@ -47,18 +50,18 @@ interface ComponentModel {
   standalone: true,
   imports: [
     CommonModule,
-    ModalModule,
     TranslocoModule,
     TuiButtonModule,
     TuiLinkModule,
     TuiSvgModule,
-    InputsModule,
     SafeHtmlPipe,
     ProjectSummaryCardComponent,
     TuiScrollbarModule,
-    AvatarModule,
     ProjectsDropdownComponent,
     InlineNotificationComponent,
+    ModalComponent,
+    AvatarComponent,
+    InputsModule,
   ],
   templateUrl: './deleting-account-modal.component.html',
   styleUrls: ['./deleting-account-modal.component.css'],

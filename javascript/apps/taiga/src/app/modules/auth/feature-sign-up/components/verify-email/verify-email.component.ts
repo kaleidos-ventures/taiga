@@ -18,13 +18,15 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { TuiNotification } from '@taiga-ui/core';
+import { TuiNotification, TuiLinkModule } from '@taiga-ui/core';
 import {
   resendSuccess,
   signup,
 } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
 import { AppService } from '~/app/services/app.service';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
 
 @UntilDestroy()
 @Component({
@@ -32,6 +34,8 @@ import { AppService } from '~/app/services/app.service';
   templateUrl: './verify-email.component.html',
   styleUrls: ['./verify-email.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CommonModule, TranslocoDirective, TuiLinkModule],
 })
 export class AuthFeatureVerifyEmailComponent implements OnInit {
   @Input()

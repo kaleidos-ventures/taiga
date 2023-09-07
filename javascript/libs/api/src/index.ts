@@ -6,8 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-export * from './lib/api.module';
-
 export * from './lib/shared/api-utils/api-utils.service';
 export * from './lib/auth/auth-api.service';
 export * from './lib/project/project-api.service';

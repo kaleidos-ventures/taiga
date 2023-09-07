@@ -34,6 +34,14 @@ import { WsService } from '~/app/services/ws';
 import { filterNil } from '~/app/shared/utils/operators';
 import { invitationWorkspaceActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 
+import { RouterLinkActive, RouterLink, RouterOutlet } from '@angular/router';
+import { TuiTabsModule } from '@taiga-ui/kit';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { InviteUserModalComponent } from '~/app/shared/invite-user-modal/invite-user-modal.component';
+
 @UntilDestroy()
 @Component({
   selector: 'tg-workspace-detail-people',
@@ -41,6 +49,18 @@ import { invitationWorkspaceActions } from '~/app/shared/invite-user-modal/data-
   styleUrls: ['./workspace-detail-people.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TuiButtonModule,
+    TuiTabsModule,
+    RouterLinkActive,
+    RouterLink,
+    RouterOutlet,
+    ModalComponent,
+    InviteUserModalComponent,
+  ],
 })
 export class WorkspaceDetailPeopleComponent implements OnInit {
   @Input() public id!: Workspace['id'];

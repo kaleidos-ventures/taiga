@@ -7,6 +7,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -19,14 +20,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { Project } from '@taiga/data';
-import { AvatarModule } from '@taiga/ui/avatar';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+
 import { filter, take } from 'rxjs/operators';
 import { ProjectNavigationComponent } from '~/app/modules/project/feature-navigation/project-feature-navigation.component';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 
 @UntilDestroy()
@@ -36,7 +38,13 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
   templateUrl: './project-navigation-settings.component.html',
   styleUrls: ['./project-navigation-settings.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiSvgModule, CommonTemplateModule, AvatarModule, RouterModule],
+  imports: [
+    CommonModule,
+    TuiSvgModule,
+    RouterModule,
+    AvatarComponent,
+    TranslocoDirective,
+  ],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -50,6 +58,9 @@ import { RouteHistoryService } from '~/app/shared/route-history/route-history.se
 export class ProjectNavigationSettingsComponent implements OnInit {
   @Input()
   public project!: Project;
+
+  @Input({ required: true })
+  public projectNavigationComponent!: ProjectNavigationComponent;
 
   @Output()
   public closeMenu = new EventEmitter<void>();
@@ -78,7 +89,6 @@ export class ProjectNavigationSettingsComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
-    private projectNavigationComponent: ProjectNavigationComponent,
     private routeHistory: RouteHistoryService
   ) {}
 

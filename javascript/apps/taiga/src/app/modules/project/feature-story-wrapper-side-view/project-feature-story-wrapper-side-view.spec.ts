@@ -11,6 +11,9 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { selectStoryView } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 import { ProjectFeatureStoryWrapperSideViewComponent } from './project-feature-story-wrapper-side-view.component';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
+import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('ButtonComponent', () => {
   let spectator: Spectator<ProjectFeatureStoryWrapperSideViewComponent>;
@@ -24,9 +27,21 @@ describe('ButtonComponent', () => {
 
   const createComponent = createComponentFactory({
     component: ProjectFeatureStoryWrapperSideViewComponent,
-    imports: [],
+    imports: [getTranslocoModule()],
     providers: [provideMockStore({ initialState })],
     mocks: [LocalStorageService],
+    overrideComponents: [
+      [
+        ProjectFeatureStoryWrapperSideViewComponent,
+        {
+          set: {
+            imports: [CommonModule],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
+          },
+        },
+      ],
+    ],
+    shallow: true,
   });
 
   beforeEach(() => {

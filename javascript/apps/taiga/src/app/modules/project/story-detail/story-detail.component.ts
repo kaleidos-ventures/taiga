@@ -7,7 +7,7 @@
  */
 
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Location } from '@angular/common';
+import { Location, DatePipe, CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -19,9 +19,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -29,6 +29,10 @@ import {
   TuiButtonComponent,
   TuiNotification,
   TuiScrollbarComponent,
+  TuiSvgModule,
+  TuiButtonModule,
+  TuiHostedDropdownModule,
+  TuiDataListModule,
 } from '@taiga-ui/core';
 import {
   Attachment,
@@ -53,7 +57,10 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
-import { OrderComments } from '~/app/shared/comments/comments.component';
+import {
+  CommentsComponent,
+  OrderComments,
+} from '~/app/shared/comments/comments.component';
 import { EditorImageUploadService } from '~/app/shared/editor/editor-image-upload.service';
 import { PermissionUpdateNotificationService } from '~/app/shared/permission-update-notification/permission-update-notification.service';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
@@ -70,6 +77,23 @@ import {
   selectWorkflow,
 } from './data-access/+state/selectors/story-detail.selectors';
 import { StoryDetaiImageUploadService } from './story-detail-image-upload.service';
+import { StoryDetailDescriptionComponent } from './components/story-detail-description/story-detail-description.component';
+import { StoryDetailAssignComponent } from './components/story-detail-assign/story-detail-assign.component';
+import { StoryDetailStatusComponent } from './components/story-detail-status/story-detail-status.component';
+import { StoryDetailTitleComponent } from './components/story-detail-title/story-detail-title.component';
+import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
+import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
+import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
+import { InputsModule } from '@taiga/ui/inputs';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { TooltipDirective } from '@taiga/ui/tooltip';
+import { AttachmentsComponent } from '~/app/shared/attachments/attachments.component';
+import { CommentsAutoScrollDirective } from '~/app/shared/comments/directives/comments-auto-scroll.directive';
+import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
+import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
+import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.component';
+import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
+import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 
 export interface StoryDetailState {
   project: Project;
@@ -121,6 +145,35 @@ export interface StoryDetailForm {
     {
       directive: ResizedDirective,
     },
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    InputsModule,
+    ReactiveFormsModule,
+    TuiSvgModule,
+    TuiButtonModule,
+    TooltipDirective,
+    TuiHostedDropdownModule,
+    TuiDropdownModule,
+    TuiDataListModule,
+    HasPermissionDirective,
+    TuiScrollbarModule,
+    CommentsAutoScrollDirective,
+    StoryCommentsPaginationDirective,
+    StoryDetailTitleComponent,
+    UserAvatarComponent,
+    NouserAvatarComponent,
+    StoryDetailStatusComponent,
+    StoryDetailAssignComponent,
+    StoryDetailDescriptionComponent,
+    AttachmentsComponent,
+    CommentsComponent,
+    ModalComponent,
+    DiscardChangesModalComponent,
+    DatePipe,
+    DateDistancePipe,
   ],
 })
 export class StoryDetailComponent {

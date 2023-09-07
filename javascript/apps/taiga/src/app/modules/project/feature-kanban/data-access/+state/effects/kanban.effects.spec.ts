@@ -5,7 +5,6 @@
  *
  * Copyright (c) 2023-present Kaleidos INC
  */
-
 import { randFirstName, randNumber, randUserName } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';

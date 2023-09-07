@@ -19,12 +19,25 @@ import { Store } from '@ngrx/store';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { selectCurrentWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { EditStatus } from '~/app/modules/project/feature-kanban/models/edit-status.model';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { EditStatusComponent } from '../edit-status/edit-status.component';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
 
 @Component({
   selector: 'tg-kanban-create-status',
   templateUrl: './kanban-create-status.component.html',
   styleUrls: ['./kanban-create-status.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    EditStatusComponent,
+    TuiButtonModule,
+    RestoreFocusTargetDirective,
+  ],
 })
 export class KanbanCreateStatusComponent implements OnInit {
   @Input({ required: true })

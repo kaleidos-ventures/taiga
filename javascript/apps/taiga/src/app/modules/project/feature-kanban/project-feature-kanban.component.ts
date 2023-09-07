@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Location } from '@angular/common';
+import { Location, CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -69,6 +69,12 @@ import {
   selectWorkflows,
 } from './data-access/+state/selectors/kanban.selectors';
 import { KanbanReorderEvent } from './kanban.model';
+import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { InviteUserModalComponent } from '~/app/shared/invite-user-modal/invite-user-modal.component';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
+import { TitleComponent } from '~/app/shared/title/title.component';
 
 interface ComponentState {
   loadingWorkflows: KanbanState['loadingWorkflows'];
@@ -89,6 +95,18 @@ interface ComponentState {
   styleUrls: ['./project-feature-kanban.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TitleComponent,
+    ResizedDirective,
+    KanbanWorkflowComponent,
+    ProjectFeatureStoryWrapperSideViewComponent,
+    ModalComponent,
+    ProjectFeatureStoryWrapperModalViewComponent,
+    InviteUserModalComponent,
+  ],
 })
 export class ProjectFeatureKanbanComponent {
   @ViewChild(ProjectFeatureStoryWrapperModalViewComponent)

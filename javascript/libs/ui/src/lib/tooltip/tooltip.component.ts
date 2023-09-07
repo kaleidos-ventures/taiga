@@ -17,6 +17,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { TooltipPosition } from './tooltip-position.model';
+
 @Component({
   selector: 'tg-ui-tooltip',
   template: `

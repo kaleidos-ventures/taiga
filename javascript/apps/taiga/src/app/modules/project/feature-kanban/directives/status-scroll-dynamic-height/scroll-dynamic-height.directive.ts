@@ -17,17 +17,15 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { KanbanStatusComponent } from '~/app/modules/project/feature-kanban/components/status/kanban-status.component';
 
 export interface StatusScrollDynamicHeight {
   cdkScrollable?: CdkVirtualScrollViewport;
 }
 
-@UntilDestroy()
 @Directive({
   selector: '[tgScrollDynamicHeight]',
   exportAs: 'tgScrollDynamicHeight',
+  standalone: true,
 })
 export class StatusScrollDynamicHeightDirective
   implements AfterViewInit, OnDestroy
@@ -77,10 +75,7 @@ export class StatusScrollDynamicHeightDirective
     return this._virtualScrollViewPort;
   }
 
-  constructor(
-    private el: ElementRef,
-    private kanbanStatusComponent: KanbanStatusComponent
-  ) {}
+  constructor(private el: ElementRef) {}
 
   public calculateHeight() {
     const maxHeight = this.getMaxHeight();
@@ -160,9 +155,6 @@ export class StatusScrollDynamicHeightDirective
       if (Math.round(this.currentBlockSize) !== Math.round(blockSize)) {
         this.currentBlockSize = blockSize;
         this.virtualScrollViewPort.style.blockSize = `${blockSize}px`;
-        requestAnimationFrame(() => {
-          this.kanbanStatusComponent.cdkScrollable?.checkViewportSize();
-        });
       }
     }
 

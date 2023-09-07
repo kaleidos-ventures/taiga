@@ -27,7 +27,7 @@ import {
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { UserComment } from '@taiga/data';
-import { BadgeModule } from '@taiga/ui/badge/badge.module';
+
 import { Subject, of, take } from 'rxjs';
 import { StoryDetaiImageUploadService } from '~/app/modules/project/story-detail/story-detail-image-upload.service';
 import { CanDeactivateService } from '~/app/shared/can-deactivate/can-deactivate.service';
@@ -44,6 +44,7 @@ import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 import { DeletedCommentComponent } from '../deleted-comment/deleted-comment.component';
 import { TooltipDirective } from '@taiga/ui/tooltip/tooltip.directive';
 import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.component';
+import { BadgeComponent } from '@taiga/ui/badge/badge.component';
 
 @Component({
   selector: 'tg-comment',
@@ -63,13 +64,14 @@ import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.
     EditorComponent,
     DiscardChangesModalComponent,
     TuiButtonModule,
-    BadgeModule,
     DateDistancePipe,
     TooltipDirective,
     TuiHostedDropdownModule,
     DeletedCommentComponent,
     TuiSvgModule,
     NouserAvatarComponent,
+    BadgeComponent,
+    TooltipDirective,
   ],
   animations: [fadeIntOutAnimation],
   providers: [

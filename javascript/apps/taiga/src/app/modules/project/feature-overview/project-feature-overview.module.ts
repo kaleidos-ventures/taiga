@@ -7,11 +7,8 @@
  */
 
 import { NgModule } from '@angular/core';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiDataListModule, TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
-import { AvatarModule } from '@taiga/ui/avatar';
-import { ModalModule } from '@taiga/ui/modal';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { TitleComponent } from '~/app/shared/title/title.component';
@@ -23,13 +20,10 @@ import { ProjectMembersComponent } from './components/project-members/project-me
 import { DataAccessProjectOverviewModule } from './data-access/project-overview-data-access.module';
 import { ProjectOverviewRoutingModule } from './project-feature-overview-routing.module';
 import { ProjectFeatureOverviewComponent } from './project-feature-overview.component';
-import { ToolTipModule } from '@taiga/ui/tooltip';
 
 @NgModule({
   imports: [
     TuiSvgModule,
-    AvatarModule,
-    CommonTemplateModule,
     ProjectOverviewRoutingModule,
     TuiLinkModule,
     DataAccessProjectOverviewModule,
@@ -38,22 +32,11 @@ import { ToolTipModule } from '@taiga/ui/tooltip';
     ProjectMembersModalComponent,
     ProjectMembersComponent,
     EditProjectComponent,
-    ModalModule,
     DropdownModule,
-    ToolTipModule,
     TuiDataListModule,
     DeleteProjectComponent,
     AutoFocusDirective,
-  ],
-  declarations: [ProjectFeatureOverviewComponent],
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: {
-        scope: 'project_overview',
-        alias: 'project_overview',
-      },
-    },
+    ProjectFeatureOverviewComponent,
   ],
 })
 export class ProjectFeatureOverviewModule {}

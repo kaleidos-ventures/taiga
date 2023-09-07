@@ -32,7 +32,7 @@ import { CommentSingleComponent } from './components/comment-single/comment-sing
 import { CommentUserInputComponent } from './components/comment-user-input/comment-user-input.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { StoryDetailApiActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
-import { ToolTipModule } from '@taiga/ui/tooltip';
+import { TooltipDirective } from '@taiga/ui/tooltip/tooltip.directive';
 
 export type OrderComments = '-createdAt' | 'createdAt';
 
@@ -54,11 +54,11 @@ export interface CommentsComponentState {
     CodeHightlightDirective,
     TranslocoModule,
     TuiButtonModule,
-    ToolTipModule,
     CommentUserInputComponent,
     CommentSkeletonComponent,
     RealTimeDateDistanceComponent,
     CommentSingleComponent,
+    TooltipDirective,
   ],
   providers: [
     RxState,

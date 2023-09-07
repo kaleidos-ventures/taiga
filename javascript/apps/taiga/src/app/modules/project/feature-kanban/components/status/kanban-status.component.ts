@@ -7,7 +7,10 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import {
+  CdkVirtualScrollViewport,
+  CdkVirtualForOf,
+} from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,7 +23,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -42,7 +45,10 @@ import {
   selectStories,
 } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { KanbanStatusKeyboardNavigation } from '~/app/modules/project/feature-kanban/directives/kanban-status-keyboard-navigation/kanban-status-keyboard-navigation.directive';
-import { StatusScrollDynamicHeight } from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
+import {
+  StatusScrollDynamicHeight,
+  StatusScrollDynamicHeightDirective,
+} from '~/app/modules/project/feature-kanban/directives/status-scroll-dynamic-height/scroll-dynamic-height.directive';
 import {
   KanbanStory,
   KanbanStoryA11y,
@@ -54,6 +60,32 @@ import { AutoScrollService } from '@taiga/ui/drag';
 import { filterNil } from '~/app/shared/utils/operators';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
 import { KanbanWorkflowComponent } from '../workflow/kanban-workflow.component';
+import { DeleteStatusComponent } from '../delete-status/delete-status.component';
+import { KanbanCreateStoryInlineComponent } from '../create-story-inline/kanban-create-story-inline.component';
+
+import { A11yDragStoryDirective } from '../story/kanban-story-a11y-drag.directive';
+import { KanbanStoryComponent } from '../story/kanban-story.component';
+
+import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
+
+import { EditStatusComponent } from '../edit-status/edit-status.component';
+
+import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
+import {
+  TuiHostedDropdownModule,
+  TuiButtonModule,
+  TuiDataListModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
+
+import { CommonModule } from '@angular/common';
+import { DropZoneDirective } from '@taiga/ui/drag/directives/drop-zone.directive';
+import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { KanbanStoryKeyboardNavigationDirective } from '~/app/modules/project/feature-kanban/directives/kanban-story-keyboard-navigation/kanban-story-keyboard-navigation.directive';
+import { DraggableDirective } from '@taiga/ui/drag/directives/draggable.directive';
+import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
+import { DragHandleDirective } from '@taiga/ui/drag/directives/drag-handle.directive';
+import { TooltipDirective } from '@taiga/ui/tooltip';
 
 export const KanbanStatusComponentSlideInTime = 300;
 
@@ -99,6 +131,34 @@ export interface KanbanComponentState {
         ),
       ]),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    DropZoneDirective,
+    DragHandleDirective,
+    TuiHostedDropdownModule,
+    TuiDropdownModule,
+    TuiButtonModule,
+    RestoreFocusTargetDirective,
+    TooltipDirective,
+    EditStatusComponent,
+    KanbanStoryKeyboardNavigationDirective,
+    StatusScrollDynamicHeightDirective,
+    TuiScrollbarModule,
+    CdkVirtualScrollViewport,
+    KanbanVirtualScrollDirective,
+    CdkVirtualForOf,
+    KanbanStoryComponent,
+    A11yDragStoryDirective,
+    DraggableDirective,
+    HasPermissionDirective,
+    KanbanCreateStoryInlineComponent,
+    TuiDataListModule,
+    TuiSvgModule,
+    DeleteStatusComponent,
+    KanbanWorkflowComponent,
   ],
 })
 export class KanbanStatusComponent
@@ -386,6 +446,10 @@ export class KanbanStatusComponent
 
   public onDynamicHeightChange() {
     this.state.set({ calculatedHeight: true });
+
+    requestAnimationFrame(() => {
+      this.cdkScrollable?.checkViewportSize();
+    });
   }
 
   private fillColor() {

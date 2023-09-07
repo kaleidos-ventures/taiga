@@ -13,7 +13,8 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { TuiSizeL, TuiSizeM, TuiSizeS } from '@taiga-ui/core';
+import { TuiSizeL, TuiSizeM, TuiSizeS, TuiSvgModule } from '@taiga-ui/core';
+import { NgIf } from '@angular/common';
 
 export type Swatches =
   | 'primary'
@@ -34,6 +35,8 @@ export type Swatches =
   templateUrl: './badge.component.html',
   styleUrls: ['./badge.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, TuiSvgModule],
 })
 export class BadgeComponent implements OnInit {
   @Input()

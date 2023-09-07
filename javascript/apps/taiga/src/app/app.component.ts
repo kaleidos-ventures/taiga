@@ -21,7 +21,6 @@ import { selectUser } from './modules/auth/data-access/+state/selectors/auth.sel
 import { AuthService } from './modules/auth/services/auth.service';
 import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { RouteHistoryService } from './shared/route-history/route-history.service';
-import { NavigationService } from './shared/navigation/navigation.service';
 import { InputModalityDetector } from '@angular/cdk/a11y';
 import { LanguageService } from './services/language/language.service';
 import { ConfigService } from '@taiga/core';
@@ -45,7 +44,6 @@ export class AppComponent {
     private store: Store,
     private routeHistoryService: RouteHistoryService,
     private translocoService: TranslocoService,
-    private navigationService: NavigationService,
     private inputModalityDetector: InputModalityDetector,
     private localStorageService: LocalStorageService,
     private languageService: LanguageService,

@@ -2,14 +2,20 @@
 
 # Usage
 
-Add the module.
+Add to the component
 
 ```ts
-import { DragModule } from '@taiga/ui/drag';
+import { DropZoneDirective } from '@taiga/ui/drag/directives/drop-zone.directive';
+import { DraggableDirective } from '@taiga/ui/drag/directives/draggable.directive';
+import { DragInProgressComponent } from '@taiga/ui/drag/components/drag-in-progress.component';
 
-@NgModule({
+@Component({
   imports: [
-    DragModule
+    DropZoneDirective,
+    DraggableDirective,
+    DragInProgressComponent
+  ]
+})
 ```
 
 Define where is valid to drop an element. An ID is required to identify different drop zones.

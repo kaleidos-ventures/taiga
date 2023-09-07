@@ -9,11 +9,15 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FieldService } from '../services/field.service';
 import { FormDirective } from '../form/form.directive';
+import { TuiSvgModule } from '@taiga-ui/core';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'tg-ui-error',
   templateUrl: './error.component.html',
   styleUrls: ['./error.component.css'],
+  standalone: true,
+  imports: [NgIf, TuiSvgModule],
 })
 export class ErrorComponent implements OnChanges {
   @Input()

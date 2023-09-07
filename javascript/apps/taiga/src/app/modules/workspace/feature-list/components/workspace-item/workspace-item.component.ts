@@ -54,6 +54,15 @@ import { WsService } from '~/app/services/ws';
 import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { selectProjectAcceptedInvite } from '~/app/shared/invite-user-modal/data-access/+state/selectors/invitation.selectors';
 import { UserStorageService } from '~/app/shared/user-storage/user-storage.service';
+import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
+import { RouterLink } from '@angular/router';
+
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+import { BadgeComponent } from '@taiga/ui/badge/badge.component';
+import { CardSkeletonComponent } from '@taiga/ui/skeletons/card-skeleton/card-skeleton.component';
+import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
 
 interface ViewModel {
   projectsToShow: number;
@@ -150,6 +159,18 @@ export interface WorkspaceItemState {
         animate('0.3s'),
       ]),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    AvatarComponent,
+    RouterLink,
+    BadgeComponent,
+    TuiButtonModule,
+    ProjectCardComponent,
+    CardSkeletonComponent,
+    TuiLinkModule,
   ],
 })
 export class WorkspaceItemComponent

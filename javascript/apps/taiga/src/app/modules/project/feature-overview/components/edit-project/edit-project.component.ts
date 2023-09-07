@@ -30,11 +30,13 @@ import {
   TuiNotification,
 } from '@taiga-ui/core';
 import { EditProject, Project } from '@taiga/data';
-import { ImageUploadModule } from '@taiga/ui/inputs/image-upload/image-upload.module';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { ModalModule } from '@taiga/ui/modal';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { InputsModule } from '@taiga/ui/inputs';
+
 import { AppService } from '~/app/services/app.service';
 import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
+import { ImageUploadComponent } from '@taiga/ui/inputs/image-upload/image-upload.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'tg-edit-project',
@@ -43,16 +45,17 @@ import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
-    InputsModule,
-    ImageUploadModule,
     FormsModule,
     TranslocoModule,
     TuiButtonModule,
     TuiLinkModule,
-    ModalModule,
     TuiAutoFocusModule,
     DiscardChangesModalComponent,
+    ModalComponent,
+    InputsModule,
+    ImageUploadComponent,
   ],
 })
 export class EditProjectComponent implements OnInit {

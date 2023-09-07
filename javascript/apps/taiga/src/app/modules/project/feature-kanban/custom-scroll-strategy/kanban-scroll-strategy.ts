@@ -244,6 +244,7 @@ export class KanbanVirtualScrollStrategy implements VirtualScrollStrategy {
       deps: [forwardRef(() => KanbanVirtualScrollDirective)],
     },
   ],
+  standalone: true,
 })
 export class KanbanVirtualScrollDirective implements OnChanges {
   @Input()

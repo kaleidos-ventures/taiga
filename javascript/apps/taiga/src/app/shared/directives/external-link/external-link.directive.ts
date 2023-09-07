@@ -20,8 +20,11 @@ import { TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
-// eslint-disable-next-line @angular-eslint/directive-selector
-@Directive({ selector: '[withExternalLink]' })
+@Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
+  selector: '[withExternalLink]',
+  standalone: true,
+})
 export class ExternalLinkDirective implements AfterViewInit, OnDestroy {
   public observer!: MutationObserver;
 

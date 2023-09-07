@@ -28,12 +28,12 @@ import {
 } from '@taiga-ui/core';
 import { TUI_LANGUAGE } from '@taiga-ui/i18n';
 import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
-import { ApiModule, SystemApiService } from '@taiga/api';
+import { SystemApiService } from '@taiga/api';
 import { ConfigService, CoreModule, coreActions } from '@taiga/core';
 import { PROMPT_PROVIDER } from '@taiga/ui/modal/services/modal.service';
 import { paramCase } from 'change-case';
 import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
-import { WsModule } from '~/app/services/ws';
+
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -72,8 +72,6 @@ export function prefersReducedMotion(): boolean {
   imports: [
     DataAccessAuthModule,
     ErrorsModule,
-    ApiModule,
-    WsModule,
     CoreModule,
     HttpClientModule,
     ApiRestInterceptorModule,

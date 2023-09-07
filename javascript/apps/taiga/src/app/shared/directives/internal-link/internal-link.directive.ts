@@ -16,8 +16,11 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-// eslint-disable-next-line @angular-eslint/directive-selector
-@Directive({ selector: '[withInternalLink]' })
+@Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
+  selector: '[withInternalLink]',
+  standalone: true,
+})
 export class InternalLinkDirective implements AfterViewInit, OnDestroy {
   public observer!: MutationObserver;
 

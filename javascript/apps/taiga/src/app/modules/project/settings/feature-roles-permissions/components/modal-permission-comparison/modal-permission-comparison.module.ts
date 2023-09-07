@@ -9,12 +9,16 @@
 import { NgModule } from '@angular/core';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiSvgModule } from '@taiga-ui/core';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { ModalPermissionEntityRowComponent } from './components/modal-permission-entity-row/modal-permission-entity-row.component';
 import { ModalPermissionComparisonComponent } from './modal-permission-comparison.component';
 
 @NgModule({
-  imports: [CommonTemplateModule, TuiSvgModule],
+  imports: [
+    TuiSvgModule,
+    ModalPermissionComparisonComponent,
+    ModalPermissionEntityRowComponent,
+  ],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -23,10 +27,6 @@ import { ModalPermissionComparisonComponent } from './modal-permission-compariso
         alias: 'project_settings',
       },
     },
-  ],
-  declarations: [
-    ModalPermissionComparisonComponent,
-    ModalPermissionEntityRowComponent,
   ],
   exports: [ModalPermissionComparisonComponent],
 })

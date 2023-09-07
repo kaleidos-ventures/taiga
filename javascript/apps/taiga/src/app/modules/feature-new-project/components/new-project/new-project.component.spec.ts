@@ -5,7 +5,6 @@
  *
  * Copyright (c) 2023-present Kaleidos INC
  */
-
 import { RouterTestingModule } from '@angular/router/testing';
 import { randUuid } from '@ngneat/falso';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
@@ -15,6 +14,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Observable } from 'rxjs';
 import { fetchWorkspaceList } from '~/app/modules/workspace/feature-list/+state/actions/workspace.actions';
 import { NewProjectComponent } from './new-project.component';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 
 describe('NewProjectComponent', () => {
   let spectator: Spectator<NewProjectComponent>;
@@ -29,7 +29,7 @@ describe('NewProjectComponent', () => {
       provideMockStore({ initialState }),
       provideMockActions(() => actions$),
     ],
-    imports: [RouterTestingModule],
+    imports: [RouterTestingModule, getTranslocoModule()],
     declareComponent: false,
     mocks: [],
   });

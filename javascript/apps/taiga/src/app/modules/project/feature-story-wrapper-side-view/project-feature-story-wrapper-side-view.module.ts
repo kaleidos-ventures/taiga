@@ -9,7 +9,7 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { NgModule } from '@angular/core';
 import { TuiSvgModule } from '@taiga-ui/core';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { StoryDetailSkeletonComponent } from '../story-detail-skeleton/story-detail-skeleton.component';
 import { StoryDetailModule } from '../story-detail/story-detail.module';
 import { ProjectFeatureStoryWrapperSideViewComponent } from './project-feature-story-wrapper-side-view.component';
@@ -18,13 +18,12 @@ import { StoryWrapperSideViewDirective } from './story-wrapper-side-view-resize.
 @NgModule({
   imports: [
     TuiSvgModule,
-    CommonTemplateModule,
     StoryDetailModule,
     StoryDetailSkeletonComponent,
     A11yModule,
     StoryWrapperSideViewDirective,
+    ProjectFeatureStoryWrapperSideViewComponent,
   ],
-  declarations: [ProjectFeatureStoryWrapperSideViewComponent],
   providers: [],
   exports: [ProjectFeatureStoryWrapperSideViewComponent],
 })

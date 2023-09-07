@@ -11,9 +11,10 @@ import { CommonModule } from '@angular/common';
 import { Project } from '@taiga/data';
 import { DropdownModule } from '../dropdown/dropdown.module';
 import { TuiDataListModule, TuiScrollbarModule } from '@taiga-ui/core';
-import { AvatarModule } from '@taiga/ui/avatar';
+
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
 
 @Component({
   selector: 'tg-projects-dropdown',
@@ -23,9 +24,9 @@ import { TranslocoModule } from '@ngneat/transloco';
     DropdownModule,
     TuiDataListModule,
     TuiScrollbarModule,
-    AvatarModule,
     RouterModule,
     TranslocoModule,
+    AvatarComponent,
   ],
   templateUrl: './projects-dropdown.component.html',
   styleUrls: ['./projects-dropdown.component.css'],

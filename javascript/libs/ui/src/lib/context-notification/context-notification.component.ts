@@ -21,6 +21,8 @@ import {
   Input,
   Output,
 } from '@angular/core';
+import { TuiSvgModule, TuiButtonModule } from '@taiga-ui/core';
+import { NgIf } from '@angular/common';
 
 type NotificationStatus = 'info' | 'notice' | 'error' | 'success' | 'warning';
 type AlertLevel = 'none' | 'polite' | 'important';
@@ -59,6 +61,8 @@ type AlertLevel = 'none' | 'polite' | 'important';
     ]),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, TuiSvgModule, TuiButtonModule],
 })
 export class ContextNotificationComponent {
   @Input()

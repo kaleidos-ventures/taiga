@@ -31,6 +31,8 @@ import {
   WorkspaceItemComponent,
   WorkspaceItemState,
 } from './workspace-item.component';
+import { CommonModule } from '@angular/common';
+
 describe('WorkspaceItem', () => {
   let mockState: RxState<WorkspaceItemState> = new RxState();
 
@@ -64,6 +66,7 @@ describe('WorkspaceItem', () => {
   const createComponent = createComponentFactory({
     component: WorkspaceItemComponent,
     imports: [],
+    mocks: [UserStorageService, WsService],
     providers: [
       provideMockStore({ initialState }),
       {
@@ -71,7 +74,15 @@ describe('WorkspaceItem', () => {
         useValue: mockState,
       },
     ],
-    mocks: [UserStorageService, WsService],
+    overrideComponents: [
+      [
+        WorkspaceItemComponent,
+        {
+          set: { imports: [CommonModule] },
+        },
+      ],
+    ],
+    shallow: true,
   });
   let store: MockStore;
 

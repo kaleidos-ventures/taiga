@@ -23,6 +23,7 @@ import { TUI_TEXTFIELD_LABEL_OUTSIDE } from '@taiga-ui/core';
 import { TuiTextAreaComponent } from '@taiga-ui/kit';
 import { FormDirective } from '../form/form.directive';
 import { FieldService } from '../services/field.service';
+import { NgIf } from '@angular/common';
 
 let nextId = 0;
 
@@ -39,6 +40,8 @@ let nextId = 0;
       },
     },
   ],
+  standalone: true,
+  imports: [NgIf],
 })
 export class TextareaComponent implements AfterContentInit {
   @Input()

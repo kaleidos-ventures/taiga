@@ -6,6 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,7 +14,8 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { TuiButtonModule } from '@taiga-ui/core';
 
 @Component({
   selector: 'tg-members-pagination',
@@ -21,7 +23,7 @@ import { CommonTemplateModule } from '~/app/shared/common-template.module';
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonTemplateModule],
+  imports: [TranslocoDirective, CommonModule, TuiButtonModule],
 })
 export class PaginationComponent {
   @Input()

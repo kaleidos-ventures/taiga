@@ -10,6 +10,7 @@ import {
   InputModalityDetector,
   LiveAnnouncer,
 } from '@angular/cdk/a11y';
+import { CommonModule } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -26,7 +27,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoDirective, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
@@ -39,18 +40,19 @@ import {
 import { TuiToggleModule } from '@taiga-ui/kit';
 import { ShortcutsService } from '@taiga/core';
 import { Membership, Permissions, Story, User } from '@taiga/data';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
+import { InputsModule } from '@taiga/ui/inputs';
+import { TooltipDirective } from '@taiga/ui/tooltip';
+
 import { Subject, map } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { initAssignUser } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectMembers } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { filterNil } from '~/app/shared/utils/operators';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
-import { ToolTipModule } from '@taiga/ui/tooltip';
 
 interface AssignComponentState {
   members: Membership['user'][];
@@ -64,7 +66,7 @@ interface AssignComponentState {
   selector: 'tg-assign-user',
   standalone: true,
   imports: [
-    CommonTemplateModule,
+    CommonModule,
     UserAvatarComponent,
     AutoFocusDirective,
     TuiFocusTrapModule,
@@ -74,10 +76,11 @@ interface AssignComponentState {
     TuiScrollbarModule,
     TuiToggleModule,
     TuiSvgModule,
-    ToolTipModule,
     UserCardComponent,
-    InputsModule,
     A11yModule,
+    InputsModule,
+    TooltipDirective,
+    TranslocoDirective,
   ],
   templateUrl: './assign-user.component.html',
   styleUrls: ['./assign-user.component.css'],

@@ -11,8 +11,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { ConfigService } from '@taiga/core';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
+
 import { SocialLoginButtonComponent } from '../social-login-button/social-login-button.component';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 
 @Component({
   selector: 'tg-social-login',
@@ -22,8 +23,8 @@ import { SocialLoginButtonComponent } from '../social-login-button/social-login-
   imports: [
     CommonModule,
     TranslocoModule,
-    ContextNotificationModule,
     SocialLoginButtonComponent,
+    ContextNotificationComponent,
   ],
   providers: [
     {

@@ -22,7 +22,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoDirective } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
 import {
   TuiLinkModule,
@@ -30,19 +30,19 @@ import {
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { Invitation, Membership, User } from '@taiga/data';
-import { AvatarModule } from '@taiga/ui/avatar';
-import { BadgeModule } from '@taiga/ui/badge/badge.module';
-import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
+
 import { of } from 'rxjs';
 import { delay, take, tap } from 'rxjs/operators';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
-import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
+
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 import { LeaveProjectDropdownComponent } from '~/app/modules/project/components/leave-project-dropdown/leave-project-dropdown.component';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
 import { leaveProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { capitalizePipe } from '~/app/shared/pipes/capitalize/capitalize.pipe';
+import { BadgeComponent } from '@taiga/ui/badge/badge.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'tg-project-members-list',
@@ -51,26 +51,16 @@ import { leaveProject } from '~/app/modules/project/data-access/+state/actions/p
   styleUrls: ['./project-members-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SkeletonsModule,
+    CommonModule,
     TuiScrollbarModule,
     TuiSvgModule,
-    AvatarModule,
-    CommonTemplateModule,
     TuiLinkModule,
     UserCardComponent,
     ScrollingModule,
-    BadgeModule,
-    CapitalizePipeModule,
     LeaveProjectDropdownComponent,
-  ],
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: {
-        scope: 'project_overview',
-        alias: 'project_overview',
-      },
-    },
+    capitalizePipe,
+    BadgeComponent,
+    TranslocoDirective,
   ],
   animations: [
     fadeIntOutAnimation,

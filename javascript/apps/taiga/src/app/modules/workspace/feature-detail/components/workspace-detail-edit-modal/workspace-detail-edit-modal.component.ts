@@ -15,7 +15,12 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Workspace } from '@taiga/data';
 import {
@@ -23,12 +28,31 @@ import {
   WorkspaceNameValidation,
 } from '~/app/shared/workspace/workspace-name-validation';
 
+import { TuiButtonModule } from '@taiga-ui/core';
+import { CommonModule } from '@angular/common';
+
+import { TranslocoDirective } from '@ngneat/transloco';
+import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { InputsModule } from '@taiga/ui/inputs';
+
 @UntilDestroy()
 @Component({
   selector: 'tg-workspace-detail-edit-modal',
   templateUrl: './workspace-detail-edit-modal.component.html',
   styleUrls: ['./workspace-detail-edit-modal.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    InputsModule,
+    TranslocoDirective,
+    ModalComponent,
+    ReactiveFormsModule,
+    TuiButtonModule,
+    DiscardChangesModalComponent,
+  ],
 })
 export class WorkspaceDetailEditModalComponent implements OnInit {
   @Input()

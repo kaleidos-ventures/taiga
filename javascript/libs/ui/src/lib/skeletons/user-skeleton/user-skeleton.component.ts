@@ -13,5 +13,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './user-skeleton.component.html',
   styleUrls: ['./user-skeleton.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class UserSkeletonComponent {}

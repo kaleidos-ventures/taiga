@@ -19,21 +19,15 @@ import {
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { TuiTabsModule } from '@taiga-ui/kit';
-import { AvatarModule } from '@taiga/ui/avatar';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { ModalModule } from '@taiga/ui/modal';
-import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
-import { BadgeModule } from 'libs/ui/src/lib/badge/badge.module';
+
 import { DeleteProjectComponent } from '~/app/modules/project/feature-overview/components/delete-project/delete-project.component';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
 import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
-import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
+
 import { ProjectCardComponent } from '~/app/shared/project-card/project-card.component';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { TitleComponent } from '~/app/shared/title/title.component';
@@ -52,29 +46,15 @@ import { WorkspaceDetailSkeletonComponent } from './components/workspace-detail-
 import { WorkspaceDetailComponent } from './components/workspace-detail/workspace-detail.component';
 import { WorkspacePageRoutingModule } from './workspace-feature-detail-routing.module';
 import { LeaveWorkspaceDropdownComponent } from './components/leave-workspace-dropdown/leave-workspace-dropdown.component';
-import { ToolTipModule } from '@taiga/ui/tooltip';
+
 import { WorkspaceDetailPeopleEffects } from './+state/effects/workspace-detail-people.effects';
 import { ProjectsDropdownComponent } from '~/app/shared/projects-dropdown/projects-dropdown.component';
 
 @NgModule({
-  declarations: [
-    WorkspaceDetailComponent,
-    WorkspaceDetailSkeletonComponent,
-    WorkspaceDetailEditModalComponent,
-    WorkspaceDetailProjectsComponent,
-    WorkspaceDetailPeopleComponent,
-    WorkspaceDetailPeopleMembersComponent,
-    WorkspaceDetailPeoplePendingComponent,
-    WorkspaceDetailPeopleNonMembersComponent,
-    WorkspaceDetailPeopleMembersRemoveComponent,
-  ],
   imports: [
     TuiLinkModule,
     RouterModule,
-    AvatarModule,
     TuiTabsModule,
-    CommonTemplateModule,
-    BadgeModule,
     DropdownModule,
     TuiDataListModule,
     TuiSvgModule,
@@ -87,26 +67,28 @@ import { ProjectsDropdownComponent } from '~/app/shared/projects-dropdown/projec
     DeleteWorkspaceComponent,
     ResizedDirective,
     WorkspacePageRoutingModule,
-    SkeletonsModule,
-    CapitalizePipeModule,
     TuiDataListModule,
     TuiSvgModule,
     HasPermissionDirective,
-    ModalModule,
     ReactiveFormsModule,
-    InputsModule,
     DiscardChangesModalComponent,
     DeleteProjectComponent,
-    ToolTipModule,
-    DynamicTableModule,
     UserCardComponent,
     PaginationComponent,
     TitleComponent,
     TuiScrollbarModule,
     InviteUserModalModule,
-    ContextNotificationModule,
     LeaveWorkspaceDropdownComponent,
     ProjectsDropdownComponent,
+    WorkspaceDetailComponent,
+    WorkspaceDetailSkeletonComponent,
+    WorkspaceDetailEditModalComponent,
+    WorkspaceDetailProjectsComponent,
+    WorkspaceDetailPeopleComponent,
+    WorkspaceDetailPeopleMembersComponent,
+    WorkspaceDetailPeoplePendingComponent,
+    WorkspaceDetailPeopleNonMembersComponent,
+    WorkspaceDetailPeopleMembersRemoveComponent,
   ],
   providers: [{ provide: TRANSLOCO_SCOPE, useValue: 'workspace' }],
 })

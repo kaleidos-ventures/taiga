@@ -22,12 +22,7 @@ import {
   TuiSelectModule,
   TuiTabsModule,
 } from '@taiga-ui/kit';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
-import { SkeletonsModule } from '@taiga/ui/skeletons/skeletons.module';
-import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
-import { ModalModule } from 'libs/ui/src/lib/modal/modal.module';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+
 import { DropdownModule } from '~/app/shared/dropdown/dropdown.module';
 import { InviteUserModalModule } from '~/app/shared/invite-user-modal/invite-user-modal.module';
 import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
@@ -43,14 +38,6 @@ import { RoleSelectComponent } from './components/role-select/role-select.compon
 import { ProjectsSettingsFeatureMembersComponent } from './feature-members.component';
 
 @NgModule({
-  declarations: [
-    ProjectsSettingsFeatureMembersComponent,
-    MembersListComponent,
-    PendingMembersListComponent,
-    RevokeInvitationComponent,
-    RoleSelectComponent,
-    RemoveMemberComponent,
-  ],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -64,22 +51,16 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
     DropdownModule,
     FormsModule,
     ReactiveFormsModule,
-    SkeletonsModule,
     TuiTabsModule,
     TuiSelectModule,
     TuiDataListWrapperModule,
-    InputsModule,
     TuiLinkModule,
     UserCardComponent,
     TuiSvgModule,
     TuiAutoFocusModule,
     A11yModule,
     TuiActiveZoneModule,
-    ContextNotificationModule,
     TuiDataListModule,
-    CommonTemplateModule,
-    DynamicTableModule,
-    ModalModule,
     InviteUserModalModule,
     RestoreFocusTargetDirective,
     RestoreFocusDirective,
@@ -103,6 +84,12 @@ import { ProjectsSettingsFeatureMembersComponent } from './feature-members.compo
       },
     ]),
     TitleComponent,
+    ProjectsSettingsFeatureMembersComponent,
+    MembersListComponent,
+    PendingMembersListComponent,
+    RevokeInvitationComponent,
+    RoleSelectComponent,
+    RemoveMemberComponent,
   ],
 })
 export class ProjectsSettingsFeatureMembersModule {}

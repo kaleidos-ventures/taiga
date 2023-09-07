@@ -8,15 +8,22 @@
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslocoService, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { TuiLinkModule, TuiSvgModule } from '@taiga-ui/core';
+import { TranslocoDirective } from '@ngneat/transloco';
+import {
+  TuiButtonModule,
+  TuiDataListModule,
+  TuiLinkModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
+import { TuiSelectModule } from '@taiga-ui/kit';
 import { Role, User } from '@taiga/data';
-import { BadgeModule } from '@taiga/ui/badge/badge.module';
-import { ToolTipModule } from '@taiga/ui/tooltip';
-import { InputsModule } from 'libs/ui/src/lib/inputs/inputs.module';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
-import { CapitalizePipeModule } from '~/app/shared/pipes/capitalize/capitalize.pipe.module';
+import { BadgeComponent } from '@taiga/ui/badge/badge.component';
+import { SelectComponent } from '@taiga/ui/inputs/select/select.component';
+import { TooltipDirective } from '@taiga/ui/tooltip/tooltip.directive';
+
 import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
+import { capitalizePipe } from '~/app/shared/pipes/capitalize/capitalize.pipe';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'tg-user-to-invite',
@@ -27,30 +34,23 @@ import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
     './user-to-invite.component.css',
   ],
   imports: [
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     TuiLinkModule,
-    InputsModule,
     TuiSvgModule,
-    ToolTipModule,
-    CommonTemplateModule,
     UserCardComponent,
-    BadgeModule,
-    CapitalizePipeModule,
-  ],
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      useValue: {
-        scope: 'invitation_modal',
-        alias: 'invitation_modal',
-      },
-    },
+    TooltipDirective,
+    BadgeComponent,
+    SelectComponent,
+    TuiSelectModule,
+    TuiDataListModule,
+    capitalizePipe,
+    TranslocoDirective,
+    TuiButtonModule,
   ],
 })
 export class UserToInviteComponent {
-  constructor(private translocoService: TranslocoService) {}
-
   @Output()
   public delete = new EventEmitter<number>();
 

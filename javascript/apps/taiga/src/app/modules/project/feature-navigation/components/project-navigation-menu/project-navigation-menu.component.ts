@@ -7,6 +7,7 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -17,12 +18,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { Project } from '@taiga/data';
-import { AvatarModule } from '@taiga/ui/avatar';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
+
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 
 interface ProjectMenuDialog {
@@ -50,10 +52,11 @@ const cssValue = getComputedStyle(document.documentElement);
   styleUrls: ['./project-navigation-menu.component.css'],
   imports: [
     TuiSvgModule,
-    CommonTemplateModule,
-    AvatarModule,
     RouterModule,
     HasPermissionDirective,
+    AvatarComponent,
+    TranslocoDirective,
+    CommonModule,
   ],
   animations: [
     trigger('blockInitialRenderAnimation', [transition(':enter', [])]),

@@ -26,12 +26,22 @@ import {
   TemplateProjectForm,
   TemplateStepComponent,
 } from '../template-step/template-step.component';
+import { InitStepComponent } from '../init-step/init-step.component';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
 @UntilDestroy()
 @Component({
   selector: 'tg-new-project',
   templateUrl: './new-project.component.html',
   styleUrls: ['../../styles/project.shared.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    InitStepComponent,
+    TemplateStepComponent,
+  ],
 })
 export class NewProjectComponent implements OnInit {
   @ViewChild(TemplateStepComponent)

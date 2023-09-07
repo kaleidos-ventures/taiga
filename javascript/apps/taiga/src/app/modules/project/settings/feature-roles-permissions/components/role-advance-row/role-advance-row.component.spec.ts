@@ -18,6 +18,7 @@ import { SettingsPermission } from '~/app/modules/project/settings/feature-roles
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
 
 import { RoleAdvanceRowComponent } from './role-advance-row.component';
+import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 
 describe('RoleAdvanceRowComponent', () => {
   let spectator: Spectator<RoleAdvanceRowComponent>;
@@ -25,7 +26,7 @@ describe('RoleAdvanceRowComponent', () => {
 
   const createComponent = createComponentFactory({
     component: RoleAdvanceRowComponent,
-    imports: [],
+    imports: [getTranslocoModule()],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [],
     mocks: [ProjectsSettingsFeatureRolesPermissionsService],

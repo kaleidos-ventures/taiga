@@ -12,19 +12,48 @@ import {
   FormControl,
   FormGroup,
   Validators,
+  ReactiveFormsModule,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
   initResetPasswordPage,
   requestResetPassword,
 } from '../data-access/+state/actions/auth.actions';
 import { selectShowResetPasswordConfirmation } from '../data-access/+state/selectors/auth.selectors';
+import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
+import { CommonModule } from '@angular/common';
+
+import { TranslocoDirective } from '@ngneat/transloco';
+import { InputsModule } from '@taiga/ui/inputs';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+
+import { ButtonLoadingDirective } from '~/app/shared/directives/button-loading/button-loading.directive';
+import { InternalLinkDirective } from '~/app/shared/directives/internal-link/internal-link.directive';
+import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
+import { TitleComponent } from '~/app/shared/title/title.component';
 
 @Component({
   selector: 'tg-auth-feature-reset-password',
   templateUrl: './auth-feature-reset-password.component.html',
   styleUrls: ['./auth-feature-reset-password.component.css'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    InputsModule,
+    TitleComponent,
+    AuthForestComponent,
+    ContextNotificationComponent,
+    ReactiveFormsModule,
+    InputsModule,
+    ButtonLoadingDirective,
+    TuiButtonModule,
+    InternalLinkDirective,
+    RouterLink,
+    getUrlPipe,
+  ],
 })
 export class AuthFeatureResetPasswordComponent implements OnInit {
   public resetPasswordForm!: FormGroup;

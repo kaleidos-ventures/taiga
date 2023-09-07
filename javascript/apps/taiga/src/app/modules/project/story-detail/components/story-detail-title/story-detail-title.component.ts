@@ -18,7 +18,12 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RxState } from '@rx-angular/state';
 import { ShortcutsService } from '@taiga/core';
@@ -34,6 +39,18 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { Store } from '@ngrx/store';
 import { filterNil } from '~/app/shared/utils/operators';
+import { TuiTextAreaModule } from '@taiga-ui/kit';
+
+import { TuiButtonModule, TuiTextfieldControllerModule } from '@taiga-ui/core';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { TooltipDirective } from '@taiga/ui/tooltip';
+import { FieldConflictComponent } from '~/app/modules/project/components/field-conflict/field-conflict.component';
+import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
+import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
+import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
+import { InputsModule } from '@taiga/ui/inputs';
 
 export interface StoryDetailTitleState {
   projectId: Project['id'];
@@ -51,6 +68,23 @@ export interface StoryDetailTitleState {
   styleUrls: ['./story-detail-title.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    InputsModule,
+    TranslocoDirective,
+    TuiButtonModule,
+    RestoreFocusTargetDirective,
+    TooltipDirective,
+    RestoreFocusDirective,
+    FieldConflictComponent,
+    ReactiveFormsModule,
+    TuiTextAreaModule,
+    AutoFocusDirective,
+    TuiTextfieldControllerModule,
+    DiscardChangesModalComponent,
+  ],
 })
 export class StoryDetailTitleComponent implements OnChanges, OnDestroy {
   @Input()

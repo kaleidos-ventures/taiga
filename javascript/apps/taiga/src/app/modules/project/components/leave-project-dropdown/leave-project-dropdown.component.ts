@@ -22,7 +22,7 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
 import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
 import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
-import { ToolTipModule } from '@taiga/ui/tooltip';
+import { TooltipDirective } from '@taiga/ui/tooltip';
 
 @Component({
   selector: 'tg-leave-project-dropdown',
@@ -33,11 +33,11 @@ import { ToolTipModule } from '@taiga/ui/tooltip';
     TranslocoModule,
     TuiButtonModule,
     TuiLinkModule,
-    ToolTipModule,
     A11yModule,
     RestoreFocusTargetDirective,
     RestoreFocusDirective,
     AutoFocusDirective,
+    TooltipDirective,
   ],
   templateUrl: './leave-project-dropdown.component.html',
   styleUrls: ['./leave-project-dropdown.component.css'],

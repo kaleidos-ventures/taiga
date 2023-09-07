@@ -11,10 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { TuiLinkModule } from '@taiga-ui/core';
-import { ContextNotificationModule } from '@taiga/ui/context-notification/context-notification.module';
-import { InputsModule } from '@taiga/ui/inputs/inputs.module';
-import { CommonTemplateModule } from '~/app/shared/common-template.module';
-import { ButtonLoadingModule } from '~/app/shared/directives/button-loading/button-loading.module';
+
 import { TitleComponent } from '~/app/shared/title/title.component';
 import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
 import { SocialLoginComponent } from '../components/social-login/social-login.component';
@@ -24,7 +21,6 @@ import { LoginComponent } from './components/login/login.component';
 const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
 
 @NgModule({
-  declarations: [AuthFeatureLoginComponent, LoginComponent],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
@@ -35,16 +31,14 @@ const routes: Routes = [{ path: '', component: AuthFeatureLoginComponent }];
     },
   ],
   imports: [
-    CommonTemplateModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
-    InputsModule,
     TuiLinkModule,
-    ContextNotificationModule,
-    ButtonLoadingModule,
     AuthForestComponent,
     SocialLoginComponent,
     TitleComponent,
+    AuthFeatureLoginComponent,
+    LoginComponent,
   ],
 })
 export class AuthFeatureLoginModule {}

@@ -23,9 +23,13 @@ import {
   FormGroupDirective,
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE, TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FieldService } from '../services/field.service';
+import { ErrorComponent } from '../error/error.component';
+import { CommonModule } from '@angular/common';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
 
 let nextId = 0;
 
@@ -43,6 +47,14 @@ let nextId = 0;
       },
     },
     FieldService,
+  ],
+  standalone: true,
+  imports: [
+    TranslocoDirective,
+    AvatarComponent,
+    TuiButtonModule,
+    CommonModule,
+    ErrorComponent,
   ],
 })
 export class ImageUploadComponent implements OnChanges {

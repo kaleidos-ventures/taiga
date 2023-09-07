@@ -19,7 +19,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, StoryDetail } from '@taiga/data';
@@ -31,6 +31,20 @@ import { PermissionsService } from '~/app/services/permissions.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectApiService } from '@taiga/api';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { StoryDetailDescriptionStickyDirective } from './story-detail-description-sticky.directive';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { InputsModule } from '@taiga/ui/inputs';
+import { TooltipDirective } from '@taiga/ui/tooltip';
+import { ClickActionAreaDirective } from '~/app/shared/directives/click-action-area/click-action-area.directive';
+import { CodeHightlightDirective } from '~/app/shared/directives/code-highlight/code-highlight.directive';
+import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
+import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
+import { SafeHtmlPipe } from '~/app/shared/pipes/safe-html/safe-html.pipe';
+import { FieldConflictComponent } from '~/app/modules/project/components/field-conflict/field-conflict.component';
+import { EditorComponent } from '~/app/shared/editor/editor.component';
 
 export interface StoryDetailDescriptionState {
   projectId: Project['id'];
@@ -52,6 +66,24 @@ export interface StoryDetailDescriptionState {
   styleUrls: ['./story-detail-description.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    RestoreFocusDirective,
+    InputsModule,
+    ReactiveFormsModule,
+    EditorComponent,
+    StoryDetailDescriptionStickyDirective,
+    TuiButtonModule,
+    FieldConflictComponent,
+    CodeHightlightDirective,
+    ClickActionAreaDirective,
+    RestoreFocusTargetDirective,
+    TooltipDirective,
+    DiscardChangesModalComponent,
+    SafeHtmlPipe,
+  ],
 })
 export class StoryDetailDescriptionComponent implements OnChanges, OnDestroy {
   @ViewChild('descriptionContent')

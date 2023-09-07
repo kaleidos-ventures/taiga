@@ -40,6 +40,16 @@ import {
   conSlideInOut,
 } from '~/app/shared/utils/animations';
 import { filterNil } from '~/app/shared/utils/operators';
+import { TuiLinkModule, TuiButtonModule } from '@taiga-ui/core';
+import { RemoveMemberComponent } from '../remove-member/remove-member.component';
+import { RoleSelectComponent } from '../role-select/role-select.component';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { CommonModule } from '@angular/common';
+import { DynamicTableModule } from '@taiga/ui/dynamic-table/dynamic-table.module';
+import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+import { UserSkeletonComponent } from '@taiga/ui/skeletons/user-skeleton/user-skeleton.component';
+import { PaginationComponent } from '~/app/shared/pagination/pagination.component';
+import { UserCardComponent } from '~/app/shared/user-card/user-card.component';
 
 interface MemberData {
   data: Membership;
@@ -55,6 +65,20 @@ interface MemberData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
   animations: [removeCell, showUndo, undoDone, conSlideInOut],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    DynamicTableModule,
+    UserCardComponent,
+    RoleSelectComponent,
+    RemoveMemberComponent,
+    ContextNotificationComponent,
+    TuiLinkModule,
+    TuiButtonModule,
+    UserSkeletonComponent,
+    PaginationComponent,
+  ],
 })
 export class MembersListComponent {
   @ViewChild('undoButton', { read: ElementRef, static: false })

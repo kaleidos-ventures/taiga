@@ -19,6 +19,15 @@ import {
   selectTotalInvitations,
   selectTotalMemberships,
 } from './+state/selectors/members.selectors';
+import { RouterLinkActive, RouterLink, RouterOutlet } from '@angular/router';
+import { TuiTabsModule } from '@taiga-ui/kit';
+import { TuiButtonModule, TuiSvgModule } from '@taiga-ui/core';
+
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { ModalComponent } from '@taiga/ui/modal/components';
+import { InviteUserModalComponent } from '~/app/shared/invite-user-modal/invite-user-modal.component';
+import { TitleComponent } from '~/app/shared/title/title.component';
 
 interface ComponentState {
   project: Project;
@@ -36,6 +45,20 @@ interface ComponentState {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RxState],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    TitleComponent,
+    TuiButtonModule,
+    TuiTabsModule,
+    RouterLinkActive,
+    RouterLink,
+    TuiSvgModule,
+    RouterOutlet,
+    ModalComponent,
+    InviteUserModalComponent,
+  ],
 })
 export class ProjectsSettingsFeatureMembersComponent {
   public model$ = this.state.select();

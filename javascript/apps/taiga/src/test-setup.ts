@@ -6,8 +6,11 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+jest.mock('pretty-bytes');
+
 import 'jest-preset-angular/setup-jest';
 import '@testing-library/jest-dom';
+import '@ng-web-apis/universal/mocks';
 
 import { getTestBed } from '@angular/core/testing';
 import {

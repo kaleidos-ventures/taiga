@@ -9,12 +9,15 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TuiSizeXS, TuiSizeXXL } from '@taiga-ui/core';
 import { RandomColorService } from '../services/random-color/random-color.service';
+import { TuiAvatarModule } from '@taiga-ui/kit';
 
 @Component({
   selector: 'tg-ui-avatar',
   templateUrl: './avatar.component.html',
   styleUrls: ['./avatar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [TuiAvatarModule],
 })
 export class AvatarComponent {
   @Input()

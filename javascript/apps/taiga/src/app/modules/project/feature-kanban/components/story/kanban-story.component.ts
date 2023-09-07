@@ -6,19 +6,17 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Location } from '@angular/common';
+import { Location, SlicePipe, CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   HostBinding,
-  Inject,
   Input,
   OnChanges,
   OnInit,
-  Optional,
   SimpleChanges,
+  forwardRef,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -33,6 +31,16 @@ import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import { KanbanStatusComponent } from '../status/kanban-status.component';
+import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
+
+import { TuiSvgModule } from '@taiga-ui/core';
+import { RouterLink } from '@angular/router';
+import { TranslocoDirective } from '@ngneat/transloco';
+import { TooltipDirective } from '@taiga/ui/tooltip';
+import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
+import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
+import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
+import { AssignUserComponent } from '~/app/modules/project/components/assign-user/assign-user.component';
 
 export interface StoryState {
   isA11yDragInProgress: boolean;
@@ -50,6 +58,21 @@ export interface StoryState {
   styleUrls: ['./kanban-story.component.css'],
   providers: [RxState],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    RouterLink,
+    TuiSvgModule,
+    HasPermissionDirective,
+    TuiDropdownModule,
+    TooltipDirective,
+    UserAvatarComponent,
+    AssignUserComponent,
+    OutsideClickDirective,
+    SlicePipe,
+    forwardRef(() => KanbanStatusComponent),
+  ],
 })
 export class KanbanStoryComponent implements OnChanges, OnInit {
   @Input()
@@ -61,6 +84,9 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
 
   @Input()
   public total = 0;
+
+  @Input()
+  public kanbanStatus?: KanbanStatusComponent;
 
   @HostBinding('attr.data-test')
   public dataTest = 'kanban-story';
@@ -91,11 +117,7 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
     private location: Location,
     private store: Store,
     private el: ElementRef,
-    @Optional()
-    @Inject(KanbanStatusComponent)
-    private kabanStatus: KanbanStatusComponent,
-    private permissionService: PermissionsService,
-    private cd: ChangeDetectorRef
+    private permissionService: PermissionsService
   ) {
     this.state.set({
       assignees: [],
@@ -241,18 +263,22 @@ export class KanbanStoryComponent implements OnChanges, OnInit {
   }
 
   private scrollToDragStoryIfNotVisible() {
-    const statusScrollBottom =
-      this.kabanStatus.kanbanVirtualScroll?.scrollStrategy.viewport?.elementRef.nativeElement.getBoundingClientRect()
-        .bottom;
+    const kanbanStatus = this.kanbanStatus;
 
+    if (!kanbanStatus) {
+      return;
+    }
+
+    const statusScrollBottom =
+      kanbanStatus.kanbanVirtualScroll?.scrollStrategy.viewport?.elementRef.nativeElement.getBoundingClientRect()
+        .bottom;
     if (statusScrollBottom) {
       const newTop =
         this.nativeElement.getBoundingClientRect().bottom -
         statusScrollBottom +
         1;
-
       if (newTop > 0) {
-        this.kabanStatus.kanbanVirtualScroll?.scrollStrategy.scrollTo({
+        kanbanStatus.kanbanVirtualScroll?.scrollStrategy.scrollTo({
           top: newTop,
         });
       }

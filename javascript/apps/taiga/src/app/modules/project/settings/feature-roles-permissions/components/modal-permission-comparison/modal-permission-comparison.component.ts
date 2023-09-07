@@ -9,6 +9,10 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { EntityConflictPermission } from '~/app/modules/project/settings/feature-roles-permissions/models/modal-permission.model';
 import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/project/settings/feature-roles-permissions/services/feature-roles-permissions.service';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { ModalPermissionEntityRowComponent } from './components/modal-permission-entity-row/modal-permission-entity-row.component';
+import { CommonModule } from '@angular/common';
+import { TranslocoDirective } from '@ngneat/transloco';
 
 @Component({
   selector: 'tg-modal-permission-comparison',
@@ -16,6 +20,13 @@ import { ProjectsSettingsFeatureRolesPermissionsService } from '~/app/modules/pr
   styleUrls: [
     './modal-permission-comparison.component.css',
     './modal-permission-comparison-common.css',
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslocoDirective,
+    ModalPermissionEntityRowComponent,
+    TuiButtonModule,
   ],
 })
 export class ModalPermissionComparisonComponent {

@@ -126,5 +126,7 @@ export class AttachmentsComponent {
         showSizeError: invalidFiles.map((file) => file.name),
       });
     }
+
+    this.fileInput.nativeElement.value = '';
   }
 }

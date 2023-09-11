@@ -6,17 +6,18 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Spectator, createHostFactory } from '@ngneat/spectator/jest';
+import { SpectatorHost, createHostFactory } from '@ngneat/spectator/jest';
 import { UndoComponent } from './undo.component';
 import { Subject } from 'rxjs';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { fakeAsync } from '@angular/core/testing';
+import { CommonModule } from '@angular/common';
 
 describe('TooltipDirective', () => {
-  let spectator: Spectator<UndoComponent>;
+  let spectator: SpectatorHost<UndoComponent>;
   const createHost = createHostFactory({
     component: UndoComponent,
-    imports: [getTranslocoModule()],
+    imports: [getTranslocoModule(), CommonModule],
   });
   const init$ = new Subject<void>();
 
@@ -44,7 +45,7 @@ describe('TooltipDirective', () => {
 
     expect(confirm).not.toHaveBeenCalled();
 
-    spectator.tick(6000);
+    spectator.tick(11000);
 
     expect(confirm).toHaveBeenCalled();
   }));
@@ -100,8 +101,37 @@ describe('TooltipDirective', () => {
 
     spectator.click('[data-test="undo-action"]');
 
-    spectator.tick(6000);
+    spectator.tick(11000);
 
     expect(confirm).not.toHaveBeenCalled();
   }));
+
+  it('delete component run confirm', () => {
+    const confirm = jest.fn();
+
+    spectator = createHost(
+      `
+      <tg-undo [initUndo]="initUndo$" (confirm)="confirm()">
+        <div class="content">Some content here</div>
+      </tg-undo>`,
+      {
+        hostProps: {
+          initUndo$: init$.asObservable(),
+          confirm,
+        },
+      }
+    );
+
+    init$.next();
+
+    spectator.detectChanges();
+
+    expect(spectator.query('[data-test="undo-action"]')).toExist();
+
+    expect(confirm).not.toHaveBeenCalled();
+
+    spectator.fixture.destroy();
+
+    expect(confirm).toHaveBeenCalled();
+  });
 });

@@ -144,6 +144,9 @@ export class UndoComponent implements OnInit, OnDestroy {
   @Input()
   public msgActionUndo = this.t.translate('ui_components.undo.action_undo');
 
+  @Input()
+  public undoTimeout = 10000;
+
   @Output()
   public confirm = new EventEmitter<void>();
 
@@ -160,14 +163,12 @@ export class UndoComponent implements OnInit, OnDestroy {
   public undoneTimeout: ReturnType<typeof setTimeout> | null = null;
 
   public undo() {
-    if (this.confirmTimeout) {
-      clearTimeout(this.confirmTimeout);
-    }
+    this.clearConfirmTimeout();
 
     this.state.set('undone');
 
     this.undoneTimeout = setTimeout(() => {
-      this.state.set('none');
+      this.close();
     }, 4000);
   }
 
@@ -181,19 +182,13 @@ export class UndoComponent implements OnInit, OnDestroy {
       this.state.set('waitUndo');
 
       this.confirmTimeout = setTimeout(() => {
-        this.state.set('none');
-        this.confirm.next();
-      }, 5000);
+        this.runConfirmDelete();
+      }, this.undoTimeout);
     });
   }
 
   public closeConfirm() {
-    this.state.set('none');
-    this.confirm.next();
-
-    if (this.confirmTimeout) {
-      clearTimeout(this.confirmTimeout);
-    }
+    this.runConfirmDelete();
   }
 
   public close() {
@@ -203,6 +198,23 @@ export class UndoComponent implements OnInit, OnDestroy {
   public ngOnDestroy() {
     if (this.undoneTimeout) {
       clearTimeout(this.undoneTimeout);
+    }
+
+    if (this.confirmTimeout) {
+      this.runConfirmDelete();
+    }
+  }
+
+  private runConfirmDelete() {
+    this.close();
+    this.confirm.next();
+    this.clearConfirmTimeout();
+  }
+
+  private clearConfirmTimeout() {
+    if (this.confirmTimeout) {
+      clearTimeout(this.confirmTimeout);
+      this.confirmTimeout = null;
     }
   }
 }

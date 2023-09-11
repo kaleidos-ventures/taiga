@@ -16,10 +16,12 @@ Copyright (c) 2023-present Kaleidos INC
       class="content"
       [attr.role]="alertLevel === 'important' ? 'alert' : null"
       [attr.aria-live]="alertLevel === 'polite' ? 'polite' : null">
-      <tui-svg
-        *ngIf="hasIcon"
-        class="icon"
-        [src]="icon"></tui-svg>
+      <div class="icon-wrapper">
+        <tui-svg
+          *ngIf="hasIcon"
+          class="icon"
+          [src]="icon"></tui-svg>
+      </div>
       <ng-content></ng-content>
       <button
         *ngIf="hasClose"

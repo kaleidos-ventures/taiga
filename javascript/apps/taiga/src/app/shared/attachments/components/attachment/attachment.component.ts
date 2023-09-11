@@ -124,8 +124,13 @@ export class AttachmentComponent implements OnChanges {
     }
   }
 
-  public downloadAttachment() {
-    this.download.nativeElement.click();
+  public downloadAttachment(e: Event) {
+    const target = e.target as HTMLElement;
+    const downloadButton = this.download.nativeElement;
+
+    if (target !== downloadButton && !downloadButton.contains(target)) {
+      this.download.nativeElement.click();
+    }
   }
 
   public ngOnChanges() {

@@ -6,15 +6,15 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 
-from taiga.attachments.serializers import AttachmentSerializer
 from taiga.base.serializers import BaseModel
+from taiga.stories.attachments.serializers import StoryAttachmentSerializer
 
 
 class CreateStoryAttachmentContent(BaseModel):
     ref: int
-    attachment: AttachmentSerializer
+    attachment: StoryAttachmentSerializer
 
 
 class DeleteStoryAttachmentContent(BaseModel):
     ref: int
-    attachment: AttachmentSerializer
+    attachment: StoryAttachmentSerializer

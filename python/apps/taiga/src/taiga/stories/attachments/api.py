@@ -9,17 +9,19 @@ from functools import partial
 from uuid import UUID
 
 from fastapi import status
+from fastapi.responses import StreamingResponse
 from taiga.attachments import services as attachments_services
 from taiga.attachments.models import Attachment
-from taiga.attachments.serializers import AttachmentSerializer
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
+from taiga.base.utils.files import iterfile
 from taiga.base.validators import B64UUID, UploadFile
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm
 from taiga.routers import routes
 from taiga.stories.attachments import events
+from taiga.stories.attachments.serializers import StoryAttachmentSerializer
 from taiga.stories.stories.api import get_story_or_404
 from taiga.stories.stories.models import Story
 
@@ -38,7 +40,7 @@ DELETE_STORY_ATTACHMENT = HasPerm("modify_story")
     name="project.story.attachments.create",
     summary="Attach a file to a story",
     responses=ERROR_403 | ERROR_404 | ERROR_422,
-    response_model=AttachmentSerializer,
+    response_model=StoryAttachmentSerializer,
 )
 async def create_story_attachments(
     project_id: B64UUID,
@@ -47,7 +49,7 @@ async def create_story_attachments(
     file: UploadFile,
 ) -> Attachment:
     """
-    Create and attachment asociate to a story
+    Create an attachment asociate to a story
     """
     story = await get_story_or_404(project_id, ref)
     await check_permissions(permissions=CREATE_STORY_ATTACHMENT, user=request.user, obj=story)
@@ -70,7 +72,7 @@ async def create_story_attachments(
     "/projects/{project_id}/stories/{ref}/attachments",
     name="project.story.attachments.list",
     summary="List story attachments",
-    response_model=list[AttachmentSerializer],
+    response_model=list[StoryAttachmentSerializer],
     responses=ERROR_403 | ERROR_404 | ERROR_422,
 )
 async def list_story_attachment(
@@ -83,9 +85,10 @@ async def list_story_attachment(
     """
     story = await get_story_or_404(project_id=project_id, ref=ref)
     await check_permissions(permissions=LIST_STORY_ATTACHMENTS, user=request.user, obj=story)
-    return await attachments_services.list_attachments(
+    attachments = await attachments_services.list_attachments(
         content_object=story,
     )
+    return attachments
 
 
 ##########################################################
@@ -107,7 +110,7 @@ async def delete_story_attachment(
     request: AuthRequest,
 ) -> None:
     """
-    Delete a attachment
+    Delete a story attachment
     """
     story = await get_story_or_404(project_id=project_id, ref=ref)
     attachment = await get_story_attachment_or_404(attachment_id=attachment_id, story=story)
@@ -115,6 +118,34 @@ async def delete_story_attachment(
 
     event_on_delete = partial(events.emit_event_when_story_attachment_is_deleted, project=story.project)
     await attachments_services.delete_attachment(attachment=attachment, event_on_delete=event_on_delete)
+
+
+##########################################################
+# download story attachment file
+##########################################################
+
+
+@routes.unauth_story_attachments.get(
+    "/projects/{project_id}/stories/{ref}/attachments/{attachment_id}/file/{filename}",
+    name="project.story.attachments.file",
+    summary="Download the story attachment file",
+    responses=ERROR_404 | ERROR_422,
+    response_class=StreamingResponse,
+)
+async def get_story_attachment_file(
+    project_id: B64UUID,
+    ref: int,
+    attachment_id: B64UUID,
+    filename: str,
+) -> StreamingResponse:
+    """
+    Download a story attachment file
+    """
+    story = await get_story_or_404(project_id=project_id, ref=ref)
+    attachment = await get_story_attachment_or_404(attachment_id=attachment_id, story=story)
+    file = attachment.storaged_object.file
+
+    return StreamingResponse(iterfile(file, mode="rb"), media_type=attachment.content_type)
 
 
 ################################################

@@ -50,5 +50,6 @@ def load_routes(api: FastAPI) -> None:
     api.include_router(routes.workflows)
     api.include_router(routes.stories)
     api.include_router(routes.story_attachments)
+    api.include_router(routes.unauth_story_attachments)
     api.include_router(routes.story_comments)
     api.include_router(routes.system)

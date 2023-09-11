@@ -47,6 +47,7 @@ async def list_attachments(
 ) -> list[Attachment]:
     return await attachments_repositories.list_attachments(
         filters={"content_object": content_object},
+        prefetch_related=["content_object", "project"],
     )
 
 
@@ -58,9 +59,7 @@ async def list_attachments(
 async def get_attachment(id: UUID, content_object: Model) -> Attachment | None:
     return await attachments_repositories.get_attachment(
         filters={"id": id, "content_object": content_object},
-        prefetch_related=[
-            "content_object",
-        ],
+        prefetch_related=["content_object", "project"],
     )
 
 

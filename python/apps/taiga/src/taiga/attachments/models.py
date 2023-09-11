@@ -11,13 +11,13 @@ from taiga.base.db.mixins import CreatedMetaInfoMixin
 
 
 class Attachment(models.BaseModel, CreatedMetaInfoMixin):
-    file = models.ForeignKey(
+    storaged_object = models.ForeignKey(
         "storage.StoragedObject",
         null=False,
         blank=False,
         on_delete=models.RESTRICT,
         related_name="attachments",
-        verbose_name="file",
+        verbose_name="storaged_object",
     )
     name = models.TextField(
         null=False,
@@ -43,6 +43,7 @@ class Attachment(models.BaseModel, CreatedMetaInfoMixin):
         verbose_name="object content type",
     )
     object_id = models.UUIDField(null=False, blank=False, verbose_name="object id")
+    # NOTE: the content_object should have a project attribute.
     content_object = models.GenericForeignKey(
         "object_content_type",
         "object_id",

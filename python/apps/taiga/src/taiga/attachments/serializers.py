@@ -8,7 +8,6 @@
 from datetime import datetime
 
 from taiga.base.serializers import UUIDB64, BaseModel
-from taiga.commons.storage.serializers import StoragedObjectFileField
 
 
 class AttachmentSerializer(BaseModel):
@@ -17,7 +16,7 @@ class AttachmentSerializer(BaseModel):
     content_type: str
     size: int
     created_at: datetime
-    file: StoragedObjectFileField
+    file: str
 
     class Config:
         orm_mode = True

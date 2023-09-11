@@ -95,6 +95,7 @@ async def test_list_attachments():
         )
         fake_attachments_repositories.list_attachments.assert_awaited_once_with(
             filters=filters,
+            prefetch_related=["content_object", "project"],
         )
         assert len(attachments_list) == 3
 
@@ -114,7 +115,7 @@ async def test_get_attachment():
         await services.get_attachment(id=attachment_id, content_object=story)
         fake_attachments_repositories.get_attachment.assert_awaited_once_with(
             filters={"id": attachment_id, "content_object": story},
-            prefetch_related=["content_object"],
+            prefetch_related=["content_object", "project"],
         )
 
 

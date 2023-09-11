@@ -16,4 +16,4 @@ def mark_attachment_file_to_delete(sender: Model, instance: Attachment, **kwargs
     """
     Mark the store object (with the file) of the attachment as deleted.
     """
-    storage_repositories.mark_storaged_object_as_deleted(storaged_object=instance.file)
+    storage_repositories.mark_storaged_object_as_deleted(storaged_object=instance.storaged_object)

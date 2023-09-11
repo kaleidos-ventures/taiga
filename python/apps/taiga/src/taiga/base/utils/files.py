@@ -8,7 +8,7 @@
 import hashlib
 import io
 from os import path, urandom
-from typing import IO, Any
+from typing import IO, Any, Generator
 
 from django.core.files.base import File as DjangoFile
 from django.db.models.fields.files import FieldFile  # noqa
@@ -30,6 +30,22 @@ def uploadfile_to_file(file: UploadFile) -> File:
     :rtype File
     """
     return File(name=file.filename, file=file.file)
+
+
+def iterfile(file: File, mode: str | None = "rb") -> Generator[bytes, None, None]:
+    """
+    Function to iterate over the content of a Django File object.
+    This function is useful to iterate over the content of a file so you can stream it.
+
+    :param file: a Django File object
+    :type file: File
+    :param mode: the mode to open the file
+    :type mode: str | None
+    :return a generator
+    :rtype Generator[bytes, None, None]
+    """
+    with file.open(mode) as f:
+        yield from f
 
 
 def get_size(file: IO[Any]) -> int:

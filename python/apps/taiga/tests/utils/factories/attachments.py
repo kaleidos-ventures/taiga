@@ -11,7 +11,7 @@ from .base import Factory, factory
 
 
 class AttachmentFactory(Factory):
-    file = factory.SubFactory("tests.utils.factories.StoragedObjectFactory")
+    storaged_object = factory.SubFactory("tests.utils.factories.StoragedObjectFactory")
     name = factory.Sequence(lambda n: f"test-file-{n}.png")
     content_type = "image/png"
     size = 145

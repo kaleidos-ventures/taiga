@@ -6,28 +6,27 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from django.conf import settings
-from django.contrib import admin
-from django.urls import path, re_path
 from django.urls.resolvers import URLPattern, URLResolver
 
 urlpatterns: list[URLPattern | URLResolver] = []
 
-##############################################
-# Default
-##############################################
-
 
 if settings.DEBUG:
+    from django.contrib import admin
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    from django.urls import path, re_path
+
+    ##############################################
+    # Admin panel
+    ##############################################
+
     urlpatterns += [
         path("admin/", admin.site.urls),
     ]
 
-##############################################
-# Static and media files in debug mode
-##############################################
-
-if settings.DEBUG:
-    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    ##############################################
+    # Media files
+    ##############################################
 
     def mediafiles_urlpatterns(prefix: str) -> list[URLPattern]:
         """
@@ -41,6 +40,10 @@ if settings.DEBUG:
             re_path(r"^%s(?P<path>.*)$" % re.escape(prefix.lstrip("/")), serve, {"document_root": settings.MEDIA_ROOT})
         ]
 
-    # Hardcoded only for development server
-    urlpatterns += staticfiles_urlpatterns(prefix="/static/")
     urlpatterns += mediafiles_urlpatterns(prefix="/media/")
+
+    ##############################################
+    # Static files
+    ##############################################
+
+    urlpatterns += staticfiles_urlpatterns(prefix="/static/")

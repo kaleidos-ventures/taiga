@@ -245,3 +245,60 @@ async def test_delete_story_attachments_404_not_found_nonexistent_attachment(cli
     client.login(project.created_by)
     response = client.delete(f"/projects/{project.b64id}/stories/{story.ref}/attachments/{NOT_EXISTING_B64ID}")
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+##########################################################
+# GET projects/<id>/stories/<ref>/attachments/<id>/file/<filename>
+##########################################################
+
+
+async def test_get_story_attachment_file_200_ok(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project)
+    user = project.created_by
+    attachment = await f.create_attachment(content_object=story, created_by=user)
+
+    client.login(user)
+    response = client.get(
+        f"/projects/{project.b64id}/stories/{story.ref}/attachments/{attachment.b64id}/file/{attachment.name}"
+    )
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_get_story_attachment_file_404_not_found_project(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project)
+    user = project.created_by
+    attachment = await f.create_attachment(content_object=story, created_by=user)
+
+    client.login(user)
+    response = client.get(
+        f"/projects/{NOT_EXISTING_B64ID}/stories/{story.ref}/attachments/{attachment.b64id}/file/{attachment.name}"
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_get_story_attachment_file_404_not_found_story(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project)
+    user = project.created_by
+    attachment = await f.create_attachment(content_object=story, created_by=user)
+
+    client.login(user)
+    response = client.get(
+        f"/projects/{project.b64id}/stories/{NOT_EXISTING_REF}/attachments/{attachment.b64id}/file/{attachment.name}"
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_get_story_attachment_file_404_not_found_attachment(client):
+    project = await f.create_project()
+    story = await f.create_story(project=project)
+    user = project.created_by
+    attachment = await f.create_attachment(content_object=story, created_by=user)
+
+    client.login(user)
+    response = client.get(
+        f"/projects/{project.b64id}/stories/{story.ref}/attachments/{NOT_EXISTING_B64ID}/file/{attachment.name}"
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text

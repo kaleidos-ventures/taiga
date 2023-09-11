@@ -60,12 +60,12 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "file",
+                    "storaged_object",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.RESTRICT,
                         related_name="attachments",
                         to="storage.storagedobject",
-                        verbose_name="file",
+                        verbose_name="storage object",
                     ),
                 ),
                 (

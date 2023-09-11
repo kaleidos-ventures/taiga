@@ -93,7 +93,7 @@ async def test_delete_storaged_object_that_has_been_used():
     storage = storaged_object.file.storage
 
     story = await f.create_story()
-    await f.create_attachment(content_object=story, file=storaged_object)
+    await f.create_attachment(content_object=story, storaged_object=storaged_object)
 
     assert len(await repositories.list_storaged_objects()) == 1
     assert storage.exists(file_path)

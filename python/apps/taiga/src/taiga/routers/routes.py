@@ -113,6 +113,7 @@ tags_metadata.append(
 
 # /projects/{id}/stories/{ref}/attachments
 story_attachments = AuthAPIRouter(tags=["story attachments"])
+unauth_story_attachments = APIRouter(tags=["story attachments"])
 tags_metadata.append(
     {
         "name": "story attachments",

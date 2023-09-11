@@ -20,7 +20,7 @@ from taiga.users.models import User
 ##########################################################
 
 
-DEFAULT_QUERYSET = Attachment.objects.select_related("file").all()
+DEFAULT_QUERYSET = Attachment.objects.select_related("storaged_object").all()
 
 
 class AttachmentFilters(TypedDict, total=False):
@@ -81,10 +81,10 @@ async def create_attachment(
     storaged_object = await storage_repositories.create_storaged_object(uploadfile_to_file(file))
 
     return await Attachment.objects.acreate(
-        file=storaged_object,
+        storaged_object=storaged_object,
         name=file.filename or "unknown",
         size=get_size(file.file),
-        content_type=file.content_type or "unknown",
+        content_type=file.content_type or "application/octet-stream",
         content_object=object,
         created_by=created_by,
     )

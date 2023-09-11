@@ -24,14 +24,14 @@ def test_mark_attachment_file_to_delete_is_connected():
 async def test_mark_attachment_file_to_delete_when_delete_first_level_related_model():
     story = await f.create_story()
     attachment = await f.create_attachment(content_object=story)
-    file = attachment.file
+    storaged_object = attachment.storaged_object
 
-    assert file.deleted_at is None
+    assert storaged_object.deleted_at is None
 
     assert await attachments_repositories.delete_attachments(filters={"id": attachment.id})
-    await db_utils.refresh_model_from_db(file)
+    await db_utils.refresh_model_from_db(storaged_object)
 
-    assert file.deleted_at
+    assert storaged_object.deleted_at
 
 
 async def test_mark_attachment_file_to_delete_when_delete_n_level_related_object():
@@ -44,20 +44,20 @@ async def test_mark_attachment_file_to_delete_when_delete_n_level_related_object
     attachment12 = await f.create_attachment(content_object=story1)
     attachment21 = await f.create_attachment(content_object=story2)
 
-    file11 = attachment11.file
-    file12 = attachment12.file
-    file21 = attachment21.file
+    storaged_object11 = attachment11.storaged_object
+    storaged_object12 = attachment12.storaged_object
+    storaged_object21 = attachment21.storaged_object
 
-    assert file11.deleted_at is None
-    assert file12.deleted_at is None
-    assert file21.deleted_at is None
+    assert storaged_object11.deleted_at is None
+    assert storaged_object12.deleted_at is None
+    assert storaged_object21.deleted_at is None
 
     assert await workspaces_repositories.delete_workspaces(filters={"id": workspace.id})
 
-    await db_utils.refresh_model_from_db(file11)
-    await db_utils.refresh_model_from_db(file12)
-    await db_utils.refresh_model_from_db(file21)
+    await db_utils.refresh_model_from_db(storaged_object11)
+    await db_utils.refresh_model_from_db(storaged_object12)
+    await db_utils.refresh_model_from_db(storaged_object21)
 
-    assert file11.deleted_at
-    assert file12.deleted_at
-    assert file21.deleted_at
+    assert storaged_object11.deleted_at
+    assert storaged_object12.deleted_at
+    assert storaged_object21.deleted_at

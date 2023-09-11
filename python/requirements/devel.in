@@ -11,4 +11,5 @@ types-babel  # babel
 types-python-slugify  # python-slugify
 types-redis  # redis
 types-redis  # redis
+types-requests # requests
 types-Pillow # Pillow/PIL

@@ -17,8 +17,8 @@ class AttachmentInline(admin.GenericTabularInline):
     model = Attachment
     ct_field = "object_content_type"
     ct_fk_field = "object_id"
-    fields = ("name", "file", "content_type", "size")
-    readonly_fields = ("name", "file", "content_type", "size")
+    fields = ("name", "storaged_object", "content_type", "size")
+    readonly_fields = ("name", "storaged_object", "content_type", "size")
     show_change_link = True
 
     def has_change_permission(self, request: HttpRequest, obj: Any = None) -> bool:
@@ -37,7 +37,7 @@ class AttachmentAdmin(admin.ModelAdmin[Attachment]):
                 "fields": (
                     ("id", "b64id"),
                     ("name", "size", "content_type"),
-                    "file",
+                    "storaged_object",
                     ("created_at", "created_by"),
                     ("object_content_type", "object_id"),
                     "content_object_link",

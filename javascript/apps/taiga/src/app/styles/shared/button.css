@@ -419,6 +419,7 @@ Used only in comment list sort button
 
   & [tuiWrapper] {
     background: none;
+    border-radius: 2px;
     color: var(--color-gray60);
     font-weight: var(--font-weight-medium);
     padding: var(--spacing-4) !important;
@@ -430,9 +431,34 @@ Used only in comment list sort button
     }
 
     @mixin wrapper-focus {
+      --tui-focus: var(--color-secondary);
+
+      color: var(--color-secondary);
+
       &::after {
-        border-color: var(--color-secondary);
         border-width: 1px;
+      }
+    }
+  }
+
+  &[variant="dark"] {
+    & [tuiWrapper] {
+      color: var(--color-gray40);
+
+      @mixin wrapper-hover {
+        background: var(--color-gray80);
+        color: var(--color-secondary40);
+      }
+
+      @mixin wrapper-focus {
+        --tui-focus: var(--color-secondary50);
+
+        color: var(--color-secondary50);
+
+        /* stylelint-disable-next-line max-nesting-depth */
+        &::after {
+          border-width: 2px;
+        }
       }
     }
   }

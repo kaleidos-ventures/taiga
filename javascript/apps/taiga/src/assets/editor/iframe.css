@@ -58,6 +58,16 @@ a {
   background-color: #dadfe9;
 }
 
+.mce-content-body p:first-child,
+.mce-content-body h1:first-child,
+.mce-content-body h2:first-child,
+.mce-content-body h3:first-child,
+.mce-content-body h4:first-child,
+.mce-content-body h5:first-child,
+.mce-content-body h6:first-child {
+  margin-block-start: 0;
+}
+
 /* Placeholder */
 .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
   color: rgba(99, 115, 143, 1); /* gray70 */
@@ -92,8 +102,8 @@ hr {
 }
 
 p {
-  margin-block-end: 0.5rem;
-  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-block-start: 0.75rem;
 }
 
 h1,
@@ -104,7 +114,15 @@ h5,
 h6 {
   font-family: "Ubuntu", sans-serif;
   line-height: 1.1;
-  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin-block-start: 1.5rem;
 }
 
 h1 {
@@ -138,6 +156,7 @@ h6 {
   font-size: 0.7rem;
   font-weight: 400;
   line-height: 1.15;
+  margin-block-start: 1rem;
 }
 
 pre {

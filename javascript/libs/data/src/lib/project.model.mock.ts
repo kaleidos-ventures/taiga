@@ -16,7 +16,7 @@ import {
   randUuid,
   randWord,
 } from '@ngneat/falso';
-import { ProjectCreation, Workspace } from '..';
+import { ProjectCreation, WorkflowMockFactory, Workspace } from '..';
 import { Project } from './project.model';
 import { WorkspaceMockFactory } from './workspace.model.mock';
 
@@ -30,6 +30,7 @@ export const ProjectMockFactory = (
     color: randNumber(),
     description: randParagraph({ length: 3 }).join('\n'),
     workspace: workspace ?? WorkspaceMockFactory(),
+    workflows: [WorkflowMockFactory()],
     logo: randImg(),
     logoSmall: randImg(),
     logoLarge: randImg(),

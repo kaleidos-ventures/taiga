@@ -100,40 +100,190 @@ Copyright (c) 2023-present Kaleidos INC
                 </span>
               </a>
             </li>
-            <li
-              class="menu-option"
-              *hasPermission="
-                ['view', 'modify', 'comment', 'delete'];
-                entity: 'story';
-                operation: 'OR'
-              "
-              [class.active]="kanbanActive.isActive"
-              data-test="kanban-button"
-              [attr.data-text]="t('commons.kanban')"
-              (pointerenter)="popup($event, 'kanban')"
-              (pointerleave)="out()">
-              <a
+            <ng-container *ngIf="project.workflows.length <= 1 && !collapsed">
+              <li
+                class="menu-option kanban-option"
+                *hasPermission="
+                  ['view', 'modify', 'comment', 'delete'];
+                  entity: 'story';
+                  operation: 'OR'
+                "
+                routerLinkActive="active"
+                data-test="kanban-button">
+                <a
+                  @slideIn
+                  (focus)="popup($event, 'kanban')"
+                  (focusout)="out()"
+                  [attr.data-text]="t('commons.kanban')"
+                  [attr.aria-label]="collapsed ? t('commons.kanban') : null"
+                  class="menu-option-item has-add-workflow-button"
+                  [class.active-dialog]="dialog.type === 'kanban'"
+                  [class.active-section]="activeSection"
+                  [routerLink]="[
+                    '/project',
+                    project.id,
+                    project.slug,
+                    'kanban'
+                  ]">
+                  <ng-container
+                    *ngTemplateOutlet="createWorkflowButtonTpl"></ng-container>
+                  <tui-svg
+                    class="menu-option-icon"
+                    src="kanban"></tui-svg>
+                  <span
+                    class="menu-option-text"
+                    data-animation="text">
+                    {{ t('commons.kanban') }}
+                  </span>
+                </a>
+              </li>
+            </ng-container>
+            <ng-container *ngIf="project.workflows.length > 1 && !collapsed">
+              <div
                 @slideIn
-                (focus)="popup($event, 'kanban')"
-                (focusout)="out()"
+                *hasPermission="
+                  ['view', 'modify', 'comment', 'delete'];
+                  entity: 'story';
+                  operation: 'OR'
+                ">
+                <div class="menu-option">
+                  <div class="menu-option-item has-add-workflow-button">
+                    <ng-container
+                      *ngTemplateOutlet="
+                        createWorkflowButtonTpl
+                      "></ng-container>
+                    <tui-svg
+                      class="menu-option-icon"
+                      src="kanban"></tui-svg>
+                    <span
+                      class="menu-option-text"
+                      data-animation="text">
+                      {{ t('commons.kanban') }}
+                    </span>
+                  </div>
+                </div>
+                <ol
+                  [attr.aria-label]="t('commons_project.workflow_list')"
+                  class="submenu"
+                  *ngIf="!collapsed">
+                  <li
+                    *ngFor="
+                      let workflow of project.workflows;
+                      trackBy: trackById
+                    "
+                    class="submenu-option">
+                    <a
+                      class="submenu-option-item"
+                      routerLinkActive="submenu-option-item-active"
+                      [routerLink]="[
+                        '/project',
+                        project.id,
+                        project.slug,
+                        'kanban',
+                        workflow.slug
+                      ]">
+                      {{ workflow.name }}
+                    </a>
+                  </li>
+                </ol>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="project.workflows.length <= 1 && collapsed">
+              <li
+                class="menu-option"
+                routerLinkActive="active"
                 [attr.data-text]="t('commons.kanban')"
-                [attr.aria-label]="collapsed ? t('commons.kanban') : null"
-                class="menu-option-item"
-                [class.active-dialog]="dialog.type === 'kanban'"
-                [routerLink]="['/project', project.id, project.slug, 'kanban']"
-                routerLinkActive
-                #kanbanActive="routerLinkActive">
-                <tui-svg
-                  class="menu-option-icon"
-                  src="kanban"></tui-svg>
-                <span
-                  *ngIf="!collapsed"
-                  class="menu-option-text"
-                  data-animation="text">
-                  {{ t('commons.kanban') }}
-                </span>
-              </a>
-            </li>
+                (pointerenter)="popup($event, 'kanban')"
+                (pointerleave)="out()">
+                <a
+                  (focus)="popup($event, 'kanban')"
+                  (focusout)="out()"
+                  data-test="navigate-kanban"
+                  [attr.data-text]="t('commons.kanban')"
+                  [attr.aria-label]="collapsed ? t('commons.kanban') : null"
+                  class="menu-option-item"
+                  [class.active-dialog]="dialog.type === 'kanban'"
+                  [routerLink]="[
+                    '/project',
+                    project.id,
+                    project.slug,
+                    'kanban'
+                  ]"
+                  routerLinkActive>
+                  <tui-svg
+                    class="menu-option-icon"
+                    src="kanban"></tui-svg>
+                  <span
+                    *ngIf="!collapsed"
+                    class="menu-option-text"
+                    data-animation="text">
+                    {{ t('commons.kanban') }}
+                  </span>
+                </a>
+              </li>
+            </ng-container>
+            <ng-container *ngIf="project.workflows.length > 1 && collapsed">
+              <li class="menu-option menu-option-kanban">
+                <tui-hosted-dropdown
+                  kanbanWorkflowMenuPosition
+                  kanbanWorkflowMenuStyles
+                  [content]="workflowsDropdown"
+                  [(open)]="openworkflowsDropdown">
+                  <button
+                    class="menu-option-item collapsed-kanban-button"
+                    aria-controls="dialog-kanban"
+                    aria-haspopup="true"
+                    [attr.aria-expanded]="openworkflowsDropdown"
+                    [attr.aria-label]="t('commons.kanban')"
+                    type="button"
+                    data-test="projects-dropdown">
+                    <tui-svg
+                      class="menu-option-icon"
+                      src="kanban"></tui-svg>
+                  </button>
+                </tui-hosted-dropdown>
+                <ng-template #workflowsDropdown>
+                  <!-- TODO: Remove `kanbanWorkflowMenuStyles` directive when `:has()` is supported by major browsers: https://caniuse.com/css-has -->
+                  <div
+                    class="dialog-kanban"
+                    kanbanWorkflowMenuStyles
+                    id="dialog-kanban">
+                    <div class="dialog-kanban-title has-add-workflow-button">
+                      <span class="dialog-kanban-text">
+                        {{ t('commons.kanban') }}
+                      </span>
+                      <ng-container
+                        *ngTemplateOutlet="
+                          createWorkflowButtonTpl
+                        "></ng-container>
+                    </div>
+                    <ol
+                      class="submenu"
+                      [attr.aria-label]="t('commons_project.workflow_list')">
+                      <li
+                        class="submenu-option"
+                        *ngFor="
+                          let workflow of project.workflows;
+                          trackBy: trackById
+                        ">
+                        <a
+                          class="submenu-option-item"
+                          routerLinkActive="submenu-option-item-active"
+                          [routerLink]="[
+                            '/project',
+                            project.id,
+                            project.slug,
+                            'kanban',
+                            workflow.slug
+                          ]">
+                          {{ workflow.name }}
+                        </a>
+                      </li>
+                    </ol>
+                  </div>
+                </ng-template>
+              </li>
+            </ng-container>
           </ul>
         </nav>
         <div class="bottom-menu">
@@ -201,18 +351,18 @@ Copyright (c) 2023-present Kaleidos INC
     [style.top.px]="dialog.top"
     [style.left.px]="dialog.left">
     <a
-      *ngIf="
-        dialog.type !== 'scrum' &&
-        dialog.type !== 'project' &&
-        dialog.type !== 'project-settings'
-      "
+      *ngIf="dialog.type !== 'project' && dialog.type !== 'project-settings'"
       [attr.href]="dialog.link"
       [style.height.px]="dialog.mainLinkHeight"
+      [class.has-add-workflow-button]="dialog.type === 'kanban'"
       class="main-link">
       <span class="dialog-text">
         {{ dialog.text }}
       </span>
     </a>
+    <ng-container *ngIf="dialog.type === 'kanban'">
+      <ng-container *ngTemplateOutlet="createWorkflowButtonTpl"></ng-container>
+    </ng-container>
     <button
       *ngIf="dialog.type === 'project-settings'"
       (click)="openSettings()"
@@ -243,4 +393,20 @@ Copyright (c) 2023-present Kaleidos INC
       </a>
     </div>
   </div>
+  <ng-template #createWorkflowButtonTpl>
+    <button
+      *ngIf="project.userIsAdmin"
+      class="create-workflow"
+      size="m"
+      appearance="action-button-2"
+      variant="dark"
+      [tgUiTooltip]="t('common_project.workflow.create')"
+      tgUiTooltipPosition="bottom-right"
+      [attr.aria-label]="t('common_project.workflow.create')"
+      (pointerenter)="activeSection = true"
+      (pointerleave)="activeSection = false"
+      tuiIconButton
+      icon="plus"
+      (click)="createWorkflow()"></button>
+  </ng-template>
 </ng-container>

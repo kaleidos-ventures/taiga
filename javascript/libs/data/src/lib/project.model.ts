@@ -9,6 +9,7 @@
 import type { Merge } from 'type-fest';
 import { Membership } from './membership.model';
 import { Story } from './story.model';
+import { Workflow } from './workflow.model';
 import { Workspace } from './workspace.model';
 
 export interface Project {
@@ -21,6 +22,7 @@ export interface Project {
   description: string | null;
   color: number;
   workspace: Pick<Workspace, 'id' | 'name' | 'slug' | 'color' | 'userRole'>;
+  workflows: Workflow[];
   userIsAdmin: boolean;
   userIsMember: boolean;
   userPermissions: string[];

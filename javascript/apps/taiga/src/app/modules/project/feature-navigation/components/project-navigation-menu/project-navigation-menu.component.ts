@@ -21,11 +21,18 @@ import { RouterModule } from '@angular/router';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TuiSvgModule } from '@taiga-ui/core';
-import { Project } from '@taiga/data';
+import {
+  TuiButtonModule,
+  TuiHostedDropdownModule,
+  TuiSvgModule,
+} from '@taiga-ui/core';
+import { Project, Workflow } from '@taiga/data';
 import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
-
+import { TooltipDirective } from '@taiga/ui/tooltip';
+import { TooltipComponent } from '@taiga/ui/tooltip/tooltip.component';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
+import { ProjectNavWorkflowMenuStylesDirective } from './project-navigation-menu-styles.directive';
+import { ProjectNavWorkflowMenuPositionDirective } from './project-navigation-menu.directive';
 
 interface ProjectMenuDialog {
   hover: boolean;
@@ -39,7 +46,7 @@ interface ProjectMenuDialog {
   mainLinkHeight: number;
   children: {
     text: string;
-    link: string[];
+    link: string;
   }[];
 }
 const cssValue = getComputedStyle(document.documentElement);
@@ -57,6 +64,12 @@ const cssValue = getComputedStyle(document.documentElement);
     AvatarComponent,
     TranslocoDirective,
     CommonModule,
+    TooltipComponent,
+    TooltipDirective,
+    TuiButtonModule,
+    TuiHostedDropdownModule,
+    ProjectNavWorkflowMenuPositionDirective,
+    ProjectNavWorkflowMenuStylesDirective,
   ],
   animations: [
     trigger('blockInitialRenderAnimation', [transition(':enter', [])]),
@@ -100,7 +113,8 @@ export class ProjectNavigationMenuComponent {
   public projectSettingButton!: ElementRef;
 
   public collapseText = true;
-  public scrumChildMenuVisible = false;
+  public activeSection = false;
+  public openworkflowsDropdown = false;
 
   public dialog: ProjectMenuDialog = {
     open: false,
@@ -133,7 +147,7 @@ export class ProjectNavigationMenuComponent {
     if (text) {
       const navigationBarWidth = 48;
 
-      if (type !== 'scrum' && el.querySelector('a')) {
+      if (el.querySelector('a')) {
         this.dialog.link = el.querySelector('a')!.getAttribute('href') ?? '';
       }
       this.dialog.hover = false;
@@ -185,37 +199,25 @@ export class ProjectNavigationMenuComponent {
     this.out();
   }
 
-  public popupScrum(event: MouseEvent | FocusEvent) {
-    if (!this.collapsed) {
-      return;
-    }
-
-    this.initDialog(event.target as HTMLElement, 'scrum' /* children */);
-  }
-
-  public toggleScrumChildMenu() {
-    if (this.collapsed) {
-      (this.backlogSubmenuEl.nativeElement as HTMLElement).focus();
-    } else {
-      this.scrumChildMenuVisible = !this.scrumChildMenuVisible;
-    }
-  }
-
   public getCollapseIcon() {
     return this.collapsed ? 'collapse-right' : 'collapse-left';
   }
 
   public toggleCollapse() {
     this.collapseMenu.next();
-
-    if (this.collapsed) {
-      this.scrumChildMenuVisible = false;
-    }
   }
 
   public openSettings() {
     this.displaySettingsMenu.next();
     this.dialog.open = false;
     this.dialog.type = '';
+  }
+
+  public createWorkflow() {
+    console.log('create workflow');
+  }
+
+  public trackById(_index: number, workflow: Workflow) {
+    return workflow.id;
   }
 }

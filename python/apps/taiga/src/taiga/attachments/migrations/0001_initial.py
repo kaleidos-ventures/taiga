@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.RESTRICT,
                         related_name="attachments",
                         to="storage.storagedobject",
-                        verbose_name="storage object",
+                        verbose_name="storaged object",
                     ),
                 ),
                 (

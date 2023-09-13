@@ -17,7 +17,7 @@ class Attachment(models.BaseModel, CreatedMetaInfoMixin):
         blank=False,
         on_delete=models.RESTRICT,
         related_name="attachments",
-        verbose_name="storaged_object",
+        verbose_name="storaged object",
     )
     name = models.TextField(
         null=False,

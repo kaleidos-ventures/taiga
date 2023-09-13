@@ -69,7 +69,7 @@ export class AuthFeatureResetPasswordComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    const state = this.router.getCurrentNavigation()!.extras.state;
+    const state = this.router.getCurrentNavigation()?.extras.state;
 
     this.loginEmail(state?.usernameInput as string);
 

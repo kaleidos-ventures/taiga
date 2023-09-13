@@ -7,7 +7,12 @@
  */
 
 import { ChangeDetectionStrategy, Component, ElementRef } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterModule,
+} from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -20,16 +25,43 @@ import { selectUser } from './modules/auth/data-access/+state/selectors/auth.sel
 import { AuthService } from './modules/auth/services/auth.service';
 import { LocalStorageService } from './shared/local-storage/local-storage.service';
 import { RouteHistoryService } from './shared/route-history/route-history.service';
-import { InputModalityDetector } from '@angular/cdk/a11y';
+import { A11yModule, InputModalityDetector } from '@angular/cdk/a11y';
 import { LanguageService } from './services/language/language.service';
 import { ConfigService } from '@taiga/cdk/services/config';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RxLet } from '@rx-angular/template/let';
+import {
+  TuiAlertModule,
+  TuiRootModule,
+  TuiNotificationModule,
+} from '@taiga-ui/core';
+import { DataAccessAuthModule } from './modules/auth/data-access/auth.module';
+import { ErrorsModule } from './modules/errors/errors.module';
+import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest-interceptor.module';
+import { BannerComponent } from './shared/banner/banner.component';
+import { NavigationModule } from './shared/navigation/navigation.module';
+import { ResizedDirective } from './shared/resize/resize.directive';
 
 @Component({
   selector: 'tg-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    DataAccessAuthModule,
+    ErrorsModule,
+    ApiRestInterceptorModule,
+    NavigationModule,
+    TuiAlertModule,
+    TuiRootModule,
+    TuiNotificationModule,
+    A11yModule,
+    BannerComponent,
+    RxLet,
+    ResizedDirective,
+    RouterModule,
+  ],
 })
 export class AppComponent {
   public title = 'taiga next';

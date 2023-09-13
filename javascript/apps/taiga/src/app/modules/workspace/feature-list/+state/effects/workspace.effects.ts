@@ -297,5 +297,7 @@ export class WorkspaceEffects {
     private workspaceApiService: WorkspaceApiService,
     private appService: AppService,
     private store: Store
-  ) {}
+  ) {
+    console.log('WorkspaceEffects');
+  }
 }

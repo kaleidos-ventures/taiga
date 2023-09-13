@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { TuiLinkModule } from '@taiga-ui/core';
+import { TuiLinkModule, TuiButtonModule } from '@taiga-ui/core';
 import { RestoreFocusDirective } from '../directives/restore-focus/restore-focus.directive';
 import { ModalComponent } from '@taiga/ui/modal/components';
 import { TranslocoDirective } from '@ngneat/transloco';
@@ -29,6 +29,7 @@ import { TranslocoDirective } from '@ngneat/transloco';
     RestoreFocusDirective,
     ModalComponent,
     TranslocoDirective,
+    TuiButtonModule,
   ],
   templateUrl: './discard-changes-modal.component.html',
   styleUrls: ['./discard-changes-modal.component.css'],

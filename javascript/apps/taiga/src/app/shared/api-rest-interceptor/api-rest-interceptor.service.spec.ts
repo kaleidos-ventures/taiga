@@ -17,7 +17,8 @@ import {
   HttpErrorResponse,
 } from '@angular/common/http';
 import { forkJoin, of, throwError } from 'rxjs';
-import { ConfigService, ConfigServiceMock } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
+import { ConfigServiceMock } from '@taiga/cdk/services/config/config.service.mock';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { AuthApiService } from '@taiga/api';
 import { refreshTokenSuccess } from '~/app/modules/auth/data-access/+state/actions/auth.actions';

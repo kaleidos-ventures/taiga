@@ -14,7 +14,7 @@ import {
   TranslocoService,
   TRANSLOCO_SCOPE,
 } from '@ngneat/transloco';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 
 interface SocialParams {
   social: string;

@@ -10,7 +10,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { UsersApiService } from '@taiga/api';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AppService } from '~/app/services/app.service';
 
 import {
@@ -27,11 +27,11 @@ import {
 import { UserSettingsEffects } from './user-settings.effects';
 
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectLanguages } from '@taiga/core';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { unexpectedError } from '~/app/modules/errors/+state/actions/errors.actions';
+import { LanguageService } from '~/app/services/language/language.service';
 
 describe('UserSettingsEffects', () => {
   let actions$: Observable<Action>;
@@ -44,7 +44,7 @@ describe('UserSettingsEffects', () => {
       provideMockActions(() => actions$),
       provideMockStore({ initialState: {} }),
     ],
-    mocks: [UsersApiService, AppService, AuthService],
+    mocks: [UsersApiService, AppService, AuthService, LanguageService],
   });
 
   beforeEach(() => {
@@ -55,8 +55,9 @@ describe('UserSettingsEffects', () => {
   it('load languages', () => {
     const languages = LanguageListMockFactory();
     const effects = spectator.inject(UserSettingsEffects);
+    const languageService = spectator.inject(LanguageService);
 
-    store.overrideSelector(selectLanguages, languages);
+    languageService.getLanguages.mockReturnValue(of(languages));
 
     actions$ = hot('-a', { a: userSettingsActions.initPreferences() });
 

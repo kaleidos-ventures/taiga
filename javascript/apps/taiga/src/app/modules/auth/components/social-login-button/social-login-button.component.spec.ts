@@ -10,7 +10,8 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { randBoolean, randUrl, randUuid } from '@ngneat/falso';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { ConfigService, ConfigServiceMock } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
+import { ConfigServiceMock } from '@taiga/cdk/services/config/config.service.mock';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { SocialLoginButtonComponent } from './social-login-button.component';
 

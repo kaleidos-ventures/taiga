@@ -8,7 +8,7 @@
 
 import { WsService } from '../services/ws.service';
 import { wsMessage } from '../ws.actions';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { createEffect } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';

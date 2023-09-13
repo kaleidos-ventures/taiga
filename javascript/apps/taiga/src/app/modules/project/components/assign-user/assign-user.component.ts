@@ -38,7 +38,7 @@ import {
   TuiSvgModule,
 } from '@taiga-ui/core';
 import { TuiToggleModule } from '@taiga-ui/kit';
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 import { Membership, Permissions, Story, User } from '@taiga/data';
 import { InputsModule } from '@taiga/ui/inputs';
 import { TooltipDirective } from '@taiga/ui/tooltip';

@@ -2,7 +2,7 @@
 
 Taiga uses [hotkeys](https://www.npmjs.com/package/hotkeys-js) for the shortcuts, check it out for more info.
 
-1. Add the shortcut to `/javascript/libs/core/src/lib/services/shortcuts/shortcuts.ts`
+1. Add the shortcut to `/javascript/libs/cdk/src/lib/services/shortcuts/shortcuts.ts`
 
 ```ts
 {
@@ -21,7 +21,7 @@ Taiga uses [hotkeys](https://www.npmjs.com/package/hotkeys-js) for the shortcuts
 2. Define & subscribe to the shortcut, you can also use it in an effect.
 
 ```ts
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 
 class Test {
   constructor(private shortcutsService: ShortcutsService) {
@@ -82,7 +82,7 @@ class Tooltip {
 Option 1
 
 ```ts
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 
 class Test {
   constructor(private shortcutsService: ShortcutsService) {
@@ -100,7 +100,7 @@ class Test {
 Option 2
 
 ```ts
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 
 class Test {
   ngUnsubscribe = new Subject();

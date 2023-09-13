@@ -11,7 +11,6 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { selectLanguages } from '@taiga/core';
 import { User } from '@taiga/data';
 import { Observable, of } from 'rxjs';
 import { filter, map, share, switchMap } from 'rxjs/operators';
@@ -23,7 +22,7 @@ import { LocalStorageService } from './shared/local-storage/local-storage.servic
 import { RouteHistoryService } from './shared/route-history/route-history.service';
 import { InputModalityDetector } from '@angular/cdk/a11y';
 import { LanguageService } from './services/language/language.service';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -127,7 +126,7 @@ export class AppComponent {
           }
           return of({ userLang: user.lang, anonymous: false });
         }),
-        concatLatestFrom(() => [this.store.select(selectLanguages)])
+        concatLatestFrom(() => [this.languageService.getLanguages()])
       )
       .subscribe(([user, languages]) => {
         const lang = languages.find((it) => it.code === user.userLang);

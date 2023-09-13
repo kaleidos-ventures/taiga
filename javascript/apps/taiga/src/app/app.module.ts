@@ -29,7 +29,7 @@ import {
 import { TUI_LANGUAGE } from '@taiga-ui/i18n';
 import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
 import { SystemApiService } from '@taiga/api';
-import { ConfigService, CoreModule, coreActions } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 import { PROMPT_PROVIDER } from '@taiga/ui/modal/services/modal.service';
 import { paramCase } from 'change-case';
 import { DataAccessAuthModule } from '~/app/modules/auth/data-access/auth.module';
@@ -72,7 +72,6 @@ export function prefersReducedMotion(): boolean {
   imports: [
     DataAccessAuthModule,
     ErrorsModule,
-    CoreModule,
     HttpClientModule,
     ApiRestInterceptorModule,
     NavigationModule,
@@ -119,6 +118,7 @@ export function prefersReducedMotion(): boolean {
         EnvironmentService,
         TranslocoService,
         SystemApiService,
+        LanguageService,
         Store,
       ],
       useFactory: (
@@ -126,7 +126,7 @@ export function prefersReducedMotion(): boolean {
         environmentService: EnvironmentService,
         translocoService: TranslocoService,
         systemApiService: SystemApiService,
-        store: Store
+        languageService: LanguageService
       ) => {
         return () => {
           return new Promise((resolve) => {
@@ -148,7 +148,7 @@ export function prefersReducedMotion(): boolean {
             }
 
             systemApiService.getLanguages().subscribe((langs) => {
-              store.dispatch(coreActions.setLanguages({ languages: langs }));
+              languageService.setLanguages(langs);
               const availableCodes = langs.map((lang) => lang.code);
               const defaultLang = langs.find((lang) => lang.isDefault);
 

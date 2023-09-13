@@ -17,7 +17,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 import { filter } from 'rxjs';
 
 @UntilDestroy()

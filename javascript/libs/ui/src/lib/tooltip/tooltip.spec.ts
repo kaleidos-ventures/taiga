@@ -13,7 +13,7 @@ import {
   SpectatorDirective,
   createDirectiveFactory,
 } from '@ngneat/spectator/jest';
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 import { Subject } from 'rxjs';
 import {
   calculateTooltipPositionByPreference,

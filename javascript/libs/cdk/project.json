@@ -1,24 +1,24 @@
 {
-  "name": "core",
+  "name": "cdk",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "sourceRoot": "libs/core/src",
+  "sourceRoot": "libs/cdk/src",
   "prefix": "tg",
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/core"],
+      "outputs": ["{workspaceRoot}/coverage/libs/cdk"],
       "options": {
-        "jestConfig": "libs/core/jest.config.ts",
+        "jestConfig": "libs/cdk/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": ["libs/core/src/**/*.ts", "libs/core/src/**/*.html"]
+        "lintFilePatterns": ["libs/cdk/src/**/*.ts", "libs/cdk/src/**/*.html"]
       }
     }
   },
-  "tags": ["scope:core"]
+  "tags": ["scope:cdk"]
 }

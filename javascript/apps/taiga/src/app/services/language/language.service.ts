@@ -8,25 +8,35 @@
 
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectLanguages } from '@taiga/core';
-import { filter, map, switchMap, take } from 'rxjs';
+import { BehaviorSubject, filter, map, switchMap, take } from 'rxjs';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { TuiLanguage } from '@taiga-ui/i18n';
 import { TUI_ENGLISH_LANGUAGE, TUI_SPANISH_LANGUAGE } from '@taiga-ui/i18n';
 import editorLanguages from '~/assets/editor/languages.json';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
+import { Language } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LanguageService {
+  #languages = new BehaviorSubject<Language[]>([]);
+
   constructor(private store: Store) {}
   public navigatorLanguage() {
     return navigator.language;
   }
 
+  public setLanguages(languages: Language[]) {
+    this.#languages.next(languages);
+  }
+
+  public getLanguages() {
+    return this.#languages.asObservable();
+  }
+
   public getUserLanguage() {
-    return this.store.select(selectLanguages).pipe(
+    return this.getLanguages().pipe(
       filter((langs) => !!langs.length),
       take(1),
       switchMap((langs) => {

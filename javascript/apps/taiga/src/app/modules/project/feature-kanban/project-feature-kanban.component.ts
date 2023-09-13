@@ -15,7 +15,7 @@ import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { TuiNotification } from '@taiga-ui/core';
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 import {
   Membership,
   Permissions,

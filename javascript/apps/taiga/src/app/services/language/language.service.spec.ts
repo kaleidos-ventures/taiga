@@ -7,15 +7,12 @@
  */
 
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectLanguages } from '@taiga/core';
+import { provideMockStore } from '@ngrx/store/testing';
 import { LanguageListMockFactory } from '@taiga/data';
 import { LanguageService } from './language.service';
 
 describe('LanguageService', () => {
   let spectator: SpectatorService<LanguageService>;
-
-  let store: MockStore;
 
   const createService = createServiceFactory({
     service: LanguageService,
@@ -25,14 +22,13 @@ describe('LanguageService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    store = spectator.inject(MockStore);
   });
 
   describe('get user registration language', () => {
     it('user language es-ES', (done) => {
       spectator.service.navigatorLanguage = jest.fn().mockReturnValue('es-ES');
 
-      store.overrideSelector(selectLanguages, LanguageListMockFactory());
+      spectator.service.setLanguages(LanguageListMockFactory());
 
       spectator.service.getUserLanguage().subscribe((lang) => {
         expect(lang.code).toBe('es-ES');
@@ -43,7 +39,7 @@ describe('LanguageService', () => {
     it('not available language', (done) => {
       spectator.service.navigatorLanguage = jest.fn().mockReturnValue('xx-XX');
 
-      store.overrideSelector(selectLanguages, LanguageListMockFactory());
+      spectator.service.setLanguages(LanguageListMockFactory());
 
       spectator.service.getUserLanguage().subscribe((lang) => {
         expect(lang.code).toBe('en-US');
@@ -54,7 +50,7 @@ describe('LanguageService', () => {
     it('skip locale if not available', (done) => {
       spectator.service.navigatorLanguage = jest.fn().mockReturnValue('es-MX');
 
-      store.overrideSelector(selectLanguages, LanguageListMockFactory());
+      spectator.service.setLanguages(LanguageListMockFactory());
 
       spectator.service.getUserLanguage().subscribe((lang) => {
         expect(lang.code).toBe('es-ES');

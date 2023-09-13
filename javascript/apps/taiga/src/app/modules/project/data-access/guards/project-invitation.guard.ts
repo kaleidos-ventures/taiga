@@ -11,7 +11,7 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 import { ProjectInvitationInfo } from '@taiga/data';
 import { EMPTY, of, throwError } from 'rxjs';
 import { catchError, mergeMap, tap } from 'rxjs/operators';

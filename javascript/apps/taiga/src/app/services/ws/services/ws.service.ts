@@ -9,7 +9,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { ConfigService, CORRELATION_ID } from '@taiga/core';
+import {
+  ConfigService,
+  CORRELATION_ID,
+} from '@taiga/cdk/services/config/config.service';
 import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
 import {
   concatMap,

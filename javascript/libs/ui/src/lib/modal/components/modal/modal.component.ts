@@ -20,7 +20,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TuiDialogService, TuiButtonModule } from '@taiga-ui/core';
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 import { ModalService } from '@taiga/ui/modal/services/modal.service';
 import { PolymorpheusContent } from '@tinkoff/ng-polymorpheus';
 import { BehaviorSubject, Subscription } from 'rxjs';

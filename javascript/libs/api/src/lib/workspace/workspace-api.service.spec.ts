@@ -13,7 +13,8 @@ import {
   SpectatorHttp,
 } from '@ngneat/spectator';
 import { provideMockStore } from '@ngrx/store/testing';
-import { ConfigService, ConfigServiceMock } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
+import { ConfigServiceMock } from '@taiga/cdk/services/config/config.service.mock';
 import { WorkspaceApiService } from './workspace-api.service';
 
 describe('WorkspaceApiService', () => {

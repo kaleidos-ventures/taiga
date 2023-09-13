@@ -18,7 +18,8 @@ import { randUuid } from '@ngneat/falso';
 
 import { mockProvider, SpyObject } from '@ngneat/spectator/jest';
 import { ProjectApiService } from '@taiga/api';
-import { ConfigService, ConfigServiceMock } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
+import { ConfigServiceMock } from '@taiga/cdk/services/config/config.service.mock';
 import { InvitationInfoMockFactory, ProjectMockFactory } from '@taiga/data';
 import { of } from 'rxjs';
 import { AuthService } from '~/app/modules/auth/services/auth.service';

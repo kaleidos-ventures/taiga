@@ -28,7 +28,7 @@ import {
   inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 import {
   BehaviorSubject,
   Subject,

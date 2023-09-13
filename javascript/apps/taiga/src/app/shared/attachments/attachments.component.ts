@@ -24,7 +24,7 @@ import { Attachment, LoadingAttachment } from '@taiga/data';
 import { AttachmentsState } from './attachments.state';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 
 import { trackByValue } from '../utils/track-by-value';
 import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';

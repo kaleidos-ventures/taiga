@@ -13,7 +13,7 @@ Api service example
 ```ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 import { Example } from './example.model';
 
 @Injectable({

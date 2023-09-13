@@ -9,8 +9,8 @@ import {
   SpectatorHttp,
 } from '@ngneat/spectator';
 import { ExampleApiService } from './example-api.service';
-import { ConfigService } from '@taiga/core';
-import { ConfigServiceMock } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
+import { ConfigServiceMock } from '@taiga/cdk/services/config/config.service.mock';
 
 describe('ExampleApiService', () => {
   let spectator: SpectatorHttp<ExampleApiService>;

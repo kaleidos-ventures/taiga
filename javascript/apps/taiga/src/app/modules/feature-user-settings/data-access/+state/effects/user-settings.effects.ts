@@ -22,15 +22,15 @@ import { TuiNotification } from '@taiga-ui/core';
 import { AuthService } from '~/app/modules/auth/services/auth.service';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { filterNil } from '~/app/shared/utils/operators';
-import { selectLanguages } from '@taiga/core';
 import { Router } from '@angular/router';
+import { LanguageService } from '~/app/services/language/language.service';
 
 @Injectable()
 export class UserSettingsEffects {
   public loadLanguages$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(userSettingsActions.initPreferences),
-      concatLatestFrom(() => [this.store.select(selectLanguages)]),
+      concatLatestFrom(() => [this.languageService.getLanguages()]),
       fetch({
         run: (_, languages) => {
           return userSettingsApiActions.fetchLanguagesSuccess({
@@ -153,6 +153,7 @@ export class UserSettingsEffects {
     private appService: AppService,
     private actions$: Actions,
     private usersApiService: UsersApiService,
-    private router: Router
+    private router: Router,
+    private languageService: LanguageService
   ) {}
 }

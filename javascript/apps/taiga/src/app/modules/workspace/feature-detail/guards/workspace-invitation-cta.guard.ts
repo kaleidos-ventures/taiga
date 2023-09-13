@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { TuiNotification } from '@taiga-ui/core';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 import {
   WorkspaceInvitationInfo,
   InvitationWorkspaceMember,

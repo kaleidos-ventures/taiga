@@ -82,8 +82,6 @@ class TodoEffects {
 With a pessimistic the effect updates the server data first, when the change is completed then we dispatch an action that changes the app.state
 
 ```ts
-import { unexpectedError } from '@taiga/core';
-
 @Injectable({
   providedIn: 'root',
 })

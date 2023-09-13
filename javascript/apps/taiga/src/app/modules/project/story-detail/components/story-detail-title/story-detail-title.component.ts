@@ -26,7 +26,7 @@ import {
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RxState } from '@rx-angular/state';
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 import { StoryDetailForm } from '~/app/modules/project/story-detail/story-detail.component';
 import {
   StoryTitleMaxLength,

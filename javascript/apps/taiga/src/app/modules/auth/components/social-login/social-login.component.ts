@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslocoModule, TRANSLOCO_SCOPE } from '@ngneat/transloco';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 
 import { SocialLoginButtonComponent } from '../social-login-button/social-login-button.component';
 import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';

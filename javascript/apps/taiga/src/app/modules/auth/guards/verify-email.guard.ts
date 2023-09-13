@@ -12,7 +12,7 @@ import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService, UsersApiService } from '@taiga/api';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 import {
   Auth,
   ProjectInvitationInfo,

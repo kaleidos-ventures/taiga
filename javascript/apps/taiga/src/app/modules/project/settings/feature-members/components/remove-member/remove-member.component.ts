@@ -17,7 +17,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { ShortcutsService } from '@taiga/core';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 import { Membership, Project, Role, User } from '@taiga/data';
 import { finalize } from 'rxjs';
 import { A11yModule } from '@angular/cdk/a11y';

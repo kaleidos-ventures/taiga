@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AuthApiService } from '@taiga/api';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 import { Auth, User } from '@taiga/data';
 import { WsService } from '~/app/services/ws';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';

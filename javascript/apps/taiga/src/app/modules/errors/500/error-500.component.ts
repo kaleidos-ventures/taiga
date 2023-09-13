@@ -7,7 +7,7 @@
  */
 
 import { Component } from '@angular/core';
-import { ConfigService } from '@taiga/core';
+import { ConfigService } from '@taiga/cdk/services/config';
 import { Router, RouterLink } from '@angular/router';
 import { TuiButtonModule } from '@taiga-ui/core';
 import { TranslocoDirective } from '@ngneat/transloco';

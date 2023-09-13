@@ -13,7 +13,7 @@ import {
   Router,
   RouterModule,
 } from '@angular/router';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoDirective, TranslocoService } from '@ngneat/transloco';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { User } from '@taiga/data';
@@ -32,15 +32,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RxLet } from '@rx-angular/template/let';
 import {
   TuiAlertModule,
-  TuiRootModule,
   TuiNotificationModule,
+  TuiRootModule,
 } from '@taiga-ui/core';
-import { DataAccessAuthModule } from './modules/auth/data-access/auth.module';
-import { ErrorsModule } from './modules/errors/errors.module';
 import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest-interceptor.module';
 import { BannerComponent } from './shared/banner/banner.component';
 import { NavigationModule } from './shared/navigation/navigation.module';
 import { ResizedDirective } from './shared/resize/resize.directive';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'tg-root',
@@ -49,18 +48,18 @@ import { ResizedDirective } from './shared/resize/resize.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    DataAccessAuthModule,
-    ErrorsModule,
+    CommonModule,
     ApiRestInterceptorModule,
     NavigationModule,
     TuiAlertModule,
-    TuiRootModule,
     TuiNotificationModule,
     A11yModule,
     BannerComponent,
     RxLet,
     ResizedDirective,
     RouterModule,
+    TuiRootModule,
+    TranslocoDirective,
   ],
 })
 export class AppComponent {

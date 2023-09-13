@@ -66,87 +66,87 @@ export const APP_ROUTES: Routes = [
     children: [],
     canActivate: [WorkspaceInvitationCTAGuard],
   },
-  {
-    path: '',
-    loadComponent: () =>
-      import(
-        './modules/workspace/feature-list/components/workspace/workspace.component'
-      ).then((m) => m.WorkspaceComponent),
-    canActivate: [AuthGuard],
-    // is lazy loaded?
-    providers: [
-      provideState(workspaceFeature),
-      provideEffects(WorkspaceEffects),
-    ],
-  },
+  // {
+  //   path: '',
+  //   loadComponent: () =>
+  //     import(
+  //       './modules/workspace/feature-list/components/workspace/workspace.component'
+  //     ).then((m) => m.WorkspaceComponent),
+  //   canActivate: [AuthGuard],
+  //   // is lazy loaded?
+  //   providers: [
+  //     provideState(workspaceFeature),
+  //     provideEffects(WorkspaceEffects),
+  //   ],
+  // },
 
-  // WORKSPACE
-  {
-    path: 'workspace/:id',
-    loadChildren: () =>
-      import(
-        './modules/workspace/feature-detail/workspace-feature-detail.module'
-      ).then((m) => m.WorkspaceFeatureDetailModule),
-    canActivate: [AuthGuard],
-  },
+  // // WORKSPACE
+  // {
+  //   path: 'workspace/:id',
+  //   loadChildren: () =>
+  //     import(
+  //       './modules/workspace/feature-detail/workspace-feature-detail.module'
+  //     ).then((m) => m.WorkspaceFeatureDetailModule),
+  //   canActivate: [AuthGuard],
+  // },
 
-  // PROJECT
-  {
-    path: 'new-project',
-    loadChildren: () =>
-      import('./modules/feature-new-project/feature-new-project.module').then(
-        (m) => m.FeatureNewProjectModule
-      ),
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'project/:id',
-    loadChildren: () =>
-      import(
-        './modules/project/feature-shell/project-feature-shell.module'
-      ).then((m) => m.ProjectFeatureShellModule),
-  },
+  // // PROJECT
+  // {
+  //   path: 'new-project',
+  //   loadChildren: () =>
+  //     import('./modules/feature-new-project/feature-new-project.module').then(
+  //       (m) => m.FeatureNewProjectModule
+  //     ),
+  //   canActivate: [AuthGuard],
+  // },
+  // {
+  //   path: 'project/:id',
+  //   loadChildren: () =>
+  //     import(
+  //       './modules/project/feature-shell/project-feature-shell.module'
+  //     ).then((m) => m.ProjectFeatureShellModule),
+  // },
 
-  {
-    path: '500',
-    loadChildren: () =>
-      import('./modules/errors/500/error-500.module').then(
-        (m) => m.Error500Module
-      ),
-    data: {
-      noHeader: true,
-    },
-  },
-  {
-    path: '403',
-    loadChildren: () =>
-      import('./modules/errors/403/error-403.module').then(
-        (m) => m.Error403Module
-      ),
-    data: {
-      noHeader: true,
-    },
-  },
+  // {
+  //   path: '500',
+  //   loadChildren: () =>
+  //     import('./modules/errors/500/error-500.module').then(
+  //       (m) => m.Error500Module
+  //     ),
+  //   data: {
+  //     noHeader: true,
+  //   },
+  // },
+  // {
+  //   path: '403',
+  //   loadChildren: () =>
+  //     import('./modules/errors/403/error-403.module').then(
+  //       (m) => m.Error403Module
+  //     ),
+  //   data: {
+  //     noHeader: true,
+  //   },
+  // },
 
-  {
-    path: '404',
-    loadChildren: () =>
-      import('./modules/errors/404/error-404.module').then(
-        (m) => m.Error404Module
-      ),
-    data: {
-      noHeader: true,
-    },
-  },
-  {
-    path: 'user-settings',
-    loadChildren: () =>
-      import(
-        './modules/feature-user-settings/feature-user-settings.module'
-      ).then((m) => m.FeatureUserSettingsModule),
-  },
-  {
-    path: '**',
-    redirectTo: '/404',
-  },
+  // {
+  //   path: '404',
+  //   loadChildren: () =>
+  //     import('./modules/errors/404/error-404.module').then(
+  //       (m) => m.Error404Module
+  //     ),
+  //   data: {
+  //     noHeader: true,
+  //   },
+  // },
+  // {
+  //   path: 'user-settings',
+  //   loadChildren: () =>
+  //     import(
+  //       './modules/feature-user-settings/feature-user-settings.module'
+  //     ).then((m) => m.FeatureUserSettingsModule),
+  // },
+  // {
+  //   path: '**',
+  //   redirectTo: '/404',
+  // },
 ];

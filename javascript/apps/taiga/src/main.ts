@@ -9,6 +9,7 @@
 import {
   APP_INITIALIZER,
   enableProdMode,
+  importProvidersFrom,
   inject,
   isDevMode,
   provideZoneChangeDetection,
@@ -29,6 +30,7 @@ import {
   tuiSvgOptionsProvider,
   TUI_SANITIZER,
   TUI_ANIMATIONS_DURATION,
+  TuiRootModule,
 } from '@taiga-ui/core';
 import { tuiToggleOptionsProvider } from '@taiga-ui/kit';
 import { SystemApiService } from '@taiga/api';
@@ -54,6 +56,11 @@ import {
   withRouterConfig,
 } from '@angular/router';
 import { APP_ROUTES } from './app/app.routes';
+import { authFeature } from './app/modules/auth/data-access/+state/reducers/auth.reducer';
+import { provideEffects } from '@ngrx/effects';
+import { AuthEffects } from './app/modules/auth/data-access/+state/effects/auth.effects';
+import { errorsFeature } from './app/modules/errors/+state/reducers/errors.reducer';
+import { ErrorsEffects } from './app/modules/errors/+state/effects/errors.effects';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -131,7 +138,11 @@ export class CustomReuseStrategy extends BaseRouteReuseStrategy {
 const providers = [
   prefersReducedMotion() ? provideAnimations() : provideNoopAnimations(),
   provideHttpClient(),
-  provideStore(),
+  provideStore({
+    [authFeature.name]: authFeature.reducer,
+    [errorsFeature.name]: errorsFeature.reducer,
+  }),
+  provideEffects(AuthEffects, ErrorsEffects),
   provideRouter(
     [],
     withEnabledBlockingInitialNavigation(),
@@ -222,6 +233,7 @@ const providers = [
       };
     },
   },
+  importProvidersFrom(TuiRootModule),
   tuiSvgOptionsProvider({
     path: (src: string): string => {
       const name = altIconName[src] ?? src;

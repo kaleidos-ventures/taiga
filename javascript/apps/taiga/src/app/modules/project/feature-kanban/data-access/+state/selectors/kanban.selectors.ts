@@ -13,9 +13,9 @@ import { findStory } from '../reducers/kanban.reducer.helpers';
 
 export const {
   selectKanbanState,
-  selectLoadingWorkflows,
+  selectLoadingWorkflow,
   selectLoadingStories,
-  selectWorkflows,
+  selectWorkflow,
   selectStories,
   selectCreateStoryForm,
   selectScrollToStory,
@@ -57,11 +57,3 @@ export const selectStory = (ref: number) => {
     return findStory(state, (it) => it.ref === ref);
   });
 };
-
-export const selectCurrentWorkflow = createSelector(
-  selectWorkflows,
-  selectCurrentWorkflowSlug,
-  (wokflows, slug) => {
-    return wokflows?.find((it) => it.slug === slug);
-  }
-);

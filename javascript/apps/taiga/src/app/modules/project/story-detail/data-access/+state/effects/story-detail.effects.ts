@@ -11,13 +11,15 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
+import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { catchError, concatMap, EMPTY, map, of, tap } from 'rxjs';
+import { EMPTY, catchError, concatMap, map, of, tap } from 'rxjs';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
-import { selectWorkflows } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import { selectWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { AppService } from '~/app/services/app.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -25,12 +27,7 @@ import {
   StoryDetailActions,
   StoryDetailApiActions,
 } from '../actions/story-detail.actions';
-import {
-  selectStory,
-  selectWorkflow,
-} from '../selectors/story-detail.selectors';
-import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { selectStory } from '../selectors/story-detail.selectors';
 
 @Injectable()
 export class StoryDetailEffects {
@@ -59,25 +56,18 @@ export class StoryDetailEffects {
     return this.actions$.pipe(
       ofType(StoryDetailApiActions.fetchStorySuccess),
       concatLatestFrom(() => [
-        this.store.select(selectWorkflows),
-        this.store.select(selectWorkflow),
+        this.store.select(selectWorkflow).pipe(filterNil()),
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
-      concatMap(([action, workflows, loadedWorkflow, project]) => {
-        const workflow =
-          loadedWorkflow ??
-          workflows?.find(
-            (workflow) => workflow.slug === action.story.workflow.slug
-          );
-
-        if (workflow?.slug === action.story.workflow.slug) {
+      concatMap(([action, workflow, project]) => {
+        if (workflow && workflow.slug === action.story.workflow.slug) {
           return of(
             StoryDetailApiActions.fetchWorkflowSuccess({
               workflow,
             })
           );
         }
-
+        console.log(action.story.workflow.slug);
         return this.projectApiService
           .getWorkflow(project?.id, action.story.workflow.slug)
           .pipe(
@@ -261,12 +251,8 @@ export class StoryDetailEffects {
   public updatesWorkflowStatusAfterDragAndDrop$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanActions.statusDropped, projectEventActions.statusReorder),
-      concatLatestFrom(() => [this.store.select(selectWorkflows)]),
-      map(([action, workflows]) => {
-        const workflow = workflows?.find((workflow) =>
-          workflow.statuses.find((status) => status.id === action.candidate?.id)
-        );
-
+      concatLatestFrom(() => [this.store.select(selectWorkflow)]),
+      map(([, workflow]) => {
         if (workflow) {
           return StoryDetailActions.newStatusOrderAfterDrag({
             workflow,

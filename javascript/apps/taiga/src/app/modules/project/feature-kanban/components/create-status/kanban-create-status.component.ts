@@ -6,24 +6,24 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
-  Output,
   Input,
   OnInit,
+  Output,
 } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
-import { selectCurrentWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
-import { EditStatus } from '~/app/modules/project/feature-kanban/models/edit-status.model';
-import { TuiButtonModule } from '@taiga-ui/core';
-import { EditStatusComponent } from '../edit-status/edit-status.component';
-import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@ngneat/transloco';
+import { Store } from '@ngrx/store';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
+import { selectWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { EditStatus } from '~/app/modules/project/feature-kanban/models/edit-status.model';
 import { RestoreFocusTargetDirective } from '~/app/shared/directives/restore-focus/restore-focus-target.directive';
+import { EditStatusComponent } from '../edit-status/edit-status.component';
 
 @Component({
   selector: 'tg-kanban-create-status',
@@ -49,7 +49,7 @@ export class KanbanCreateStatusComponent implements OnInit {
   @Output()
   public closeForm = new EventEmitter<void>();
 
-  public workflow = this.store.selectSignal(selectCurrentWorkflow);
+  public workflow = this.store.selectSignal(selectWorkflow);
 
   public showAddForm = false;
   public columnSize = 292;

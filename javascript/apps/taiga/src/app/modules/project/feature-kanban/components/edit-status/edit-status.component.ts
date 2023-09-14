@@ -6,6 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,21 +21,20 @@ import {
 import {
   FormBuilder,
   FormGroup,
-  Validators,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { Status } from '@taiga/data';
-import { selectCurrentWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
-import { EditStatus } from '~/app/modules/project/feature-kanban/models/edit-status.model';
-import { UtilsService } from '~/app/shared/utils/utils-service.service';
-import { TuiButtonModule } from '@taiga-ui/core';
-import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@ngneat/transloco';
+import { Store } from '@ngrx/store';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { Status } from '@taiga/data';
 import { InputsModule } from '@taiga/ui/inputs';
-import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
-import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
+import { selectWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { EditStatus } from '~/app/modules/project/feature-kanban/models/edit-status.model';
 import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
+import { OutsideClickDirective } from '~/app/shared/directives/outside-click/outside-click.directive';
+import { RestoreFocusDirective } from '~/app/shared/directives/restore-focus/restore-focus.directive';
+import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 @Component({
   selector: 'tg-edit-status',
@@ -76,7 +76,7 @@ export class EditStatusComponent implements OnInit {
     this.cancelEdit();
   }
 
-  public workflow = this.store.selectSignal(selectCurrentWorkflow);
+  public workflow = this.store.selectSignal(selectWorkflow);
 
   public statusForm!: FormGroup;
   public statusMaxLength = 30;

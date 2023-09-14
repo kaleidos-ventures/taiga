@@ -8,6 +8,7 @@
 
 import { createFeature, createSelector, on } from '@ngrx/store';
 import { Status, Story, Workflow } from '@taiga/data';
+import { DropCandidate } from '@taiga/ui/drag/drag.model';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   KanbanStory,
@@ -15,7 +16,7 @@ import {
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
 import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
-import { DropCandidate } from '@taiga/ui/drag/drag.model';
+import { moveItemArray } from '~/app/shared/utils/move-item-array';
 import { pick } from '~/app/shared/utils/pick';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import {
@@ -31,12 +32,11 @@ import {
   replaceStory,
   setIntialPosition,
 } from './kanban.reducer.helpers';
-import { moveItemArray } from '~/app/shared/utils/move-item-array';
 
 export interface KanbanState {
-  loadingWorkflows: boolean;
+  loadingWorkflow: boolean;
   loadingStories: boolean;
-  workflows: null | Workflow[];
+  workflow: null | Workflow;
   currentWorkflowSlug: Workflow['slug'];
   stories: Record<Status['id'], KanbanStory[]>;
   createStoryForm: Status['id'];
@@ -67,9 +67,9 @@ export interface KanbanState {
 }
 
 export const initialKanbanState: KanbanState = {
-  loadingWorkflows: false,
+  loadingWorkflow: false,
   loadingStories: false,
-  workflows: null,
+  workflow: null,
   currentWorkflowSlug: 'main',
   stories: {},
   createStoryForm: '',
@@ -272,22 +272,20 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    KanbanApiActions.fetchWorkflowsSuccess,
-    (state, { workflows }): KanbanState => {
-      state.workflows = workflows;
-      state.loadingWorkflows = false;
+    KanbanApiActions.fetchWorkflowSuccess,
+    (state, { workflow }): KanbanState => {
+      state.workflow = workflow;
+      state.loadingWorkflow = false;
 
-      workflows.forEach((workflow) => {
-        workflow.statuses.forEach((status) => {
-          if (!state.stories[status.id]) {
-            state.stories[status.id] = [];
-          }
-        });
+      workflow.statuses.forEach((status) => {
+        if (!state.stories[status.id]) {
+          state.stories[status.id] = [];
+        }
       });
 
       if (state.empty !== null && state.empty) {
         // open the first form if the kanban is empty and there is at least one status
-        state.createStoryForm = state.workflows[0].statuses?.[0]?.id;
+        state.createStoryForm = state.workflow.statuses?.[0]?.id;
       }
 
       return state;
@@ -310,9 +308,9 @@ export const reducer = createImmerReducer(
         state.empty = !stories.length;
       }
 
-      if (state.empty && state.workflows) {
+      if (state.empty && state.workflow) {
         // open the first form if the kanban is empty and there is at least one status
-        state.createStoryForm = state.workflows[0].statuses?.[0]?.id;
+        state.createStoryForm = state.workflow.statuses?.[0]?.id;
       }
 
       return state;
@@ -448,8 +446,7 @@ export const reducer = createImmerReducer(
       state = removeStory(state, (it) => !!it._shadow || !!it._dragging);
 
       if (story) {
-        // TODO: current workflow
-        const statusObj = state.workflows![0].statuses.find(
+        const statusObj = state.workflow?.statuses.find(
           (it) => it.id === status
         );
 
@@ -533,8 +530,8 @@ export const reducer = createImmerReducer(
     const oldStory = findStory(state, (it) => it.ref === story.ref);
 
     // TODO: current workflow
-    if (oldStory?.status.id !== story.status && state.workflows) {
-      const status = state.workflows[0].statuses.find(
+    if (oldStory?.status.id !== story.status && state.workflow) {
+      const status = state.workflow.statuses.find(
         (it) => it.id === story.status
       );
 
@@ -669,12 +666,10 @@ export const reducer = createImmerReducer(
   on(
     KanbanApiActions.createStatusSuccess,
     KanbanEventsActions.updateStatus,
-    (state, { status, workflow }): KanbanState => {
+    (state, { status }): KanbanState => {
       state.loadingStatus = false;
-      const workflowIndex = state.workflows!.findIndex(
-        (it) => it.slug === workflow
-      );
-      state.workflows![workflowIndex].statuses.push(status);
+
+      state.workflow?.statuses.push(status);
       state.stories[status.id] = [];
 
       return state;
@@ -683,29 +678,22 @@ export const reducer = createImmerReducer(
   on(
     KanbanActions.editStatus,
     KanbanEventsActions.editStatus,
-    (state, { status, workflow }): KanbanState => {
-      const workflowIndex = state.workflows!.findIndex(
-        (it) => it.slug === workflow
-      );
-      const statusIndex = state.workflows![workflowIndex].statuses.findIndex(
+    (state, { status }): KanbanState => {
+      const statusIndex = state.workflow!.statuses.findIndex(
         (it) => it.id === status.id
       );
-      state.workflows![workflowIndex].statuses[statusIndex].name = status.name;
+      state.workflow!.statuses[statusIndex].name = status.name;
 
       return state;
     }
   ),
   on(
     KanbanApiActions.editStatusError,
-    (state, { undo, status, workflow }): KanbanState => {
-      const workflowIndex = state.workflows!.findIndex(
-        (it) => it.slug === workflow
-      );
-      const statusIndex = state.workflows![workflowIndex].statuses.findIndex(
+    (state, { undo, status }): KanbanState => {
+      const statusIndex = state.workflow!.statuses.findIndex(
         (it) => it.id === status.id
       );
-      state.workflows![workflowIndex].statuses[statusIndex].name =
-        undo.status.name;
+      state.workflow!.statuses[statusIndex].name = undo.status.name;
 
       return state;
     }
@@ -713,11 +701,8 @@ export const reducer = createImmerReducer(
   on(
     KanbanApiActions.deleteStatusSuccess,
     KanbanEventsActions.statusDeleted,
-    (state, { status, workflow, moveToStatus }): KanbanState => {
-      const workflowIndex = state.workflows!.findIndex(
-        (it) => it.slug === workflow
-      );
-      const statuses = state.workflows![workflowIndex].statuses;
+    (state, { status, moveToStatus }): KanbanState => {
+      const statuses = state.workflow!.statuses;
       const statusIndex = statuses.findIndex((it) => it.id === status);
       if (moveToStatus) {
         const storiesToMove = state.stories[status];
@@ -733,7 +718,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(KanbanActions.statusDragStart, (state, { id }): KanbanState => {
-    const currentWorkflow = state.workflows ? state.workflows[0] : undefined;
+    const currentWorkflow = state.workflow;
 
     if (currentWorkflow) {
       state.dragType = 'status';
@@ -759,7 +744,7 @@ export const reducer = createImmerReducer(
     KanbanActions.statusDropped,
     projectEventActions.statusReorder,
     (state, { id, candidate }): KanbanState => {
-      const currentWorkflow = state.workflows ? state.workflows[0] : undefined;
+      const currentWorkflow = state.workflow;
 
       if (!currentWorkflow) {
         return state;
@@ -811,19 +796,18 @@ export const kanbanFeature = createFeature({
   name: 'kanban',
   reducer,
   extraSelectors: ({
-    selectWorkflows,
+    selectWorkflow,
     selectDraggingStatus,
     selectStatusDropCandidate,
   }) => ({
     selectColums: createSelector(
-      selectWorkflows,
+      selectWorkflow,
       selectDraggingStatus,
       selectStatusDropCandidate,
-      (workflows, currentStatus, statusDropCandidate) => {
-        if (!workflows || !workflows.length) {
+      (workflow, currentStatus, statusDropCandidate) => {
+        if (!workflow) {
           return [];
         }
-        const workflow = workflows[0];
 
         if (!statusDropCandidate) {
           return workflow.statuses.map((it) => {

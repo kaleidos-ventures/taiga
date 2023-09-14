@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -30,7 +30,7 @@ interface SocialParams {
   standalone: true,
   templateUrl: './social-login-button.component.html',
   styleUrls: ['./social-login-button.component.css'],
-  imports: [CommonModule, TranslocoModule],
+  imports: [CommonModule, TranslocoModule, NgOptimizedImage],
   providers: [
     {
       provide: TRANSLOCO_SCOPE,

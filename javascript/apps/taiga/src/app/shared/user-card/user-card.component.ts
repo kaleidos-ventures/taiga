@@ -12,6 +12,7 @@ import { TranslocoService } from '@ngneat/transloco';
 import { TuiSvgModule } from '@taiga-ui/core';
 import { User } from '@taiga/data';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
+import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.component';
 import { UtilsService } from '~/app/shared/utils/utils-service.service';
 
 @Component({
@@ -19,7 +20,12 @@ import { UtilsService } from '~/app/shared/utils/utils-service.service';
   standalone: true,
   templateUrl: './user-card.component.html',
   styleUrls: ['./user-card.component.css'],
-  imports: [CommonModule, UserAvatarComponent, TuiSvgModule],
+  imports: [
+    CommonModule,
+    UserAvatarComponent,
+    NouserAvatarComponent,
+    TuiSvgModule,
+  ],
 })
 export class UserCardComponent implements OnChanges {
   @Input() public user!: Partial<User>;

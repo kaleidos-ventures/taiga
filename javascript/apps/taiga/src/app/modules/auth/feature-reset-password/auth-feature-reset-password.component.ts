@@ -22,7 +22,7 @@ import {
 } from '../data-access/+state/actions/auth.actions';
 import { selectShowResetPasswordConfirmation } from '../data-access/+state/selectors/auth.selectors';
 import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 import { TranslocoDirective } from '@ngneat/transloco';
 import { InputsModule } from '@taiga/ui/inputs';
@@ -53,6 +53,7 @@ import { TitleComponent } from '~/app/shared/title/title.component';
     InternalLinkDirective,
     RouterLink,
     getUrlPipe,
+    NgOptimizedImage,
   ],
 })
 export class AuthFeatureResetPasswordComponent implements OnInit {

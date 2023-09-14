@@ -22,7 +22,7 @@ import { PasswordStrengthComponent } from '@taiga/ui/inputs/password-strength/pa
 import { newPassword } from '~/app/modules/auth/data-access/+state/actions/auth.actions';
 import { TuiButtonModule } from '@taiga-ui/core';
 import { TranslocoDirective } from '@ngneat/transloco';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { InputsModule } from '@taiga/ui/inputs';
 import { ButtonLoadingDirective } from '~/app/shared/directives/button-loading/button-loading.directive';
 import { InternalLinkDirective } from '~/app/shared/directives/internal-link/internal-link.directive';
@@ -44,6 +44,7 @@ import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
     InternalLinkDirective,
     RouterLink,
     getUrlPipe,
+    NgOptimizedImage,
   ],
 })
 export class NewPasswordComponent implements OnInit {

@@ -9,7 +9,7 @@ Copyright (c) 2023-present Kaleidos INC
   class="user-card"
   [class.disabled]="disabled">
   <tg-user-avatar
-    class="top"
+    class="user-avatar"
     *ngIf="fullName"
     [color]="setColor(user.color)"
     [class.disabled]="disabled"
@@ -17,11 +17,9 @@ Copyright (c) 2023-present Kaleidos INC
     type="light"
     [user]="user"></tg-user-avatar>
 
-  <img
+  <tg-nouser-avatar
     *ngIf="!fullName"
-    src="assets/images/avatar.svg"
-    class="avatar top"
-    alt="" />
+    class="user-avatar"></tg-nouser-avatar>
   <div
     class="user-identifier"
     [class.highlight]="textToHighlight"

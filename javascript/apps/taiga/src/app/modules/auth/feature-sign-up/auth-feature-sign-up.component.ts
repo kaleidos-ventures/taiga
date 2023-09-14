@@ -23,7 +23,7 @@ import { AuthFeatureVerifyEmailComponent } from './components/verify-email/verif
 import { SignupComponent } from './components/signup/signup.component';
 import { TuiButtonModule } from '@taiga-ui/core';
 import { SocialLoginComponent } from '../components/social-login/social-login.component';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 import { InlineNotificationComponent } from '@taiga/ui/inline-notification';
@@ -55,6 +55,7 @@ import { TitleComponent } from '~/app/shared/title/title.component';
     InternalLinkDirective,
     AuthFeatureVerifyEmailComponent,
     getUrlPipe,
+    NgOptimizedImage,
   ],
 })
 export class AuthFeatureSignUpComponent implements OnInit {

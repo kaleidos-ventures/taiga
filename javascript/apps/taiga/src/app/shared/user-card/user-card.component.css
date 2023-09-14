@@ -141,14 +141,6 @@ Copyright (c) 2023-present Kaleidos INC
   padding: var(--spacing-4);
 }
 
-.avatar {
-  block-size: 32px;
-  border: solid 2px var(--color-gray20);
-  border-radius: 50%;
-  inline-size: 32px;
-  overflow: hidden;
-}
-
 .overflow {
   @mixin ellipsis;
 
@@ -157,7 +149,7 @@ Copyright (c) 2023-present Kaleidos INC
   max-inline-size: 100%;
 }
 
-.top {
+.user-avatar {
   align-self: start;
 
   &.disabled {

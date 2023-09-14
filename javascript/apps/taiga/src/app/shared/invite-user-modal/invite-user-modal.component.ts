@@ -79,7 +79,7 @@ import { UserCardComponent } from '../user-card/user-card.component';
 import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
 import { TuiAutoFocusModule, TuiActiveZoneModule } from '@taiga-ui/cdk';
 import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { InputsModule } from '@taiga/ui/inputs';
 import { BadgeComponent } from '@taiga/ui/badge/badge.component';
 import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
@@ -141,6 +141,7 @@ interface InviteUserState {
     TuiLinkModule,
     ButtonLoadingDirective,
     capitalizePipe,
+    NgOptimizedImage,
   ],
 })
 export class InviteUserModalComponent implements OnInit, OnChanges {

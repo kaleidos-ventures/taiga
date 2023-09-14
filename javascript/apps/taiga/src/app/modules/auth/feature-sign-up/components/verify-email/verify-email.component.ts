@@ -26,7 +26,7 @@ import {
 import { SignUp } from '~/app/modules/auth/feature-sign-up/models/sign-up.model';
 import { AppService } from '~/app/services/app.service';
 import { TranslocoDirective } from '@ngneat/transloco';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +35,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./verify-email.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, TranslocoDirective, TuiLinkModule],
+  imports: [CommonModule, TranslocoDirective, TuiLinkModule, NgOptimizedImage],
 })
 export class AuthFeatureVerifyEmailComponent implements OnInit {
   @Input()

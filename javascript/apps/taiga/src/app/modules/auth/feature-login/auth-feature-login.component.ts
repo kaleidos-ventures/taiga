@@ -13,7 +13,7 @@ import { fadeIntOutAnimation } from '~/app/shared/utils/animations';
 import { AuthService } from '../services/auth.service';
 import { LoginComponent } from './components/login/login.component';
 import { SocialLoginComponent } from '../components/social-login/social-login.component';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { AuthForestComponent } from '../components/auth-forest/auth-forest.component';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { TitleComponent } from '~/app/shared/title/title.component';
@@ -32,6 +32,7 @@ import { TitleComponent } from '~/app/shared/title/title.component';
     SocialLoginComponent,
     LoginComponent,
     RouterLink,
+    NgOptimizedImage,
   ],
 })
 export class AuthFeatureLoginComponent implements OnInit {

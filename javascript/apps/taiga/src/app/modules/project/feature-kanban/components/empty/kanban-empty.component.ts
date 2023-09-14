@@ -16,8 +16,7 @@ import {
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiButtonModule } from '@taiga-ui/core';
 
-import { CommonModule } from '@angular/common';
-import { NgOptimizedImage } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'tg-kanban-empty',

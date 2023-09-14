@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
@@ -14,6 +14,6 @@ import { Component } from '@angular/core';
   standalone: true,
   templateUrl: './auth-forest.component.html',
   styleUrls: ['./auth-forest.component.css'],
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
 })
 export class AuthForestComponent {}

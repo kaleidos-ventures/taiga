@@ -13,7 +13,9 @@ Copyright (c) 2023-present Kaleidos INC
         [routerLink]="['/']"
         [attr.aria-label]="t('navigation.go_home')">
         <img
-          src="/assets/images/LogoTaiga.svg"
+          width="56"
+          height="56"
+          ngSrc="/assets/images/LogoTaiga.svg"
           alt="" />
       </a>
       <h1 class="error-title">{{ t('errors_page.500.something_wrong') }}</h1>
@@ -38,8 +40,10 @@ Copyright (c) 2023-present Kaleidos INC
       </button>
     </div>
     <img
+      width="674"
+      height="495"
       class="error-background-image"
-      src="/assets/images/error-500.svg"
+      ngSrc="/assets/images/error-500.svg"
       alt="" />
     <a
       class="error-home"

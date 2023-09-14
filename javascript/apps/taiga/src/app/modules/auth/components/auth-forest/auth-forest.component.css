@@ -7,6 +7,7 @@ Copyright (c) 2023-present Kaleidos INC
 */
 
 img {
+  inline-size: auto;
   inset-block-start: var(--banner-height);
   max-block-size: calc(100vh - var(--banner-height));
   pointer-events: none;

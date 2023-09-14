@@ -26,10 +26,10 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import {
   TuiButtonComponent,
+  TuiButtonModule,
   TuiNotification,
   TuiScrollbarComponent,
   TuiSvgModule,
-  TuiButtonModule,
 } from '@taiga-ui/core';
 import {
   Attachment,
@@ -47,7 +47,6 @@ import {
   Workflow,
 } from '@taiga/data';
 import { map, merge, pairwise, startWith, take } from 'rxjs';
-
 import { v4 } from 'uuid';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -187,7 +186,7 @@ export class StoryDetailComponent {
 
       // taiga ui in the modal has a focus trap that makes the focus on the element, so we need to delay the focus one tick
       requestAnimationFrame(() => {
-        this.setInitilFocus();
+        this.setInitialFocus();
       });
     }
   }
@@ -443,7 +442,7 @@ export class StoryDetailComponent {
     }
   }
 
-  public setInitilFocus() {
+  public setInitialFocus() {
     const locationState = this.location.getState() as null | {
       nextStoryNavigation?: boolean;
       previousStoryNavigation?: boolean;

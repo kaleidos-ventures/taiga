@@ -8,18 +8,18 @@
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import { Membership, Status, Story, Workflow } from '@taiga/data';
+import { DropCandidate } from '@taiga/ui/drag/drag.model';
 import {
   KanbanReorderEvent,
   KanbanStory,
   KanbanStoryA11y,
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
-import { DropCandidate } from '@taiga/ui/drag/drag.model';
 
 export const KanbanActions = createActionGroup({
   source: 'Kanban',
   events: {
-    'Init Kanban': emptyProps(),
+    'Init Kanban': props<{ workflow: Workflow['slug'] }>(),
     'Open Create Story form': props<{ status: Status['id'] }>(),
     'Close Create Story form': emptyProps(),
     'Create Story': props<{
@@ -120,7 +120,7 @@ export const KanbanActions = createActionGroup({
 export const KanbanApiActions = createActionGroup({
   source: 'Kanban Api',
   events: {
-    'Fetch Workflows Success': props<{ workflows: Workflow[] }>(),
+    'Fetch Workflow Success': props<{ workflow: Workflow }>(),
     'Fetch Stories Success': props<{
       stories: Story[];
       offset: number;

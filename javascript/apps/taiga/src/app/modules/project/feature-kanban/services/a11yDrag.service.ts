@@ -28,6 +28,7 @@ import {
   KanbanStory,
   KanbanStoryA11y,
 } from '~/app/modules/project/feature-kanban/kanban.model';
+import { KanbanState } from '../data-access/+state/reducers/kanban.reducer';
 
 @Injectable({
   providedIn: 'root',
@@ -166,11 +167,9 @@ export class A11yDragService {
     this.store
       .select(selectKanbanState)
       .pipe(take(1))
-      .subscribe((state) => {
+      .subscribe((state: KanbanState) => {
         const story = findStory(state, (it) => it.ref === this.storyRef);
-        const workflow = state.workflows?.find((it) => {
-          return it.slug === state.currentWorkflowSlug;
-        });
+        const workflow = state.workflow;
 
         if (!workflow || !story) {
           return;

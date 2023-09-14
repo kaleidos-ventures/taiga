@@ -6,10 +6,11 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Location, CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -21,13 +22,14 @@ import {
   Permissions,
   Project,
   Role,
+  Status,
   Story,
   StoryDetail,
   StoryView,
-  WorkflowStatus,
-  Status,
   Workflow,
+  WorkflowStatus,
 } from '@taiga/data';
+import { ModalComponent } from '@taiga/ui/modal/components';
 import { combineLatest, filter, map, merge, pairwise, take } from 'rxjs';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
@@ -37,9 +39,12 @@ import {
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
+import { InviteUserModalComponent } from '~/app/shared/invite-user-modal/invite-user-modal.component';
 import { PermissionUpdateNotificationService } from '~/app/shared/permission-update-notification/permission-update-notification.service';
+import { ResizedDirective } from '~/app/shared/resize/resize.directive';
 import { ResizedEvent } from '~/app/shared/resize/resize.model';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
+import { TitleComponent } from '~/app/shared/title/title.component';
 import { filterNil } from '~/app/shared/utils/operators';
 import { pick } from '~/app/shared/utils/pick';
 import { ProjectFeatureStoryWrapperModalViewComponent } from '../feature-story-wrapper-modal-view/project-feature-story-wrapper-modal-view.component';
@@ -48,6 +53,7 @@ import {
   selectStory,
   selectStoryView,
 } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
+import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
 import {
   KanbanActions,
   KanbanEventsActions,
@@ -57,20 +63,14 @@ import {
   kanbanFeature,
 } from './data-access/+state/reducers/kanban.reducer';
 import {
-  selectLoadingWorkflows,
-  selectWorkflows,
+  selectLoadingWorkflow,
+  selectWorkflow,
 } from './data-access/+state/selectors/kanban.selectors';
 import { KanbanReorderEvent } from './kanban.model';
-import { KanbanWorkflowComponent } from './components/workflow/kanban-workflow.component';
-import { TranslocoDirective } from '@ngneat/transloco';
-import { ModalComponent } from '@taiga/ui/modal/components';
-import { InviteUserModalComponent } from '~/app/shared/invite-user-modal/invite-user-modal.component';
-import { ResizedDirective } from '~/app/shared/resize/resize.directive';
-import { TitleComponent } from '~/app/shared/title/title.component';
 
 interface ComponentState {
-  loadingWorkflows: KanbanState['loadingWorkflows'];
-  workflows: KanbanState['workflows'];
+  loadingWorkflow: KanbanState['loadingWorkflow'];
+  workflow: KanbanState['workflow'];
   invitePeopleModal: boolean;
   showStoryDetail: boolean;
   storyView: StoryView;
@@ -109,19 +109,7 @@ export class ProjectFeatureKanbanComponent {
 
   public invitePeopleModal = false;
   public kanbanWidth = 0;
-  public model$ = this.state.select().pipe(
-    map((state) => {
-      const hasStatuses =
-        state.workflows?.find((workflow) => {
-          return workflow.statuses.length;
-        }) ?? true;
-
-      return {
-        ...state,
-        isEmpty: !hasStatuses,
-      };
-    })
-  );
+  public model$ = this.state.select();
   public project$ = this.store.select(selectCurrentProject);
 
   constructor(
@@ -129,8 +117,8 @@ export class ProjectFeatureKanbanComponent {
     private state: RxState<ComponentState>,
     private wsService: WsService,
     private permissionService: PermissionsService,
-    private router: Router,
     private route: ActivatedRoute,
+    private router: Router,
     private appService: AppService,
     private location: Location,
     public shortcutsService: ShortcutsService,
@@ -145,11 +133,22 @@ export class ProjectFeatureKanbanComponent {
       void this.router.navigate(['403']);
       return;
     }
-    this.store.dispatch(KanbanActions.initKanban());
+
+    this.route.paramMap.subscribe((params) => {
+      const workflowSlug = params.get('workflow') ?? 'main';
+      this.store.dispatch(KanbanActions.initKanban({ workflow: workflowSlug }));
+    });
+
+    // Load on init kanban page. Not on every reload
+    // const workflowSlug = this.route.snapshot.params['workflow'];
+    // this.store.dispatch(
+    //   KanbanActions.initKanban({ workflow: workflowSlug })
+    // );
+
     this.checkInviteModalStatus();
     this.state.connect(
-      'loadingWorkflows',
-      this.store.select(selectLoadingWorkflows)
+      'loadingWorkflow',
+      this.store.select(selectLoadingWorkflow)
     );
 
     this.state.connect(
@@ -185,7 +184,7 @@ export class ProjectFeatureKanbanComponent {
       }
     );
     this.state.connect('storyView', this.store.select(selectStoryView));
-    this.state.connect('workflows', this.store.select(selectWorkflows));
+    this.state.connect('workflow', this.store.select(selectWorkflow));
     this.state.connect(
       'columns',
       this.store.select(kanbanFeature.selectColums)

@@ -24,8 +24,8 @@ import { filterNil } from '~/app/shared/utils/operators';
 import { KanbanStatusComponent } from '../components/status/kanban-status.component';
 import { KanbanWorkflowComponent } from '../components/workflow/kanban-workflow.component';
 import {
-  selectCurrentWorkflow,
   selectStory,
+  selectWorkflow,
 } from '../data-access/+state/selectors/kanban.selectors';
 import { KanbanStory } from '../kanban.model';
 
@@ -131,7 +131,7 @@ export class KanbanScrollManagerService {
   private moveToStatus(status: Status) {
     return new Observable((subscriber) => {
       this.store
-        .select(selectCurrentWorkflow)
+        .select(selectWorkflow)
         .pipe(
           filterNil(),
           take(1),

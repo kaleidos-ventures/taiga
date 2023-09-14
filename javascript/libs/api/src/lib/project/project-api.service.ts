@@ -239,10 +239,10 @@ export class ProjectApiService {
 
   public getWorkflow(
     projectId: Project['id'],
-    slug: string
+    workflow: Workflow['slug']
   ): Observable<Workflow> {
     return this.http.get<Workflow>(
-      `${this.config.apiUrl}/projects/${projectId}/workflows/${slug}`
+      `${this.config.apiUrl}/projects/${projectId}/workflows/${workflow}`
     );
   }
 

@@ -36,9 +36,8 @@ import {
   KanbanEventsActions,
 } from '../actions/kanban.actions';
 import {
-  selectCurrentWorkflow,
   selectCurrentWorkflowSlug,
-  selectWorkflows,
+  selectWorkflow,
 } from '../selectors/kanban.selectors';
 
 @Injectable()
@@ -51,11 +50,13 @@ export class KanbanEffects {
       ]),
       fetch({
         run: (action, project) => {
-          return this.projectApiService.getWorkflows(project.id).pipe(
-            map((workflows) => {
-              return KanbanApiActions.fetchWorkflowsSuccess({ workflows });
-            })
-          );
+          return this.projectApiService
+            .getWorkflow(project.id, action.workflow)
+            .pipe(
+              map((workflow) => {
+                return KanbanApiActions.fetchWorkflowSuccess({ workflow });
+              })
+            );
         },
         onError: (action, error: HttpErrorResponse) => {
           return this.appService.errorManagement(error);
@@ -69,22 +70,24 @@ export class KanbanEffects {
       ofType(KanbanActions.initKanban),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
-        this.store.select(selectWorkflows),
+        this.store.select(selectWorkflow),
       ]),
       fetch({
         run: (action, project) => {
-          return this.projectApiService.getAllStories(project.id, 'main').pipe(
-            map(({ stories, offset, complete }) => {
-              return KanbanApiActions.fetchStoriesSuccess({
-                stories,
-                offset,
-                complete,
-              });
-            }),
-            finalize(() => {
-              return KanbanActions.loadStoriesComplete();
-            })
-          );
+          return this.projectApiService
+            .getAllStories(project.id, action.workflow)
+            .pipe(
+              map(({ stories, offset, complete }) => {
+                return KanbanApiActions.fetchStoriesSuccess({
+                  stories,
+                  offset,
+                  complete,
+                });
+              }),
+              finalize(() => {
+                return KanbanActions.loadStoriesComplete();
+              })
+            );
         },
         onError: (action, error: HttpErrorResponse) => {
           return this.appService.errorManagement(error);
@@ -437,7 +440,7 @@ export class KanbanEffects {
       filter(({ candidate }) => !!candidate),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProjectId).pipe(filterNil()),
-        this.store.select(selectCurrentWorkflow).pipe(filterNil()),
+        this.store.select(selectWorkflow).pipe(filterNil()),
       ]),
       pessimisticUpdate({
         run: (action, project, workflow) => {

@@ -394,7 +394,8 @@ Copyright (c) 2023-present Kaleidos INC
     </div>
   </div>
   <ng-template #createWorkflowButtonTpl>
-    <button
+    <a
+      [routerLink]="['/project', project.id, project.slug, 'new-workflow']"
       *ngIf="project.userIsAdmin"
       class="create-workflow"
       size="m"
@@ -406,7 +407,6 @@ Copyright (c) 2023-present Kaleidos INC
       (pointerenter)="activeSection = true"
       (pointerleave)="activeSection = false"
       tuiIconButton
-      icon="plus"
-      (click)="createWorkflow()"></button>
+      icon="plus"></a>
   </ng-template>
 </ng-container>

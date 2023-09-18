@@ -246,6 +246,18 @@ export class ProjectApiService {
     );
   }
 
+  public createWorkflow(
+    workflow: Workflow['name'],
+    project: Project['id']
+  ): Observable<Workflow> {
+    return this.http.post<Workflow>(
+      `${this.config.apiUrl}/projects/${project}/workflows`,
+      {
+        name: workflow,
+      }
+    );
+  }
+
   public updateInvitationRole(
     id: string,
     userData: { id: string; roleSlug: string }

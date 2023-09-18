@@ -29,6 +29,26 @@ const routes: Routes = [
           ).then((m) => m.ProjectFeatureOverviewModule),
       },
       {
+        path: 'overview',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-overview/project-feature-overview.module'
+          ).then((m) => m.ProjectFeatureOverviewModule),
+        data: {
+          overview: true,
+        },
+      },
+      {
+        path: ':slug/overview',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-overview/project-feature-overview.module'
+          ).then((m) => m.ProjectFeatureOverviewModule),
+        data: {
+          overview: true,
+        },
+      },
+      {
         path: 'kanban',
         loadChildren: () =>
           import(
@@ -47,6 +67,17 @@ const routes: Routes = [
         path: ':slug/kanban',
         redirectTo: ':slug/kanban/main',
         pathMatch: 'full',
+      },
+      {
+        path: ':slug/new-workflow',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-new-workflow/project-feature-new-workflow.module'
+          ).then((m) => m.ProjectFeatureNewWorkflowModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          newKanban: true,
+        },
       },
       {
         path: ':slug/kanban/:workflow',

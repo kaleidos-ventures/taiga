@@ -15,15 +15,15 @@ import {
   OnDestroy,
 } from '@angular/core';
 import {
-  Router,
-  RouterOutlet,
   ActivatedRoute,
   ActivatedRouteSnapshot,
+  Router,
+  RouterOutlet,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiNotification, TuiButtonModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiNotification } from '@taiga-ui/core';
 import {
   Attachment,
   Membership,
@@ -54,9 +54,9 @@ import {
 } from '../data-access/+state/actions/project.actions';
 import { setNotificationClosed } from '../feature-overview/data-access/+state/actions/project-overview.actions';
 
-import { ProjectNavigationComponent } from '../feature-navigation/project-feature-navigation.component';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
+import { ProjectNavigationComponent } from '../feature-navigation/project-feature-navigation.component';
 
 @UntilDestroy()
 @Component({
@@ -153,10 +153,16 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
           active.routeConfig?.component?.name ===
             'ProjectFeatureOverviewComponent';
         const isSettings = !!active.data.settings;
+        const isNewKanban = !!active.data.newKanban;
 
         if (isKanban) {
           void this.router.navigate(
             [`project/${project.id}/${project.slug}/kanban`],
+            { replaceUrl: true }
+          );
+        } else if (isNewKanban) {
+          void this.router.navigate(
+            [`project/${project.id}/${project.slug}/new-workflow`],
             { replaceUrl: true }
           );
         } else if (isOverview) {

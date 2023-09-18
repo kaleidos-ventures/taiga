@@ -8,6 +8,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import {
@@ -44,7 +45,7 @@ import {
 export class KanbanEffects {
   public loadKanbanWorkflows$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanActions.initKanban),
+      ofType(KanbanActions.initKanban, KanbanActions.loadWorkflowKanban),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
@@ -67,7 +68,7 @@ export class KanbanEffects {
 
   public loadKanbanStories$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanActions.initKanban),
+      ofType(KanbanActions.initKanban, KanbanActions.loadWorkflowKanban),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
         this.store.select(selectWorkflow),
@@ -91,6 +92,42 @@ export class KanbanEffects {
         },
         onError: (action, error: HttpErrorResponse) => {
           return this.appService.errorManagement(error);
+        },
+      })
+    );
+  });
+
+  public createWorkflow$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(KanbanActions.createWorkflow),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: (workflow, project) => {
+          return this.projectApiService
+            .createWorkflow(workflow.name, project.id)
+            .pipe(
+              map((newWorkflow) => {
+                console.log({ newWorkflow });
+                void this.router.navigate([
+                  '/project',
+                  project.id,
+                  project.slug,
+                  newWorkflow.slug,
+                ]);
+                return KanbanApiActions.createWorkflowSuccess({
+                  workflow: newWorkflow,
+                });
+              })
+            );
+        },
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status !== 403) {
+            this.appService.errorManagement(httpResponse);
+          }
+
+          return KanbanApiActions.createWorkflowError();
         },
       })
     );
@@ -480,6 +517,7 @@ export class KanbanEffects {
     private actions$: Actions,
     private store: Store,
     private projectApiService: ProjectApiService,
+    private router: Router,
     private kanbanScrollManagerService: KanbanScrollManagerService,
     private translocoService: TranslocoService
   ) {}

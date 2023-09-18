@@ -30,7 +30,16 @@ import {
   WorkflowStatus,
 } from '@taiga/data';
 import { ModalComponent } from '@taiga/ui/modal/components';
-import { combineLatest, filter, map, merge, pairwise, take } from 'rxjs';
+import {
+  combineLatest,
+  distinctUntilChanged,
+  filter,
+  map,
+  merge,
+  pairwise,
+  skip,
+  take,
+} from 'rxjs';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
@@ -134,16 +143,22 @@ export class ProjectFeatureKanbanComponent {
       return;
     }
 
-    this.route.paramMap.subscribe((params) => {
-      const workflowSlug = params.get('workflow') ?? 'main';
-      this.store.dispatch(KanbanActions.initKanban({ workflow: workflowSlug }));
-    });
-
     // Load on init kanban page. Not on every reload
-    // const workflowSlug = this.route.snapshot.params['workflow'];
-    // this.store.dispatch(
-    //   KanbanActions.initKanban({ workflow: workflowSlug })
-    // );
+    const workflow: Workflow['slug'] =
+      (this.route.snapshot.params['workflow'] as Workflow['slug']) ?? 'main';
+    this.store.dispatch(KanbanActions.initKanban({ workflow }));
+
+    this.route.paramMap
+      .pipe(
+        map((params) => {
+          return params.get('workflow') ?? 'main';
+        }),
+        distinctUntilChanged(),
+        skip(1)
+      )
+      .subscribe((workflow: Workflow['slug']) => {
+        this.store.dispatch(KanbanActions.loadWorkflowKanban({ workflow }));
+      });
 
     this.checkInviteModalStatus();
     this.state.connect(

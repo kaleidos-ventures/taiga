@@ -16,6 +16,7 @@ import {
   StoryDetail,
   User,
   UserComment,
+  Workflow,
 } from '@taiga/data';
 import { DropCandidate } from '@taiga/ui/drag/drag.model';
 
@@ -65,6 +66,14 @@ export const updateStoryShowView = createAction(
   props<{
     showView: boolean;
   }>()
+);
+
+export const createWorkflow = createAction(
+  '[Project] Create Workflow',
+  props<{
+    project: Project;
+    name: Workflow['name'];
+  }>
 );
 
 export const newProjectMembers = createAction(

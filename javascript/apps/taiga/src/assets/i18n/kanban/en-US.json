@@ -42,5 +42,11 @@
     "delete_stories": "Delete the stories too",
     "stories_placed_below": "The stories will be placed below the existing ones.",
     "status": "Status"
+  },
+  "create_workflow": {
+    "save": "Create Workflow",
+    "workflow_name_aria": "Workflow name (Maximum 40 Characters only)",
+    "write_workflow_name": "Write a workflow name",
+    "workflow_empty": "Workflow name can’t be empty."
   }
 }

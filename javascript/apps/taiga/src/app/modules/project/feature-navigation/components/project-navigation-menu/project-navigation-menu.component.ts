@@ -213,10 +213,6 @@ export class ProjectNavigationMenuComponent {
     this.dialog.type = '';
   }
 
-  public createWorkflow() {
-    console.log('create workflow');
-  }
-
   public trackById(_index: number, workflow: Workflow) {
     return workflow.id;
   }

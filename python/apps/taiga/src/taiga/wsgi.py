@@ -5,8 +5,8 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from a2wsgi import WSGIMiddleware
 from fastapi import FastAPI
-from starlette.middleware.wsgi import WSGIMiddleware
 from taiga.base.django.wsgi import application as django_app
 from taiga.events import app as events_app
 from taiga.events import connect_events_manager, disconnect_events_manager
@@ -28,4 +28,4 @@ app.on_event("startup")(connect_taskqueue_manager)
 app.on_event("shutdown")(disconnect_taskqueue_manager)
 
 # Serve /media /admin and /static files urls
-app.mount("/", WSGIMiddleware(django_app))
+app.mount("/", WSGIMiddleware(django_app))  # type: ignore

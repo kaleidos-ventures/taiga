@@ -2,6 +2,7 @@
 fastapi
 pydantic[email,dotenv]<2.0
 python-multipart
+a2wsgi # WSGI to ASGI adapter
 uvicorn[standard]
 httpx
 

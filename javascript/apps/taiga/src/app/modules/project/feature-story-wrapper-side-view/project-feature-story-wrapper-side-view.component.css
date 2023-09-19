@@ -33,17 +33,21 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .dragbar {
-  block-size: 4rem;
-  border: solid 3px transparent;
+  border: solid 6px transparent;
+  display: flex;
+  flex-direction: column;
   inline-size: 1px;
-  inset-block-start: 50%;
+  inset-block-end: 0;
+  inset-block-start: 0;
+  justify-content: center;
   position: absolute;
 
   &::after {
     background: var(--color-gray40);
-    block-size: 100%;
+    block-size: 4rem;
+    border-radius: 2px;
     content: "";
-    inline-size: 1px;
+    inline-size: 2px;
     inset-inline-start: -1px;
     position: absolute;
     transition: background-color 0.3s ease-in;

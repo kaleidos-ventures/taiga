@@ -73,6 +73,7 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   public minWidthCollapsed = 440;
   public minWidthUncollapsed = 500;
   public widthToForceCollapse = 500;
+  public dragInitialPosition = 0;
 
   constructor(
     private store: Store,
@@ -84,14 +85,19 @@ export class ProjectFeatureStoryWrapperSideViewComponent implements OnChanges {
   }
 
   public dragMove(dragHandle: HTMLElement, event: MouseEvent) {
-    this.sidepanelWidth = window.innerWidth - event.clientX;
+    this.sidepanelWidth =
+      window.innerWidth - event.clientX - this.dragInitialPosition;
     dragHandle.style.transform = 'translate(0, 0)';
   }
 
-  public isDragging(isDragging: boolean) {
+  public isDragging(event: MouseEvent, isDragging: boolean) {
     this.dragging = isDragging;
 
-    if (!isDragging) {
+    if (isDragging && this.sidepanel) {
+      this.dragInitialPosition =
+        this.sidepanel.nativeElement.getBoundingClientRect().x - event.clientX;
+    } else {
+      this.dragInitialPosition = 0;
       this.localStorage.set('story_width', this.sidepanelWidth);
     }
   }

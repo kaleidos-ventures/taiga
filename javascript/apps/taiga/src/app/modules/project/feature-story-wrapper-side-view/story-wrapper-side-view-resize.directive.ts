@@ -39,7 +39,7 @@ export class StoryWrapperSideViewDirective {
     }
 
     this.disableEditorPointerEvents();
-    this.tgResizeStart.emit();
+    this.tgResizeStart.emit(event);
 
     this.subscriptionMousemove = fromEvent(document.body, 'mousemove')
       .pipe(untilDestroyed(this), throttleTime(0, animationFrameScheduler))

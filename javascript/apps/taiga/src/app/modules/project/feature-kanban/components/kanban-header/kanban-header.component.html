@@ -1,0 +1,66 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <h1
+    id="main-area-title"
+    data-test="kanban-title">
+    {{ t('kanban.title') }}
+  </h1>
+
+  <tui-hosted-dropdown
+    class="status-options-menu"
+    tuiDropdownAlign="left"
+    [content]="workflowOptionsDropdown"
+    [(open)]="openWorkflowOptions">
+    <button
+      #statusOptions
+      [attr.aria-label]="t('kanban.status_options')"
+      role="menu"
+      aria-haspopup="true"
+      [attr.aria-expanded]="openWorkflowOptions"
+      icon="more-vertical"
+      data-test="status-options"
+      class="status-options-menu-button"
+      appearance="action-button-2"
+      tuiIconButton
+      type="button"></button>
+  </tui-hosted-dropdown>
+
+  <ng-template #workflowOptionsDropdown>
+    <tui-data-list class="view-options-list">
+      <button
+        class="option-btn"
+        data-test="edit-status-btn"
+        tuiOption
+        type="button">
+        <div class="option-container">
+          <tui-svg
+            aria-hidden="true"
+            class="option-icon"
+            src="pen"></tui-svg>
+          <span class="option-name">{{ t('kanban.edit_workflow_name') }}</span>
+        </div>
+      </button>
+      <hr class="separator" />
+      <button
+        class="option-btn option-delete"
+        data-test="delete-status-btn"
+        tuiOption
+        type="button">
+        <div class="option-container">
+          <tui-svg
+            aria-hidden="true"
+            class="option-icon"
+            src="trash"></tui-svg>
+          <span class="option-name">{{ t('kanban.delete_workflow') }}</span>
+        </div>
+      </button>
+    </tui-data-list>
+  </ng-template>
+</ng-container>

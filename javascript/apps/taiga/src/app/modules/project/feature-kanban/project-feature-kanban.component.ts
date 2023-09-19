@@ -76,6 +76,7 @@ import {
   selectWorkflow,
 } from './data-access/+state/selectors/kanban.selectors';
 import { KanbanReorderEvent } from './kanban.model';
+import { KanbanHeaderComponent } from './components/kanban-header/kanban-header.component';
 
 interface ComponentState {
   loadingWorkflow: KanbanState['loadingWorkflow'];
@@ -107,6 +108,7 @@ interface ComponentState {
     ModalComponent,
     ProjectFeatureStoryWrapperModalViewComponent,
     InviteUserModalComponent,
+    KanbanHeaderComponent,
   ],
 })
 export class ProjectFeatureKanbanComponent {

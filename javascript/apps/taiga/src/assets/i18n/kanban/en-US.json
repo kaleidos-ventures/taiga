@@ -32,6 +32,8 @@
   "empty_kanban": "This kanban is empty",
   "create_status_explanation_admin": "Create statuses to organize your stories and visualize the progress of your project.",
   "create_status_explanation": "Once the admins of this project set up the kanban, you can start creating stories",
+  "delete_workflow": "Delete workflow",
+  "edit_workflow_name": "Edit workflow name",
   "delete_status_modal": {
     "title": "Delete {{ statusName }} status?",
     "what_to_do_stories": "What do you want to do with the stories in this status?",

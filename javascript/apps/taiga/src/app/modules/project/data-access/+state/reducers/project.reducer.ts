@@ -111,9 +111,6 @@ export const reducer = createImmerReducer(
       return state;
     }
   ),
-  // on(KanbanApiActions.createWorkflowSuccess, (state, {workflow})): ProjectState => {
-
-  // }),
   on(
     ProjectActions.permissionsUpdateSuccess,
     (state, { project }): ProjectState => {

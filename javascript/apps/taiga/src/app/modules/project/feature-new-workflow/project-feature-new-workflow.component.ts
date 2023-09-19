@@ -7,8 +7,12 @@
  */
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Workflow } from '@taiga/data';
+import { RxState } from '@rx-angular/state';
+import { Project, Workflow } from '@taiga/data';
+import { filterNil } from '~/app/shared/utils/operators';
+import { selectCurrentProject } from '../data-access/+state/selectors/project.selectors';
 import { KanbanActions } from '../feature-kanban/data-access/+state/actions/kanban.actions';
 import { NewWorkflowFormComponent } from './components/new-workflow-form/new-workflow-form.component';
 
@@ -21,10 +25,20 @@ import { NewWorkflowFormComponent } from './components/new-workflow-form/new-wor
   imports: [NewWorkflowFormComponent],
 })
 export class ProjectFeatureNewWorkflowComponent {
-  constructor(private store: Store) {}
+  constructor(
+    private state: RxState<{
+      project: Project;
+    }>,
+    private store: Store,
+    private router: Router
+  ) {
+    this.state.connect(
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
+    );
+  }
 
   public createWorkflow(workflow: Workflow['name']) {
-    console.log({ workflow });
     this.store.dispatch(
       KanbanActions.createWorkflow({
         name: workflow,
@@ -33,6 +47,14 @@ export class ProjectFeatureNewWorkflowComponent {
   }
 
   public cancelCreateWorkflow() {
-    console.log('routelink to main');
+    const project = this.state.get('project');
+    const firstworkflow = project.workflows[0];
+    void this.router.navigate([
+      '/project',
+      project.id,
+      project.slug,
+      'kanban',
+      firstworkflow.slug,
+    ]);
   }
 }

@@ -109,14 +109,15 @@ export class KanbanEffects {
             .createWorkflow(workflow.name, project.id)
             .pipe(
               map((newWorkflow) => {
-                console.log({ newWorkflow });
                 void this.router.navigate([
                   '/project',
                   project.id,
                   project.slug,
+                  'kanban',
                   newWorkflow.slug,
                 ]);
                 return KanbanApiActions.createWorkflowSuccess({
+                  projectId: project.id,
                   workflow: newWorkflow,
                 });
               })

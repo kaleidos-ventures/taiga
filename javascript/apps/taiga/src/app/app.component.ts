@@ -35,7 +35,6 @@ import {
   TuiNotificationModule,
   TuiRootModule,
 } from '@taiga-ui/core';
-import { ApiRestInterceptorModule } from './shared/api-rest-interceptor/api-rest-interceptor.module';
 import { BannerComponent } from './shared/banner/banner.component';
 import { NavigationModule } from './shared/navigation/navigation.module';
 import { ResizedDirective } from './shared/resize/resize.directive';
@@ -49,7 +48,6 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     CommonModule,
-    ApiRestInterceptorModule,
     NavigationModule,
     TuiAlertModule,
     TuiNotificationModule,

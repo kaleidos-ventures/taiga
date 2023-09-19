@@ -42,7 +42,12 @@ import { EnvironmentService } from './app/services/environment.service';
 import { LanguageService } from './app/services/language/language.service';
 import { TUI_LANGUAGE } from '@taiga-ui/i18n';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { provideHttpClient } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptors,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { provideTranslocoMessageformat } from '@ngneat/transloco-messageformat';
 import { TranslocoHttpLoader } from './transloco-loader';
 import {
@@ -61,6 +66,7 @@ import { provideEffects } from '@ngrx/effects';
 import { AuthEffects } from './app/modules/auth/data-access/+state/effects/auth.effects';
 import { errorsFeature } from './app/modules/errors/+state/reducers/errors.reducer';
 import { ErrorsEffects } from './app/modules/errors/+state/effects/errors.effects';
+import { ApiRestInterceptorService } from './app/shared/api-rest-interceptor/api-rest-interceptor.service';
 
 const altIconName: Record<string, string> = {
   tuiIconChevronDownLarge: 'chevron-down',
@@ -257,6 +263,12 @@ const providers = [
   {
     provide: TUI_ANIMATIONS_DURATION,
     useFactory: () => (inject(TUI_IS_CYPRESS) ? 0 : 300),
+  },
+  provideHttpClient(withInterceptorsFromDi()),
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: ApiRestInterceptorService,
+    multi: true,
   },
   tuiToggleOptionsProvider({
     icons: {

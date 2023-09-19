@@ -66,19 +66,19 @@ export const APP_ROUTES: Routes = [
     children: [],
     canActivate: [WorkspaceInvitationCTAGuard],
   },
-  // {
-  //   path: '',
-  //   loadComponent: () =>
-  //     import(
-  //       './modules/workspace/feature-list/components/workspace/workspace.component'
-  //     ).then((m) => m.WorkspaceComponent),
-  //   canActivate: [AuthGuard],
-  //   // is lazy loaded?
-  //   providers: [
-  //     provideState(workspaceFeature),
-  //     provideEffects(WorkspaceEffects),
-  //   ],
-  // },
+  {
+    path: '',
+    loadComponent: () =>
+      import(
+        './modules/workspace/feature-list/components/workspace/workspace.component'
+      ).then((m) => m.WorkspaceComponent),
+    canActivate: [AuthGuard],
+    // is lazy loaded?
+    providers: [
+      provideState(workspaceFeature),
+      provideEffects(WorkspaceEffects),
+    ],
+  },
 
   // // WORKSPACE
   // {

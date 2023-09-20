@@ -16,87 +16,10 @@ Copyright (c) 2023-present Kaleidos INC
   inline-size: 100%;
 }
 
-/* Rotate arrows in RTL */
-:host-context([dir="rtl"]) {
-  & .story-navigation-arrow {
-    transform: rotate(180deg);
-  }
-}
-
-.workflow {
-  @mixin font-inline;
-
-  color: var(--color-secondary);
-  font-weight: var(--font-weight-medium);
-  position: relative;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.chevron-right-icon {
-  block-size: var(--spacing-8);
-  color: var(--color-gray60);
-  inline-size: var(--spacing-8);
-  margin-block: 0;
-  margin-inline: var(--spacing-4);
-}
-
 .story {
   block-size: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.story-ref {
-  @mixin font-inline;
-
-  color: var(--color-gray80);
-  font-weight: var(--font-weight-medium);
-  margin-inline-end: var(--spacing-4);
-
-  &::ng-deep .hash {
-    color: var(--color-secondary50);
-    margin-inline-start: var(--spacing-4);
-  }
-}
-
-.story-header {
-  display: flex;
-  justify-content: space-between;
-  margin-block: var(--spacing-8);
-  margin-inline: var(--spacing-8);
-
-  & .start {
-    align-items: center;
-    display: flex;
-    margin-inline-start: var(--spacing-8);
-  }
-
-  & .end {
-    column-gap: var(--spacing-8);
-    display: flex;
-
-    &.no-close {
-      grid-template-columns: 32px 32px 40px 32px;
-    }
-  }
-
-  & .change-view {
-    margin-inline-start: var(--spacing-8);
-    position: relative;
-
-    &::before {
-      block-size: var(--spacing-24);
-      border-inline-start: solid 1px var(--color-gray20);
-      content: "";
-      inset-block: 0;
-      inset-inline-start: calc(var(--spacing-8) * -1);
-      margin-block: auto;
-      position: absolute;
-    }
-  }
 }
 
 .scrollbar-content {
@@ -176,43 +99,6 @@ Copyright (c) 2023-present Kaleidos INC
   & tui-svg {
     color: var(--color-gray70);
   }
-}
-
-.copy-link {
-  &::ng-deep tui-svg {
-    block-size: var(--spacing-12);
-    inline-size: var(--spacing-12);
-  }
-
-  &.copied {
-    &::ng-deep [tuiWrapper] {
-      background-color: var(--color-ok10);
-    }
-
-    & tui-svg {
-      color: var(--color-ok);
-    }
-  }
-}
-
-.view-options-list {
-  @mixin option-list;
-}
-
-.story-options-list {
-  @mixin option-list;
-}
-
-.story-option {
-  justify-content: flex-start;
-}
-
-.story-option-icon {
-  @mixin option-icon;
-}
-
-.story-option-name {
-  @mixin option-name;
 }
 
 .delete-story-confirm-title {

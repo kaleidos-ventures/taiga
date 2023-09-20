@@ -6,7 +6,6 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Clipboard } from '@angular/cdk/clipboard';
 import { Location, DatePipe, CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -31,8 +30,6 @@ import {
   TuiScrollbarComponent,
   TuiSvgModule,
   TuiButtonModule,
-  TuiHostedDropdownModule,
-  TuiDataListModule,
 } from '@taiga-ui/core';
 import {
   Attachment,
@@ -77,19 +74,17 @@ import {
   selectWorkflow,
 } from './data-access/+state/selectors/story-detail.selectors';
 import { StoryDetaiImageUploadService } from './story-detail-image-upload.service';
+import { StoryDetailHeaderComponent } from './components/story-detail-header/story-detail-header.component';
 import { StoryDetailDescriptionComponent } from './components/story-detail-description/story-detail-description.component';
 import { StoryDetailAssignComponent } from './components/story-detail-assign/story-detail-assign.component';
 import { StoryDetailStatusComponent } from './components/story-detail-status/story-detail-status.component';
 import { StoryDetailTitleComponent } from './components/story-detail-title/story-detail-title.component';
 import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
 import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
-import { TuiDropdownModule } from '@taiga-ui/core/directives/dropdown';
 import { InputsModule } from '@taiga/ui/inputs';
 import { ModalComponent } from '@taiga/ui/modal/components';
-import { TooltipDirective } from '@taiga/ui/tooltip';
 import { AttachmentsComponent } from '~/app/shared/attachments/attachments.component';
 import { CommentsAutoScrollDirective } from '~/app/shared/comments/directives/comments-auto-scroll.directive';
-import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
 import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.component';
 import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
@@ -154,11 +149,6 @@ export interface StoryDetailForm {
     ReactiveFormsModule,
     TuiSvgModule,
     TuiButtonModule,
-    TooltipDirective,
-    TuiHostedDropdownModule,
-    TuiDropdownModule,
-    TuiDataListModule,
-    HasPermissionDirective,
     TuiScrollbarModule,
     CommentsAutoScrollDirective,
     StoryCommentsPaginationDirective,
@@ -167,6 +157,7 @@ export interface StoryDetailForm {
     NouserAvatarComponent,
     StoryDetailStatusComponent,
     StoryDetailAssignComponent,
+    StoryDetailHeaderComponent,
     StoryDetailDescriptionComponent,
     AttachmentsComponent,
     CommentsComponent,
@@ -208,50 +199,17 @@ export class StoryDetailComponent {
 
   public storyRef!: ElementRef;
   public collapsedSet = false;
-  public linkCopied = false;
-  public dropdownState = false;
-  public storyOptionsState = false;
   public showDeleteStoryConfirm = false;
-  public hintShown = false;
   public columnHeight = 0;
   public storyHeight = 0;
-  public storyViewOptions: { id: StoryView; translation: string }[] = [
-    {
-      id: 'modal-view',
-      translation: 'story.modal_view',
-    },
-    {
-      id: 'side-view',
-      translation: 'story.side_panel_view',
-    },
-    {
-      id: 'full-view',
-      translation: 'story.full_width_view',
-    },
-  ];
-  public resetCopyLinkTimeout?: ReturnType<typeof setTimeout>;
-  public showCopyLinkHintTimeout?: ReturnType<typeof setTimeout>;
   public form: FormGroup<StoryDetailForm> | null = null;
 
   public model$ = this.state.select();
   public project$ = this.store.select(selectCurrentProject);
 
-  public get getCurrentViewTranslation() {
-    const index = this.storyViewOptions.findIndex(
-      (it) => it.id === this.state.get('selectedStoryView')
-    );
-
-    if (index !== -1) {
-      return this.storyViewOptions[index].translation;
-    }
-
-    return '';
-  }
-
   constructor(
     private cd: ChangeDetectorRef,
     private store: Store,
-    private clipboard: Clipboard,
     private location: Location,
     private permissionService: PermissionsService,
     private wsService: WsService,
@@ -463,87 +421,6 @@ export class StoryDetailComponent {
     }
   }
 
-  public trackByIndex(index: number) {
-    return index;
-  }
-
-  public selectStoryView(id: StoryView) {
-    this.dropdownState = false;
-    this.store.dispatch(
-      StoryDetailActions.updateStoryViewMode({
-        storyView: id,
-        previousStoryView: this.state.get('selectedStoryView'),
-      })
-    );
-
-    // reset state to prevent focus on navigation arrows
-    this.location.replaceState(this.location.path(), undefined, {});
-  }
-
-  public displayHint() {
-    this.showCopyLinkHintTimeout = setTimeout(() => {
-      this.hintShown = true;
-      this.cd.detectChanges();
-    }, 200);
-  }
-
-  public getStoryLink() {
-    this.clipboard.copy(window.location.href);
-
-    this.linkCopied = true;
-  }
-
-  public resetCopyLink(type: 'fast' | 'slow') {
-    if (this.showCopyLinkHintTimeout) {
-      clearTimeout(this.showCopyLinkHintTimeout);
-    }
-
-    if (this.linkCopied) {
-      const time = type === 'fast' ? 200 : 4000;
-      this.resetCopyLinkTimeout = setTimeout(() => {
-        this.hintShown = false;
-        this.linkCopied = false;
-        this.cd.detectChanges();
-      }, time);
-    } else {
-      this.hintShown = false;
-    }
-  }
-
-  public navigateToNextStory(ref: number) {
-    void this.router.navigate(
-      [
-        'project',
-        this.state.get('project').id,
-        this.state.get('project').slug,
-        'stories',
-        ref,
-      ],
-      {
-        state: {
-          nextStoryNavigation: true,
-        },
-      }
-    );
-  }
-
-  public navigateToPreviousStory(ref: number) {
-    void this.router.navigate(
-      [
-        'project',
-        this.state.get('project').id,
-        this.state.get('project').slug,
-        'stories',
-        ref,
-      ],
-      {
-        state: {
-          previousStoryNavigation: true,
-        },
-      }
-    );
-  }
-
   public closeStory() {
     const ref = this.state.get('story').ref;
 
@@ -585,8 +462,7 @@ export class StoryDetailComponent {
     this.showDeleteStoryConfirm = false;
   }
 
-  public deleteStoryConfirmModal() {
-    this.storyOptionsState = false;
+  public showDeleteConfirm() {
     this.showDeleteStoryConfirm = true;
   }
 

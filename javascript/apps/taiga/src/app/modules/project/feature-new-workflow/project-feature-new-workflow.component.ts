@@ -15,6 +15,7 @@ import { filterNil } from '~/app/shared/utils/operators';
 import { selectCurrentProject } from '../data-access/+state/selectors/project.selectors';
 import { KanbanActions } from '../feature-kanban/data-access/+state/actions/kanban.actions';
 import { NewWorkflowFormComponent } from './components/new-workflow-form/new-workflow-form.component';
+import { NewWorkflowSkeletonComponent } from './components/new-workflow-skeleton/new-workflow-skeleton.component';
 
 @Component({
   selector: 'tg-project-feature-new-workflow',
@@ -22,7 +23,7 @@ import { NewWorkflowFormComponent } from './components/new-workflow-form/new-wor
   styleUrls: ['./project-feature-new-workflow.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NewWorkflowFormComponent],
+  imports: [NewWorkflowFormComponent, NewWorkflowSkeletonComponent],
 })
 export class ProjectFeatureNewWorkflowComponent {
   constructor(

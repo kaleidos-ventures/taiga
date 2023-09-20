@@ -63,6 +63,21 @@ Copyright (c) 2023-present Kaleidos INC
 @mixin square 20;
 @mixin square 24;
 
+/* mixin cicle - auto generates utility classes */
+@define-mixin circle $size {
+  .skeleton-circle-$(size) {
+    /* stylelint-disable-next-line custom-property-pattern */
+    block-size: var(--spacing-$size);
+    border-radius: 50%;
+    /* stylelint-disable-next-line custom-property-pattern */
+    inline-size: var(--spacing-$size);
+
+    @mixin-content;
+  }
+}
+
+@mixin circle 12;
+
 /* skeleton-animation for menu or content */
 .skeleton-animation {
   & * {

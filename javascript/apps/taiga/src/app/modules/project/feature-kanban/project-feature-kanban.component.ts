@@ -81,6 +81,7 @@ import { KanbanHeaderComponent } from './components/kanban-header/kanban-header.
 interface ComponentState {
   loadingWorkflow: KanbanState['loadingWorkflow'];
   workflow: KanbanState['workflow'];
+  workflows: Workflow[];
   invitePeopleModal: boolean;
   showStoryDetail: boolean;
   storyView: StoryView;
@@ -184,6 +185,18 @@ export class ProjectFeatureKanbanComponent {
     this.state.connect(
       'selectedStory',
       this.store.select(selectStory).pipe(filterNil())
+    );
+
+    this.state.connect(
+      'workflows',
+      this.store
+        .select(selectCurrentProject)
+        .pipe(filterNil())
+        .pipe(
+          map((project) => {
+            return project.workflows;
+          })
+        )
     );
 
     this.state.hold(

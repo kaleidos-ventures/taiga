@@ -13,13 +13,14 @@ Copyright (c) 2023-present Kaleidos INC
     [showFormErrors]="submitted"
     [formGroup]="newWorkflowForm"
     (submit)="submitCreateWorkflow()">
-    <div class="content">
+    <div class="input-wrapper">
       <tg-ui-input class="workflow-input">
         <input
           tgAutoFocus
           [attr.aria-label]="t('kanban.create_workflow.workflow_name_aria')"
           formControlName="name"
           data-test="create-workflow-input"
+          class="create-workflow-input"
           [maxlength]="workflowNameMaxLength"
           #statusInput
           inputRef
@@ -30,31 +31,29 @@ Copyright (c) 2023-present Kaleidos INC
           </tg-ui-error>
         </ng-container>
       </tg-ui-input>
-    </div>
-    <div
-      *ngIf="
-        newWorkflowForm.get('name')!.value?.length! >= workflowNameMaxLength
-      "
-      class="max-length">
-      {{ t('form_errors.max_length') }}
+      <div
+        *ngIf="
+          newWorkflowForm.get('name')!.value?.length! >= workflowNameMaxLength
+        "
+        class="max-length">
+        {{ t('form_errors.max_length') }}
+      </div>
     </div>
 
-    <div class="actions">
-      <button
-        tuiButton
-        data-test="status-create"
-        appearance="primary"
-        type="submit">
-        {{ t('kanban.create_workflow.save') }}
-      </button>
-      <button
-        (click)="cancelEdit()"
-        data-test="cancel-edit-status"
-        tuiButton
-        type="button"
-        appearance="tertiary">
-        {{ t('commons.cancel') }}
-      </button>
-    </div>
+    <button
+      tuiButton
+      data-test="status-create"
+      appearance="primary"
+      type="submit">
+      {{ t('kanban.create_workflow.save') }}
+    </button>
+    <button
+      (click)="cancelEdit()"
+      data-test="cancel-edit-status"
+      tuiButton
+      type="button"
+      appearance="tertiary">
+      {{ t('commons.cancel') }}
+    </button>
   </form>
 </ng-container>

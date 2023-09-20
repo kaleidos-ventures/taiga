@@ -6,7 +6,13 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 -->
 
-<div>New Kanban Works!</div>
 <tg-new-workflow-form
+  class="workflow-form"
   (createWorkflow)="createWorkflow($event)"
   (cancelCreateWorkflow)="cancelCreateWorkflow()"></tg-new-workflow-form>
+<div class="skeleton-wrapper">
+  <tg-new-workflow-skeleton></tg-new-workflow-skeleton>
+  <tg-new-workflow-skeleton></tg-new-workflow-skeleton>
+  <tg-new-workflow-skeleton></tg-new-workflow-skeleton>
+  <tg-new-workflow-skeleton></tg-new-workflow-skeleton>
+</div>

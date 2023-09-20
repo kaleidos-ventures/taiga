@@ -24,6 +24,7 @@ import { TranslocoDirective } from '@ngneat/transloco';
 import { TuiButtonModule } from '@taiga-ui/core';
 import { Workflow } from '@taiga/data';
 import { InputsModule } from '@taiga/ui/inputs';
+import { AutoFocusDirective } from '~/app/shared/directives/auto-focus/auto-focus.directive';
 
 @Component({
   selector: 'tg-new-workflow-form',
@@ -37,6 +38,7 @@ import { InputsModule } from '@taiga/ui/inputs';
     ReactiveFormsModule,
     InputsModule,
     TuiButtonModule,
+    AutoFocusDirective,
   ],
 })
 export class NewWorkflowFormComponent implements OnInit {
@@ -72,10 +74,13 @@ export class NewWorkflowFormComponent implements OnInit {
   }
 
   public submitCreateWorkflow() {
+    this.newWorkflowForm.markAllAsTouched();
     this.submitted = true;
-    const workflowName = this.newWorkflowForm.get('name')
-      ?.value as Workflow['name'];
-    this.createWorkflow.emit(workflowName);
+    if (this.newWorkflowForm.valid) {
+      const workflowName = this.newWorkflowForm.get('name')
+        ?.value as Workflow['name'];
+      this.createWorkflow.emit(workflowName);
+    }
   }
 
   public cancelEdit() {

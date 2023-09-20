@@ -1,0 +1,109 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <tg-ui-modal
+    class="delete-status-modal"
+    [open]="show"
+    [width]="500"
+    (requestClose)="close()">
+    <div
+      role="dialog"
+      aria-labelledby="delete-status"
+      aria-modal="true">
+      <h1
+        class="title"
+        id="delete-status">
+        {{
+          t('kanban.delete_status_modal.title', {
+            statusName: currentWorkflow.name
+          })
+        }}
+      </h1>
+      <tg-ui-context-notification
+        class="warning-notification"
+        alertLevel="polite"
+        status="error">
+        <span [innerHtml]="t('common_project.delete_modal_warning')"></span>
+      </tg-ui-context-notification>
+      <p
+        class="text"
+        [class.is-last-workflow]="isLastWorkflow">
+        {{
+          isLastWorkflow
+            ? t('kanban.delete_status_modal.stories_will_be_deleted')
+            : t('kanban.delete_status_modal.what_to_do_stories')
+        }}
+      </p>
+      <form
+        *ngIf="form && !isLastWorkflow"
+        [formGroup]="form">
+        <tg-ui-radio
+          id="1"
+          name="statuses"
+          value="move"
+          [label]="t('kanban.delete_status_modal.move_stories_another_status')"
+          [control]="statusesFormControl"></tg-ui-radio>
+
+        <tg-ui-select
+          *ngIf="workflowsList()"
+          [label]="t('kanban.delete_status_modal.status')"
+          labelVisuallyHidden>
+          <tui-select
+            class="select-workflow"
+            tuiTextfieldSize="l"
+            [valueContent]="valueContent()"
+            formControlName="workflow"
+            (keydown.enter)="$event.preventDefault()"
+            data-test="select-workflows">
+            <tui-data-list *tuiDataList>
+              <button
+                *ngFor="let workflow of filteredWorkflwos(); trackBy: trackById"
+                tuiOption
+                [attr.data-test]="workflow.name.toLowerCase()"
+                size="s"
+                [class.selected]="workflow.id === form.get('workflow')?.value"
+                [value]="workflow.id">
+                {{ workflow.name }}
+              </button>
+            </tui-data-list>
+          </tui-select>
+        </tg-ui-select>
+        <span class="select-info">
+          {{ t('kanban.delete_status_modal.stories_placed_below') }}
+        </span>
+
+        <tg-ui-radio
+          id="2"
+          name="stauses"
+          value="delete"
+          data-test="delete-statuses"
+          [label]="t('kanban.delete_status_modal.delete_stories')"
+          [control]="statusesFormControl"></tg-ui-radio>
+      </form>
+
+      <div class="actions">
+        <button
+          type="button"
+          (click)="close()"
+          data-test="cancel-delete-status"
+          tuiLink>
+          {{ t('kanban.delete_status_modal.cancel') }}
+        </button>
+        <button
+          data-test="submit-delete-status"
+          tuiButton
+          icon="trash"
+          (click)="submit()"
+          appearance="destructive">
+          {{ t('kanban.delete_status_modal.confirm') }}
+        </button>
+      </div>
+    </div>
+  </tg-ui-modal>
+</ng-container>

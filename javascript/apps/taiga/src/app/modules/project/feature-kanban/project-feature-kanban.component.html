@@ -18,7 +18,10 @@ Copyright (c) 2023-present Kaleidos INC
         (resized)="onResized($event)"
         class="kanban-wrapper kanban-cdk-area">
         <div class="kanban">
-          <tg-kanban-header></tg-kanban-header>
+          <tg-kanban-header
+            *ngIf="vm.workflow"
+            [workflows]="vm.workflows"
+            [workflow]="vm.workflow"></tg-kanban-header>
           <div class="kanban-wrapper">
             <ng-container *ngIf="vm.workflow && vm.workflow.statuses.length">
               <tg-kanban-workflow

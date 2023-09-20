@@ -7,7 +7,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslocoDirective } from '@ngneat/transloco';
 import {
   TuiButtonModule,
@@ -15,6 +15,8 @@ import {
   TuiHostedDropdownModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
+import { Workflow } from '@taiga/data';
+import { DeleteWorkflowComponent } from '../delete-workflow/delete-workflow.component';
 
 @Component({
   selector: 'tg-kanban-header',
@@ -29,8 +31,21 @@ import {
     TuiButtonModule,
     TuiDataListModule,
     TuiSvgModule,
+    DeleteWorkflowComponent,
   ],
 })
 export class KanbanHeaderComponent {
+  @Input({ required: true }) public workflows: Workflow[] = [];
+  @Input({ required: true }) public workflow!: Workflow;
+
   public openWorkflowOptions = false;
+  public deleteWorkflowModal = false;
+
+  public openDeleteWorkflowModal() {
+    this.deleteWorkflowModal = true;
+  }
+
+  public submitDeleteWorkflow(event: Workflow['id'] | undefined) {
+    console.log(event);
+  }
 }

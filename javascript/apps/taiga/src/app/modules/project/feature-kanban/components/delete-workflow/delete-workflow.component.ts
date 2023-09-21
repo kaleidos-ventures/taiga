@@ -14,7 +14,6 @@ import {
   Output,
   OnInit,
   signal,
-  inject,
   WritableSignal,
   computed,
   Signal,
@@ -22,17 +21,18 @@ import {
 import { TranslocoModule } from '@ngneat/transloco';
 import { TuiAutoFocusModule } from '@taiga-ui/cdk';
 import { TuiButtonModule, TuiLinkModule } from '@taiga-ui/core';
-import { Status, Workflow } from '@taiga/data';
+import { Workflow } from '@taiga/data';
 
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Observable, map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 import { InputsModule } from '@taiga/ui/inputs';
 import { ModalComponent } from '@taiga/ui/modal/components';
 import { trackByProp } from '~/app/shared/utils/track-by-prop';
 
+/* TODO: Workflout shoud have id?, if not, change the type */
 @Component({
   selector: 'tg-delete-workflow',
   templateUrl: './delete-workflow.component.html',
@@ -68,18 +68,20 @@ export class DeleteWorkflowComponent implements OnInit {
     this.workflowsList.set(workflows);
   }
 
-  public get isLastWorkflow() {
-    return this.workflowsList().length === 1;
-  }
-
-  public form!: FormGroup;
-  public fb = inject(FormBuilder);
+  public form = new FormGroup({
+    statuses: new FormControl<string>('move', { nonNullable: true }),
+    workflow: new FormControl<string>('', { nonNullable: true }),
+  });
   public workflowsList: WritableSignal<Workflow[]> = signal([]);
-  public filteredWorkflwos: Signal<Workflow[]> = computed(() => {
+  public filteredWorkflows = computed(() => {
     return this.workflowsList().filter(
-      (it) => it.id !== this.currentWorkflow.id
+      (it) => it.slug !== this.currentWorkflow.slug
     );
   });
+  public isLastWorkflow = computed(() => {
+    return this.workflowsList().length === 1;
+  });
+
   public valueContent!: Signal<string>;
   public trackById = trackByProp<Workflow>('id');
 
@@ -88,37 +90,33 @@ export class DeleteWorkflowComponent implements OnInit {
   }
 
   constructor() {
-    if (!this.isLastWorkflow) {
-      this.form = this.fb.group({
-        statuses: ['move'],
-        workflow: [''],
-      });
-
-      const valueContent$ = this.form.get('statuses')?.valueChanges.pipe(
-        map((value) => {
-          return this.workflowsList().find((it) => it.id === value)?.name ?? '';
-        })
-      ) as Observable<string>;
-
-      this.valueContent = toSignal(valueContent$, {
-        initialValue: '',
-      });
+    if (!this.isLastWorkflow()) {
+      this.valueContent = toSignal(
+        this.statusesFormControl.valueChanges.pipe(
+          takeUntilDestroyed(),
+          map((value) => {
+            return (
+              this.workflowsList().find((it) => it.id === value)?.name ?? ''
+            );
+          }),
+          map((value) => value ?? '')
+        ),
+        { initialValue: '' }
+      );
     }
   }
 
   public ngOnInit() {
-    if (this.filteredWorkflwos().length) {
-      (this.form.get('workflow') as FormControl).setValue(
-        this.filteredWorkflwos()[0].id
-      );
+    if (this.filteredWorkflows().length) {
+      this.form.get('workflow')?.setValue(this.filteredWorkflows()[0].slug);
     }
   }
 
   public submit() {
     this.close();
     const moveToWorkflow: Workflow['id'] | undefined =
-      !this.isLastWorkflow && this.form.get('statuses')!.value === 'move'
-        ? (this.form.get('workflow')!.value as Workflow['id'])
+      !this.isLastWorkflow() && this.form.get('statuses')!.value === 'move'
+        ? this.form.value.workflow
         : undefined;
     this.submitDelete.next(moveToWorkflow);
   }

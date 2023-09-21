@@ -27,7 +27,7 @@ import { Status } from '@taiga/data';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Observable, map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 import { InputsModule } from '@taiga/ui/inputs';
 import { ModalComponent } from '@taiga/ui/modal/components';
@@ -90,6 +90,7 @@ export class DeleteStatusComponent implements OnInit {
       });
 
       const valueContent$ = this.form.get('status')?.valueChanges.pipe(
+        takeUntilDestroyed(),
         map((value) => {
           return this.statusesList().find((it) => it.id === value)?.name ?? '';
         })

@@ -20,8 +20,8 @@ Copyright (c) 2023-present Kaleidos INC
         class="title"
         id="delete-status">
         {{
-          t('kanban.delete_status_modal.title', {
-            statusName: currentWorkflow.name
+          t('kanban.delete_workflow_modal.title', {
+            name: currentWorkflow.name
           })
         }}
       </h1>
@@ -33,26 +33,28 @@ Copyright (c) 2023-present Kaleidos INC
       </tg-ui-context-notification>
       <p
         class="text"
-        [class.is-last-workflow]="isLastWorkflow">
+        [class.is-last-workflow]="isLastWorkflow()">
         {{
-          isLastWorkflow
-            ? t('kanban.delete_status_modal.stories_will_be_deleted')
-            : t('kanban.delete_status_modal.what_to_do_stories')
+          isLastWorkflow()
+            ? t('kanban.delete_workflow_modal.stories_will_be_deleted')
+            : t('kanban.delete_workflow_modal.what_to_do_statuses')
         }}
       </p>
       <form
-        *ngIf="form && !isLastWorkflow"
+        *ngIf="!isLastWorkflow()"
         [formGroup]="form">
         <tg-ui-radio
           id="1"
           name="statuses"
           value="move"
-          [label]="t('kanban.delete_status_modal.move_stories_another_status')"
+          [label]="
+            t('kanban.delete_workflow_modal.move_stories_another_workflow')
+          "
           [control]="statusesFormControl"></tg-ui-radio>
 
         <tg-ui-select
           *ngIf="workflowsList()"
-          [label]="t('kanban.delete_status_modal.status')"
+          [label]="t('kanban.delete_workflow_modal.workflow')"
           labelVisuallyHidden>
           <tui-select
             class="select-workflow"
@@ -63,27 +65,27 @@ Copyright (c) 2023-present Kaleidos INC
             data-test="select-workflows">
             <tui-data-list *tuiDataList>
               <button
-                *ngFor="let workflow of filteredWorkflwos(); trackBy: trackById"
+                *ngFor="let workflow of filteredWorkflows(); trackBy: trackById"
                 tuiOption
                 [attr.data-test]="workflow.name.toLowerCase()"
                 size="s"
-                [class.selected]="workflow.id === form.get('workflow')?.value"
-                [value]="workflow.id">
+                [class.selected]="workflow.slug === form.get('workflow')?.value"
+                [value]="workflow.slug">
                 {{ workflow.name }}
               </button>
             </tui-data-list>
           </tui-select>
         </tg-ui-select>
         <span class="select-info">
-          {{ t('kanban.delete_status_modal.stories_placed_below') }}
+          {{ t('kanban.delete_workflow_modal.statuses_placed_after') }}
         </span>
 
         <tg-ui-radio
-          id="2"
+          id="delete-workflow-all"
           name="stauses"
           value="delete"
           data-test="delete-statuses"
-          [label]="t('kanban.delete_status_modal.delete_stories')"
+          [label]="t('kanban.delete_workflow_modal.delete_all')"
           [control]="statusesFormControl"></tg-ui-radio>
       </form>
 
@@ -93,7 +95,7 @@ Copyright (c) 2023-present Kaleidos INC
           (click)="close()"
           data-test="cancel-delete-status"
           tuiLink>
-          {{ t('kanban.delete_status_modal.cancel') }}
+          {{ t('kanban.delete_workflow_modal.cancel') }}
         </button>
         <button
           data-test="submit-delete-status"
@@ -101,7 +103,7 @@ Copyright (c) 2023-present Kaleidos INC
           icon="trash"
           (click)="submit()"
           appearance="destructive">
-          {{ t('kanban.delete_status_modal.confirm') }}
+          {{ t('kanban.delete_workflow_modal.confirm') }}
         </button>
       </div>
     </div>

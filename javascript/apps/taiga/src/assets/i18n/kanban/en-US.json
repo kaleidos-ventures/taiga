@@ -45,6 +45,17 @@
     "stories_placed_below": "The stories will be placed below the existing ones.",
     "status": "Status"
   },
+  "delete_workflow_modal": {
+    "title": "Delete {{ name }} workflow?",
+    "what_to_do_statuses": "What do you want to do with the statuses inside them?",
+    "stories_will_be_deleted": "The stories from this status will be automatically deleted.",
+    "cancel": "Never mind, keep workflow",
+    "confirm": "Yes, delete workflow",
+    "move_stories_another_workflow": "Move them to another workflow",
+    "delete_all": "Delete the stories and statuses too",
+    "statuses_placed_after": "The statuses will be placed after the existing ones.",
+    "workflow": "Workflow"
+  },
   "create_workflow": {
     "save": "Create Workflow",
     "workflow_name_aria": "Workflow name (Maximum 40 Characters only)",

@@ -13,6 +13,10 @@ class CreateWorkflowContent(BaseModel):
     workflow: WorkflowSerializer
 
 
+class UpdateWorkflowContent(BaseModel):
+    workflow: WorkflowSerializer
+
+
 class CreateWorkflowStatusContent(BaseModel):
     workflow_status: WorkflowStatusSerializer
 

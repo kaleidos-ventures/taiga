@@ -12,7 +12,7 @@ from taiga.base.api import AuthRequest, Request, responses
 from taiga.base.api.permissions import check_permissions
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
-from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
+from taiga.exceptions.api.errors import ERROR_400, ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm, IsProjectAdmin
 from taiga.projects.projects.api import get_project_or_404
 from taiga.routers import routes
@@ -23,6 +23,7 @@ from taiga.workflows.api.validators import (
     DeleteWorkflowStatusQuery,
     ReorderWorkflowStatusesValidator,
     UpdateWorkflowStatusValidator,
+    UpdateWorkflowValidator,
 )
 from taiga.workflows.models import Workflow, WorkflowStatus
 from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, WorkflowSerializer, WorkflowStatusSerializer
@@ -31,6 +32,7 @@ from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, Workf
 CREATE_WORKFLOW = IsProjectAdmin()
 LIST_WORKFLOWS = HasPerm("view_story")
 GET_WORKFLOW = HasPerm("view_story")
+UPDATE_WORKFLOW = IsProjectAdmin()
 CREATE_WORKFLOW_STATUS = IsProjectAdmin()
 UPDATE_WORKFLOW_STATUS = IsProjectAdmin()
 DELETE_WORKFLOW_STATUS = IsProjectAdmin()
@@ -115,6 +117,34 @@ async def get_workflow(
     workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
     await check_permissions(permissions=GET_WORKFLOW, user=request.user, obj=workflow)
     return await workflows_services.get_workflow_detail(project_id=project_id, workflow_slug=workflow_slug)
+
+
+##########################################################
+# update workflow
+##########################################################
+
+
+@routes.workflows.patch(
+    "/projects/{project_id}/workflows/{workflow_slug}",
+    name="project.workflow.update",
+    summary="Update workflow",
+    responses=GET_WORKFLOW_200 | ERROR_400 | ERROR_403 | ERROR_404 | ERROR_422,
+    response_model=None,
+)
+async def update_workflow(
+    project_id: B64UUID,
+    workflow_slug: str,
+    request: AuthRequest,
+    form: UpdateWorkflowValidator,
+) -> WorkflowSerializer:
+    """
+    Update workflow
+    """
+    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
+    await check_permissions(permissions=UPDATE_WORKFLOW, user=request.user, obj=workflow)
+
+    values = form.dict(exclude_unset=True)
+    return await workflows_services.update_workflow(project_id=project_id, workflow=workflow, values=values)
 
 
 ################################################

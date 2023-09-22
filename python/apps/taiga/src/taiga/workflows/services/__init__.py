@@ -119,6 +119,24 @@ async def get_workflow_detail(project_id: UUID, workflow_slug: str) -> WorkflowS
 
 
 ##########################################################
+# update workflow
+##########################################################
+
+
+async def update_workflow(project_id: UUID, workflow: Workflow, values: dict[str, Any] = {}) -> WorkflowSerializer:
+    updated_workflow = await workflows_repositories.update_workflow(workflow=workflow, values=values)
+    updated_workflow_detail = await get_workflow_detail(project_id=project_id, workflow_slug=updated_workflow.slug)
+
+    # Emit event
+    await workflows_events.emit_event_when_workflow_is_updated(
+        project=workflow.project,
+        workflow=updated_workflow_detail,
+    )
+
+    return updated_workflow_detail
+
+
+##########################################################
 # create workflow status
 ##########################################################
 

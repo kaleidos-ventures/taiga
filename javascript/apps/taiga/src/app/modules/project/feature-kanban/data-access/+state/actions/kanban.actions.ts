@@ -7,7 +7,7 @@
  */
 
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Membership, Project, Status, Story, Workflow } from '@taiga/data';
+import { Membership, Status, Story, Workflow } from '@taiga/data';
 import { DropCandidate } from '@taiga/ui/drag/drag.model';
 import {
   KanbanReorderEvent,
@@ -129,7 +129,6 @@ export const KanbanApiActions = createActionGroup({
       complete: boolean;
     }>(),
     'Create Workflow Success': props<{
-      projectId: Project['id'];
       workflow: Workflow;
     }>(),
     'create Workflow Error': emptyProps(),

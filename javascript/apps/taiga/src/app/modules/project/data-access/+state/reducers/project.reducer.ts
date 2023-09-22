@@ -17,7 +17,6 @@ import * as RolesPermissionsActions from '~/app/modules/project/settings/feature
 import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import * as ProjectActions from '../actions/project.actions';
-import { projectEventActions } from '../actions/project.actions';
 
 export const projectFeatureKey = 'project';
 
@@ -105,8 +104,11 @@ export const reducer = createImmerReducer(
   }),
   on(
     KanbanApiActions.createWorkflowSuccess,
-    (state, { projectId, workflow }): ProjectState => {
-      state.projects[projectId].workflows.push(workflow);
+    ProjectActions.projectEventActions.createWorkflow,
+    (state, { workflow }): ProjectState => {
+      if (state.currentProjectId) {
+        state.projects[state.currentProjectId].workflows.push(workflow);
+      }
 
       return state;
     }
@@ -144,7 +146,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    projectEventActions.removeMember,
+    ProjectActions.projectEventActions.removeMember,
     (state, { membership }): ProjectState => {
       state.members = state.members.filter(
         (members) => members.user.username !== membership.user.username
@@ -154,7 +156,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    projectEventActions.updateMember,
+    ProjectActions.projectEventActions.updateMember,
     (state, { membership }): ProjectState => {
       state.members = state.members.map((member) => {
         if (member.user.username === membership.user.username) {

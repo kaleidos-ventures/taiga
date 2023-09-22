@@ -34,17 +34,17 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         empty: true,
-        loadingWorkflows: true,
-        workflows: [workflow],
+        loadingWorkflow: true,
+        workflow,
       },
-      KanbanApiActions.fetchWorkflowsSuccess({
-        workflows: [workflow],
+      KanbanApiActions.fetchWorkflowSuccess({
+        workflow,
       })
     );
 
     expect(state.stories[workflow.statuses[0].id]).toEqual([]);
     expect(state.createStoryForm).toEqual(workflow.statuses[0].id);
-    expect(state.loadingWorkflows).toEqual(false);
+    expect(state.loadingWorkflow).toEqual(false);
   });
 
   it('load stories', () => {
@@ -76,7 +76,7 @@ describe('Kanban reducer', () => {
       {
         ...initialKanbanState,
         loadingStories: true,
-        workflows: [workflow],
+        workflow,
       },
       KanbanApiActions.fetchStoriesSuccess({
         stories: [],

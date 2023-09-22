@@ -142,6 +142,7 @@ export const projectEventActions = createActionGroup({
     }>(),
     'Remove Member': props<{ membership: Membership; workspace: string }>(),
     'Update Member': props<{ membership: Membership }>(),
+    'Create Workflow': props<{ workflow: Workflow }>(),
     'Create comment': props<{ storyRef: Story['ref']; comment: UserComment }>(),
     'Status reorder': props<{
       id: Status['id'];

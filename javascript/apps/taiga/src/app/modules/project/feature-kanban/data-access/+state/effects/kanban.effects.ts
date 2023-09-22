@@ -97,42 +97,6 @@ export class KanbanEffects {
     );
   });
 
-  public createWorkflow$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(KanbanActions.createWorkflow),
-      concatLatestFrom(() => [
-        this.store.select(selectCurrentProject).pipe(filterNil()),
-      ]),
-      pessimisticUpdate({
-        run: (workflow, project) => {
-          return this.projectApiService
-            .createWorkflow(workflow.name, project.id)
-            .pipe(
-              map((newWorkflow) => {
-                void this.router.navigate([
-                  '/project',
-                  project.id,
-                  project.slug,
-                  'kanban',
-                  newWorkflow.slug,
-                ]);
-                return KanbanApiActions.createWorkflowSuccess({
-                  workflow: newWorkflow,
-                });
-              })
-            );
-        },
-        onError: (action, httpResponse: HttpErrorResponse) => {
-          if (httpResponse.status !== 403) {
-            this.appService.errorManagement(httpResponse);
-          }
-
-          return KanbanApiActions.createWorkflowError();
-        },
-      })
-    );
-  });
-
   public createStory$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanActions.createStory),

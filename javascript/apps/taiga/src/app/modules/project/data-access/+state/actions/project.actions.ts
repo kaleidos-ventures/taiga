@@ -6,7 +6,12 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createAction, createActionGroup, props } from '@ngrx/store';
+import {
+  createAction,
+  createActionGroup,
+  emptyProps,
+  props,
+} from '@ngrx/store';
 import {
   Attachment,
   Membership,
@@ -68,12 +73,18 @@ export const updateStoryShowView = createAction(
   }>()
 );
 
+// export const createWorkflow = createAction(
+//   '[Project] Create Workflow',
+//   props<{
+//     name: Workflow['name'];
+//   }>
+// );
+
 export const createWorkflow = createAction(
-  '[Project] Create Workflow',
+  '[Project] create workflow',
   props<{
-    project: Project;
     name: Workflow['name'];
-  }>
+  }>()
 );
 
 export const newProjectMembers = createAction(
@@ -112,6 +123,16 @@ export const deleteProjectSuccess = createAction(
     error?: boolean;
   }>()
 );
+
+export const projectApiActions = createActionGroup({
+  source: 'Project Api',
+  events: {
+    'Create Workflow Success': props<{
+      workflow: Workflow;
+    }>(),
+    'create Workflow Error': emptyProps(),
+  },
+});
 
 export const projectEventActions = createActionGroup({
   source: 'Project ws',

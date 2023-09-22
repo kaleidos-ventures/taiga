@@ -60,6 +60,7 @@
     "save": "Create Workflow",
     "workflow_name_aria": "Workflow name (Maximum 40 Characters only)",
     "write_workflow_name": "Write a workflow name",
-    "workflow_empty": "Workflow name can’t be empty."
+    "workflow_empty": "Workflow name can’t be empty.",
+    "max_workflow_created": "You reached the max number of workflows (8)."
   }
 }

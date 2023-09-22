@@ -163,10 +163,10 @@ ul {
   &:focus-visible {
     outline: solid 2px var(--color-secondary50);
   }
+}
 
-  &.has-add-workflow-button {
-    position: relative;
-  }
+.has-add-workflow-button {
+  position: relative;
 }
 
 .menu-option {

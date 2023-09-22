@@ -8,7 +8,6 @@
 
 import { createFeature, on } from '@ngrx/store';
 import { Membership, Project } from '@taiga/data';
-import { KanbanApiActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import {
   editProject,
   editProjectSuccess,
@@ -103,7 +102,7 @@ export const reducer = createImmerReducer(
     return state;
   }),
   on(
-    KanbanApiActions.createWorkflowSuccess,
+    ProjectActions.projectApiActions.createWorkflowSuccess,
     ProjectActions.projectEventActions.createWorkflow,
     (state, { workflow }): ProjectState => {
       if (state.currentProjectId) {

@@ -10,8 +10,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
+import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { EMPTY, of } from 'rxjs';
@@ -23,7 +23,9 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
+import { selectUrl } from '~/app/router-selectors';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
@@ -35,8 +37,6 @@ import {
   selectCurrentProject,
   selectMembers,
 } from '../selectors/project.selectors';
-import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
-import { selectUrl } from '~/app/router-selectors';
 @Injectable()
 export class ProjectEffects {
   public loadProject$ = createEffect(() => {
@@ -168,6 +168,48 @@ export class ProjectEffects {
     },
     { dispatch: false }
   );
+
+  public createWorkflow$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.createWorkflow),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .createWorkflow(action.name, project.id)
+            .pipe(
+              map((newWorkflow) => {
+                void this.router.navigate([
+                  '/project',
+                  project.id,
+                  project.slug,
+                  'kanban',
+                  newWorkflow.slug,
+                ]);
+                return ProjectActions.projectApiActions.createWorkflowSuccess({
+                  workflow: newWorkflow,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 400) {
+            this.appService.toastNotification({
+              message: 'create_workflow.max_workflow_created',
+              status: TuiNotification.Error,
+              scope: 'kanban',
+              closeOnNavigation: false,
+            });
+            return ProjectActions.projectApiActions.createWorkflowError();
+          } else {
+            return this.appService.errorManagement(httpResponse);
+          }
+        },
+      })
+    );
+  });
 
   public initAssignUser$ = createEffect(() => {
     return this.actions$.pipe(

@@ -8,15 +8,21 @@
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { Project, Workflow } from '@taiga/data';
+import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { filterNil } from '~/app/shared/utils/operators';
+import {
+  createWorkflow,
+  projectApiActions,
+} from '../data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '../data-access/+state/selectors/project.selectors';
-import { KanbanActions } from '../feature-kanban/data-access/+state/actions/kanban.actions';
 import { NewWorkflowFormComponent } from './components/new-workflow-form/new-workflow-form.component';
 import { NewWorkflowSkeletonComponent } from './components/new-workflow-skeleton/new-workflow-skeleton.component';
-
+@UntilDestroy()
 @Component({
   selector: 'tg-project-feature-new-workflow',
   templateUrl: './project-feature-new-workflow.component.html',
@@ -31,31 +37,39 @@ export class ProjectFeatureNewWorkflowComponent {
       project: Project;
     }>,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private actions$: Actions,
+    private routeHistoryService: RouteHistoryService
   ) {
     this.state.connect(
       'project',
       this.store.select(selectCurrentProject).pipe(filterNil())
     );
+    this.actions$
+      .pipe(ofType(projectApiActions.createWorkflowError), untilDestroyed(this))
+      .subscribe(() => {
+        this.cancelCreateWorkflow();
+      });
   }
 
   public createWorkflow(workflow: Workflow['name']) {
     this.store.dispatch(
-      KanbanActions.createWorkflow({
+      createWorkflow({
         name: workflow,
       })
     );
   }
 
   public cancelCreateWorkflow() {
+    void this.router.navigate(this.getPreviousUrl);
+  }
+
+  public get getPreviousUrl(): string[] {
+    const previousUrl = this.routeHistoryService.getPreviousUrl();
     const project = this.state.get('project');
-    const firstworkflow = project.workflows[0];
-    void this.router.navigate([
-      '/project',
-      project.id,
-      project.slug,
-      'kanban',
-      firstworkflow.slug,
-    ]);
+    console.log({ previousUrl });
+    return previousUrl
+      ? [previousUrl]
+      : [`/project/${project.id}${project.slug}/overview`];
   }
 }

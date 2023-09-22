@@ -102,7 +102,7 @@ Copyright (c) 2023-present Kaleidos INC
             </li>
             <ng-container *ngIf="project.workflows.length <= 1 && !collapsed">
               <li
-                class="menu-option kanban-option"
+                class="menu-option kanban-option has-add-workflow-button"
                 *hasPermission="
                   ['view', 'modify', 'comment', 'delete'];
                   entity: 'story';
@@ -116,7 +116,7 @@ Copyright (c) 2023-present Kaleidos INC
                   (focusout)="out()"
                   [attr.data-text]="t('commons.kanban')"
                   [attr.aria-label]="collapsed ? t('commons.kanban') : null"
-                  class="menu-option-item has-add-workflow-button"
+                  class="menu-option-item"
                   [class.active-dialog]="dialog.type === 'kanban'"
                   [class.active-section]="activeSection"
                   [routerLink]="[
@@ -125,8 +125,6 @@ Copyright (c) 2023-present Kaleidos INC
                     project.slug,
                     'kanban'
                   ]">
-                  <ng-container
-                    *ngTemplateOutlet="createWorkflowButtonTpl"></ng-container>
                   <tui-svg
                     class="menu-option-icon"
                     src="kanban"></tui-svg>
@@ -136,6 +134,8 @@ Copyright (c) 2023-present Kaleidos INC
                     {{ t('commons.kanban') }}
                   </span>
                 </a>
+                <ng-container
+                  *ngTemplateOutlet="createWorkflowButtonTpl"></ng-container>
               </li>
             </ng-container>
             <ng-container *ngIf="project.workflows.length > 1 && !collapsed">

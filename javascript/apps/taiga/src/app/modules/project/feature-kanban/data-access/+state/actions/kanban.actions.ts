@@ -21,7 +21,6 @@ export const KanbanActions = createActionGroup({
   events: {
     'Init Kanban': props<{ workflow: Workflow['slug'] }>(),
     'Load Workflow kanban': props<{ workflow: Workflow['slug'] }>(),
-    'Create Workflow': props<{ name: Workflow['name'] }>(),
     'Open Create Story form': props<{ status: Status['id'] }>(),
     'Close Create Story form': emptyProps(),
     'Create Story': props<{
@@ -128,10 +127,7 @@ export const KanbanApiActions = createActionGroup({
       offset: number;
       complete: boolean;
     }>(),
-    'Create Workflow Success': props<{
-      workflow: Workflow;
-    }>(),
-    'create Workflow Error': emptyProps(),
+
     'Create Story Success': props<{
       story: Story;
       tmpId: PartialStory['tmpId'];

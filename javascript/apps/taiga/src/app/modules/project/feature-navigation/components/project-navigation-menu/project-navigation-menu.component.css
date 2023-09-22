@@ -198,8 +198,11 @@ ul {
 
 .submenu-option-item {
   @mixin menu-option-item;
+  @mixin ellipsis;
 
   block-size: var(--spacing-28);
+  display: inline-block;
+  inline-size: 100%;
 
   &:hover {
     background: var(--color-gray90);

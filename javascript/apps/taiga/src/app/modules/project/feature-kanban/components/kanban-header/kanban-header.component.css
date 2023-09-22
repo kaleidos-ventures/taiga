@@ -15,7 +15,11 @@ Copyright (c) 2023-present Kaleidos INC
   gap: var(--spacing-4);
 }
 
-h1 {
+.kanban-title {
+  @mixin font-inline;
+
+  color: var(--color-gray100);
+  font-weight: 500;
   margin: 0;
 }
 

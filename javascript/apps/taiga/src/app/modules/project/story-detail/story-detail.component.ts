@@ -47,6 +47,11 @@ import {
   Workflow,
 } from '@taiga/data';
 import { map, merge, pairwise, startWith, take } from 'rxjs';
+
+import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
+import { BreadcrumbComponent } from '@taiga/ui/breadcrumb/breadcrumb.component';
+import { InputsModule } from '@taiga/ui/inputs';
+import { ModalComponent } from '@taiga/ui/modal/components';
 import { v4 } from 'uuid';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
@@ -79,9 +84,6 @@ import { StoryDetailAssignComponent } from './components/story-detail-assign/sto
 import { StoryDetailStatusComponent } from './components/story-detail-status/story-detail-status.component';
 import { StoryDetailTitleComponent } from './components/story-detail-title/story-detail-title.component';
 import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
-import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
-import { InputsModule } from '@taiga/ui/inputs';
-import { ModalComponent } from '@taiga/ui/modal/components';
 import { AttachmentsComponent } from '~/app/shared/attachments/attachments.component';
 import { CommentsAutoScrollDirective } from '~/app/shared/comments/directives/comments-auto-scroll.directive';
 import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
@@ -164,6 +166,7 @@ export interface StoryDetailForm {
     DiscardChangesModalComponent,
     DatePipe,
     DateDistancePipe,
+    BreadcrumbComponent,
   ],
 })
 export class StoryDetailComponent {

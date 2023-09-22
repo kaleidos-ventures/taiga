@@ -20,7 +20,6 @@ Copyright (c) 2023-present Kaleidos INC
   --hover-bg-color: var(--color-gray20);
 
   inline-size: 100%;
-  margin-block-start: var(--spacing-16);
   max-inline-size: 450px;
 
   & .add-assignee {

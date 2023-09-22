@@ -117,7 +117,6 @@ export class KanbanEffects {
                   newWorkflow.slug,
                 ]);
                 return KanbanApiActions.createWorkflowSuccess({
-                  projectId: project.id,
                   workflow: newWorkflow,
                 });
               })

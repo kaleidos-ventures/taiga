@@ -117,6 +117,29 @@ async def test_get_detailed_workflow_ok():
 
 
 #######################################################
+# update_workflow
+#######################################################
+
+
+async def test_update_workflow_ok():
+    project = f.build_project()
+    workflow = f.build_workflow(project=project)
+    values = {"name": "updated name"}
+
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.get_workflow_detail", autospec=True),
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+    ):
+        updated_workflow = await services.update_workflow(project_id=project.id, workflow=workflow, values=values)
+        fake_workflows_repo.update_workflow.assert_awaited_once_with(workflow=workflow, values=values)
+        fake_workflows_events.emit_event_when_workflow_is_updated.assert_awaited_once_with(
+            project=project,
+            workflow=updated_workflow,
+        )
+
+
+#######################################################
 # create_workflow_status
 #######################################################
 

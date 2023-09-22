@@ -45,13 +45,12 @@ class Workflow(models.BaseModel):
         return f"<Workflow {self.name}>"
 
     def save(self, *args: Any, **kwargs: Any) -> None:
-        if not self.slug:
-            self.slug = slugify_uniquely_for_queryset(
-                value=self.name,
-                queryset=self.project.workflows.all(),
-                generate_suffix=generate_incremental_int_suffix(),
-                use_always_suffix=False,
-            )
+        self.slug = slugify_uniquely_for_queryset(
+            value=self.name,
+            queryset=self.project.workflows.all(),
+            generate_suffix=generate_incremental_int_suffix(),
+            use_always_suffix=False,
+        )
 
         super().save(*args, **kwargs)
 

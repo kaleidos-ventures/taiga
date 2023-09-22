@@ -36,6 +36,10 @@ class CreateWorkflowStatusValidator(BaseModel):
     color: conint(gt=0, lt=9)  # type: ignore
 
 
+class UpdateWorkflowValidator(BaseModel):
+    name: WorkflowName
+
+
 class UpdateWorkflowStatusValidator(BaseModel):
     name: WorkflowStatusName | None
 

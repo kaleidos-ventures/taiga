@@ -143,6 +143,61 @@ async def test_get_workflow_422_unprocessable_project_b64id(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
+#################################################################
+# Workflow PATCH /projects/<pj_b64id>/workflows/{wf_slug}
+#################################################################
+
+
+async def test_update_workflow_200_ok(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    data = {"name": "updated name"}
+
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{project.b64id}/workflows/{workflow.slug}", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_update_workflow_403_forbidden_permissions(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    user = await f.create_user()
+    data = {"name": "updated name"}
+
+    client.login(user)
+    response = client.patch(f"/projects/{project.b64id}/workflows/{workflow.slug}", json=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_update_workflow_404_not_found_project_b64id(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    data = {"name": "updated name"}
+
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{NOT_EXISTING_B64ID}/workflows/{workflow.slug}", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_workflow_404_workflow_slug(client):
+    project = await f.create_project()
+    data = {"name": "updated name"}
+
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{project.b64id}/workflows/{NOT_EXISTING_SLUG}", json=data)
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_update_workflow_422_unprocessable_project_b64id(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    data = {"name": "updated name"}
+
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{INVALID_B64ID}/workflows/{workflow.slug}", json=data)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
+
+
 ################################################################################
 # WorkflowStatus POST /projects/<pj_b64id>/workflows/<wf_slug>/statuses
 ################################################################################

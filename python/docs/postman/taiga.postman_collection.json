@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "302d4e8d-fe62-488f-a80e-cf3520c18277",
+		"_postman_id": "a9dc834f-1ba0-4cc9-907f-f5eac02b8f85",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "9835734"
@@ -2356,7 +2356,9 @@
 							"script": {
 								"exec": [
 									"// Post-request execution tasks",
-									""
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.set(\"wf-slug\", pm.response.json().slug);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -2485,6 +2487,64 @@
 						},
 						"method": "GET",
 						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update workflow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"       pm.environment.set(\"ref1\", pm.response.json().ref);",
+									"       pm.environment.set(\"story_ref\", pm.response.json().ref);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"updated workflow\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}",
 							"protocol": "{{protocol}}",

@@ -149,6 +149,20 @@ def get_workflow(
 
 
 ##########################################################
+# update workflow
+##########################################################
+
+
+@sync_to_async
+def update_workflow(workflow: Workflow, values: dict[str, Any] = {}) -> Workflow:
+    for attr, value in values.items():
+        setattr(workflow, attr, value)
+
+    workflow.save()
+    return workflow
+
+
+##########################################################
 # WorkflowStatus - filters and querysets
 ##########################################################
 

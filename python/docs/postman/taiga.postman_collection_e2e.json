@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "48b40463-3f63-40a6-bfad-432eefa99e17",
+		"_postman_id": "5511fda1-e0cf-4e71-9c44-ae40b83d9fa7",
 		"name": "taiga-next e2e",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "9835734"
@@ -3658,6 +3658,85 @@
 						},
 						"method": "GET",
 						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200.projects.{pj}.workflows.{wf}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API contract",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
+									"    pm.expect(jsonRes).to.have.property(\"name\");",
+									"    pm.expect(jsonRes).to.have.property(\"slug\");",
+									"    pm.expect(jsonRes).to.have.property(\"order\");",
+									"    pm.expect(jsonRes).to.have.property(\"statuses\");",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(5);",
+									"",
+									"    // Validate second-level entries",
+									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"name\");",
+									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"color\");",
+									"    pm.expect(jsonRes.statuses[0]).to.have.property(\"order\");",
+									"    var numOfReturnedFields = Object.keys(jsonRes.statuses[0]).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(4);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"updated workflow\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}",
 							"protocol": "{{protocol}}",

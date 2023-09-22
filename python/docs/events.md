@@ -669,6 +669,19 @@ Content for:
   ```
 
 
+#### `workflows.update`
+
+It happens when a workflow has been updated.
+
+Content for:
+- project channel:
+  ```
+  {
+      "workflow": {... "workflow object" ...}
+  }
+  ```
+
+
 #### `workflowstatuses.create`
 
 It happens when a new workflow status has been created.

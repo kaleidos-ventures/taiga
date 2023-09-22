@@ -78,12 +78,6 @@ Copyright (c) 2023-present Kaleidos INC
                       </span>
                     </div>
                   </div>
-                  <tg-story-detail-status
-                    *ngIf="vm.selectedStoryView === 'side-view'"
-                    [form]="form"></tg-story-detail-status>
-                  <tg-story-detail-assign
-                    *ngIf="vm.story && vm.selectedStoryView === 'side-view'"
-                    [story]="vm.story"></tg-story-detail-assign>
                   <tg-story-detail-description
                     [form]="form"
                     [story]="vm.story"
@@ -128,11 +122,24 @@ Copyright (c) 2023-present Kaleidos INC
                   class="sidebar"
                   [style.min-height.px]="columnHeight">
                   <ng-container *ngIf="sidebarOpen">
+                    <ng-container *ngIf="vm.project.workflows.length > 1">
+                      <tg-ui-breadcrumb
+                        class="story-breadcrumb story-breadcrumb-modal"
+                        [crumbs]="[
+                          t('kanban.workflows'),
+                          vm.story.workflow.name
+                        ]"
+                        [type]="
+                          vm.selectedStoryView === 'side-view'
+                            ? 'collapsed'
+                            : 'expanded'
+                        ">
+                      </tg-ui-breadcrumb>
+                    </ng-container>
                     <tg-story-detail-status
-                      *ngIf="vm.selectedStoryView !== 'side-view'"
                       [form]="form"></tg-story-detail-status>
                     <tg-story-detail-assign
-                      *ngIf="vm.story && vm.selectedStoryView !== 'side-view'"
+                      *ngIf="vm.story"
                       [story]="vm.story"></tg-story-detail-assign>
                   </ng-container>
 

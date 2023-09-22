@@ -1,5 +1,8 @@
 {
+  "workflow": "workflow",
+  "workflows": "workflows",
   "page_title": "{{projectName}} kanban",
+  "workflow_title": "[{{projectName}}] kanban workflow",
   "title": "Kanban",
   "empty": "The project administrator has not set any status yet.",
   "status_label": "Status {{ statusName }}, Tap left and right arrows to move between statuses.",

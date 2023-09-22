@@ -1,4 +1,4 @@
-/**
+/**.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -15,7 +15,8 @@ import {
   TuiHostedDropdownModule,
   TuiSvgModule,
 } from '@taiga-ui/core';
-import { Workflow } from '@taiga/data';
+import { Project, Workflow } from '@taiga/data';
+import { BreadcrumbComponent } from '@taiga/ui/breadcrumb/breadcrumb.component';
 import { DeleteWorkflowComponent } from '../delete-workflow/delete-workflow.component';
 
 @Component({
@@ -32,9 +33,11 @@ import { DeleteWorkflowComponent } from '../delete-workflow/delete-workflow.comp
     TuiDataListModule,
     TuiSvgModule,
     DeleteWorkflowComponent,
+    BreadcrumbComponent,
   ],
 })
 export class KanbanHeaderComponent {
+  @Input({ required: true }) public project!: Project;
   @Input({ required: true }) public workflows: Workflow[] = [];
   @Input({ required: true }) public workflow!: Workflow;
 

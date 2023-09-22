@@ -1,0 +1,23 @@
+@import url("tools/typography.css");
+
+:host {
+  @mixin font-inline;
+
+  color: var(--color-gray80);
+  display: block;
+}
+
+.crumb {
+  padding: var(--spacing4);
+}
+
+.accent {
+  color: var(--color-gray100);
+  font-weight: 500;
+}
+
+.collapsed-crumb-icon {
+  block-size: var(--spacing-16);
+  color: var(--color-gray40);
+  inline-size: var(--spacing-16);
+}

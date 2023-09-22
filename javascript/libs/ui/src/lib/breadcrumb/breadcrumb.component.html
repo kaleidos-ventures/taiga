@@ -1,0 +1,35 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <ng-container *ngIf="type === 'expanded'">
+    <ng-container
+      *ngFor="let crumb of crumbs; trackBy: trackByIndex; last as isLast">
+      <span
+        class="crumb"
+        [class.accent]="isLast && accent">
+        {{ crumb }}
+      </span>
+      <span
+        class="crumb-divider"
+        *ngIf="!isLast">
+        &gt;
+      </span>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="type === 'collapsed'">
+    <tui-svg
+      class="collapsed-crumb-icon"
+      role="image"
+      [attr.aria-label]="t('kanban.workflow')"
+      [src]="icon"></tui-svg>
+    <span class="crumb">
+      {{ crumbs.at(-1) }}
+    </span>
+  </ng-container>
+</ng-container>

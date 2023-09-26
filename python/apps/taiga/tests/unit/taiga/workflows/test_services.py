@@ -5,11 +5,17 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 from decimal import Decimal
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 import pytest
 from taiga.base.repositories.neighbors import Neighbor
 from taiga.workflows import services
+from taiga.workflows.serializers import (
+    DeleteWorkflowSerializer,
+    ReorderWorkflowStatusesSerializer,
+    WorkflowNestedSerializer,
+    WorkflowSerializer,
+)
 from taiga.workflows.services import exceptions as ex
 from tests.utils import factories as f
 
@@ -109,11 +115,52 @@ async def test_get_detailed_workflow_ok():
     workflow_status = f.build_workflow_status()
     workflow = f.build_workflow(statuses=[workflow_status])
 
-    with (patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,):
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.serializers_services", autospec=True) as fake_workflows_serializers,
+    ):
         fake_workflows_repo.get_workflow.return_value = workflow
         fake_workflows_repo.list_workflow_statuses.return_value = [workflow_status]
-        await services.get_workflow_detail(project_id="id", workflow_slug="main")
+        fake_workflows_serializers.serialize_workflow.return_value = WorkflowSerializer(
+            id=workflow.id,
+            name=workflow.name,
+            slug=workflow.slug,
+            order=workflow.order,
+            statuses=[workflow_status],
+        )
+        await services.get_workflow_detail(project_id=workflow.project_id, workflow_slug=workflow.slug)
         fake_workflows_repo.get_workflow.assert_awaited_once()
+        fake_workflows_serializers.serialize_workflow.assert_called_once()
+
+
+async def test_get_delete_workflow_detail_ok():
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.serializers_services", autospec=True) as fake_workflows_serializers,
+        patch("taiga.workflows.services.stories_services", autospec=True) as fake_stories_services,
+    ):
+        workflow_status = f.build_workflow_status()
+        workflow = f.build_workflow(statuses=[workflow_status])
+        fake_workflows_serializers.serialize_delete_workflow_detail.return_value = DeleteWorkflowSerializer(
+            id=workflow.id,
+            name=workflow.name,
+            slug=workflow.slug,
+            order=workflow.order,
+            statuses=[workflow_status],
+            stories=[],
+        )
+        fake_stories_services.list_all_stories.return_value = []
+        workflow_statuses = [workflow_status]
+        fake_workflows_repo.get_workflow.return_value = workflow
+        fake_workflows_repo.list_workflow_statuses.return_value = workflow_statuses
+        await services.get_delete_workflow_detail(project_id=workflow.project_id, workflow_slug=workflow.slug)
+        fake_workflows_repo.get_workflow.assert_awaited_once()
+        fake_workflows_repo.list_workflow_statuses.assert_awaited_once_with(filters={"workflow_id": workflow.id})
+        fake_stories_services.list_all_stories.assert_awaited_once_with(
+            project_id=workflow.project_id,
+            workflow_slug=workflow.slug,
+        )
+        fake_workflows_serializers.serialize_delete_workflow_detail.assert_called_once()
 
 
 #######################################################
@@ -230,6 +277,251 @@ async def test_update_workflow_status_none_name():
 
 
 #######################################################
+# delete workflow
+#######################################################
+
+
+async def test_delete_workflow_no_target_workflow_ok():
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+        patch("taiga.workflows.services.get_delete_workflow_detail", autospec=True) as fake_get_delete_workflow_detail,
+    ):
+        workflow = f.build_workflow()
+        status1 = f.build_workflow_status(workflow=workflow, order=1)
+        status2 = f.build_workflow_status(workflow=workflow, order=2)
+        status3 = f.build_workflow_status(workflow=workflow, order=3)
+        fake_get_delete_workflow_detail.return_value = DeleteWorkflowSerializer(
+            id=workflow.id,
+            name=workflow.name,
+            slug=workflow.slug,
+            order=workflow.order,
+            statuses=[status1, status2, status3],
+            stories=[],
+        )
+        fake_workflows_repo.get_workflow.return_value = workflow
+        fake_workflows_repo.list_workflow_statuses.return_value = [status1, status2, status3]
+        fake_workflows_repo.delete_workflow.return_value = True
+
+        ret = await services.delete_workflow(workflow=workflow)
+
+        fake_workflows_repo.delete_workflow.assert_awaited_once_with(filters={"id": workflow.id})
+        fake_workflows_events.emit_event_when_workflow_is_deleted.assert_awaited_once()
+        assert ret is True
+
+
+async def test_delete_workflow_with_target_workflow_with_anchor_status_ok():
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.get_workflow_detail", autospec=True) as fake_get_workflow_detail,
+        patch("taiga.workflows.services.get_delete_workflow_detail", autospec=True) as fake_get_delete_workflow_detail,
+        patch("taiga.workflows.services.get_workflow", autospec=True) as fake_get_workflow,
+        patch("taiga.workflows.services.reorder_workflow_statuses", autospec=True) as fake_reorder_workflow_statuses,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+    ):
+        deleted_workflow = f.build_workflow(slug="deleted_workflow")
+        deleted_workflow_status1 = f.build_workflow_status(workflow=deleted_workflow, order=1)
+        deleted_workflow_status2 = f.build_workflow_status(workflow=deleted_workflow, order=2)
+        deleted_workflow_statuses = [deleted_workflow_status1, deleted_workflow_status2]
+        deleted_workflow_detail = DeleteWorkflowSerializer(
+            id=deleted_workflow.id,
+            name=deleted_workflow.name,
+            slug=deleted_workflow.slug,
+            order=deleted_workflow.order,
+            statuses=deleted_workflow_statuses,
+            stories=[],
+        )
+        fake_get_delete_workflow_detail.return_value = deleted_workflow_detail
+        target_workflow = f.build_workflow(slug="target_workflow")
+        target_workflow_status1 = f.build_workflow_status(workflow=target_workflow, order=1)
+        target_workflow_status2 = f.build_workflow_status(workflow=target_workflow, order=2)
+        target_workflow_statuses = [target_workflow_status2, target_workflow_status1]
+        target_workflow_detail = WorkflowSerializer(
+            id=target_workflow.id,
+            name=target_workflow.name,
+            slug=target_workflow.slug,
+            order=target_workflow.order,
+            statuses=target_workflow_statuses,
+        )
+
+        fake_get_workflow.return_value = target_workflow
+        fake_get_workflow_detail.return_value = target_workflow_detail
+        # the serializer response doesn't maters
+        fake_reorder_workflow_statuses.return_value = ReorderWorkflowStatusesSerializer(
+            workflow=WorkflowNestedSerializer(
+                id=target_workflow.id, name=deleted_workflow.name, slug=deleted_workflow.slug
+            ),
+            statuses=[],
+            reorder=None,
+        )
+        fake_workflows_repo.list_workflow_statuses.side_effect = [deleted_workflow_statuses, target_workflow_statuses]
+        fake_workflows_repo.delete_workflow.return_value = True
+        # service call
+        ret = await services.delete_workflow(workflow=deleted_workflow, target_workflow_slug=target_workflow.slug)
+        # asserts
+        fake_workflows_repo.list_workflow_statuses.assert_has_awaits(
+            [
+                call(filters={"workflow_id": deleted_workflow.id}, order_by=["order"]),
+                call(filters={"workflow_id": target_workflow.id}, order_by=["-order"], offset=0, limit=1),
+            ]
+        )
+        fake_workflows_repo.delete_workflow.assert_awaited_once_with(filters={"id": deleted_workflow.id})
+        fake_reorder_workflow_statuses.assert_awaited_once_with(
+            target_workflow=target_workflow,
+            statuses=[status.id for status in deleted_workflow_statuses],
+            reorder={"place": "after", "status": target_workflow_statuses[0].id},
+            source_workflow=deleted_workflow,
+        )
+        fake_get_workflow_detail.assert_awaited_once_with(
+            project_id=target_workflow.project.id, workflow_slug=target_workflow.slug
+        )
+        fake_get_delete_workflow_detail.assert_awaited_once_with(
+            project_id=deleted_workflow.project.id, workflow_slug=deleted_workflow.slug
+        )
+        fake_workflows_events.emit_event_when_workflow_is_deleted.assert_awaited_once_with(
+            project=deleted_workflow.project,
+            workflow=deleted_workflow_detail,
+            target_workflow=target_workflow_detail,
+        )
+        assert ret is True
+
+
+async def test_delete_workflow_with_target_workflow_with_no_anchor_status_ok():
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.get_workflow_detail", autospec=True) as fake_get_workflow_detail,
+        patch("taiga.workflows.services.get_delete_workflow_detail", autospec=True) as fake_get_delete_workflow_detail,
+        patch("taiga.workflows.services.get_workflow", autospec=True) as fake_get_workflow,
+        patch("taiga.workflows.services.reorder_workflow_statuses", autospec=True) as fake_reorder_workflow_statuses,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+    ):
+        deleted_workflow = f.build_workflow(slug="deleted_workflow")
+        deleted_workflow_status1 = f.build_workflow_status(workflow=deleted_workflow, order=1)
+        deleted_workflow_statuses = [deleted_workflow_status1]
+        deleted_workflow_detail = DeleteWorkflowSerializer(
+            id=deleted_workflow.id,
+            name=deleted_workflow.name,
+            slug=deleted_workflow.slug,
+            order=deleted_workflow.order,
+            statuses=deleted_workflow_statuses,
+            stories=[],
+        )
+        fake_get_delete_workflow_detail.return_value = deleted_workflow_detail
+        target_workflow = f.build_workflow(slug="target_workflow")
+        target_workflow_statuses = []
+        target_workflow_detail = WorkflowSerializer(
+            id=target_workflow.id,
+            name=target_workflow.name,
+            slug=target_workflow.slug,
+            order=target_workflow.order,
+            statuses=target_workflow_statuses,
+        )
+
+        fake_get_workflow.return_value = target_workflow
+        fake_get_workflow_detail.return_value = target_workflow_detail
+        # the serializer response doesn't maters
+        fake_reorder_workflow_statuses.return_value = ReorderWorkflowStatusesSerializer(
+            workflow=WorkflowNestedSerializer(
+                id=target_workflow.id, name=deleted_workflow.name, slug=deleted_workflow.slug
+            ),
+            statuses=[],
+            reorder=None,
+        )
+        fake_workflows_repo.list_workflow_statuses.side_effect = [deleted_workflow_statuses, target_workflow_statuses]
+        fake_workflows_repo.delete_workflow.return_value = True
+        # service call
+        ret = await services.delete_workflow(workflow=deleted_workflow, target_workflow_slug=target_workflow.slug)
+        # asserts
+        fake_workflows_repo.list_workflow_statuses.assert_has_awaits(
+            [
+                call(filters={"workflow_id": deleted_workflow.id}, order_by=["order"]),
+                call(filters={"workflow_id": target_workflow.id}, order_by=["-order"], offset=0, limit=1),
+            ]
+        )
+        fake_workflows_repo.delete_workflow.assert_awaited_once_with(filters={"id": deleted_workflow.id})
+        fake_reorder_workflow_statuses.assert_awaited_once_with(
+            target_workflow=target_workflow,
+            statuses=[status.id for status in deleted_workflow_statuses],
+            reorder=None,
+            source_workflow=deleted_workflow,
+        )
+        fake_get_workflow_detail.assert_awaited_once_with(
+            project_id=target_workflow.project.id, workflow_slug=target_workflow.slug
+        )
+        fake_workflows_events.emit_event_when_workflow_is_deleted.assert_awaited_once_with(
+            project=deleted_workflow.project,
+            workflow=deleted_workflow_detail,
+            target_workflow=target_workflow_detail,
+        )
+        assert ret is True
+
+
+async def test_delete_workflow_not_existing_target_workflow_exception():
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.get_delete_workflow_detail", autospec=True) as fake_get_delete_workflow_detail,
+        patch("taiga.workflows.services.get_workflow", autospec=True) as fake_get_workflow,
+        patch("taiga.workflows.services.reorder_workflow_statuses", autospec=True) as fake_reorder_workflow_statuses,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+        pytest.raises(ex.NonExistingMoveToWorkflow),
+    ):
+        deleted_workflow = f.build_workflow(slug="deleted_workflow")
+        deleted_workflow_detail = DeleteWorkflowSerializer(
+            id=deleted_workflow.id,
+            name=deleted_workflow.name,
+            slug=deleted_workflow.slug,
+            order=deleted_workflow.order,
+            statuses=[],
+            stories=[],
+        )
+        target_workflow = f.build_workflow(slug="target_workflow")
+        fake_get_delete_workflow_detail.return_value = deleted_workflow_detail
+        fake_get_workflow.return_value = None
+
+        # service call
+        ret = await services.delete_workflow(workflow=deleted_workflow, target_workflow_slug=target_workflow.slug)
+
+        # asserts
+        fake_reorder_workflow_statuses.assert_not_awaited()
+        fake_workflows_repo.delete_workflow.assert_not_awaited()
+        fake_workflows_events.emit_event_when_workflow_is_deleted.assert_not_awaited()
+
+        assert ret is False
+
+
+async def test_delete_workflow_same_target_workflow_exception():
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.get_delete_workflow_detail", autospec=True) as fake_get_delete_workflow_detail,
+        patch("taiga.workflows.services.get_workflow", autospec=True) as fake_get_workflow,
+        patch("taiga.workflows.services.reorder_workflow_statuses", autospec=True) as fake_reorder_workflow_statuses,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+        pytest.raises(ex.SameMoveToWorkflow),
+    ):
+        deleted_workflow = f.build_workflow(slug="deleted_workflow")
+        deleted_workflow_detail = DeleteWorkflowSerializer(
+            id=deleted_workflow.id,
+            name=deleted_workflow.name,
+            slug=deleted_workflow.slug,
+            order=deleted_workflow.order,
+            statuses=[],
+            stories=[],
+        )
+        fake_get_delete_workflow_detail.return_value = deleted_workflow_detail
+        fake_get_workflow.return_value = deleted_workflow
+
+        # service call
+        ret = await services.delete_workflow(workflow=deleted_workflow, target_workflow_slug=deleted_workflow.slug)
+
+        # asserts
+        fake_reorder_workflow_statuses.assert_not_awaited()
+        fake_workflows_repo.delete_workflow.assert_not_awaited()
+        fake_workflows_events.emit_event_when_workflow_is_deleted.assert_not_awaited()
+
+        assert ret is True
+
+
+#######################################################
 # _calculate_offset
 #######################################################
 
@@ -278,9 +570,10 @@ async def test_calculate_offset() -> None:
 #######################################################
 
 
-async def test_reorder_workflow_statuses_ok():
+async def test_reorder_workflow_statuses_same_workflow_ok():
     with (
         patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.stories_repositories", autospec=True) as fake_stories_repo,
         patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
     ):
         workflow = f.build_workflow()
@@ -291,23 +584,104 @@ async def test_reorder_workflow_statuses_ok():
         fake_workflows_repo.list_workflow_statuses_to_reorder.return_value = [status3, status2]
 
         await services.reorder_workflow_statuses(
-            workflow=f.build_workflow(),
+            target_workflow=f.build_workflow(),
             statuses=[status3.id, status2.id],
             reorder={"place": "after", "status": status1.id},
         )
 
+        fake_stories_repo.bulk_update_workflow_to_stories.assert_not_awaited()
         fake_workflows_repo.bulk_update_workflow_statuses.assert_awaited_once_with(
-            objs_to_update=[status3, status2], fields_to_update=["order"]
+            objs_to_update=[status3, status2], fields_to_update=["order", "workflow"]
         )
         fake_workflows_events.emit_event_when_workflow_statuses_are_reordered.assert_awaited_once()
 
 
-async def test_reorder_workflow_status_repeated():
-    with (pytest.raises(ex.InvalidWorkflowStatusError),):
+async def test_reorder_workflow_statuses_between_workflows_with_anchor_ok():
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+    ):
+        workflow1 = f.build_workflow()
+        workflow2 = f.build_workflow()
+        status1 = f.build_workflow_status(workflow=workflow1, order=1)
+        status2 = f.build_workflow_status(workflow=workflow1, order=2)
+        status3 = f.build_workflow_status(workflow=workflow1, order=3)
+        fake_workflows_repo.get_workflow_status.return_value = status1
+        fake_workflows_repo.list_workflow_statuses_to_reorder.return_value = [status3, status2]
+        fake_stories_repo.bulk_update_workflow_to_stories.return_value = None
+
         await services.reorder_workflow_statuses(
-            workflow=f.build_workflow(),
-            statuses=["new"],
-            reorder={"place": "after", "status": "new"},
+            target_workflow=workflow1,
+            statuses=[status3.id, status2.id],
+            reorder={"place": "after", "status": status1.id},
+            source_workflow=workflow2,
+        )
+
+        fake_workflows_repo.bulk_update_workflow_statuses.assert_awaited_once_with(
+            objs_to_update=[status3, status2], fields_to_update=["order", "workflow"]
+        )
+        fake_stories_repo.bulk_update_workflow_to_stories.assert_awaited_once_with(
+            statuses_ids=[status3.id, status2.id], old_workflow_id=workflow2.id, new_workflow_id=workflow1.id
+        )
+        fake_workflows_events.emit_event_when_workflow_statuses_are_reordered.assert_awaited_once()
+
+
+async def test_reorder_workflow_statuses_between_workflows_no_anchor_ok():
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        patch("taiga.workflows.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.workflows.services.workflows_events", autospec=True) as fake_workflows_events,
+    ):
+        workflow1 = f.build_workflow()
+        workflow2 = f.build_workflow(statuses=[])
+        status1 = f.build_workflow_status(workflow=workflow1, order=1)
+        status2 = f.build_workflow_status(workflow=workflow1, order=2)
+        fake_workflows_repo.get_workflow_status.return_value = status1
+        fake_workflows_repo.list_workflow_statuses_to_reorder.return_value = [status1, status2]
+        fake_stories_repo.bulk_update_workflow_to_stories.return_value = None
+
+        await services.reorder_workflow_statuses(
+            target_workflow=workflow2, statuses=[status1.id, status2.id], reorder=None, source_workflow=workflow1
+        )
+
+        fake_workflows_repo.bulk_update_workflow_statuses.assert_awaited_once_with(
+            objs_to_update=[status1, status2], fields_to_update=["order", "workflow"]
+        )
+        fake_stories_repo.bulk_update_workflow_to_stories.assert_awaited_once_with(
+            statuses_ids=[status1.id, status2.id], old_workflow_id=workflow1.id, new_workflow_id=workflow2.id
+        )
+        fake_workflows_events.emit_event_when_workflow_statuses_are_reordered.assert_awaited_once()
+
+
+async def test_reorder_workflow_statuses_between_workflows_no_anchor_same_workflow_exception():
+    with (
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+        pytest.raises(ex.NonExistingMoveToStatus),
+    ):
+        workflow = f.build_workflow()
+        status1 = f.build_workflow_status(workflow=workflow, order=1)
+        status2 = f.build_workflow_status(workflow=workflow, order=2)
+        fake_workflows_repo.list_workflow_statuses_to_reorder.return_value = [status1, status2]
+
+        await services.reorder_workflow_statuses(
+            target_workflow=workflow, statuses=[status1.id, status2.id], reorder=None, source_workflow=workflow
+        )
+
+
+async def test_reorder_workflow_status_repeated():
+    with (
+        pytest.raises(ex.InvalidWorkflowStatusError),
+        patch("taiga.workflows.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        workflow = f.build_workflow()
+        status = f.build_workflow_status(workflow=workflow, order=1)
+        fake_workflows_repo.list_workflow_statuses_to_reorder.return_value = [status]
+
+        await services.reorder_workflow_statuses(
+            target_workflow=workflow,
+            statuses=[status.id],
+            reorder={"place": "after", "status": status.id},
         )
 
 
@@ -319,7 +693,7 @@ async def test_reorder_anchor_workflow_status_does_not_exist():
         fake_workflows_repo.get_workflow_status.return_value = None
 
         await services.reorder_workflow_statuses(
-            workflow=f.build_workflow(),
+            target_workflow=f.build_workflow(),
             statuses=["in-progress"],
             reorder={"place": "after", "status": "mooo"},
         )
@@ -333,7 +707,7 @@ async def test_reorder_any_workflow_status_does_not_exist():
         fake_workflows_repo.get_workflow_status.return_value = None
 
         await services.reorder_workflow_statuses(
-            workflow=f.build_workflow(),
+            target_workflow=f.build_workflow(),
             statuses=["in-progress", "mooo"],
             reorder={"place": "after", "status": "new"},
         )

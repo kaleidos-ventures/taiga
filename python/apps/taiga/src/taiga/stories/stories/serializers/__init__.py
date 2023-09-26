@@ -18,7 +18,7 @@ class StorySummarySerializer(BaseModel):
     title: str
     status: WorkflowStatusNestedSerializer
     version: int
-    assignees: list[UserNestedSerializer]
+    assignees: list[UserNestedSerializer] | None
 
     class Config:
         orm_mode = True

@@ -9,8 +9,9 @@
 from typing import Any
 from uuid import UUID
 
+from taiga.stories.stories.serializers import StorySummarySerializer
 from taiga.workflows.models import Workflow, WorkflowStatus
-from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, WorkflowSerializer
+from taiga.workflows.serializers import DeleteWorkflowSerializer, ReorderWorkflowStatusesSerializer, WorkflowSerializer
 
 
 def serialize_workflow(workflow: Workflow, workflow_statuses: list[WorkflowStatus] = []) -> WorkflowSerializer:
@@ -20,6 +21,21 @@ def serialize_workflow(workflow: Workflow, workflow_statuses: list[WorkflowStatu
         slug=workflow.slug,
         order=workflow.order,
         statuses=workflow_statuses,
+    )
+
+
+def serialize_delete_workflow_detail(
+    workflow: Workflow,
+    workflow_statuses: list[WorkflowStatus] = [],
+    workflow_stories: list[StorySummarySerializer] = [],
+) -> DeleteWorkflowSerializer:
+    return DeleteWorkflowSerializer(
+        id=workflow.id,
+        name=workflow.name,
+        slug=workflow.slug,
+        order=workflow.order,
+        statuses=workflow_statuses,
+        stories=workflow_stories,
     )
 
 

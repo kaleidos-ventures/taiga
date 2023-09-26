@@ -20,6 +20,7 @@ from taiga.workflows import services as workflows_services
 from taiga.workflows.api.validators import (
     CreateWorkflowStatusValidator,
     CreateWorkflowValidator,
+    DeleteWorkflowQuery,
     DeleteWorkflowStatusQuery,
     ReorderWorkflowStatusesValidator,
     UpdateWorkflowStatusValidator,
@@ -32,6 +33,7 @@ from taiga.workflows.serializers import ReorderWorkflowStatusesSerializer, Workf
 CREATE_WORKFLOW = IsProjectAdmin()
 LIST_WORKFLOWS = HasPerm("view_story")
 GET_WORKFLOW = HasPerm("view_story")
+DELETE_WORKFLOW = IsProjectAdmin()
 UPDATE_WORKFLOW = IsProjectAdmin()
 CREATE_WORKFLOW_STATUS = IsProjectAdmin()
 UPDATE_WORKFLOW_STATUS = IsProjectAdmin()
@@ -119,7 +121,7 @@ async def get_workflow(
     return await workflows_services.get_workflow_detail(project_id=project_id, workflow_slug=workflow_slug)
 
 
-##########################################################
+#########################################################
 # update workflow
 ##########################################################
 
@@ -145,6 +147,44 @@ async def update_workflow(
 
     values = form.dict(exclude_unset=True)
     return await workflows_services.update_workflow(project_id=project_id, workflow=workflow, values=values)
+
+
+################################################
+# delete workflow
+################################################
+
+
+@routes.workflows.delete(
+    "/projects/{project_id}/workflows/{workflow_slug}",
+    name="project.workflow.delete",
+    summary="Delete a workflow",
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_workflow(
+    project_id: B64UUID,
+    workflow_slug: str,
+    request: AuthRequest,
+    query_params: DeleteWorkflowQuery = Depends(),
+) -> None:
+    """
+    Deletes a workflow in the given project, providing the option to move all the statuses and their stories to another
+    workflow.
+
+    Query params:
+
+    * **move_to:** the workflow's slug to which move the statuses from the workflow being deleted
+        - if not received, the workflow, statuses and its contained stories will be deleted
+        - if received, the workflow will be deleted but its statuses and stories won't (they will be appended to the
+         last status of the specified workflow).
+    """
+    workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
+    await check_permissions(permissions=DELETE_WORKFLOW, user=request.user, obj=workflow)
+
+    await workflows_services.delete_workflow(
+        workflow=workflow,
+        target_workflow_slug=query_params.move_to,
+    )
 
 
 ################################################
@@ -247,7 +287,7 @@ async def reorder_workflow_statuses(
     await check_permissions(permissions=REORDER_WORKFLOW_STATUSES, user=request.user, obj=workflow)
 
     return await workflows_services.reorder_workflow_statuses(
-        workflow=workflow,
+        target_workflow=workflow,
         statuses=form.statuses,
         reorder=form.get_reorder_dict(),
     )
@@ -277,7 +317,6 @@ async def delete_workflow_status(
     to any other existing workflow status in the same workflow.
 
     Query params:
-
     * **move_to:** the workflow status's slug to which move the stories from the status being deleted
         - if not received, the workflow status and its contained stories will be deleted
         - if received, the workflow status will be deleted but its contained stories won't (they will be first moved to

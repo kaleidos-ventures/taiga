@@ -29,6 +29,7 @@ DEFAULT_QUERYSET_WORKFLOW = Workflow.objects.all()
 
 
 class WorkflowFilters(TypedDict, total=False):
+    id: UUID
     slug: str
     project_id: UUID
 
@@ -160,6 +161,17 @@ def update_workflow(workflow: Workflow, values: dict[str, Any] = {}) -> Workflow
 
     workflow.save()
     return workflow
+
+
+##########################################################
+# Workflow - delete workflow
+##########################################################
+
+
+async def delete_workflow(filters: WorkflowFilters = {}) -> int:
+    qs = _apply_filters_to_workflow_queryset(qs=DEFAULT_QUERYSET_WORKFLOW, filters=filters)
+    count, _ = await qs.adelete()
+    return count
 
 
 ##########################################################

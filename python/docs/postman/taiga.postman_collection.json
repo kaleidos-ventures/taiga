@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "b330253f-040c-48f5-b6e8-a7d24d0b18f3",
+		"_postman_id": "6395d1e4-7f57-478c-b868-47621357a450",
 		"name": "taiga-next",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "15018493"
+		"_exporter_id": "3299216"
 	},
 	"item": [
 		{
@@ -2796,6 +2796,67 @@
 								{
 									"key": "moveTo",
 									"value": "{{wfs-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete workflow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/projects/{{pj-id}}/workflows/{{wf-slug}}?moveTo={{wf-slug}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"projects",
+								"{{pj-id}}",
+								"workflows",
+								"{{wf-slug}}"
+							],
+							"query": [
+								{
+									"key": "moveTo",
+									"value": "{{wf-slug}}"
 								}
 							]
 						}

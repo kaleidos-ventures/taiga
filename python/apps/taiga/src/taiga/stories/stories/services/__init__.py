@@ -83,6 +83,22 @@ async def list_paginated_stories(
         filters={"workflow_slug": workflow_slug, "project_id": project_id}
     )
 
+    stories_serializer = await get_serialized_stories(project_id, workflow_slug, limit, offset)
+
+    pagination = Pagination(offset=offset, limit=limit, total=total_stories)
+
+    return pagination, stories_serializer
+
+
+async def list_all_stories(project_id: UUID, workflow_slug: str) -> list[StorySummarySerializer]:
+    stories_serializer = await get_serialized_stories(project_id, workflow_slug)
+
+    return stories_serializer
+
+
+async def get_serialized_stories(
+    project_id: UUID, workflow_slug: str, limit: int | None = None, offset: int | None = None
+) -> list[StorySummarySerializer]:
     stories = await stories_repositories.list_stories(
         filters={"workflow_slug": workflow_slug, "project_id": project_id},
         offset=offset,
@@ -90,17 +106,12 @@ async def list_paginated_stories(
         select_related=["created_by", "project", "workflow", "status"],
         prefetch_related=["assignees"],
     )
-
-    stories_serializer = [
+    return [
         serializers_services.serialize_story_list(
             story=story, assignees=await stories_repositories.list_story_assignees(story)
         )
         for story in stories
     ]
-
-    pagination = Pagination(offset=offset, limit=limit, total=total_stories)
-
-    return pagination, stories_serializer
 
 
 ##########################################################

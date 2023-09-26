@@ -9,15 +9,27 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *transloco="let t">
   <ng-container *ngIf="type === 'expanded'">
     <ng-container
-      *ngFor="let crumb of crumbs; trackBy: trackByIndex; last as isLast">
+      *ngFor="
+        let crumb of crumbs;
+        trackBy: trackByIndex;
+        last as isLast;
+        index as i
+      ">
       <span
+        *ngIf="hideLastCrumb && !isLast"
+        class="crumb"
+        [class.accent]="isLast && accent">
+        {{ crumb }}
+      </span>
+      <span
+        *ngIf="!hideLastCrumb"
         class="crumb"
         [class.accent]="isLast && accent">
         {{ crumb }}
       </span>
       <span
         class="crumb-divider"
-        *ngIf="!isLast">
+        *ngIf="!(hideLastCrumb && i === crumbs.length - 2) && !isLast">
         &gt;
       </span>
     </ng-container>

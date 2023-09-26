@@ -11,6 +11,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output,
 } from '@angular/core';
@@ -48,6 +49,8 @@ export class NewWorkflowFormComponent implements OnInit {
   @Output()
   public cancelCreateWorkflow = new EventEmitter();
 
+  @Input() public workflow: Workflow | null = null;
+
   public newWorkflowForm!: FormGroup;
 
   public workflowNameMaxLength = 40;
@@ -62,7 +65,7 @@ export class NewWorkflowFormComponent implements OnInit {
   public initForm() {
     this.newWorkflowForm = this.fb.group({
       name: [
-        '',
+        this.workflow?.name || '',
         [
           Validators.required,
           Validators.maxLength(this.workflowNameMaxLength),

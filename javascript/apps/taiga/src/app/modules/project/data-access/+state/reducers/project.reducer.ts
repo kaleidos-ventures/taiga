@@ -113,6 +113,18 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
+    ProjectActions.projectApiActions.updateWorkflowSuccess,
+    (state, { workflow, oldSlug }): ProjectState => {
+      if (state.currentProjectId) {
+        const workflows = state.projects[state.currentProjectId].workflows;
+        const workflowIndex = workflows.findIndex((it) => it.slug === oldSlug);
+        workflows[workflowIndex].name = workflow.name;
+        workflows[workflowIndex].slug = workflow.slug;
+      }
+      return state;
+    }
+  ),
+  on(
     ProjectActions.permissionsUpdateSuccess,
     (state, { project }): ProjectState => {
       state.projects[project.id] = project;

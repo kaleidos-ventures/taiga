@@ -27,8 +27,24 @@ class WorkflowName(ConstrainedStr):
     max_length = 40
 
 
+class WorkflowSlug(ConstrainedStr):
+    strip_whitespace = True
+    min_length = 1
+    max_length = 40
+
+
 class CreateWorkflowValidator(BaseModel):
     name: WorkflowName
+
+
+class DeleteWorkflowQuery(BaseModel):
+    move_to: WorkflowSlug | None
+
+    @validator("move_to")
+    def check_move_to_slug(cls, v: WorkflowSlug | None) -> WorkflowSlug | None:
+        if v is None:
+            return None
+        return v
 
 
 class CreateWorkflowStatusValidator(BaseModel):

@@ -6,6 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.base.serializers import UUIDB64, BaseModel
+from taiga.stories.stories.serializers import StorySummarySerializer
 from taiga.workflows.serializers.nested import WorkflowNestedSerializer, WorkflowStatusNestedSerializer
 
 
@@ -15,6 +16,18 @@ class WorkflowSerializer(BaseModel):
     slug: str
     order: int
     statuses: list[WorkflowStatusNestedSerializer]
+
+    class Config:
+        orm_mode = True
+
+
+class DeleteWorkflowSerializer(BaseModel):
+    id: UUIDB64
+    name: str
+    slug: str
+    order: int
+    statuses: list[WorkflowStatusNestedSerializer]
+    stories: list[StorySummarySerializer]
 
     class Config:
         orm_mode = True
@@ -42,7 +55,7 @@ class ReorderSerializer(BaseModel):
 class ReorderWorkflowStatusesSerializer(BaseModel):
     workflow: WorkflowNestedSerializer
     statuses: list[UUIDB64]
-    reorder: ReorderSerializer
+    reorder: ReorderSerializer | None
 
     class Config:
         orm_mode = True

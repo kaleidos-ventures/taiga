@@ -87,6 +87,27 @@ async def test_update_workflow():
     assert updated_workflow.name == "Updated name"
 
 
+#########################################################
+# delete workflow
+##########################################################
+
+
+async def test_delete_workflow_without_workflow_statuses_ok() -> None:
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project, statuses=[])
+
+    delete_ret = await repositories.delete_workflow(filters={"id": workflow.id})
+    assert delete_ret == 1
+
+
+async def test_delete_workflow_with_workflow_statuses_ok() -> None:
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+
+    delete_ret = await repositories.delete_workflow(filters={"id": workflow.id})
+    assert delete_ret == 4
+
+
 ##########################################################
 # create_workflow_status
 ##########################################################

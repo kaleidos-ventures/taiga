@@ -245,16 +245,23 @@ async def test_list_stories_to_reorder() -> None:
     assert stories[2].ref == story2.ref
 
 
-async def test_list_stories_to_reorder_bad_names() -> None:
-    project = await f.create_project()
-    workflow = await sync_to_async(project.workflows.first)()
-    status = await sync_to_async(workflow.statuses.first)()
-    story1 = await f.create_story(project=project, workflow=workflow, status=status)
-    story2 = await f.create_story(project=project, workflow=workflow, status=status)
-    non_existing_reference = 9999999
+##########################################################
+# misc - bulk_update_workflow_to_stories
+##########################################################
 
-    refs = [story1.ref, non_existing_reference, story2.ref]
-    stories = await repositories.list_stories_to_reorder(filters={"status_id": status.id, "refs": refs})
-    assert len(stories) == 2
-    assert stories[0].ref == story1.ref
-    assert stories[1].ref == story2.ref
+
+async def test_bulk_update_workflow_to_stories() -> None:
+    project = await f.create_project()
+    old_workflow = await sync_to_async(project.workflows.first)()
+    new_workflow = await sync_to_async(project.workflows.first)()
+    status = await sync_to_async(old_workflow.statuses.first)()
+    story1 = await f.create_story(project=project, workflow=old_workflow, status=status)
+    story2 = await f.create_story(project=project, workflow=old_workflow, status=status)
+
+    await repositories.bulk_update_workflow_to_stories(
+        statuses_ids=[status.id], old_workflow_id=old_workflow.id, new_workflow_id=new_workflow.id
+    )
+    stories = await repositories.list_stories(filters={"workflow_id": old_workflow}, select_related=["workflow"])
+    assert story1 in stories and story2 in stories
+    assert stories[0].workflow == new_workflow
+    assert stories[1].workflow == new_workflow

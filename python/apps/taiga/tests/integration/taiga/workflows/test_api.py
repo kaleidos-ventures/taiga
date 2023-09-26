@@ -298,6 +298,61 @@ async def test_update_status_422_unprocessable_wf_status_b64id(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
+################################################################################
+# Workflow DELETE /projects/<pj_b64id>/workflows/<ws_slug>
+################################################################################
+
+
+async def test_delete_workflow_204_ok(client):
+    project = await f.create_project()
+    deleted_workflow = await f.create_workflow(project=project)
+    f.build_workflow_status(workflow=deleted_workflow, order=1)
+    f.build_workflow_status(workflow=deleted_workflow, order=2)
+    target_workflow = await f.create_workflow(project=project)
+    f.build_workflow_status(workflow=target_workflow, order=1)
+    f.build_workflow_status(workflow=target_workflow, order=2)
+
+    client.login(project.created_by)
+    response = client.delete(
+        f"/projects/{project.b64id}/workflows/{deleted_workflow.slug}/?moveTo={target_workflow.slug}"
+    )
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.text
+
+
+async def test_delete_workflow_403_not_project_admin(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    another_user = await f.create_user()
+
+    client.login(another_user)
+    response = client.delete(f"/projects/{project.b64id}/workflows/{workflow.slug}")
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response.text
+
+
+async def test_delete_workflow_404_not_found_project_b64id(client):
+    project = await f.create_project()
+    workflow = await f.create_workflow(project=project)
+    client.login(project.created_by)
+    response = client.delete(f"/projects/{NOT_EXISTING_B64ID}/workflows/{workflow.slug}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.text
+
+
+async def test_delete_workflow_422_empty_move_to_slug(client):
+    project = await f.create_project()
+    client.login(project.created_by)
+    empty_string = ""
+    response = client.delete(f"/projects/{project.b64id}/workflows/slug/?moveTo={empty_string}")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
+
+
+async def test_delete_workflow_422_long_move_to_slug(client):
+    project = await f.create_project()
+    client.login(project.created_by)
+    long_string = "slug_slug_slug_slug_slug_slug_slug_slug_slug_slug"
+    response = client.delete(f"/projects/{project.b64id}/workflows/slug/?moveTo={long_string}")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
+
+
 ##########################################################
 # Workflow Status POST /projects/<slug>/workflows/<slug>/statuses/reorder
 ##########################################################

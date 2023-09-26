@@ -6,20 +6,25 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.base.serializers import BaseModel
-from taiga.stories.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer
 from taiga.users.serializers.nested import UserNestedSerializer
 
 
 class CreateStoryContent(BaseModel):
+    from taiga.stories.stories.serializers import StoryDetailSerializer
+
     story: StoryDetailSerializer
 
 
 class UpdateStoryContent(BaseModel):
+    from taiga.stories.stories.serializers import StoryDetailSerializer
+
     story: StoryDetailSerializer
     updates_attrs: list[str]
 
 
 class ReorderStoriesContent(BaseModel):
+    from taiga.stories.stories.serializers import ReorderStoriesSerializer
+
     reorder: ReorderStoriesSerializer
 
 

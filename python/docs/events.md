@@ -681,6 +681,19 @@ Content for:
   }
   ```
 
+#### `workflows.delete`
+
+It happens when a workflow has been deleted.
+
+Content for:
+- project channel:
+  ```
+  {
+      "workflow": {... "workflow object" ...},
+      "targetWorkflow": null | {... "workflow object" ...}
+  }
+  ```
+
 
 #### `workflowstatuses.create`
 

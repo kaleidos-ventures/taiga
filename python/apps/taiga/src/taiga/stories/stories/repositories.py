@@ -245,3 +245,11 @@ def list_stories_to_reorder(filters: StoryFilters = {}) -> list[Story]:
 @sync_to_async
 def list_story_assignees(story: Story) -> list[User]:
     return list(story.assignees.all().order_by("-story_assignments__created_at"))
+
+
+async def bulk_update_workflow_to_stories(
+    statuses_ids: list[UUID], old_workflow_id: UUID, new_workflow_id: UUID
+) -> None:
+    await Story.objects.filter(status_id__in=statuses_ids, workflow_id=old_workflow_id).aupdate(
+        workflow_id=new_workflow_id
+    )

@@ -30,3 +30,17 @@ Copyright (c) 2023-present Kaleidos INC
 .separator {
   @mixin separator;
 }
+
+.workflow-form {
+  &::ng-deep {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    margin-block-start: var(--spacing-4);
+    padding: 0;
+
+    &.input-wrapper {
+      max-inline-size: 210px;
+    }
+  }
+}

@@ -20,11 +20,13 @@ Copyright (c) 2023-present Kaleidos INC
 
   <tg-ui-breadcrumb
     *ngIf="workflows.length > 1"
+    [hideLastCrumb]="editStatusFormOpened"
     [crumbs]="[t('commons.kanban'), t('kanban.workflows'), workflow.name]"
     [accent]="true">
   </tg-ui-breadcrumb>
 
   <tui-hosted-dropdown
+    *ngIf="!editStatusFormOpened"
     class="status-options-menu"
     tuiDropdownAlign="left"
     [content]="workflowOptionsDropdown"
@@ -49,7 +51,8 @@ Copyright (c) 2023-present Kaleidos INC
         class="option-btn"
         data-test="edit-status-btn"
         tuiOption
-        type="button">
+        type="button"
+        (click)="toggleEditWorkflowForm()">
         <div class="option-container">
           <tui-svg
             aria-hidden="true"
@@ -75,6 +78,13 @@ Copyright (c) 2023-present Kaleidos INC
       </button>
     </tui-data-list>
   </ng-template>
+
+  <tg-new-workflow-form
+    *ngIf="editStatusFormOpened"
+    class="workflow-form"
+    [workflow]="workflow"
+    (createWorkflow)="editWorkflowName($event)"
+    (cancelCreateWorkflow)="toggleEditWorkflowForm()"></tg-new-workflow-form>
 
   <tg-delete-workflow
     *ngIf="deleteWorkflowModal"

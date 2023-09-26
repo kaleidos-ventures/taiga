@@ -26,6 +26,7 @@ export class BreadcrumbComponent {
   @Input() public icon = 'kanban';
   @Input() public accent = false;
   @Input() public type: BreadCrumbType = 'expanded';
+  @Input() public hideLastCrumb = false;
 
   public trackByIndex(index: number) {
     return index;

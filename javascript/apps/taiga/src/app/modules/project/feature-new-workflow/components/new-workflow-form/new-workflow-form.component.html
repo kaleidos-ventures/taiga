@@ -45,7 +45,7 @@ Copyright (c) 2023-present Kaleidos INC
       data-test="status-create"
       appearance="primary"
       type="submit">
-      {{ t('kanban.create_workflow.save') }}
+      {{ workflow ? t('commons.save') : t('kanban.create_workflow.save') }}
     </button>
     <button
       (click)="cancelEdit()"

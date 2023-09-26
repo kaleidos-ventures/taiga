@@ -73,17 +73,18 @@ export const updateStoryShowView = createAction(
   }>()
 );
 
-// export const createWorkflow = createAction(
-//   '[Project] Create Workflow',
-//   props<{
-//     name: Workflow['name'];
-//   }>
-// );
-
 export const createWorkflow = createAction(
   '[Project] create workflow',
   props<{
     name: Workflow['name'];
+  }>()
+);
+
+export const updateWorkflow = createAction(
+  '[Project] update workflow',
+  props<{
+    name: Workflow['name'];
+    slug: Workflow['slug'];
   }>()
 );
 
@@ -131,6 +132,10 @@ export const projectApiActions = createActionGroup({
       workflow: Workflow;
     }>(),
     'create Workflow Error': emptyProps(),
+    'Update Workflow Success': props<{
+      workflow: Workflow;
+      oldSlug: Workflow['slug'];
+    }>(),
   },
 });
 

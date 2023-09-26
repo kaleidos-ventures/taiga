@@ -258,6 +258,19 @@ export class ProjectApiService {
     );
   }
 
+  public updateWorkflow(
+    workflowName: Workflow['name'],
+    workflowSlug: Workflow['slug'],
+    project: Project['id']
+  ): Observable<Workflow> {
+    return this.http.patch<Workflow>(
+      `${this.config.apiUrl}/projects/${project}/workflows/${workflowSlug}`,
+      {
+        name: workflowName,
+      }
+    );
+  }
+
   public updateInvitationRole(
     id: string,
     userData: { id: string; roleSlug: string }

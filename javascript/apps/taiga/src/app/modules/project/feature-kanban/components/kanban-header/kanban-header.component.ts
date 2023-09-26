@@ -18,6 +18,9 @@ import {
 import { Project, Workflow } from '@taiga/data';
 import { BreadcrumbComponent } from '@taiga/ui/breadcrumb/breadcrumb.component';
 import { DeleteWorkflowComponent } from '../delete-workflow/delete-workflow.component';
+import { NewWorkflowFormComponent } from '~/app/modules/project/feature-new-workflow/components/new-workflow-form/new-workflow-form.component';
+import { updateWorkflow } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'tg-kanban-header',
@@ -34,6 +37,7 @@ import { DeleteWorkflowComponent } from '../delete-workflow/delete-workflow.comp
     TuiSvgModule,
     DeleteWorkflowComponent,
     BreadcrumbComponent,
+    NewWorkflowFormComponent,
   ],
 })
 export class KanbanHeaderComponent {
@@ -43,6 +47,9 @@ export class KanbanHeaderComponent {
 
   public openWorkflowOptions = false;
   public deleteWorkflowModal = false;
+  public editStatusFormOpened = false;
+
+  constructor(private store: Store) {}
 
   public openDeleteWorkflowModal() {
     this.deleteWorkflowModal = true;
@@ -50,5 +57,20 @@ export class KanbanHeaderComponent {
 
   public submitDeleteWorkflow(event: Workflow['id'] | undefined) {
     console.log(event);
+  }
+
+  public toggleEditWorkflowForm() {
+    this.editStatusFormOpened = !this.editStatusFormOpened;
+  }
+
+  public editWorkflowName(workflow: Workflow['name']) {
+    this.openWorkflowOptions = false;
+    this.toggleEditWorkflowForm();
+    this.store.dispatch(
+      updateWorkflow({
+        name: workflow,
+        slug: this.workflow.slug,
+      })
+    );
   }
 }

@@ -32,6 +32,7 @@ import {
   replaceStory,
   setIntialPosition,
 } from './kanban.reducer.helpers';
+import { projectApiActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 
 export interface KanbanState {
   loadingWorkflow: boolean;
@@ -275,6 +276,7 @@ export const reducer = createImmerReducer(
     KanbanApiActions.fetchWorkflowSuccess,
     (state, { workflow }): KanbanState => {
       state.workflow = workflow;
+      state.currentWorkflowSlug = workflow.slug;
       state.loadingWorkflow = false;
 
       workflow.statuses.forEach((status) => {
@@ -786,6 +788,21 @@ export const reducer = createImmerReducer(
 
       state.draggingStatus = null;
       state.statusDropCandidate = null;
+
+      return state;
+    }
+  ),
+  on(
+    projectApiActions.updateWorkflowSuccess,
+    (state, { workflow, oldSlug }): KanbanState => {
+      if (state.currentWorkflowSlug === oldSlug) {
+        state.currentWorkflowSlug = workflow.slug;
+      }
+
+      if (state.workflow && state.workflow.slug === oldSlug) {
+        state.workflow.name = workflow.name;
+        state.workflow.slug = workflow.slug;
+      }
 
       return state;
     }

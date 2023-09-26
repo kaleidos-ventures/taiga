@@ -6,6 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
+import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -206,6 +207,39 @@ export class ProjectEffects {
           } else {
             return this.appService.errorManagement(httpResponse);
           }
+        },
+      })
+    );
+  });
+
+  public updateWorkflow$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.updateWorkflow),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .updateWorkflow(action.name, action.slug, project.id)
+            .pipe(
+              map((updatedWorkflow) => {
+                // void this.router.navigate(
+                //   [`project/${project.id}/${project.slug}/kanban/${updatedWorkflow.slug}`],
+                //   { replaceUrl: true }
+                // );
+                this.location.go(
+                  `project/${project.id}/${project.slug}/kanban/${updatedWorkflow.slug}`
+                );
+                return ProjectActions.projectApiActions.updateWorkflowSuccess({
+                  workflow: updatedWorkflow,
+                  oldSlug: action.slug,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          return this.appService.errorManagement(httpResponse);
         },
       })
     );
@@ -463,6 +497,7 @@ export class ProjectEffects {
     private appService: AppService,
     private router: Router,
     private revokeInvitationService: RevokeInvitationService,
-    private store: Store
+    private store: Store,
+    private location: Location
   ) {}
 }

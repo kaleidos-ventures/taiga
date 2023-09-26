@@ -42,11 +42,6 @@ describe('ProjectNavigationComponent', () => {
     spectator.component.project = ProjectMockFactory();
   });
 
-  it('default', () => {
-    expect(spectator.component.collapseText).toEqual(true);
-    expect(spectator.component.scrumChildMenuVisible).toEqual(false);
-  });
-
   it('Collapsed icon - uncollapsed', () => {
     spectator.component.collapsed = false;
     expect(spectator.component.getCollapseIcon()).toEqual('collapse-left');
@@ -57,13 +52,6 @@ describe('ProjectNavigationComponent', () => {
     expect(spectator.component.getCollapseIcon()).toEqual('collapse-right');
   });
 
-  it('Toggle scrum child menu - uncollapsed', () => {
-    spectator.component.collapsed = false;
-    spectator.component.scrumChildMenuVisible = true;
-    spectator.component.toggleScrumChildMenu();
-    expect(spectator.component.scrumChildMenuVisible).toBeFalsy();
-  });
-
   it('Popup dialog event', () => {
     spectator.component.collapsed = true;
     spectator.component.initDialog = jest.fn();
@@ -72,21 +60,6 @@ describe('ProjectNavigationComponent', () => {
     const eventObj: any = { target: { value: 42 } };
 
     spectator.component.popup(eventObj, type);
-
-    expect(spectator.component.initDialog).toHaveBeenCalledWith(
-      eventObj.target,
-      type
-    );
-  });
-
-  it('Popup scrum event', () => {
-    spectator.component.collapsed = true;
-    spectator.component.initDialog = jest.fn();
-
-    const type = 'scrum';
-    const eventObj: any = { target: { value: 42 } };
-
-    spectator.component.popupScrum(eventObj);
 
     expect(spectator.component.initDialog).toHaveBeenCalledWith(
       eventObj.target,

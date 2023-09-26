@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 import { randFirstName, randNumber, randUserName } from '@ngneat/falso';
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -64,18 +64,18 @@ describe('ProjectEffects', () => {
     const project = ProjectMockFactory();
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(KanbanEffects);
-    const workflows = [WorkflowMockFactory(3)];
+    const workflow = WorkflowMockFactory(3);
 
     store.overrideSelector(selectCurrentProject, project);
 
-    projectApiService.getWorkflows.mockReturnValue(
-      cold('-b|', { b: workflows })
-    );
+    projectApiService.getWorkflow.mockReturnValue(cold('-b|', { b: workflow }));
 
-    actions$ = hot('-a', { a: KanbanActions.initKanban() });
+    actions$ = hot('-a', {
+      a: KanbanActions.initKanban({ workflow: workflow.slug }),
+    });
 
     const expected = cold('--a', {
-      a: KanbanApiActions.fetchWorkflowsSuccess({ workflows }),
+      a: KanbanApiActions.fetchWorkflowSuccess({ workflow }),
     });
 
     expect(effects.loadKanbanWorkflows$).toBeObservable(expected);
@@ -85,12 +85,15 @@ describe('ProjectEffects', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(KanbanEffects);
     const stories = [StoryMockFactory()];
+    const workflow = WorkflowMockFactory(3);
 
     projectApiService.getAllStories.mockReturnValue(
       cold('-b|', { b: { stories, offset: 0, complete: false } })
     );
 
-    actions$ = hot('-a', { a: KanbanActions.initKanban() });
+    actions$ = hot('-a', {
+      a: KanbanActions.initKanban({ workflow: workflow.slug }),
+    });
 
     const expected = cold('--a', {
       a: KanbanApiActions.fetchStoriesSuccess({

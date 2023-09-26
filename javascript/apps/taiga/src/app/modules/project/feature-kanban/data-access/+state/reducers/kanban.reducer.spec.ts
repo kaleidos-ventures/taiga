@@ -301,7 +301,7 @@ describe('Kanban reducer', () => {
             [status.id]: stories,
           },
           dragging: [stories[0]],
-          workflows: [workflow],
+          workflow,
         },
         KanbanActions.storyDropped({
           ref: stories[0].ref!,
@@ -396,7 +396,7 @@ describe('Kanban reducer', () => {
           [status.id]: stories,
           [status2.id]: stories2,
         },
-        workflows: [workflow],
+        workflow,
       },
       KanbanEventsActions.reorderStory({
         stories: [stories[0].ref!],
@@ -453,7 +453,7 @@ describe('Kanban reducer', () => {
           [status.id]: stories,
           [status2.id]: stories2,
         },
-        workflows: [workflow],
+        workflow,
       },
       StoryDetailActions.updateStory({
         projectId: randUuid(),
@@ -490,7 +490,7 @@ describe('Kanban reducer', () => {
         stories: {
           [status.id]: stories,
         },
-        workflows: [workflow],
+        workflow,
       },
       StoryDetailActions.updateStory({
         projectId: randUuid(),
@@ -539,7 +539,7 @@ describe('Kanban reducer', () => {
           [status.id]: stories,
           [status2.id]: stories2,
         },
-        workflows: [workflow],
+        workflow,
       },
       projectEventActions.updateStory({
         story: {
@@ -604,7 +604,7 @@ describe('Kanban reducer', () => {
           [status.id]: stories,
           [status2.id]: stories2,
         },
-        workflows: [workflow],
+        workflow,
       },
       KanbanActions.removeMembers({ members: [assignee2] })
     );
@@ -651,7 +651,7 @@ describe('Kanban reducer', () => {
           [status.id]: stories,
           [status2.id]: stories2,
         },
-        workflows: [workflow],
+        workflow,
       },
       projectEventActions.updateStory({
         story: {
@@ -688,7 +688,7 @@ describe('Kanban reducer', () => {
           [status.id]: stories,
           [status2.id]: [],
         },
-        workflows: [workflow],
+        workflow,
       },
       KanbanApiActions.deleteStatusSuccess({
         status: status.id,
@@ -698,7 +698,7 @@ describe('Kanban reducer', () => {
     );
     expect(state.stories[status.id]).toBeUndefined();
     expect(state.stories[status2.id].length).toEqual(1);
-    expect(state.workflows![0].statuses.length).toEqual(11);
+    expect(state.workflow?.statuses.length).toEqual(11);
   });
 
   it('delete status and stories', () => {
@@ -722,7 +722,7 @@ describe('Kanban reducer', () => {
         stories: {
           [status.id]: stories,
         },
-        workflows: [workflow],
+        workflow,
       },
       KanbanApiActions.deleteStatusSuccess({
         status: status.id,
@@ -731,7 +731,7 @@ describe('Kanban reducer', () => {
       })
     );
     expect(state.stories[status.id]).toBeUndefined();
-    expect(state.workflows![0].statuses.length).toEqual(10);
+    expect(state.workflow?.statuses.length).toEqual(10);
   });
 
   describe('status dropped', () => {
@@ -742,7 +742,7 @@ describe('Kanban reducer', () => {
       const state = kanbanReducer.kanbanFeature.reducer(
         {
           ...initialKanbanState,
-          workflows: [workflow],
+          workflow,
         },
 
         KanbanActions.statusDropped({
@@ -754,15 +754,9 @@ describe('Kanban reducer', () => {
         })
       );
 
-      expect(state.workflows![0].statuses[0].id).toEqual(
-        workflow.statuses[1].id
-      );
-      expect(state.workflows![0].statuses[1].id).toEqual(
-        workflow.statuses[2].id
-      );
-      expect(state.workflows![0].statuses[2].id).toEqual(
-        workflow.statuses[0].id
-      );
+      expect(state.workflow?.statuses[0].id).toEqual(workflow.statuses[1].id);
+      expect(state.workflow?.statuses[1].id).toEqual(workflow.statuses[2].id);
+      expect(state.workflow?.statuses[2].id).toEqual(workflow.statuses[0].id);
     });
 
     it('sleft', () => {
@@ -772,7 +766,7 @@ describe('Kanban reducer', () => {
       const state = kanbanReducer.kanbanFeature.reducer(
         {
           ...initialKanbanState,
-          workflows: [workflow],
+          workflow,
         },
 
         KanbanActions.statusDropped({
@@ -784,22 +778,16 @@ describe('Kanban reducer', () => {
         })
       );
 
-      expect(state.workflows![0].statuses[0].id).toEqual(
-        workflow.statuses[1].id
-      );
-      expect(state.workflows![0].statuses[1].id).toEqual(
-        workflow.statuses[0].id
-      );
-      expect(state.workflows![0].statuses[2].id).toEqual(
-        workflow.statuses[2].id
-      );
+      expect(state.workflow?.statuses[0].id).toEqual(workflow.statuses[1].id);
+      expect(state.workflow?.statuses[1].id).toEqual(workflow.statuses[0].id);
+      expect(state.workflow?.statuses[2].id).toEqual(workflow.statuses[2].id);
     });
   });
 
   describe('select columns', () => {
     it('drag right', () => {
-      const workflows = [WorkflowMockFactory(3)];
-      const statuses = workflows[0].statuses;
+      const workflow = WorkflowMockFactory(3);
+      const statuses = workflow.statuses;
       const draggingStatus = statuses[0];
       const statusDropCandidate = {
         id: draggingStatus.id,
@@ -810,7 +798,7 @@ describe('Kanban reducer', () => {
       } as KanbanState['statusDropCandidate'];
 
       const columns = kanbanReducer.kanbanFeature.selectColums.projector(
-        workflows,
+        workflow,
         draggingStatus,
         statusDropCandidate
       );
@@ -832,8 +820,8 @@ describe('Kanban reducer', () => {
     });
 
     it('drag left', () => {
-      const workflows = [WorkflowMockFactory(3)];
-      const statuses = workflows[0].statuses;
+      const workflow = WorkflowMockFactory(3);
+      const statuses = workflow.statuses;
       const draggingStatus = statuses[1];
       const statusDropCandidate = {
         id: draggingStatus.id,
@@ -844,7 +832,7 @@ describe('Kanban reducer', () => {
       } as KanbanState['statusDropCandidate'];
 
       const columns = kanbanReducer.kanbanFeature.selectColums.projector(
-        workflows,
+        workflow,
         draggingStatus,
         statusDropCandidate
       );

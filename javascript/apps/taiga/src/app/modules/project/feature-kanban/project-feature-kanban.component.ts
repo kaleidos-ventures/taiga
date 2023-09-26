@@ -147,9 +147,12 @@ export class ProjectFeatureKanbanComponent {
     }
 
     // Load on init kanban page. Not on every reload
-    const workflow: Workflow['slug'] =
-      (this.route.snapshot.params['workflow'] as Workflow['slug']) ?? 'main';
-    this.store.dispatch(KanbanActions.initKanban({ workflow }));
+    const workflow: Workflow['slug'] = this.route.snapshot.params[
+      'workflow'
+    ] as Workflow['slug'];
+    if (workflow) {
+      this.store.dispatch(KanbanActions.initKanban({ workflow }));
+    }
 
     this.route.paramMap
       .pipe(

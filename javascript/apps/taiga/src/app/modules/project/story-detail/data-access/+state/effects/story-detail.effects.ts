@@ -59,15 +59,19 @@ export class StoryDetailEffects {
         this.store.select(selectWorkflow).pipe(filterNil()),
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
-      concatMap(([action, workflow, project]) => {
-        if (workflow && workflow.slug === action.story.workflow.slug) {
+      concatMap(([action, loadedWorkflow, project]) => {
+        const workflow =
+          loadedWorkflow ??
+          project.workflows?.find(
+            (workflow) => workflow.slug === action.story.workflow.slug
+          );
+        if (workflow?.slug === action.story.workflow.slug) {
           return of(
             StoryDetailApiActions.fetchWorkflowSuccess({
               workflow,
             })
           );
         }
-        console.log(action.story.workflow.slug);
         return this.projectApiService
           .getWorkflow(project?.id, action.story.workflow.slug)
           .pipe(
@@ -251,7 +255,7 @@ export class StoryDetailEffects {
   public updatesWorkflowStatusAfterDragAndDrop$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanActions.statusDropped, projectEventActions.statusReorder),
-      concatLatestFrom(() => [this.store.select(selectWorkflow)]),
+      concatLatestFrom(() => this.store.select(selectWorkflow)),
       map(([, workflow]) => {
         if (workflow) {
           return StoryDetailActions.newStatusOrderAfterDrag({

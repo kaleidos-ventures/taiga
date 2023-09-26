@@ -430,7 +430,7 @@ export class StoryDetailComponent {
     void this.router.navigateByUrl(
       `project/${this.state.get('project').id}/${
         this.state.get('project').slug
-      }/kanban`
+      }/kanban/${this.state.get('story').workflow.slug}`
     );
     if (ref) {
       requestAnimationFrame(() => {

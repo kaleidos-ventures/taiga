@@ -67,7 +67,6 @@ export class ProjectFeatureNewWorkflowComponent {
   public get getPreviousUrl(): string[] {
     const previousUrl = this.routeHistoryService.getPreviousUrl();
     const project = this.state.get('project');
-    console.log({ previousUrl });
     return previousUrl
       ? [previousUrl]
       : [`/project/${project.id}${project.slug}/overview`];

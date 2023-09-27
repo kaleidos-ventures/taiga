@@ -291,7 +291,7 @@ async def test_get_story_422_unprocessable_story_ref(client):
 ##########################################################
 
 
-async def test_update_story_200_ok_unprotected_attribute_ok(client):
+async def test_update_story_200_ok_unprotected_attribute_status_ok(client):
     project = await f.create_project()
     workflow = await project.workflows.afirst()
     status1 = await workflow.statuses.afirst()
@@ -299,6 +299,19 @@ async def test_update_story_200_ok_unprotected_attribute_ok(client):
     story = await f.create_story(project=project, workflow=workflow, status=status1)
 
     data = {"version": story.version, "status": status2.b64id}
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{project.b64id}/stories/{story.ref}", json=data)
+    assert response.status_code == status.HTTP_200_OK, response.text
+
+
+async def test_update_story_200_ok_unprotected_attribute_workflow_ok(client):
+    project = await f.create_project()
+    workflow1 = await project.workflows.afirst()
+    status1 = await workflow1.statuses.afirst()
+    workflow2 = await f.create_workflow(project=project)
+    story = await f.create_story(project=project, workflow=workflow1, status=status1)
+
+    data = {"version": story.version, "workflow": workflow2.slug}
     client.login(project.created_by)
     response = client.patch(f"/projects/{project.b64id}/stories/{story.ref}", json=data)
     assert response.status_code == status.HTTP_200_OK, response.text

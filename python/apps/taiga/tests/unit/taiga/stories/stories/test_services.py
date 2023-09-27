@@ -399,6 +399,90 @@ async def test_validate_and_process_values_to_update_error_wrong_status():
         fake_stories_repo.list_stories.assert_not_awaited()
 
 
+async def test_validate_and_process_values_to_update_ok_with_workflow():
+    project = f.build_project()
+    workflow1 = f.build_workflow(project=project)
+    status1 = f.build_workflow_status(workflow=workflow1)
+    story1 = f.build_story(project=project, workflow=workflow1, status=status1)
+    workflow2 = f.build_workflow(project=project)
+    status2 = f.build_workflow_status(workflow=workflow2)
+    status3 = f.build_workflow_status(workflow=workflow2)
+    story2 = f.build_story(project=project, workflow=workflow2, status=status2)
+    values = {"version": story1.version, "workflow": workflow2.slug}
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        fake_workflows_repo.get_workflow.return_value = workflow2
+        fake_workflows_repo.list_workflow_statuses.return_value = [status2]
+        fake_stories_repo.list_stories.return_value = [story2, status3]
+
+        valid_values = await services._validate_and_process_values_to_update(story=story1, values=values)
+
+        fake_workflows_repo.get_workflow.assert_awaited_once_with(
+            filters={"project_id": story1.project_id, "slug": workflow2.slug}, prefetch_related=["statuses"]
+        )
+        fake_workflows_repo.list_workflow_statuses.assert_awaited_once_with(
+            filters={"workflow_id": workflow2.id}, order_by=["order"], offset=0, limit=1
+        )
+        fake_stories_repo.list_stories.assert_awaited_once_with(
+            filters={"status_id": status2.id},
+            order_by=["-order"],
+            offset=0,
+            limit=1,
+        )
+
+        assert valid_values["workflow"] == workflow2
+        assert valid_values["order"] == services.DEFAULT_ORDER_OFFSET + story2.order
+
+
+async def test_validate_and_process_values_to_update_error_wrong_workflow():
+    story = f.build_story()
+    values = {"version": story.version, "workflow": "wrong_workflow"}
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        fake_workflows_repo.get_workflow.return_value = None
+
+        with pytest.raises(ex.InvalidWorkflowError):
+            await services._validate_and_process_values_to_update(story=story, values=values)
+
+        fake_workflows_repo.get_workflow.assert_awaited_once_with(
+            filters={"project_id": story.project_id, "slug": "wrong_workflow"}, prefetch_related=["statuses"]
+        )
+        fake_stories_repo.list_stories.assert_not_awaited()
+
+
+async def test_validate_and_process_values_to_update_error_workflow_without_statuses():
+    project = f.build_project()
+    workflow1 = f.build_workflow(project=project)
+    status1 = f.build_workflow_status(workflow=workflow1)
+    story = f.build_story(project=project, workflow=workflow1, status=status1)
+    workflow2 = f.build_workflow(project=project, statuses=None)
+    values = {"version": story.version, "workflow": workflow2.slug}
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
+    ):
+        fake_workflows_repo.get_workflow.return_value = workflow2
+        fake_workflows_repo.list_workflow_statuses.return_value = []
+
+        with pytest.raises(ex.WorkflowHasNotStatusesError):
+            await services._validate_and_process_values_to_update(story=story, values=values)
+
+        fake_workflows_repo.get_workflow.assert_awaited_once_with(
+            filters={"project_id": story.project_id, "slug": workflow2.slug}, prefetch_related=["statuses"]
+        )
+        fake_workflows_repo.list_workflow_statuses.assert_awaited_once_with(
+            filters={"workflow_id": workflow2.id}, order_by=["order"], offset=0, limit=1
+        )
+        fake_stories_repo.list_stories.assert_not_awaited()
+
+
 #######################################################
 # _calculate_offset
 #######################################################

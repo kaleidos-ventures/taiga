@@ -88,7 +88,7 @@ const routes: Routes = [
         canDeactivate: [CanDeactivateGuard],
         data: {
           kanban: true,
-          reuseComponent: true,
+          reuseComponent: false,
         },
       },
       {

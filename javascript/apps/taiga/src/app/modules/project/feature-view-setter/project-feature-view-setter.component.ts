@@ -41,7 +41,7 @@ import {
 } from '@angular/router';
 import { RxState } from '@rx-angular/state';
 import { CommonModule } from '@angular/common';
-import { StoryDetail, StoryView, Project, Story } from '@taiga/data';
+import { StoryDetail, StoryView, Project, Story, Workflow } from '@taiga/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface ProjectFeatureViewSetterComponentState {
@@ -99,11 +99,6 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
       )
     );
 
-    this.state.connect(
-      'isKanban',
-      this.state.select('url').pipe(map((url) => url.endsWith('/kanban')))
-    );
-
     this.state.hold(
       this.state.select('kanbanHost').pipe(distinctUntilChanged(), filterNil()),
       (host) => {
@@ -128,7 +123,21 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([url, data, params]) => {
-        if (!url.endsWith('/kanban') && !!data.stories) {
+        this.state.connect(
+          'isKanban',
+          this.state
+            .select('url')
+            .pipe(
+              map((url) =>
+                url.endsWith(`/kanban/${params.workflow as Workflow['slug']}`)
+              )
+            )
+        );
+
+        if (
+          !url.endsWith(`/kanban/${params.workflow as Workflow['slug']}`) &&
+          !!data.stories
+        ) {
           const storyParams = params as StoryParams;
           const needRedirect = params.slug !== (data.project as Project).slug;
           if (needRedirect) {

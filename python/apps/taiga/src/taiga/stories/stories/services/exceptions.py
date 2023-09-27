@@ -13,6 +13,14 @@ class InvalidStatusError(TaigaServiceException):
     ...
 
 
+class InvalidWorkflowError(TaigaServiceException):
+    ...
+
+
+class WorkflowHasNotStatusesError(TaigaServiceException):
+    ...
+
+
 class InvalidStoryRefError(TaigaServiceException):
     ...
 

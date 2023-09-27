@@ -108,7 +108,7 @@ async def list_paginated_stories(
 async def get_story(project_id: UUID, ref: int) -> Story | None:
     return await stories_repositories.get_story(
         filters={"ref": ref, "project_id": project_id},
-        select_related=["project", "workspace"],
+        select_related=["project", "workspace", "workflow"],
     )
 
 
@@ -181,10 +181,30 @@ async def _validate_and_process_values_to_update(story: Story, values: dict[str,
             output["status"] = status
 
             # Calculate new order
-            latest_story = await stories_repositories.list_stories(
-                filters={"status_id": status.id}, order_by=["-order"], offset=0, limit=1
+            output["order"] = await _calculate_next_order(status_id=status.id)
+
+    elif workflow_slug := output.pop("workflow", None):
+        workflow = await workflows_repositories.get_workflow(
+            filters={"project_id": story.project_id, "slug": workflow_slug}, prefetch_related=["statuses"]
+        )
+
+        if not workflow:
+            raise ex.InvalidWorkflowError("The provided workflow is not valid.")
+        elif workflow.slug != story.workflow.slug:
+            output["workflow"] = workflow
+
+            # Set first status
+            first_status = await workflows_repositories.list_workflow_statuses(
+                filters={"workflow_id": workflow.id}, order_by=["order"], offset=0, limit=1
             )
-            output["order"] = DEFAULT_ORDER_OFFSET + (latest_story[0].order if latest_story else 0)
+
+            if not first_status:
+                raise ex.WorkflowHasNotStatusesError("The provided workflow hasn't any statuses.")
+
+            output["status"] = first_status[0]
+
+            # Calculate new order
+            output["order"] = await _calculate_next_order(status_id=first_status[0].id)
 
     return output
 
@@ -302,6 +322,14 @@ async def reorder_stories(
     await stories_events.emit_when_stories_are_reordered(project=project, reorder=reorder_story_serializer)
 
     return reorder_story_serializer
+
+
+async def _calculate_next_order(status_id: UUID) -> Decimal:
+    latest_story = await stories_repositories.list_stories(
+        filters={"status_id": status_id}, order_by=["-order"], offset=0, limit=1
+    )
+
+    return DEFAULT_ORDER_OFFSET + (latest_story[0].order if latest_story else 0)
 
 
 ##########################################################

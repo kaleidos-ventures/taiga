@@ -29,6 +29,7 @@ class UpdateStoryValidator(BaseModel):
     title: Title | None
     description: str | None
     status: B64UUID | None
+    workflow: str | None
 
 
 class ReorderValidator(BaseModel):

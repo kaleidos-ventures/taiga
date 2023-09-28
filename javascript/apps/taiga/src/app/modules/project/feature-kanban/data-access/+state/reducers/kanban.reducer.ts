@@ -9,7 +9,10 @@
 import { createFeature, createSelector, on } from '@ngrx/store';
 import { Status, Story, Workflow } from '@taiga/data';
 import { DropCandidate } from '@taiga/ui/drag/drag.model';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  projectEventActions,
+  projectApiActions,
+} from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   KanbanStory,
   KanbanStoryA11y,
@@ -32,7 +35,6 @@ import {
   replaceStory,
   setIntialPosition,
 } from './kanban.reducer.helpers';
-import { projectApiActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 
 export interface KanbanState {
   loadingWorkflow: boolean;
@@ -794,12 +796,13 @@ export const reducer = createImmerReducer(
   ),
   on(
     projectApiActions.updateWorkflowSuccess,
-    (state, { workflow, oldSlug }): KanbanState => {
-      if (state.currentWorkflowSlug === oldSlug) {
+    projectEventActions.updateWorkflow,
+    (state, { workflow }): KanbanState => {
+      if (state.workflow?.id === workflow.id) {
         state.currentWorkflowSlug = workflow.slug;
       }
 
-      if (state.workflow && state.workflow.slug === oldSlug) {
+      if (state.workflow?.id === workflow.id) {
         state.workflow.name = workflow.name;
         state.workflow.slug = workflow.slug;
       }

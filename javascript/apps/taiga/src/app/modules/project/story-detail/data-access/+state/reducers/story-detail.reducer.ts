@@ -491,6 +491,21 @@ export const reducer = createImmerReducer(
 
       return state;
     }
+  ),
+  on(
+    projectEventActions.updateWorkflow,
+    (state, { workflow }): StoryDetailState => {
+      if (state.workflow?.id === workflow.id) {
+        state.workflow.name = workflow.name;
+        state.workflow.slug = workflow.slug;
+      }
+
+      if (state.story?.workflow.id === workflow.id) {
+        state.story.workflow.name = workflow.name;
+        state.story.workflow.slug = workflow.slug;
+      }
+      return state;
+    }
   )
 );
 

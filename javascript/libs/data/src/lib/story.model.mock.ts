@@ -15,6 +15,7 @@ import {
   randSlug,
   randText,
   randUser,
+  randUuid,
 } from '@ngneat/falso';
 import { Status, StatusMockFactory, UserMockFactory } from '..';
 import { Story, StoryDetail } from './story.model';
@@ -66,6 +67,7 @@ export const StoryDetailMockFactory = (
     slug: randSlug(),
     status: statuses[Math.floor(Math.random() * statuses.length)],
     workflow: {
+      id: randUuid(),
       name: randText(),
       slug: randSlug(),
     },

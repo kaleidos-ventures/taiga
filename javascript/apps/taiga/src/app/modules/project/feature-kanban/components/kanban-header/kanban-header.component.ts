@@ -9,6 +9,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslocoDirective } from '@ngneat/transloco';
+import { TooltipDirective } from '@taiga/ui/tooltip';
 import {
   TuiButtonModule,
   TuiDataListModule,
@@ -31,6 +32,7 @@ import { Store } from '@ngrx/store';
   imports: [
     CommonModule,
     TranslocoDirective,
+    TooltipDirective,
     TuiHostedDropdownModule,
     TuiButtonModule,
     TuiDataListModule,
@@ -60,11 +62,11 @@ export class KanbanHeaderComponent {
   }
 
   public toggleEditWorkflowForm() {
+    this.openWorkflowOptions = false;
     this.editStatusFormOpened = !this.editStatusFormOpened;
   }
 
   public editWorkflowName(workflow: Workflow['name']) {
-    this.openWorkflowOptions = false;
     this.toggleEditWorkflowForm();
     this.store.dispatch(
       updateWorkflow({

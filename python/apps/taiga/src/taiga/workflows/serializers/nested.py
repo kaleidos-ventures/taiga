@@ -9,6 +9,7 @@ from taiga.base.serializers import UUIDB64, BaseModel
 
 
 class WorkflowNestedSerializer(BaseModel):
+    id: UUIDB64
     name: str
     slug: str
 

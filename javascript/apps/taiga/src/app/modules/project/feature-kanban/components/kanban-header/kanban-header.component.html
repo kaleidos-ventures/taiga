@@ -33,10 +33,12 @@ Copyright (c) 2023-present Kaleidos INC
     [(open)]="openWorkflowOptions">
     <button
       #statusOptions
+      *ngIf="project.userIsAdmin && project.workflows.length > 1"
       [attr.aria-label]="t('kanban.status_options')"
       role="menu"
       aria-haspopup="true"
       [attr.aria-expanded]="openWorkflowOptions"
+      [tgUiTooltip]="t('kanban.status_options')"
       icon="more-vertical"
       data-test="status-options"
       class="status-options-menu-button"

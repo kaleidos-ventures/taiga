@@ -21,7 +21,7 @@ export interface Story {
 }
 
 export interface StoryDetail extends Story {
-  workflow: Pick<Workflow, 'name' | 'slug'>;
+  workflow: Pick<Workflow, 'id' | 'name' | 'slug'>;
   prev: null | {
     ref: Story['ref'];
     title: Story['title'];

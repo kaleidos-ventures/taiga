@@ -224,16 +224,11 @@ export class ProjectEffects {
             .updateWorkflow(action.name, action.slug, project.id)
             .pipe(
               map((updatedWorkflow) => {
-                // void this.router.navigate(
-                //   [`project/${project.id}/${project.slug}/kanban/${updatedWorkflow.slug}`],
-                //   { replaceUrl: true }
-                // );
                 this.location.go(
                   `project/${project.id}/${project.slug}/kanban/${updatedWorkflow.slug}`
                 );
                 return ProjectActions.projectApiActions.updateWorkflowSuccess({
                   workflow: updatedWorkflow,
-                  oldSlug: action.slug,
                 });
               })
             );

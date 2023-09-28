@@ -279,6 +279,15 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       });
 
     this.wsService
+      .projectEvents<{ workflow: Workflow }>('workflows.update')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        this.store.dispatch(
+          projectEventActions.updateWorkflow(eventResponse.event.content)
+        );
+      });
+
+    this.wsService
       .projectEvents<{ story: StoryDetail }>('stories.update')
       .pipe(untilDestroyed(this))
       .subscribe((msg) => {

@@ -114,10 +114,13 @@ export const reducer = createImmerReducer(
   ),
   on(
     ProjectActions.projectApiActions.updateWorkflowSuccess,
-    (state, { workflow, oldSlug }): ProjectState => {
+    ProjectActions.projectEventActions.updateWorkflow,
+    (state, { workflow }): ProjectState => {
       if (state.currentProjectId) {
         const workflows = state.projects[state.currentProjectId].workflows;
-        const workflowIndex = workflows.findIndex((it) => it.slug === oldSlug);
+        const workflowIndex = workflows.findIndex(
+          (it) => it.id === workflow.id
+        );
         workflows[workflowIndex].name = workflow.name;
         workflows[workflowIndex].slug = workflow.slug;
       }

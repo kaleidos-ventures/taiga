@@ -88,6 +88,7 @@ describe('StoryDetailEffects', () => {
       project.workflows.push(workflow);
 
       story.workflow = {
+        id: workflow.id,
         slug: workflow.slug,
         name: workflow.name,
       };
@@ -119,6 +120,7 @@ describe('StoryDetailEffects', () => {
       const story = StoryDetailMockFactory();
 
       story.workflow = {
+        id: workflow.id,
         slug: storyWorkflow.slug,
         name: storyWorkflow.name,
       };

@@ -23,10 +23,16 @@ import {
   ElementRef,
   HostBinding,
   HostListener,
+  inject,
   Input,
   OnInit,
+  DestroyRef,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  Router,
+} from '@angular/router';
 import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
 import { Subject } from 'rxjs';
@@ -34,6 +40,7 @@ import { LocalStorageService } from '~/app/shared/local-storage/local-storage.se
 import { ProjectNavigationSettingsComponent } from './components/project-navigation-settings/project-navigation-settings.component';
 import { CommonModule } from '@angular/common';
 import { ProjectNavigationMenuComponent } from './components/project-navigation-menu/project-navigation-menu.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 const collapseMenuAnimation = '200ms ease-out';
 const openMenuAnimation = '200ms ease-in';
@@ -199,6 +206,7 @@ export class ProjectNavigationComponent implements OnInit, AfterViewInit {
   public showProjectSettings = false;
   public settingsAnimationInProgress = false;
   public animationEvents$ = new Subject<AnimationEvent>();
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private el: ElementRef,
@@ -209,7 +217,7 @@ export class ProjectNavigationComponent implements OnInit, AfterViewInit {
 
   public ngOnInit() {
     this.collapsed = !!LocalStorageService.get('projectnav-collapsed');
-    this.router.events.subscribe(() => {
+    this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.showProjectSettings = this.isSettings();
     });
     this.showProjectSettings = this.isSettings();
@@ -221,7 +229,14 @@ export class ProjectNavigationComponent implements OnInit, AfterViewInit {
   }
 
   public isSettings() {
-    return !!this.route.snapshot.data.settings;
+    const getActiveRoute = (
+      route: ActivatedRouteSnapshot
+    ): ActivatedRouteSnapshot => {
+      return route.firstChild ? getActiveRoute(route.firstChild) : route;
+    };
+    const active = getActiveRoute(this.route.snapshot);
+
+    return !!active.data.settings;
   }
 
   public calcBlockSize() {

@@ -56,7 +56,7 @@ export class StoryDetailEffects {
     return this.actions$.pipe(
       ofType(StoryDetailApiActions.fetchStorySuccess),
       concatLatestFrom(() => [
-        this.store.select(selectWorkflow).pipe(filterNil()),
+        this.store.select(selectWorkflow),
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),
       concatMap(([action, loadedWorkflow, project]) => {

@@ -16,18 +16,20 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   HostBinding,
   HostListener,
   inject,
   Input,
   OnInit,
-  DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ActivatedRoute,
   ActivatedRouteSnapshot,
@@ -37,10 +39,8 @@ import { RxState } from '@rx-angular/state';
 import { Project } from '@taiga/data';
 import { Subject } from 'rxjs';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
-import { ProjectNavigationSettingsComponent } from './components/project-navigation-settings/project-navigation-settings.component';
-import { CommonModule } from '@angular/common';
 import { ProjectNavigationMenuComponent } from './components/project-navigation-menu/project-navigation-menu.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ProjectNavigationSettingsComponent } from './components/project-navigation-settings/project-navigation-settings.component';
 
 const collapseMenuAnimation = '200ms ease-out';
 const openMenuAnimation = '200ms ease-in';

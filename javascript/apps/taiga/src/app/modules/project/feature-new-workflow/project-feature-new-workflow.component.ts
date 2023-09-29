@@ -12,7 +12,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { Project, Workflow } from '@taiga/data';
+import { TuiNotification } from '@taiga-ui/core';
+import { Membership, Project, Workflow } from '@taiga/data';
+import { AppService } from '~/app/services/app.service';
+import { WsService } from '~/app/services/ws';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { filterNil } from '~/app/shared/utils/operators';
 import {
@@ -39,7 +42,9 @@ export class ProjectFeatureNewWorkflowComponent {
     private store: Store,
     private router: Router,
     private actions$: Actions,
-    private routeHistoryService: RouteHistoryService
+    private routeHistoryService: RouteHistoryService,
+    private wsService: WsService,
+    private appService: AppService
   ) {
     this.state.connect(
       'project',
@@ -50,6 +55,8 @@ export class ProjectFeatureNewWorkflowComponent {
       .subscribe(() => {
         this.cancelCreateWorkflow();
       });
+
+    this.events();
   }
 
   public createWorkflow(workflow: Workflow['name']) {
@@ -70,5 +77,33 @@ export class ProjectFeatureNewWorkflowComponent {
     return previousUrl
       ? [previousUrl]
       : [`/project/${project.id}${project.slug}/overview`];
+  }
+
+  public events() {
+    this.wsService
+      .userEvents<{ membership: Membership }>('projectmemberships.update')
+      .pipe(untilDestroyed(this))
+      .subscribe((eventResponse) => {
+        const response = eventResponse.event.content;
+        if (!response.membership.role.isAdmin) {
+          this.userLoseAdminRole();
+        }
+      });
+  }
+
+  public userLoseAdminRole() {
+    this.appService.toastNotification({
+      message: 'errors.admin_permission',
+      paramsMessage: {
+        project: this.state.get('project').name,
+      },
+      status: TuiNotification.Warning,
+      closeOnNavigation: false,
+    });
+    void this.router.navigate([
+      `/project/${this.state.get('project').id}/${
+        this.state.get('project').slug
+      }/overview`,
+    ]);
   }
 }

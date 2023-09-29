@@ -236,7 +236,18 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       this.wsService.projectEvents('projectroles.update')
     )
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
+      .subscribe((data) => {
+        const content = data.event.content as { membership: Membership };
+        if (!content.membership.role.isAdmin) {
+          this.appService.toastNotification({
+            message: 'errors.admin_permission',
+            paramsMessage: {
+              project: content.membership.project?.name,
+            },
+            status: TuiNotification.Error,
+            closeOnNavigation: false,
+          });
+        }
         this.store.dispatch(
           permissionsUpdate({ id: this.state.get('project').id })
         );

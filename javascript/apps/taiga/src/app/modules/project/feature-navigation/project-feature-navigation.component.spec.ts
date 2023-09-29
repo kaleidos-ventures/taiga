@@ -15,7 +15,7 @@ import {
   Spectator,
 } from '@ngneat/spectator/jest';
 import { ProjectMockFactory } from '@taiga/data';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { getTranslocoModule } from '~/app/transloco/transloco-testing.module';
 import { ProjectNavigationComponent } from './project-feature-navigation.component';
@@ -57,6 +57,9 @@ describe('ProjectNavigationComponent', () => {
                 settings: true,
               },
             },
+            data: of({
+              settings: true,
+            }),
           },
         },
       ],

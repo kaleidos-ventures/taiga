@@ -27,11 +27,10 @@ Copyright (c) 2023-present Kaleidos INC
         [class.accent]="isLast && accent">
         {{ crumb }}
       </span>
-      <span
+      <tui-svg
         class="crumb-divider"
-        *ngIf="!(hideLastCrumb && i === crumbs.length - 2) && !isLast">
-        &gt;
-      </span>
+        *ngIf="!(hideLastCrumb && i === crumbs.length - 2) && !isLast"
+        src="chevron-right"></tui-svg>
     </ng-container>
   </ng-container>
   <ng-container *ngIf="type === 'collapsed'">

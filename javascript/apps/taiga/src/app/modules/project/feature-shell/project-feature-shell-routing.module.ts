@@ -22,11 +22,73 @@ const routes: Routes = [
     },
     children: [
       {
-        path: '',
+        path: ':slug/kanban',
+        redirectTo: ':slug/kanban/main',
+        pathMatch: 'full',
+      },
+      {
+        path: 'kanban',
+        redirectTo: '/kanban/main',
+        pathMatch: 'full',
+      },
+      {
+        path: ':slug/kanban/:workflow',
         loadChildren: () =>
           import(
-            '~/app/modules/project/feature-overview/project-feature-overview.module'
-          ).then((m) => m.ProjectFeatureOverviewModule),
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          kanban: true,
+        },
+      },
+      {
+        path: ':slug/stories/:storyRef',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          stories: true,
+        },
+      },
+      {
+        path: 'stories/:storyRef',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          stories: true,
+        },
+      },
+      {
+        path: ':slug/settings',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/settings/feature-settings/feature-settings.module'
+          ).then((m) => m.ProjectSettingsFeatureSettingsModule),
+        data: {
+          settings: true,
+        },
+        resolve: {
+          project: ProjectAdminResolver,
+        },
+      },
+      {
+        path: 'settings',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/settings/feature-settings/feature-settings.module'
+          ).then((m) => m.ProjectSettingsFeatureSettingsModule),
+        data: {
+          settings: true,
+        },
+        resolve: {
+          project: ProjectAdminResolver,
+        },
       },
       {
         path: 'overview',
@@ -49,94 +111,16 @@ const routes: Routes = [
         },
       },
       {
-        path: 'kanban',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
-          ).then((m) => m.ProjectFeatureViewSetterModule),
-        canDeactivate: [CanDeactivateGuard],
-      },
-      {
-        path: ':slug',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/feature-overview/project-feature-overview.module'
-          ).then((m) => m.ProjectFeatureOverviewModule),
-      },
-      {
-        path: ':slug/kanban',
-        redirectTo: ':slug/kanban/main',
-        pathMatch: 'full',
-      },
-      {
         path: ':slug/new-workflow',
         loadChildren: () =>
           import(
             '~/app/modules/project/feature-new-workflow/project-feature-new-workflow.module'
           ).then((m) => m.ProjectFeatureNewWorkflowModule),
-        canDeactivate: [CanDeactivateGuard],
+        resolve: {
+          project: ProjectAdminResolver,
+        },
         data: {
           newKanban: true,
-        },
-      },
-      {
-        path: ':slug/kanban/:workflow',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
-          ).then((m) => m.ProjectFeatureViewSetterModule),
-        canDeactivate: [CanDeactivateGuard],
-        data: {
-          kanban: true,
-          reuseComponent: false,
-        },
-      },
-      {
-        path: 'stories/:storyRef',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
-          ).then((m) => m.ProjectFeatureViewSetterModule),
-        canDeactivate: [CanDeactivateGuard],
-        data: {
-          kanban: true,
-        },
-      },
-      {
-        path: ':slug/stories/:storyRef',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
-          ).then((m) => m.ProjectFeatureViewSetterModule),
-        canDeactivate: [CanDeactivateGuard],
-        data: {
-          stories: true,
-        },
-      },
-      {
-        path: 'settings',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/settings/feature-settings/feature-settings.module'
-          ).then((m) => m.ProjectSettingsFeatureSettingsModule),
-        data: {
-          settings: true,
-        },
-        resolve: {
-          project: ProjectAdminResolver,
-        },
-      },
-      {
-        path: ':slug/settings',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/settings/feature-settings/feature-settings.module'
-          ).then((m) => m.ProjectSettingsFeatureSettingsModule),
-        data: {
-          settings: true,
-        },
-        resolve: {
-          project: ProjectAdminResolver,
         },
       },
     ],

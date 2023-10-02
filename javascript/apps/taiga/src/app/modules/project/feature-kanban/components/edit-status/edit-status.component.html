@@ -31,8 +31,11 @@ Copyright (c) 2023-present Kaleidos INC
           [placeholder]="t('kanban.write_status')" />
         <ng-container inputError>
           <tg-ui-error error="required">
-            {{ t('kanban.status_empty') }}</tg-ui-error
-          >
+            {{ t('kanban.status_empty') }}
+          </tg-ui-error>
+          <tg-ui-error error="pattern">
+            {{ t('kanban.status_empty') }}
+          </tg-ui-error>
         </ng-container>
       </tg-ui-input>
     </div>

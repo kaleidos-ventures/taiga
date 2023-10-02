@@ -16,8 +16,10 @@ CallableGenerator = Generator[Callable[..., Any], None, None]
 class B64UUID(UUID):
     @classmethod
     def __modify_schema__(cls: Type["B64UUID"], field_schema: dict[str, Any]) -> None:
-        field_schema["example"] = "6JgsbGyoEe2VExhWgGrI2w"
-        field_schema["format"] = None
+        field_schema.update(
+            example="6JgsbGyoEe2VExhWgGrI2w",
+            format=None,
+        )
 
     @classmethod
     def __get_validators__(cls: Type["B64UUID"]) -> CallableGenerator:

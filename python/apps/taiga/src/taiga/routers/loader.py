@@ -13,6 +13,7 @@ from taiga.auth import api as auth_api  # noqa
 from taiga.integrations.github.auth import api as github_auth_api  # noqa
 from taiga.integrations.gitlab.auth import api as gitlab_auth_api  # noqa
 from taiga.integrations.google.auth import api as google_auth_api  # noqa
+from taiga.notifications import api as notifications_api  # noqa
 from taiga.projects.invitations import api as projects_invitations_api  # noqa
 from taiga.projects.memberships import api as projects_memberships_api  # noqa
 from taiga.projects.projects import api as projects_api  # noqa
@@ -39,6 +40,7 @@ def load_routes(api: FastAPI) -> None:
     api.include_router(routes.auth)
     api.include_router(routes.users)
     api.include_router(routes.unauth_users)
+    api.include_router(routes.notifications)
     api.include_router(routes.workspaces)
     api.include_router(routes.workspaces_invitations)
     api.include_router(routes.unauth_workspaces_invitations)

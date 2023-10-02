@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "taiga.commons.storage",
     "taiga.emails",
     "taiga.mediafiles",
+    "taiga.notifications",
     "taiga.projects.invitations",
     "taiga.projects.memberships",
     "taiga.projects.projects",

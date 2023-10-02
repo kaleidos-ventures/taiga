@@ -33,7 +33,9 @@ async def test_create_story_assignment_not_member():
         ) as fake_story_assignment_repo,
         pytest.raises(ex.InvalidAssignmentError),
     ):
-        await services.create_story_assignment(project_id=story.project.id, story=story, username=user.username)
+        await services.create_story_assignment(
+            project_id=story.project.id, story=story, username=user.username, created_by=story.created_by
+        )
         fake_story_assignment_repo.create_story_assignment.assert_not_awaited()
 
 
@@ -55,14 +57,20 @@ async def test_create_story_assignment_user_without_view_story_permission():
         patch(
             "taiga.stories.assignments.services.stories_assignments_events", autospec=True
         ) as fake_stories_assignments_events,
+        patch(
+            "taiga.stories.assignments.services.stories_assignments_notifications", autospec=True
+        ) as fake_stories_assignments_notifications,
         pytest.raises(ex.InvalidAssignmentError),
     ):
         fake_pj_memberships_repo.get_project_membership.return_value = None
         fake_story_assignment_repo.create_story_assignment.return_value = None, False
 
-        await services.create_story_assignment(project_id=story.project.id, story=story, username=user.username)
-        fake_stories_assignments_events.emit_event_when_story_assignment_is_created.assert_not_awaited()
+        await services.create_story_assignment(
+            project_id=story.project.id, story=story, username=user.username, created_by=story.created_by
+        )
         fake_story_assignment_repo.create_story_assignment.assert_not_awaited()
+        fake_stories_assignments_events.emit_event_when_story_assignment_is_created.assert_not_awaited()
+        fake_stories_assignments_notifications.notify_when_story_is_assigned.assert_not_awaited()
 
 
 async def test_create_story_assignment_ok():
@@ -83,17 +91,25 @@ async def test_create_story_assignment_ok():
         patch(
             "taiga.stories.assignments.services.stories_assignments_events", autospec=True
         ) as fake_stories_assignments_events,
+        patch(
+            "taiga.stories.assignments.services.stories_assignments_notifications", autospec=True
+        ) as fake_stories_assignments_notifications,
     ):
         fake_pj_memberships_repo.get_project_membership.return_value = membership
         fake_story_assignment_repo.create_story_assignment.return_value = story_assignment, True
 
-        await services.create_story_assignment(project_id=project.id, story=story, username=user.username)
-        fake_stories_assignments_events.emit_event_when_story_assignment_is_created.assert_awaited_once_with(
-            story_assignment=story_assignment
+        await services.create_story_assignment(
+            project_id=project.id, story=story, username=user.username, created_by=story.created_by
         )
         fake_story_assignment_repo.create_story_assignment.assert_awaited_once_with(
             story=story,
             user=user,
+        )
+        fake_stories_assignments_events.emit_event_when_story_assignment_is_created.assert_awaited_once_with(
+            story_assignment=story_assignment
+        )
+        fake_stories_assignments_notifications.notify_when_story_is_assigned.assert_awaited_once_with(
+            story=story, assigned_to=user, emitted_by=story.created_by
         )
 
 
@@ -115,21 +131,31 @@ async def test_create_story_assignment_already_assignment():
         patch(
             "taiga.stories.assignments.services.stories_assignments_events", autospec=True
         ) as fake_stories_assignments_events,
+        patch(
+            "taiga.stories.assignments.services.stories_assignments_notifications", autospec=True
+        ) as fake_stories_assignments_notifications,
     ):
         fake_pj_memberships_repo.get_project_membership.return_value = membership
         fake_story_assignment_repo.create_story_assignment.return_value = story_assignment, True
 
-        await services.create_story_assignment(project_id=project.id, story=story, username=user.username)
+        await services.create_story_assignment(
+            project_id=project.id, story=story, username=user.username, created_by=story.created_by
+        )
 
         fake_story_assignment_repo.create_story_assignment.return_value = story_assignment, False
 
-        await services.create_story_assignment(project_id=project.id, story=story, username=user.username)
-        fake_stories_assignments_events.emit_event_when_story_assignment_is_created.assert_awaited_once_with(
-            story_assignment=story_assignment
+        await services.create_story_assignment(
+            project_id=project.id, story=story, username=user.username, created_by=story.created_by
         )
         fake_story_assignment_repo.create_story_assignment.assert_awaited_with(
             story=story,
             user=user,
+        )
+        fake_stories_assignments_events.emit_event_when_story_assignment_is_created.assert_awaited_once_with(
+            story_assignment=story_assignment
+        )
+        fake_stories_assignments_notifications.notify_when_story_is_assigned.assert_awaited_once_with(
+            story=story, assigned_to=user, emitted_by=story.created_by
         )
 
 
@@ -175,15 +201,20 @@ async def test_delete_story_assignment_fail():
         patch(
             "taiga.stories.assignments.services.stories_assignments_events", autospec=True
         ) as fake_stories_assignments_events,
+        patch(
+            "taiga.stories.assignments.services.stories_assignments_notifications", autospec=True
+        ) as fake_stories_assignments_notifications,
     ):
         fake_story_assignment_repo.delete_stories_assignments.return_value = 0
 
-        await services.delete_story_assignment(story_assignment=story_assignment)
-        fake_stories_assignments_events.emit_event_when_story_assignment_is_deleted.assert_not_awaited()
-
+        await services.delete_story_assignment(
+            story=story, story_assignment=story_assignment, deleted_by=story.created_by
+        )
         fake_story_assignment_repo.delete_stories_assignments.assert_awaited_once_with(
             filters={"id": story_assignment.id},
         )
+        fake_stories_assignments_events.emit_event_when_story_assignment_is_deleted.assert_not_awaited()
+        fake_stories_assignments_notifications.notify_when_story_is_unassigned.assert_not_awaited()
 
 
 async def test_delete_story_assignment_ok():
@@ -198,14 +229,21 @@ async def test_delete_story_assignment_ok():
         patch(
             "taiga.stories.assignments.services.stories_assignments_events", autospec=True
         ) as fake_stories_assignments_events,
+        patch(
+            "taiga.stories.assignments.services.stories_assignments_notifications", autospec=True
+        ) as fake_stories_assignments_notifications,
     ):
         fake_story_assignment_repo.delete_stories_assignments.return_value = 1
 
-        await services.delete_story_assignment(story_assignment=story_assignment)
+        await services.delete_story_assignment(
+            story=story, story_assignment=story_assignment, deleted_by=story.created_by
+        )
+        fake_story_assignment_repo.delete_stories_assignments.assert_awaited_once_with(
+            filters={"id": story_assignment.id},
+        )
         fake_stories_assignments_events.emit_event_when_story_assignment_is_deleted.assert_awaited_once_with(
             story_assignment=story_assignment
         )
-
-        fake_story_assignment_repo.delete_stories_assignments.assert_awaited_once_with(
-            filters={"id": story_assignment.id},
+        fake_stories_assignments_notifications.notify_when_story_is_unassigned.assert_awaited_once_with(
+            story=story, unassigned_to=user, emitted_by=story.created_by
         )

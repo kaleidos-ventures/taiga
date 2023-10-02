@@ -19,6 +19,7 @@ from .files import (  # noqa
     build_string_uploadfile,
 )
 from .mediafiles import MediafileFactory, build_mediafile, create_mediafile  # noqa
+from .notifications import NotificationFactory, build_notification, create_notification  # noqa
 from .projects import (  # noqa
     ProjectFactory,
     ProjectInvitationFactory,

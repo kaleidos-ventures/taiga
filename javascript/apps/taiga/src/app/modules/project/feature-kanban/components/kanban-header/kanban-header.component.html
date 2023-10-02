@@ -27,7 +27,8 @@ Copyright (c) 2023-present Kaleidos INC
         t('kanban.workflows').slice(1),
       workflow.name
     ]"
-    [accent]="true">
+    [accent]="true"
+    class="kanban-header-breadcrumbs">
   </tg-ui-breadcrumb>
 
   <tui-hosted-dropdown
@@ -43,7 +44,9 @@ Copyright (c) 2023-present Kaleidos INC
       role="menu"
       aria-haspopup="true"
       [attr.aria-expanded]="openWorkflowOptions"
-      [tgUiTooltip]="t('kanban.status_options')"
+      [tgUiTooltip]="
+        t('kanban.status_options_tooltip', { name: workflow.name })
+      "
       icon="more-vertical"
       data-test="status-options"
       class="status-options-menu-button"
@@ -87,7 +90,7 @@ Copyright (c) 2023-present Kaleidos INC
   </ng-template>
 
   <tg-new-workflow-form
-    *ngIf="editStatusFormOpened"
+    *ngIf="editStatusFormOpened && project.userIsAdmin"
     class="workflow-form"
     [workflow]="workflow"
     (createWorkflow)="editWorkflowName($event)"

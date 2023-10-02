@@ -10,7 +10,6 @@ Copyright (c) 2023-present Kaleidos INC
 @import url("shared/option-list.css");
 
 :host {
-  align-items: center;
   display: flex;
   gap: var(--spacing-4);
 }
@@ -31,12 +30,15 @@ Copyright (c) 2023-present Kaleidos INC
   @mixin separator;
 }
 
+.kanban-header-breadcrumbs {
+  padding-block-start: var(--spacing-4);
+}
+
 .workflow-form {
   &::ng-deep {
     background: transparent;
-    border: 0;
+    border-color: transparent;
     box-shadow: none;
-    margin-block-start: var(--spacing-4);
     padding: 0;
 
     &.input-wrapper {

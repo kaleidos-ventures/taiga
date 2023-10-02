@@ -12,7 +12,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiNotification } from '@taiga-ui/core';
 import { Membership, Project, Workflow } from '@taiga/data';
 import { AppService } from '~/app/services/app.service';
 import { WsService } from '~/app/services/ws';
@@ -92,14 +91,6 @@ export class ProjectFeatureNewWorkflowComponent {
   }
 
   public userLoseAdminRole() {
-    this.appService.toastNotification({
-      message: 'errors.admin_permission',
-      paramsMessage: {
-        project: this.state.get('project').name,
-      },
-      status: TuiNotification.Warning,
-      closeOnNavigation: false,
-    });
     void this.router.navigate([
       `/project/${this.state.get('project').id}/${
         this.state.get('project').slug

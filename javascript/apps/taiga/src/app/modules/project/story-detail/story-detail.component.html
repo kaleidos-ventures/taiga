@@ -125,15 +125,11 @@ Copyright (c) 2023-present Kaleidos INC
                     <ng-container *ngIf="vm.project.workflows.length > 1">
                       <tg-ui-breadcrumb
                         class="story-breadcrumb story-breadcrumb-modal"
+                        [collapsable]="true"
                         [crumbs]="[
                           t('kanban.workflows'),
                           vm.story.workflow.name
-                        ]"
-                        [type]="
-                          vm.selectedStoryView === 'side-view'
-                            ? 'collapsed'
-                            : 'expanded'
-                        ">
+                        ]">
                       </tg-ui-breadcrumb>
                     </ng-container>
                     <tg-story-detail-status

@@ -7,7 +7,17 @@ Copyright (c) 2023-present Kaleidos INC
 -->
 
 <ng-container *transloco="let t">
-  <ng-container *ngIf="type === 'expanded'">
+  <div class="breadcrumb-wrapper">
+    <tui-svg
+      [tgUiTooltip]="
+        t('kanban.workflow').charAt(0).toUpperCase() +
+        t('kanban.workflow').slice(1)
+      "
+      tgUiTooltipPosition="bottom"
+      class="crumb-icon collapsed"
+      role="image"
+      [attr.aria-label]="t('kanban.workflow')"
+      [src]="icon"></tui-svg>
     <ng-container
       *ngFor="
         let crumb of crumbs;
@@ -15,32 +25,22 @@ Copyright (c) 2023-present Kaleidos INC
         last as isLast;
         index as i
       ">
-      <span
+      <div
         *ngIf="hideLastCrumb && !isLast"
-        class="crumb"
-        [class.accent]="isLast && accent">
+        class="crumb">
         {{ crumb }}
-      </span>
-      <span
+      </div>
+      <div
         *ngIf="!hideLastCrumb"
         class="crumb"
+        [class.expanded]="!isLast"
         [class.accent]="isLast && accent">
         {{ crumb }}
-      </span>
+      </div>
       <tui-svg
-        class="crumb-divider"
+        class="crumb-divider expanded"
         *ngIf="!(hideLastCrumb && i === crumbs.length - 2) && !isLast"
         src="chevron-right"></tui-svg>
     </ng-container>
-  </ng-container>
-  <ng-container *ngIf="type === 'collapsed'">
-    <tui-svg
-      class="collapsed-crumb-icon"
-      role="image"
-      [attr.aria-label]="t('kanban.workflow')"
-      [src]="icon"></tui-svg>
-    <span class="crumb">
-      {{ crumbs.at(-1) }}
-    </span>
-  </ng-container>
+  </div>
 </ng-container>

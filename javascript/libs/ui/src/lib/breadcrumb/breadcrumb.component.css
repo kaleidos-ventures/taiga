@@ -15,8 +15,18 @@ Copyright (c) 2023-present Kaleidos INC
   display: block;
 }
 
+:host(.collapsable) {
+  container-type: inline-size;
+}
+
+.breadcrumb-wrapper {
+  align-items: center;
+  display: flex;
+}
+
 .crumb {
   padding: var(--spacing-4);
+  white-space: nowrap;
 }
 
 .crumb-divider {
@@ -29,8 +39,22 @@ Copyright (c) 2023-present Kaleidos INC
   font-weight: 500;
 }
 
-.collapsed-crumb-icon {
+.crumb-icon {
   block-size: var(--spacing-16);
   color: var(--color-gray40);
   inline-size: var(--spacing-16);
+}
+
+.collapsed {
+  display: none;
+}
+
+@container (inline-size < 200px) {
+  .expanded {
+    display: none;
+  }
+
+  .collapsed {
+    display: block;
+  }
 }

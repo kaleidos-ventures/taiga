@@ -91,6 +91,7 @@ import {
 } from './data-access/+state/selectors/story-detail.selectors';
 import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
 import { StoryDetaiImageUploadService } from './story-detail-image-upload.service';
+import { MovedWorkflowService } from '../feature-kanban/services/moved-workflow.service';
 
 export interface StoryDetailState {
   project: Project;
@@ -222,7 +223,8 @@ export class StoryDetailComponent {
     private router: Router,
     private permissionUpdateNotificationService: PermissionUpdateNotificationService,
     private resizedDirective: ResizedDirective,
-    private el: ElementRef
+    private el: ElementRef,
+    private movedWorkflow: MovedWorkflowService
   ) {
     this.state.hold(this.resizedDirective.resized, () => {
       this.setHeights();
@@ -431,6 +433,10 @@ export class StoryDetailComponent {
   }
 
   public closeStory() {
+    if (this.redirectWhenWorkflowDeleted()) {
+      return;
+    }
+
     const ref = this.state.get('story').ref;
 
     this.store.dispatch(StoryDetailActions.leaveStoryDetail());
@@ -503,6 +509,10 @@ export class StoryDetailComponent {
   }
 
   public fieldEdit(edit: boolean) {
+    if (!edit && this.redirectWhenWorkflowDeleted()) {
+      return;
+    }
+
     this.state.set({ fieldEdit: edit });
   }
 
@@ -673,5 +683,33 @@ export class StoryDetailComponent {
           );
         }
       });
+  }
+
+  public redirectWhenWorkflowDeleted(): boolean {
+    if (this.movedWorkflow.postponed) {
+      const action = this.movedWorkflow.postponed;
+      const project = this.state.get('project');
+
+      void this.router.navigate([
+        `project/${project.id}/${project.slug}/overview`,
+      ]);
+
+      this.appService.toastNotification({
+        message: 'errors.deleted_workflow_and_moved',
+        paramsMessage: {
+          name: action.workflow.name,
+          moved:
+            action.targetWorkflow &&
+            `<a href="project/${project.id}/${project.slug}/kanban/${action.targetWorkflow.slug}">${action.targetWorkflow.name}</a>`,
+        },
+        status: TuiNotification.Info,
+        autoClose: true,
+      });
+
+      this.movedWorkflow.postponed = null;
+      return true;
+    }
+
+    return false;
   }
 }

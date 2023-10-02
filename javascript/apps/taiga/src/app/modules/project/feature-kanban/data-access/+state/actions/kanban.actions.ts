@@ -187,6 +187,11 @@ export const KanbanEventsActions = createActionGroup({
       status: Status;
       workflow: Workflow['slug'];
     }>(),
+    'Move status': props<{
+      status: Status;
+      workflow: Workflow['slug'];
+      stories: KanbanStory[];
+    }>(),
     'Edit status': props<{
       status: Status;
       workflow: Workflow['slug'];

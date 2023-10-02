@@ -708,6 +708,17 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
+    KanbanEventsActions.moveStatus,
+    (state, { status, stories }): KanbanState => {
+      state.loadingStatus = false;
+
+      state.workflow?.statuses.push(status);
+      state.stories[status.id] = stories;
+
+      return state;
+    }
+  ),
+  on(
     KanbanActions.editStatus,
     KanbanEventsActions.editStatus,
     (state, { status, workflow }): KanbanState => {

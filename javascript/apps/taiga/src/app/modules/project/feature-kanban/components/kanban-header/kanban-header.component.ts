@@ -20,7 +20,10 @@ import { Project, Workflow } from '@taiga/data';
 import { BreadcrumbComponent } from '@taiga/ui/breadcrumb/breadcrumb.component';
 import { DeleteWorkflowComponent } from '../delete-workflow/delete-workflow.component';
 import { NewWorkflowFormComponent } from '~/app/modules/project/feature-new-workflow/components/new-workflow-form/new-workflow-form.component';
-import { updateWorkflow } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  deleteWorkflow,
+  updateWorkflow,
+} from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { Store } from '@ngrx/store';
 
 @Component({
@@ -58,7 +61,9 @@ export class KanbanHeaderComponent {
   }
 
   public submitDeleteWorkflow(event: Workflow['id'] | undefined) {
-    console.log(event);
+    this.store.dispatch(
+      deleteWorkflow({ workflow: this.workflow, moveTo: event })
+    );
   }
 
   public toggleEditWorkflowForm() {

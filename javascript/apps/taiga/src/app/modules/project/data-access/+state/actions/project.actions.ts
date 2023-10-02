@@ -88,6 +88,14 @@ export const updateWorkflow = createAction(
   }>()
 );
 
+export const deleteWorkflow = createAction(
+  '[Project] delete workflow',
+  props<{
+    workflow: Workflow;
+    moveTo?: Workflow['slug'];
+  }>()
+);
+
 export const newProjectMembers = createAction(
   '[Project][ws] New Project Members'
 );
@@ -135,6 +143,9 @@ export const projectApiActions = createActionGroup({
     'Update Workflow Success': props<{
       workflow: Workflow;
     }>(),
+    'Delete Workflow Success': props<{
+      workflow: Workflow;
+    }>(),
   },
 });
 
@@ -169,6 +180,11 @@ export const projectEventActions = createActionGroup({
     'Update Member': props<{ membership: Membership }>(),
     'Create Workflow': props<{ workflow: Workflow }>(),
     'Update Workflow': props<{ workflow: Workflow }>(),
+    'Delete Workflow': props<{
+      workflow: Workflow;
+      targetWorkflow?: Workflow;
+      hasOpenStory?: boolean;
+    }>(),
     'Create comment': props<{ storyRef: Story['ref']; comment: UserComment }>(),
     'Status reorder': props<{
       id: Status['id'];

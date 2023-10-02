@@ -159,7 +159,10 @@
     "entity_no_longer_exists": "This {{entity}} no longer exists.",
     "user_deleted_entity": "{{user}} has deleted it, so you cannot edit it anymore.",
     "deleted_project": "Project {{name}} has been deleted.",
-    "deleted_workspace": "The workspace {{name}} has been deleted."
+    "deleted_workspace": "The workspace {{name}} has been deleted.",
+    "deleted_workflow": "The workflow {{name}} was deleted.",
+    "deleted_workflow_and_stories": "The workflow {{name}} and the stories within it have been deleted.",
+    "deleted_workflow_and_moved": "The workflow {{name}} has been deleted. The stories within it have been moved to {{moved}} workflow."
   },
   "form_errors": {
     "max_length": "Character limit has been reached."

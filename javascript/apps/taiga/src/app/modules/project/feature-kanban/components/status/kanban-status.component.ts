@@ -86,6 +86,7 @@ import { DraggableDirective } from '@taiga/ui/drag/directives/draggable.directiv
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { DragHandleDirective } from '@taiga/ui/drag/directives/drag-handle.directive';
 import { TooltipDirective } from '@taiga/ui/tooltip';
+import { MovedWorkflowService } from '~/app/modules/project/feature-kanban/services/moved-workflow.service';
 
 export const KanbanStatusComponentSlideInTime = 300;
 
@@ -128,6 +129,26 @@ export interface KanbanComponentState {
             opacity: 1,
             transform: 'translateY(0%)',
           })
+        ),
+      ]),
+    ]),
+    trigger('movedStatus', [
+      transition('* => on', [
+        style({
+          width: 0,
+          background: 'rgba(211, 251, 244, 1)',
+          boxShadow: '4px 4px 8px 0px rgba(216, 222, 233, 0.5)',
+          borderRadius: '4px',
+        }),
+        animate(
+          `${KanbanStatusComponentSlideInTime}ms ease-out`,
+          style({
+            width: '*',
+          })
+        ),
+        animate(
+          '1000ms ease-out',
+          style({ background: '*', boxShadow: '*', borderRadius: '*' })
         ),
       ]),
     ]),
@@ -226,6 +247,10 @@ export class KanbanStatusComponent
   public editStatusActive = false;
   public deleteStatusModal = false;
 
+  public statusesIds$ = this.movedWorkflow.statuses$.pipe(
+    map((statuses) => statuses?.map((status) => status.id))
+  );
+
   public model$ = this.state.select().pipe(
     map((state) => {
       return {
@@ -258,7 +283,8 @@ export class KanbanStatusComponent
     private store: Store,
     private autoScrollService: AutoScrollService,
     private permissionService: PermissionsService,
-    private kanbanScrollManagerService: KanbanScrollManagerService
+    private kanbanScrollManagerService: KanbanScrollManagerService,
+    private movedWorkflow: MovedWorkflowService
   ) {
     this.state.set({ visible: false, stories: [], calculatedHeight: false });
     this.kanbanScrollManagerService.registerKanbanStatus(this);

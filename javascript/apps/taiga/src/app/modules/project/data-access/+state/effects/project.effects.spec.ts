@@ -14,7 +14,11 @@ import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { ProjectMockFactory, UserMockFactory } from '@taiga/data';
+import {
+  ProjectMockFactory,
+  UserMockFactory,
+  WorkflowMockFactory,
+} from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
 import { Observable, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
@@ -30,6 +34,8 @@ import {
   projectEventActions,
   leaveProject,
   leaveProjectSuccess,
+  updateWorkflow,
+  projectApiActions,
 } from '../actions/project.actions';
 import { selectCurrentProject } from '../selectors/project.selectors';
 import { ProjectEffects } from './project.effects';
@@ -293,6 +299,36 @@ describe('ProjectEffects', () => {
         });
         expect(router.navigate).toHaveBeenCalledWith(['/']);
       });
+    });
+
+    it('update workflow', () => {
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(ProjectEffects);
+      const workflow = WorkflowMockFactory();
+      const newWorkflowName = randCompanyName();
+      const workflowSuccess = {
+        ...workflow,
+        name: newWorkflowName,
+      };
+
+      projectApiService.updateWorkflow.mockReturnValue(
+        cold('-b|', { b: workflowSuccess })
+      );
+
+      actions$ = hot('-a', {
+        a: updateWorkflow({
+          name: newWorkflowName,
+          slug: workflow.slug,
+        }),
+      });
+
+      const expected = cold('--a', {
+        a: projectApiActions.updateWorkflowSuccess({
+          workflow: workflowSuccess,
+        }),
+      });
+
+      expect(effects.updateWorkflow$).toBeObservable(expected);
     });
   });
 });

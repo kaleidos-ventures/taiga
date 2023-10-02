@@ -9,7 +9,7 @@
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { Store } from '@ngrx/store';
@@ -38,6 +38,9 @@ import {
   selectCurrentProject,
   selectMembers,
 } from '../selectors/project.selectors';
+import { MovedWorkflowService } from '~/app/modules/project/feature-kanban/services/moved-workflow.service';
+import { selectCurrentWorkflowSlug } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+
 @Injectable()
 export class ProjectEffects {
   public loadProject$ = createEffect(() => {
@@ -262,6 +265,98 @@ export class ProjectEffects {
     },
     { dispatch: false }
   );
+
+  public deleteWorkflow$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.deleteWorkflow),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      pessimisticUpdate({
+        run: (action, project) => {
+          return this.projectApiService
+            .deleteWorkflow(project.id, action.workflow.slug, action.moveTo)
+            .pipe(
+              map(() => {
+                this.movedWorkflow.statuses = action.workflow.statuses;
+
+                setTimeout(() => {
+                  this.movedWorkflow.statuses = null;
+                }, 500);
+
+                void this.router.navigate([
+                  `project/${project.id}/${project.slug}${
+                    action.moveTo ? `/kanban/${action.moveTo}` : '/overview'
+                  }`,
+                ]);
+
+                this.appService.toastNotification({
+                  message: 'errors.deleted_workflow',
+                  paramsMessage: { name: action.workflow.name },
+                  status: TuiNotification.Info,
+                  autoClose: true,
+                });
+
+                return ProjectActions.projectApiActions.deleteWorkflowSuccess({
+                  workflow: action.workflow,
+                });
+              })
+            );
+        },
+        onError: (_, httpResponse: HttpErrorResponse) => {
+          return this.appService.errorManagement(httpResponse);
+        },
+      })
+    );
+  });
+
+  public deleteWorkflowEvent$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(projectEventActions.deleteWorkflow),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+        this.store.select(selectCurrentWorkflowSlug).pipe(filterNil()),
+      ]),
+      map(([action, project, workflow]) => {
+        if (workflow === action.workflow.slug) {
+          if (!action.targetWorkflow?.slug) {
+            void this.router.navigate([
+              `project/${project.id}/${project.slug}/overview`,
+            ]);
+          } else {
+            if (action.hasOpenStory) {
+              this.movedWorkflow.postponed = {
+                workflow: action.workflow,
+                targetWorkflow: action.targetWorkflow,
+              };
+            } else {
+              void this.router.navigate([
+                `project/${project.id}/${project.slug}/overview`,
+              ]);
+            }
+          }
+
+          this.appService.toastNotification({
+            message: action.targetWorkflow?.name
+              ? 'errors.deleted_workflow_and_moved'
+              : 'errors.deleted_workflow_and_stories',
+            paramsMessage: {
+              name: action.workflow.name,
+              moved:
+                action.targetWorkflow &&
+                `<a href="project/${project.id}/${project.slug}/kanban/${action.targetWorkflow.slug}">${action.targetWorkflow.name}</a>`,
+            },
+            status: TuiNotification.Info,
+            autoClose: true,
+          });
+        }
+
+        return ProjectActions.projectApiActions.deleteWorkflowSuccess({
+          workflow: action.workflow,
+        });
+      })
+    );
+  });
 
   public initAssignUser$ = createEffect(() => {
     return this.actions$.pipe(
@@ -517,6 +612,6 @@ export class ProjectEffects {
     private revokeInvitationService: RevokeInvitationService,
     private store: Store,
     private location: Location,
-    private route: ActivatedRoute
+    private movedWorkflow: MovedWorkflowService
   ) {}
 }

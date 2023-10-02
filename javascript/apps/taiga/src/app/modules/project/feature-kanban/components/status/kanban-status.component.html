@@ -9,6 +9,9 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
     <div
+      [@movedStatus]="
+        (statusesIds$ | async)?.includes(status.id) ? 'on' : 'off'
+      "
       [tgUiDropZone]="status.id"
       dropCategory="story"
       class="wrapper"

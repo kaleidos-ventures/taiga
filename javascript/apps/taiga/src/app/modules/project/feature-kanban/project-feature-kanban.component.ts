@@ -68,11 +68,13 @@ import {
   kanbanFeature,
 } from './data-access/+state/reducers/kanban.reducer';
 import {
+  selectCurrentWorkflowSlug,
   selectLoadingWorkflow,
   selectWorkflow,
 } from './data-access/+state/selectors/kanban.selectors';
 import { KanbanReorderEvent } from './kanban.model';
 import { KanbanHeaderComponent } from './components/kanban-header/kanban-header.component';
+import { MovedWorkflowService } from './services/moved-workflow.service';
 
 interface ComponentState {
   loadingWorkflow: KanbanState['loadingWorkflow'];
@@ -127,6 +129,8 @@ export class ProjectFeatureKanbanComponent {
   public model$ = this.state.select();
   public project$ = this.store.select(selectCurrentProject);
 
+  public lockKanban = false;
+
   constructor(
     private store: Store,
     private state: RxState<ComponentState>,
@@ -136,6 +140,7 @@ export class ProjectFeatureKanbanComponent {
     private router: Router,
     private appService: AppService,
     private location: Location,
+    private movedWorkflow: MovedWorkflowService,
     public shortcutsService: ShortcutsService,
     public routeHistoryService: RouteHistoryService,
     public permissionUpdateNotificationService: PermissionUpdateNotificationService
@@ -227,6 +232,12 @@ export class ProjectFeatureKanbanComponent {
           status: TuiNotification.Error,
           scope: 'kanban',
         });
+      });
+
+    this.movedWorkflow.postponed$
+      .pipe(untilDestroyed(this))
+      .subscribe((postponed) => {
+        this.lockKanban = !!postponed;
       });
   }
 
@@ -376,6 +387,50 @@ export class ProjectFeatureKanbanComponent {
           });
         this.store.dispatch(ProjectActions.fetchProjectMembers());
         this.unassignRoleMembersWithoutPermissions(permissions as Role);
+      });
+
+    this.wsService
+      .projectEvents<{
+        workflow: Workflow & { stories: Story[] };
+        targetWorkflow: Workflow;
+      }>('workflows.delete')
+      .pipe(
+        untilDestroyed(this),
+        concatLatestFrom(() => [
+          this.store.select(selectCurrentWorkflowSlug).pipe(filterNil()),
+        ])
+      )
+      .subscribe(([eventResponse, workflow]) => {
+        const action = eventResponse.event.content;
+        const { stories, ...wf } = action.workflow;
+        this.store.dispatch(
+          ProjectActions.projectEventActions.deleteWorkflow({
+            workflow: wf,
+            targetWorkflow: action.targetWorkflow,
+            hasOpenStory: this.state.get('showStoryDetail'),
+          })
+        );
+
+        if (workflow === action.targetWorkflow?.slug) {
+          this.movedWorkflow.statuses = action.workflow.statuses;
+
+          const statuses = action.workflow.statuses;
+          statuses.forEach((status) => {
+            this.store.dispatch(
+              KanbanEventsActions.moveStatus({
+                status,
+                workflow: action.targetWorkflow.slug,
+                stories: stories.filter(
+                  (story) => story.status.id === status.id
+                ),
+              })
+            );
+          });
+
+          setTimeout(() => {
+            this.movedWorkflow.statuses = null;
+          }, 500);
+        }
       });
   }
 

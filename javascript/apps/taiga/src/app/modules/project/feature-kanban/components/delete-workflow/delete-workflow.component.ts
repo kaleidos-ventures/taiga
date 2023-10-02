@@ -114,7 +114,7 @@ export class DeleteWorkflowComponent implements OnInit {
 
   public submit() {
     this.close();
-    const moveToWorkflow: Workflow['id'] | undefined =
+    const moveToWorkflow: Workflow['slug'] | undefined =
       !this.isLastWorkflow() && this.form.get('statuses')!.value === 'move'
         ? this.form.value.workflow
         : undefined;

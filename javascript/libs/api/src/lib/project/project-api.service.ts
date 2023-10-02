@@ -271,6 +271,18 @@ export class ProjectApiService {
     );
   }
 
+  public deleteWorkflow(
+    project: Project['id'],
+    workflowSlug: Workflow['slug'],
+    moveTo: Workflow['slug'] | undefined
+  ) {
+    return this.http.delete<Workflow>(
+      `${this.config.apiUrl}/projects/${project}/workflows/${workflowSlug}${
+        moveTo ? `?moveTo=${moveTo}` : ''
+      }`
+    );
+  }
+
   public updateInvitationRole(
     id: string,
     userData: { id: string; roleSlug: string }

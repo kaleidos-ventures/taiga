@@ -7,11 +7,15 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  Input,
+} from '@angular/core';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { TuiSvgModule } from '@taiga-ui/core';
-
-type BreadCrumbType = 'expanded' | 'collapsed';
+import { TooltipDirective } from '../tooltip';
 
 @Component({
   selector: 'tg-ui-breadcrumb',
@@ -19,14 +23,17 @@ type BreadCrumbType = 'expanded' | 'collapsed';
   styleUrls: ['./breadcrumb.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, TranslocoDirective, TuiSvgModule],
+  imports: [CommonModule, TranslocoDirective, TuiSvgModule, TooltipDirective],
 })
 export class BreadcrumbComponent {
   @Input({ required: true }) public crumbs: string[] = [];
   @Input() public icon = 'kanban';
   @Input() public accent = false;
-  @Input() public type: BreadCrumbType = 'expanded';
   @Input() public hideLastCrumb = false;
+
+  @Input()
+  @HostBinding('class.collapsable')
+  public collapsable = false;
 
   public trackByIndex(index: number) {
     return index;

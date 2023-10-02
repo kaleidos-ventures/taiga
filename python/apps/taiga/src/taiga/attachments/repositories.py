@@ -69,7 +69,7 @@ async def _apply_prefetch_related_to_queryset(
 
 
 ##########################################################
-# create comment
+# create attachment
 ##########################################################
 
 

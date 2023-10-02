@@ -32,6 +32,16 @@ tags_metadata.append(
     }
 )
 
+# /notifications
+notifications = AuthAPIRouter(tags=["notifications"])
+tags_metadata.append(
+    {
+        "name": "notifications",
+        "description": "Endpoint for user notifications resources.",
+    }
+)
+
+
 # /workspaces
 workspaces = AuthAPIRouter(tags=["workspaces"])
 tags_metadata.append(

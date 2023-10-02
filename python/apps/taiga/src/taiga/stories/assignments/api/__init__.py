@@ -51,7 +51,10 @@ async def create_story_assignment(
     await check_permissions(permissions=CREATE_STORY_ASSIGNMENT, user=request.user, obj=story)
 
     return await story_assignments_services.create_story_assignment(
-        project_id=project_id, story=story, username=form.username
+        project_id=project_id,
+        story=story,
+        username=form.username,
+        created_by=request.user,
     )
 
 
@@ -77,9 +80,12 @@ async def delete_story_assignment(
     Delete a story assignment
     """
     story_assignment = await get_story_assignment_or_404(project_id, ref, username)
+    story = await get_story_or_404(project_id, ref)
     await check_permissions(permissions=DELETE_STORY_ASSIGNMENT, user=request.user, obj=story_assignment.story)
 
-    await story_assignments_services.delete_story_assignment(story_assignment=story_assignment)
+    await story_assignments_services.delete_story_assignment(
+        story_assignment=story_assignment, story=story, deleted_by=request.user
+    )
 
 
 ################################################

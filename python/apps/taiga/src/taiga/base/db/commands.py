@@ -15,7 +15,6 @@ from django.apps import apps
 from django.conf import settings
 from taiga.base.django.commands import call_django_command
 from taiga.base.utils import pprint
-from taiga.base.utils.commands import unwrap_typer_param
 
 cli = typer.Typer(
     name="The Taiga DB Manager",
@@ -75,7 +74,6 @@ def init_migrations(
 
 
 @cli.command(help="Creates new migration(s) for apps.")
-@unwrap_typer_param
 def make_migrations(
     name: str = typer.Option("", "--name", "-n", help="Use this name for migration file(s)."),
     dry_run: bool = typer.Option(

@@ -16,8 +16,10 @@ CallableGenerator = Generator[Callable[..., Any], None, None]
 class LanguageCode(str):
     @classmethod
     def __modify_schema__(cls: Type["LanguageCode"], field_schema: dict[str, Any]) -> None:
-        field_schema["example"] = settings.LANG
-        field_schema["enum"] = i18n.available_languages
+        field_schema.update(
+            example=settings.LANG,
+            enum=i18n.available_languages,
+        )
 
     @classmethod
     def __get_validators__(cls: Type["LanguageCode"]) -> CallableGenerator:

@@ -7,7 +7,7 @@
 
 from humps.main import camelize
 from pydantic import BaseModel as _BaseModel
-from taiga.base.serializers.fields import UUIDB64  # noqa
+from taiga.base.serializers.fields import UUIDB64, CamelizeDict, FileField  # noqa
 
 
 class BaseModel(_BaseModel):

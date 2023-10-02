@@ -20,6 +20,15 @@ class ProjectNestedSerializer(BaseModel, ProjectLogoMixin):
         orm_mode = True
 
 
+class ProjectLinkNestedSerializer(BaseModel):
+    id: UUIDB64
+    name: str
+    slug: str
+
+    class Config:
+        orm_mode = True
+
+
 class ProjectSmallNestedSerializer(BaseModel):
     id: UUIDB64
     name: str

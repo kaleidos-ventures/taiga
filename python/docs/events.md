@@ -931,3 +931,16 @@ Content for:
       "attachment": {... "attachment object" ...}
   }
   ```
+
+
+#### `notifications.create`
+
+It happens when a new notifications is created.
+
+Content for:
+- user channel:
+  ```
+  {
+      "notification": {... "notification object" ...},
+  }
+  ```

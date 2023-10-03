@@ -9,10 +9,7 @@ Copyright (c) 2023-present Kaleidos INC
 <ng-container *transloco="let t">
   <div class="breadcrumb-wrapper">
     <tui-svg
-      [tgUiTooltip]="
-        t('kanban.workflow').charAt(0).toUpperCase() +
-        t('kanban.workflow').slice(1)
-      "
+      [tgUiTooltip]="t('kanban.workflow')"
       tgUiTooltipPosition="bottom"
       class="crumb-icon collapsed"
       role="image"

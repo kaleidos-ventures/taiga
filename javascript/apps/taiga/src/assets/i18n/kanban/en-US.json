@@ -1,6 +1,6 @@
 {
-  "workflow": "workflow",
-  "workflows": "workflows",
+  "workflow": "Workflow",
+  "workflows": "Workflows",
   "page_title": "{{projectName}} kanban",
   "workflow_title": "[{{projectName}}] kanban workflow",
   "title": "Kanban",

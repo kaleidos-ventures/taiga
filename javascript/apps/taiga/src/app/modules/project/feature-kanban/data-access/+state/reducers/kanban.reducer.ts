@@ -35,6 +35,7 @@ import {
   replaceStory,
   setIntialPosition,
 } from './kanban.reducer.helpers';
+import { StoryDetailApiActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 
 export interface KanbanState {
   loadingWorkflow: boolean;
@@ -805,6 +806,17 @@ export const reducer = createImmerReducer(
       if (state.workflow?.id === workflow.id) {
         state.workflow.name = workflow.name;
         state.workflow.slug = workflow.slug;
+      }
+
+      return state;
+    }
+  ),
+  on(
+    StoryDetailApiActions.fetchWorkflowSuccess,
+    (state, { workflow }): KanbanState => {
+      if (!state.workflow) {
+        state.workflow = workflow;
+        state.currentWorkflowSlug = workflow.slug;
       }
 
       return state;

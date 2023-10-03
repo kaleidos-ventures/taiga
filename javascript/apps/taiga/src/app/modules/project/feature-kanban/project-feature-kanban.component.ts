@@ -41,6 +41,7 @@ import {
   take,
 } from 'rxjs';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { selectWorkflow as selectWorkflowStoryDetail } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 import {
   selectCurrentProject,
   selectMembers,
@@ -81,6 +82,7 @@ import { KanbanHeaderComponent } from './components/kanban-header/kanban-header.
 interface ComponentState {
   loadingWorkflow: KanbanState['loadingWorkflow'];
   workflow: KanbanState['workflow'];
+  workflowStoryDetail: KanbanState['workflow'];
   workflows: Workflow[];
   invitePeopleModal: boolean;
   showStoryDetail: boolean;
@@ -206,8 +208,16 @@ export class ProjectFeatureKanbanComponent {
       combineLatest([
         this.state.select('storyView'),
         this.state.select('showStoryDetail'),
+        this.state.select('workflow'),
+        this.state.select('workflowStoryDetail'),
       ]),
-      ([storyView, showStoryDetail]) => {
+      ([storyView, showStoryDetail, workflow, workflowStoryDetail]) => {
+        if (showStoryDetail && !workflow && workflowStoryDetail?.slug) {
+          // when there is a story open we should init kanban this way
+          this.store.dispatch(
+            KanbanActions.initKanban({ workflow: workflowStoryDetail.slug })
+          );
+        }
         if (showStoryDetail && storyView === 'side-view') {
           this.setCloseShortcut();
           this.shortcutsService.setScope('side-view');
@@ -218,6 +228,10 @@ export class ProjectFeatureKanbanComponent {
     );
     this.state.connect('storyView', this.store.select(selectStoryView));
     this.state.connect('workflow', this.store.select(selectWorkflow));
+    this.state.connect(
+      'workflowStoryDetail',
+      this.store.select(selectWorkflowStoryDetail)
+    );
     this.state.connect(
       'columns',
       this.store.select(kanbanFeature.selectColums)

@@ -21,12 +21,7 @@ Copyright (c) 2023-present Kaleidos INC
   <tg-ui-breadcrumb
     *ngIf="workflows.length > 1"
     [hideLastCrumb]="editStatusFormOpened"
-    [crumbs]="[
-      t('commons.kanban'),
-      t('kanban.workflows').charAt(0).toLocaleUpperCase() +
-        t('kanban.workflows').slice(1),
-      workflow.name
-    ]"
+    [crumbs]="[t('commons.kanban'), t('kanban.workflows'), workflow.name]"
     [accent]="true"
     class="kanban-header-breadcrumbs">
   </tg-ui-breadcrumb>

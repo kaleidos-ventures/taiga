@@ -1,5 +1,8 @@
 {
+  "workflow": "workflow",
+  "workflows": "workflows",
   "page_title": "{{projectName}} kanban",
+  "workflow_title": "[{{projectName}}] kanban workflow",
   "title": "Kanban",
   "empty": "The project administrator has not set any status yet.",
   "status_label": "Status {{ statusName }}, Tap left and right arrows to move between statuses.",
@@ -24,6 +27,7 @@
   "write_status": "Write a status name",
   "status_empty": "Status name can’t be empty.",
   "status_options": "Display status options",
+  "status_options_tooltip": "{{ name }} workflow options",
   "status_btn_tooltip": "Status actions",
   "edit_status_name": "Edit status name",
   "status_name": "Status name",
@@ -32,6 +36,8 @@
   "empty_kanban": "This kanban is empty",
   "create_status_explanation_admin": "Create statuses to organize your stories and visualize the progress of your project.",
   "create_status_explanation": "Once the admins of this project set up the kanban, you can start creating stories",
+  "delete_workflow": "Delete workflow",
+  "edit_workflow_name": "Edit workflow name",
   "delete_status_modal": {
     "title": "Delete {{ statusName }} status?",
     "what_to_do_stories": "What do you want to do with the stories in this status?",
@@ -42,5 +48,23 @@
     "delete_stories": "Delete the stories too",
     "stories_placed_below": "The stories will be placed below the existing ones.",
     "status": "Status"
+  },
+  "delete_workflow_modal": {
+    "title": "Delete {{ name }} workflow?",
+    "what_to_do_statuses": "What do you want to do with the statuses inside them?",
+    "stories_will_be_deleted": "The stories from this status will be automatically deleted.",
+    "cancel": "Never mind, keep workflow",
+    "confirm": "Yes, delete workflow",
+    "move_stories_another_workflow": "Move them to another workflow",
+    "delete_all": "Delete the stories and statuses too",
+    "statuses_placed_after": "The statuses will be placed after the existing ones.",
+    "workflow": "Workflow"
+  },
+  "create_workflow": {
+    "save": "Create Workflow",
+    "workflow_name_aria": "Workflow name (Maximum 40 Characters only)",
+    "write_workflow_name": "Write a workflow name",
+    "workflow_empty": "Workflow name can’t be empty.",
+    "max_workflow_created": "You reached the max number of workflows (8)."
   }
 }

@@ -55,6 +55,17 @@ const routes: Routes = [
         },
       },
       {
+        path: 'kanban/:workflow',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          kanban: true,
+        },
+      },
+      {
         path: ':slug/stories/:storyRef',
         loadChildren: () =>
           import(

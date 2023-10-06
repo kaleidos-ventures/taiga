@@ -157,7 +157,12 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
 
         if (isKanban) {
           void this.router.navigate(
-            [`project/${project.id}/${project.slug}/kanban`],
+            [
+              `project/${project.id}/${project.slug}/kanban/${
+                (active.params.workflow as Workflow['slug']) ||
+                project.workflows[0].slug
+              }`,
+            ],
             { replaceUrl: true }
           );
         } else if (isNewKanban) {

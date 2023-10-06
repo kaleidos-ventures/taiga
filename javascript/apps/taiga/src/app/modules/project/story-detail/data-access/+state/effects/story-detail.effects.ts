@@ -65,6 +65,11 @@ export class StoryDetailEffects {
           project.workflows?.find(
             (workflow) => workflow.slug === action.story.workflow.slug
           );
+        if (!workflow?.statuses) {
+          return of(
+            KanbanActions.initKanban({ workflow: action.story.workflow.slug })
+          );
+        }
         if (workflow?.slug === action.story.workflow.slug) {
           return of(
             StoryDetailApiActions.fetchWorkflowSuccess({

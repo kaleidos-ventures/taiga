@@ -24,6 +24,7 @@ import {
   pairwise,
   startWith,
   combineLatest,
+  of,
 } from 'rxjs';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { StoryDetailActions } from '../story-detail/data-access/+state/actions/story-detail.actions';
@@ -43,6 +44,7 @@ import { RxState } from '@rx-angular/state';
 import { CommonModule } from '@angular/common';
 import { StoryDetail, StoryView, Project, Story, Workflow } from '@taiga/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { selectCurrentWorkflowSlug } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 
 interface ProjectFeatureViewSetterComponentState {
   storyView: StoryView;
@@ -50,6 +52,7 @@ interface ProjectFeatureViewSetterComponentState {
   isKanban: boolean;
   kanbanHost: ViewContainerRef | undefined;
   url: string;
+  workflowSlug: Workflow['slug'];
 }
 
 interface StoryParams {
@@ -98,6 +101,10 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
         distinctUntilChanged()
       )
     );
+    this.state.connect(
+      'workflowSlug',
+      this.store.select(selectCurrentWorkflowSlug)
+    );
 
     this.state.hold(
       this.state.select('kanbanHost').pipe(distinctUntilChanged(), filterNil()),
@@ -120,24 +127,14 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
       this.state.select('url'),
       this.route.data,
       this.route.params,
+      this.state.select('workflowSlug'),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([url, data, params]) => {
-        this.state.connect(
-          'isKanban',
-          this.state
-            .select('url')
-            .pipe(
-              map((url) =>
-                url.endsWith(`/kanban/${params.workflow as Workflow['slug']}`)
-              )
-            )
-        );
+      .subscribe(([url, data, params, workflowSlug]) => {
+        const isKanbanUrl = url.endsWith(`/kanban/${workflowSlug}`);
+        this.state.connect('isKanban', of(isKanbanUrl));
 
-        if (
-          !url.endsWith(`/kanban/${params.workflow as Workflow['slug']}`) &&
-          !!data.stories
-        ) {
+        if (!isKanbanUrl && !!data.stories) {
           const storyParams = params as StoryParams;
           const needRedirect = params.slug !== (data.project as Project).slug;
           if (needRedirect) {

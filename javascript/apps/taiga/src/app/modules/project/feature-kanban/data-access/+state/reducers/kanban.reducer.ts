@@ -107,11 +107,15 @@ export const initialKanbanState: KanbanState = {
 
 export const reducer = createImmerReducer(
   initialKanbanState,
-  on(KanbanActions.initKanban, (state): KanbanState => {
-    state = { ...initialKanbanState };
+  on(
+    KanbanActions.initKanban,
+    KanbanActions.loadWorkflowKanban,
+    (state): KanbanState => {
+      state = { ...initialKanbanState };
 
-    return state;
-  }),
+      return state;
+    }
+  ),
   on(KanbanActions.openCreateStoryForm, (state, { status }): KanbanState => {
     state.createStoryForm = status;
 
@@ -837,7 +841,7 @@ export const kanbanFeature = createFeature({
       selectDraggingStatus,
       selectStatusDropCandidate,
       (workflow, currentStatus, statusDropCandidate) => {
-        if (!workflow) {
+        if (!workflow || !workflow.statuses) {
           return [];
         }
 

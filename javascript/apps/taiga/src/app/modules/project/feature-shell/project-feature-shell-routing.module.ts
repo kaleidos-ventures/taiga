@@ -23,13 +23,25 @@ const routes: Routes = [
     children: [
       {
         path: ':slug/kanban',
-        redirectTo: ':slug/kanban/main',
-        pathMatch: 'full',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          kanban: true,
+        },
       },
       {
         path: 'kanban',
-        redirectTo: '/kanban/main',
-        pathMatch: 'full',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          kanban: true,
+        },
       },
       {
         path: ':slug/kanban/:workflow',

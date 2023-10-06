@@ -24,7 +24,12 @@ Copyright (c) 2023-present Kaleidos INC
             [workflows]="vm.workflows"
             [workflow]="vm.workflow"></tg-kanban-header>
           <div class="kanban-wrapper">
-            <ng-container *ngIf="vm.workflow && vm.workflow.statuses.length">
+            <ng-container
+              *ngIf="
+                vm.workflow &&
+                vm.workflow.statuses &&
+                vm.workflow.statuses.length
+              ">
               <tg-kanban-workflow
                 role="grid"
                 [userIsAdmin]="vm.project.userIsAdmin"
@@ -33,7 +38,11 @@ Copyright (c) 2023-present Kaleidos INC
             </ng-container>
 
             <div
-              *ngIf="vm.workflow && !vm.workflow.statuses.length"
+              *ngIf="
+                vm.workflow &&
+                vm.workflow.statuses &&
+                !vm.workflow.statuses.length
+              "
               class="empty">
               {{ t('kanban.empty') }}
             </div>

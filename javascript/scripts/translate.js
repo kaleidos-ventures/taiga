@@ -14,6 +14,9 @@ const { Translate } = require('@google-cloud/translate').v2;
 const projectId = process.env.projectId ?? '';
 const defaultSourceLang = 'en-US';
 const fs = require('fs');
+const dataConfig = JSON.parse(
+  fs.readFileSync('./apps/taiga/src/assets/config.json', 'utf8')
+);
 
 const i18Dir = './apps/taiga/src/assets/i18n';
 
@@ -45,7 +48,7 @@ async function createLocalFiles(codes) {
   });
 }
 async function init() {
-  const response = await fetch('http://127.0.0.1:8000/api/v2/system/languages');
+  const response = await fetch(`${dataConfig.api}/system/languages`);
   let codes = {};
   (await response.json()).forEach((it) => {
     codes[it.englishName] = it.code;

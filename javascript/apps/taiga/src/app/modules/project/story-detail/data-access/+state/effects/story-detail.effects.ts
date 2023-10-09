@@ -54,7 +54,10 @@ export class StoryDetailEffects {
 
   public loadWorkflow$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(StoryDetailApiActions.fetchStorySuccess),
+      ofType(
+        StoryDetailApiActions.fetchStorySuccess,
+        StoryDetailApiActions.updateStoryWorkflowSuccess
+      ),
       concatLatestFrom(() => [
         this.store.select(selectWorkflow),
         this.store.select(selectCurrentProject).pipe(filterNil()),
@@ -139,6 +142,46 @@ export class StoryDetailEffects {
                 permission: this.translocoService.translate('commons.modify'),
               },
               status: TuiNotification.Error,
+            });
+          } else {
+            this.appService.errorManagement(httpResponse, {
+              any: {
+                type: 'toast',
+                options: {
+                  label: 'errors.save_changes',
+                  message: 'errors.please_refresh',
+                  status: TuiNotification.Error,
+                },
+              },
+            });
+          }
+        },
+      })
+    );
+  });
+
+  public updateStoryWorkflow$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(StoryDetailActions.updateStoryWorkflow),
+      pessimisticUpdate({
+        run: (action) => {
+          return this.projectApiService
+            .updateStory(action.projectId, action.story)
+            .pipe(
+              map((story) =>
+                StoryDetailApiActions.updateStoryWorkflowSuccess({ story })
+              )
+            );
+        },
+        onError: (action, httpResponse: HttpErrorResponse) => {
+          if (httpResponse.status === 400) {
+            this.appService.toastNotification({
+              message: 'move.error',
+              paramsMessage: { workflow: action.story.workflow },
+              status: TuiNotification.Error,
+              scope: 'story',
+              autoClose: true,
+              closeOnNavigation: false,
             });
           } else {
             this.appService.errorManagement(httpResponse, {

@@ -39,5 +39,6 @@ Copyright (c) 2023-present Kaleidos INC
         *ngIf="!(hideLastCrumb && i === crumbs.length - 2) && !isLast"
         src="chevron-right"></tui-svg>
     </ng-container>
+    <ng-content select="[data-slot=workflow-action]"></ng-content>
   </div>
 </ng-container>

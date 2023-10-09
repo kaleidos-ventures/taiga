@@ -1,0 +1,56 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+@import url("tools/typography.css");
+@import url("shared/option-list.css");
+
+:host {
+  display: block;
+}
+
+.workflow-selector-wrapper {
+  inline-size: 245px;
+}
+
+.workflow-list-header {
+  @mixin font-small;
+
+  color: var(--color-gray100);
+  padding-block: var(--spacing-4) var(--spacing-8);
+  padding-inline: var(--spacing-4);
+  text-transform: uppercase;
+}
+
+.separator {
+  @mixin separator;
+
+  margin-inline: 0;
+}
+
+.workflow-btn {
+  @mixin font-inline;
+
+  align-items: center;
+  color: var(--color-gray90);
+  display: flex;
+  gap: var(--spacing-8);
+  justify-content: flex-start;
+}
+
+.workflow-icon {
+  color: var(--color-gray40);
+}
+
+.workflow-name {
+  @mixin ellipsis;
+
+  &:hover {
+    background: var(--color-gray20);
+    color: var(--color-secondary80);
+  }
+}

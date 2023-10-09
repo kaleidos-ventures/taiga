@@ -14,7 +14,6 @@ Copyright (c) 2023-present Kaleidos INC
 tui-data-list {
   --tui-data-list-padding: var(--spacing-4);
 
-  border: 1px solid var(--color-gray40);
   border-radius: 3px;
 
   &:focus {

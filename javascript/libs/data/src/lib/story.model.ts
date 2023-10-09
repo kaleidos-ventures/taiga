@@ -44,6 +44,7 @@ export interface StoryUpdate {
   status?: Story['status']['id'];
   title?: Story['title'];
   description?: Story['description'];
+  workflow?: Workflow['slug'];
 }
 
 export interface createdBy {

@@ -1,0 +1,62 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <tg-ui-breadcrumb
+    class="story-breadcrumb"
+    [collapsable]="true"
+    [crumbs]="[t('kanban.workflow'), story.workflow.name]">
+    <tui-hosted-dropdown
+      *ngIf="canEdit"
+      data-slot="workflow-action"
+      class="status-options-menu"
+      tuiDropdownAlign="left"
+      [content]="workflowListDropdown"
+      [(open)]="openWorkflowList">
+      <button
+        aria-haspopup="true"
+        [attr.aria-expanded]="openWorkflowList"
+        data-slot="workflow-action"
+        [attr.aria-label]="'move story'"
+        icon="change"
+        appearance="tertiary"
+        class="move-story-to-workflow-button"
+        tuiIconButton
+        [pseudoActive]="openWorkflowList || null"
+        type="button"></button>
+    </tui-hosted-dropdown>
+    <ng-template #workflowListDropdown>
+      <div class="workflow-selector-wrapper">
+        <tui-data-list>
+          <div class="workflow-list-header">
+            {{ t('kanban.move_to_workflow') }}
+          </div>
+          <hr class="separator" />
+          <tui-opt-group>
+            <button
+              *ngFor="
+                let workflow of filteredWorkflows;
+                trackBy: trackByWorkflowId
+              "
+              class="workflow-btn"
+              tuiOption
+              type="button"
+              (click)="moveToWorkflow(workflow)">
+              <tui-svg
+                src="kanban"
+                class="workflow-icon"></tui-svg>
+              <span class="workflow-name">
+                {{ workflow.name }}
+              </span>
+            </button>
+          </tui-opt-group>
+        </tui-data-list>
+      </div>
+    </ng-template>
+  </tg-ui-breadcrumb>
+</ng-container>

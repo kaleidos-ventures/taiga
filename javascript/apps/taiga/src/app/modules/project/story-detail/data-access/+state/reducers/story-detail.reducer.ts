@@ -158,12 +158,14 @@ export const reducer = createImmerReducer(
   ),
   on(
     StoryDetailApiActions.updateStorySuccess,
+    StoryDetailApiActions.updateStoryWorkflowSuccess,
     (state, { story }): StoryDetailState => {
       state.story = story;
 
       return state;
     }
   ),
+
   on(StoryDetailActions.updateStory, (state, { story }): StoryDetailState => {
     if (state.story) {
       if (story.title) {

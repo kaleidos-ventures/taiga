@@ -118,20 +118,20 @@ Copyright (c) 2023-present Kaleidos INC
             </div>
             <div class="sidebar-wrapper">
               <tui-scrollbar [style.height.px]="columnHeight">
-                <div
+                <aside
                   class="sidebar"
                   [style.min-height.px]="columnHeight">
                   <ng-container *ngIf="sidebarOpen">
                     <ng-container *ngIf="vm.project.workflows.length > 1">
-                      <tg-ui-breadcrumb
-                        class="story-breadcrumb story-breadcrumb-modal"
-                        [collapsable]="true"
-                        [crumbs]="[
-                          t('kanban.workflow'),
-                          vm.story.workflow.name
-                        ]">
-                      </tg-ui-breadcrumb>
+                      <tg-story-detail-workflow
+                        *ngIf="vm.story"
+                        [story]="vm.story"
+                        [workflows]="vm.project.workflows"
+                        [canEdit]="vm.canEdit"
+                        (toWorkflow)="moveStoryToWorkflow($event)">
+                      </tg-story-detail-workflow>
                     </ng-container>
+
                     <tg-story-detail-status
                       [form]="form"></tg-story-detail-status>
                     <tg-story-detail-assign
@@ -152,7 +152,7 @@ Copyright (c) 2023-present Kaleidos INC
                     tuiIconButton
                     (click)="toggleSidebar.next()"
                     type="button"></button>
-                </div>
+                </aside>
               </tui-scrollbar>
             </div>
           </div>

@@ -18,13 +18,13 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
+  combineLatest,
   distinctUntilChanged,
   filter,
   map,
+  of,
   pairwise,
   startWith,
-  combineLatest,
-  of,
 } from 'rxjs';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { StoryDetailActions } from '../story-detail/data-access/+state/actions/story-detail.actions';
@@ -33,18 +33,18 @@ import {
   selectStoryView,
 } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 
-import { ProjectFeatureStoryWrapperFullViewModule } from '../feature-story-wrapper-full-view/project-feature-story-wrapper-full-view.module';
-import { filterNil } from '~/app/shared/utils/operators';
+import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ActivatedRoute,
   ActivatedRouteSnapshot,
   Router,
 } from '@angular/router';
 import { RxState } from '@rx-angular/state';
-import { CommonModule } from '@angular/common';
-import { StoryDetail, StoryView, Project, Story, Workflow } from '@taiga/data';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { selectCurrentWorkflowSlug } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { Project, Story, StoryDetail, StoryView, Workflow } from '@taiga/data';
+import { filterNil } from '~/app/shared/utils/operators';
+import { selectCurrentWorkflowSlug } from '../feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { ProjectFeatureStoryWrapperFullViewModule } from '../feature-story-wrapper-full-view/project-feature-story-wrapper-full-view.module';
 
 interface ProjectFeatureViewSetterComponentState {
   storyView: StoryView;

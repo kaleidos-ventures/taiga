@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Location, DatePipe, CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -49,7 +49,6 @@ import {
 import { map, merge, pairwise, startWith, take } from 'rxjs';
 
 import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
-import { BreadcrumbComponent } from '@taiga/ui/breadcrumb/breadcrumb.component';
 import { InputsModule } from '@taiga/ui/inputs';
 import { ModalComponent } from '@taiga/ui/modal/components';
 import { v4 } from 'uuid';
@@ -58,14 +57,27 @@ import { selectCurrentProject } from '~/app/modules/project/data-access/+state/s
 import { AppService } from '~/app/services/app.service';
 import { PermissionsService } from '~/app/services/permissions.service';
 import { WsService } from '~/app/services/ws';
+import { AttachmentsComponent } from '~/app/shared/attachments/attachments.component';
 import {
   CommentsComponent,
   OrderComments,
 } from '~/app/shared/comments/comments.component';
+import { CommentsAutoScrollDirective } from '~/app/shared/comments/directives/comments-auto-scroll.directive';
+import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
 import { EditorImageUploadService } from '~/app/shared/editor/editor-image-upload.service';
+import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.component';
 import { PermissionUpdateNotificationService } from '~/app/shared/permission-update-notification/permission-update-notification.service';
+import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
 import { ResizedDirective } from '~/app/shared/resize/resize.directive';
+import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { filterNil } from '~/app/shared/utils/operators';
+import { selectCurrentWorkflowSlug } from '../feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { StoryDetailAssignComponent } from './components/story-detail-assign/story-detail-assign.component';
+import { StoryDetailDescriptionComponent } from './components/story-detail-description/story-detail-description.component';
+import { StoryDetailHeaderComponent } from './components/story-detail-header/story-detail-header.component';
+import { StoryDetailStatusComponent } from './components/story-detail-status/story-detail-status.component';
+import { StoryDetailTitleComponent } from './components/story-detail-title/story-detail-title.component';
+import { StoryDetailWorkflowComponent } from './components/story-detail-workflow/story-detail-workflow.component';
 import {
   StoryDetailActions,
   StoryDetailApiActions,
@@ -77,19 +89,8 @@ import {
   selectStoryView,
   selectWorkflow,
 } from './data-access/+state/selectors/story-detail.selectors';
-import { StoryDetaiImageUploadService } from './story-detail-image-upload.service';
-import { StoryDetailHeaderComponent } from './components/story-detail-header/story-detail-header.component';
-import { StoryDetailDescriptionComponent } from './components/story-detail-description/story-detail-description.component';
-import { StoryDetailAssignComponent } from './components/story-detail-assign/story-detail-assign.component';
-import { StoryDetailStatusComponent } from './components/story-detail-status/story-detail-status.component';
-import { StoryDetailTitleComponent } from './components/story-detail-title/story-detail-title.component';
 import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
-import { AttachmentsComponent } from '~/app/shared/attachments/attachments.component';
-import { CommentsAutoScrollDirective } from '~/app/shared/comments/directives/comments-auto-scroll.directive';
-import { DiscardChangesModalComponent } from '~/app/shared/discard-changes-modal/discard-changes-modal.component';
-import { NouserAvatarComponent } from '~/app/shared/nouser-avatar/nouser-avatar.component';
-import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
-import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
+import { StoryDetaiImageUploadService } from './story-detail-image-upload.service';
 
 export interface StoryDetailState {
   project: Project;
@@ -113,6 +114,7 @@ export interface StoryDetailState {
   user: User;
   attachments: Attachment[];
   loadingAttachments: LoadingAttachment[];
+  workflowSlug: Workflow['slug'];
 }
 
 export interface StoryDetailForm {
@@ -166,7 +168,7 @@ export interface StoryDetailForm {
     DiscardChangesModalComponent,
     DatePipe,
     DateDistancePipe,
-    BreadcrumbComponent,
+    StoryDetailWorkflowComponent,
   ],
 })
 export class StoryDetailComponent {
@@ -290,6 +292,11 @@ export class StoryDetailComponent {
     this.state.connect(
       'loadingAttachments',
       this.store.select(storyDetailFeature.selectLoadingAttachments)
+    );
+
+    this.state.connect(
+      'workflowSlug',
+      this.store.select(selectCurrentWorkflowSlug)
     );
 
     this.state
@@ -427,10 +434,11 @@ export class StoryDetailComponent {
     const ref = this.state.get('story').ref;
 
     this.store.dispatch(StoryDetailActions.leaveStoryDetail());
+    this.store;
     void this.router.navigateByUrl(
       `project/${this.state.get('project').id}/${
         this.state.get('project').slug
-      }/kanban/${this.state.get('story').workflow.slug}`
+      }/kanban/${this.state.get('workflowSlug') || 'main'}`
     );
     if (ref) {
       requestAnimationFrame(() => {
@@ -473,6 +481,18 @@ export class StoryDetailComponent {
       StoryDetailActions.deleteStory({
         ref: this.state.get('story').ref,
         project: this.state.get('project'),
+      })
+    );
+  }
+
+  public moveStoryToWorkflow(workflow: Workflow) {
+    const story = this.getStoryUpdate();
+    story.workflow = workflow.slug;
+
+    this.store.dispatch(
+      StoryDetailActions.updateStoryWorkflow({
+        projectId: this.state.get('project').id,
+        story,
       })
     );
   }

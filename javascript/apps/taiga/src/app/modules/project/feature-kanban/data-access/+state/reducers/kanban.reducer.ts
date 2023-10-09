@@ -10,15 +10,18 @@ import { createFeature, createSelector, on } from '@ngrx/store';
 import { Status, Story, Workflow } from '@taiga/data';
 import { DropCandidate } from '@taiga/ui/drag/drag.model';
 import {
-  projectEventActions,
   projectApiActions,
+  projectEventActions,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   KanbanStory,
   KanbanStoryA11y,
   PartialStory,
 } from '~/app/modules/project/feature-kanban/kanban.model';
-import { StoryDetailActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
+import {
+  StoryDetailActions,
+  StoryDetailApiActions,
+} from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 import { moveItemArray } from '~/app/shared/utils/move-item-array';
 import { pick } from '~/app/shared/utils/pick';
 import { createImmerReducer } from '~/app/shared/utils/store';
@@ -35,7 +38,6 @@ import {
   replaceStory,
   setIntialPosition,
 } from './kanban.reducer.helpers';
-import { StoryDetailApiActions } from '~/app/modules/project/story-detail/data-access/+state/actions/story-detail.actions';
 
 export interface KanbanState {
   loadingWorkflow: boolean;
@@ -628,6 +630,18 @@ export const reducer = createImmerReducer(
 
         return it;
       });
+
+      return state;
+    }
+  ),
+  on(
+    StoryDetailApiActions.updateStoryWorkflowSuccess,
+    (state, { story }): KanbanState => {
+      if (state.currentWorkflowSlug !== story.workflow.slug) {
+        state = removeStory(state, (it) => it.ref === story.ref);
+      } else {
+        state = addStory(state, story, undefined, 'top', story.status);
+      }
 
       return state;
     }

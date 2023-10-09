@@ -38,6 +38,7 @@
   "create_status_explanation": "Once the admins of this project set up the kanban, you can start creating stories",
   "delete_workflow": "Delete workflow",
   "edit_workflow_name": "Edit workflow name",
+  "move_to_workflow": "Move story to another workflow:",
   "delete_status_modal": {
     "title": "Delete {{ statusName }} status?",
     "what_to_do_stories": "What do you want to do with the stories in this status?",

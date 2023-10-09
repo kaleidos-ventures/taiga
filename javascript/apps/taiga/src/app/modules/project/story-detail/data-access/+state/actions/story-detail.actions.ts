@@ -34,6 +34,10 @@ export const StoryDetailActions = createActionGroup({
       story: StoryUpdate;
       projectId: Project['id'];
     }>(),
+    'Update story workflow': props<{
+      story: StoryUpdate;
+      projectId: Project['id'];
+    }>(),
     'Delete story': props<{
       ref: Story['ref'];
       project: Project;
@@ -104,6 +108,7 @@ export const StoryDetailApiActions = createActionGroup({
     'Fetch Story Success': props<{ story: StoryDetail }>(),
     'Fetch Workflow Success': props<{ workflow: Workflow }>(),
     'Update Story Success': props<{ story: StoryDetail }>(),
+    'Update Story Workflow Success': props<{ story: StoryDetail }>(),
     'Delete Story Success': props<{
       project: Project;
       ref: Story['ref'];

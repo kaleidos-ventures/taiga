@@ -12,22 +12,28 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@ngneat/transloco';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   TuiButtonModule,
   TuiDataListModule,
   TuiHostedDropdownComponent,
   TuiHostedDropdownModule,
+  TuiNotification,
   TuiSvgModule,
 } from '@taiga-ui/core';
-import { StoryDetail, Workflow } from '@taiga/data';
+import { Project, StoryDetail, Workflow } from '@taiga/data';
 import { BreadcrumbComponent } from '@taiga/ui/breadcrumb/breadcrumb.component';
+import { AppService } from '~/app/services/app.service';
+import { WsService } from '~/app/services/ws';
 
+@UntilDestroy()
 @Component({
   selector: 'tg-story-detail-workflow',
   templateUrl: './story-detail-workflow.component.html',
@@ -44,12 +50,12 @@ import { BreadcrumbComponent } from '@taiga/ui/breadcrumb/breadcrumb.component';
     TuiSvgModule,
   ],
 })
-export class StoryDetailWorkflowComponent implements OnChanges {
+export class StoryDetailWorkflowComponent implements OnInit, OnChanges {
   @Input({ required: true })
   public story!: StoryDetail;
 
   @Input({ required: true })
-  public workflows!: Workflow[];
+  public project!: Project;
 
   @Input()
   public canEdit = false;
@@ -63,8 +69,14 @@ export class StoryDetailWorkflowComponent implements OnChanges {
   public openWorkflowList = false;
   public filteredWorkflows: Workflow[] = [];
 
+  constructor(private wsService: WsService, private appService: AppService) {}
+
+  public ngOnInit(): void {
+    this.events();
+  }
+
   public ngOnChanges(): void {
-    this.filteredWorkflows = this.workflows.filter(
+    this.filteredWorkflows = this.project.workflows.filter(
       (workflow) => workflow.slug !== this.story.workflow.slug
     );
   }
@@ -77,5 +89,24 @@ export class StoryDetailWorkflowComponent implements OnChanges {
     this.openWorkflowList = false;
     this.component?.nativeFocusableElement?.focus();
     this.toWorkflow.emit(workflow);
+  }
+
+  public events() {
+    this.wsService
+      .projectEvents<{ story: StoryDetail }>('stories.update')
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => {
+        const workflowURL = `project/${this.project.id}/${this.project.slug}/kanban/${msg.event.content.story.workflow.slug}`;
+        this.appService.toastNotification({
+          message: 'move.confirm',
+          paramsMessage: {
+            workflowURL,
+            workflowName: msg.event.content.story.workflow.name,
+          },
+          status: TuiNotification.Info,
+          scope: 'story',
+          autoClose: true,
+        });
+      });
   }
 }

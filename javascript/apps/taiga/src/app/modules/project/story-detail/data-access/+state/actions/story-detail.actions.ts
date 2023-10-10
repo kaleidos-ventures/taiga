@@ -36,6 +36,7 @@ export const StoryDetailActions = createActionGroup({
     }>(),
     'Update story workflow': props<{
       story: StoryUpdate;
+      workflow: Workflow;
       projectId: Project['id'];
     }>(),
     'Delete story': props<{

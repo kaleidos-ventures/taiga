@@ -492,6 +492,7 @@ export class StoryDetailComponent {
     this.store.dispatch(
       StoryDetailActions.updateStoryWorkflow({
         projectId: this.state.get('project').id,
+        workflow,
         story,
       })
     );

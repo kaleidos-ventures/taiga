@@ -126,7 +126,7 @@ Copyright (c) 2023-present Kaleidos INC
                       <tg-story-detail-workflow
                         *ngIf="vm.story"
                         [story]="vm.story"
-                        [workflows]="vm.project.workflows"
+                        [project]="vm.project"
                         [canEdit]="vm.canEdit"
                         (toWorkflow)="moveStoryToWorkflow($event)">
                       </tg-story-detail-workflow>

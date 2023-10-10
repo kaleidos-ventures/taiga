@@ -177,7 +177,7 @@ export class StoryDetailEffects {
           if (httpResponse.status === 400) {
             this.appService.toastNotification({
               message: 'move.error',
-              paramsMessage: { workflow: action.story.workflow },
+              paramsMessage: { workflow: action.workflow.name },
               status: TuiNotification.Error,
               scope: 'story',
               autoClose: true,

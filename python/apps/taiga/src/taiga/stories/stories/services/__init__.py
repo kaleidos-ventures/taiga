@@ -10,6 +10,7 @@ from typing import Any, cast
 from uuid import UUID
 
 from taiga.base.api import Pagination
+from taiga.base.repositories.neighbors import Neighbor
 from taiga.projects.projects.models import Project
 from taiga.stories.stories import events as stories_events
 from taiga.stories.stories import repositories as stories_repositories
@@ -112,7 +113,9 @@ async def get_story(project_id: UUID, ref: int) -> Story | None:
     )
 
 
-async def get_story_detail(project_id: UUID, ref: int) -> StoryDetailSerializer:
+async def get_story_detail(
+    project_id: UUID, ref: int, neighbors: Neighbor[Story] | None = None
+) -> StoryDetailSerializer:
     story = cast(
         Story,
         await stories_repositories.get_story(
@@ -129,7 +132,12 @@ async def get_story_detail(project_id: UUID, ref: int) -> StoryDetailSerializer:
             prefetch_related=["assignees"],
         ),
     )
-    neighbors = await stories_repositories.list_story_neighbors(story=story, filters={"workflow_id": story.workflow_id})
+
+    if not neighbors:
+        neighbors = await stories_repositories.list_story_neighbors(
+            story=story, filters={"workflow_id": story.workflow_id}
+        )
+
     assignees = await stories_repositories.list_story_assignees(story=story)
 
     return serializers_services.serialize_story_detail(story=story, neighbors=neighbors, assignees=assignees)
@@ -145,8 +153,17 @@ async def update_story(
     current_version: int,
     values: dict[str, Any] = {},
 ) -> StoryDetailSerializer:
-    # Update story
+    # Values to update
     update_values = await _validate_and_process_values_to_update(story, values)
+
+    # Old neighbors
+    old_neighbors = None
+    if update_values.get("workflow", None):
+        old_neighbors = await stories_repositories.list_story_neighbors(
+            story=story, filters={"workflow_id": story.workflow_id}
+        )
+
+    # Update story
     if not await stories_repositories.update_story(
         id=story.id,
         current_version=current_version,
@@ -155,7 +172,7 @@ async def update_story(
         raise ex.UpdatingStoryWithWrongVersionError("Updating a story with the wrong version.")
 
     # Get detailed story
-    detailed_story = await get_story_detail(project_id=story.project_id, ref=story.ref)
+    detailed_story = await get_story_detail(project_id=story.project_id, ref=story.ref, neighbors=old_neighbors)
 
     # Emit event
     await stories_events.emit_event_when_story_is_updated(

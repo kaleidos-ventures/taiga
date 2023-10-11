@@ -235,12 +235,76 @@ async def test_update_story_ok():
             current_version=story.version,
             values=values,
         )
-        fake_get_story_detail.assert_awaited_once_with(
-            project_id=story.project_id,
-            ref=story.ref,
-        )
+        fake_get_story_detail.assert_awaited_once_with(project_id=story.project_id, ref=story.ref, neighbors=None)
         fake_stories_events.emit_event_when_story_is_updated.assert_awaited_once_with(
             project=story.project,
+            story=updated_story,
+            updates_attrs=[*values],
+        )
+        assert updated_story == detailed_story
+
+
+async def test_update_story_workflow_ok():
+    project = f.build_project()
+    old_workflow = f.build_workflow(project=project)
+    workflow_status1 = f.build_workflow_status(workflow=old_workflow)
+    workflow_status2 = f.build_workflow_status(workflow=old_workflow)
+    story1 = f.build_story(project=project, workflow=old_workflow, status=workflow_status1)
+    story2 = f.build_story(project=project, workflow=old_workflow, status=workflow_status1)
+    story3 = f.build_story(project=project, workflow=old_workflow, status=workflow_status2)
+    new_workflow = f.build_workflow(project=project)
+    workflow_status3 = f.build_workflow_status(workflow=new_workflow)
+    values = {
+        "version": story2.version + 1,
+        "workflow": new_workflow,
+        "status": workflow_status3,
+        "order": services.DEFAULT_ORDER_OFFSET + story2.order,
+    }
+    old_neighbors = {
+        "prev": {"ref": story1.ref, "title": story1.title},
+        "next": {"ref": story3.ref, "title": story3.title},
+    }
+    detailed_story = {
+        "ref": story2.ref,
+        "version": story2.version + 1,
+        "workflow": {"id": new_workflow.id, "name": new_workflow.name, "slug": new_workflow.slug},
+        "prev": {"ref": story1.ref, "title": story1.title},
+        "next": {"ref": story3.ref, "title": story3.title},
+    }
+
+    with (
+        patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
+        patch(
+            "taiga.stories.stories.services._validate_and_process_values_to_update", autospec=True
+        ) as fake_validate_and_process,
+        patch("taiga.stories.stories.services.get_story_detail", autospec=True) as fake_get_story_detail,
+        patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+    ):
+        fake_validate_and_process.return_value = values
+        fake_stories_repo.list_story_neighbors.return_value = old_neighbors
+        fake_stories_repo.update_story.return_value = True
+        fake_get_story_detail.return_value = detailed_story
+
+        updated_story = await services.update_story(
+            story=story2,
+            current_version=story2.version,
+            values=values,
+        )
+
+        fake_validate_and_process.assert_awaited_once_with(
+            story=story2,
+            values=values,
+        )
+        fake_stories_repo.update_story.assert_awaited_once_with(
+            id=story2.id,
+            current_version=story2.version,
+            values=values,
+        )
+        fake_get_story_detail.assert_awaited_once_with(
+            project_id=story2.project_id, ref=story2.ref, neighbors=old_neighbors
+        )
+        fake_stories_events.emit_event_when_story_is_updated.assert_awaited_once_with(
+            project=story2.project,
             story=updated_story,
             updates_attrs=[*values],
         )

@@ -11,7 +11,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { concatLatestFrom } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { User } from '@taiga/data';
+import { NotificationType, User } from '@taiga/data';
 import { Observable, of } from 'rxjs';
 import { filter, map, share, switchMap } from 'rxjs/operators';
 import { WsService } from '~/app/services/ws';
@@ -24,6 +24,7 @@ import { InputModalityDetector } from '@angular/cdk/a11y';
 import { LanguageService } from './services/language/language.service';
 import { ConfigService } from '@taiga/cdk/services/config';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { UserEventsActions } from './modules/auth/data-access/+state/actions/user.actions';
 
 @Component({
   selector: 'tg-root',
@@ -80,6 +81,17 @@ export class AppComponent {
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
         void this.router.navigate(['/logout']);
+      });
+
+    this.wsService
+      .userEvents<{ notification: NotificationType }>('notifications.create')
+      .pipe(takeUntilDestroyed())
+      .subscribe((msg) => {
+        this.store.dispatch(
+          UserEventsActions.newNotification({
+            notification: msg.event.content.notification,
+          })
+        );
       });
 
     this.setBannerHeight();

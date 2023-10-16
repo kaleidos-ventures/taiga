@@ -380,6 +380,39 @@ Used only in comment list sort button
   }
 }
 
+[data-appearance="navigation-action"]:is(button, a) {
+  @mixin button-dropdown-expanded {
+    background: var(--color-gray20);
+    color: var(--color-secondary90);
+  }
+
+  transition-duration: 100ms !important;
+
+  & [tuiWrapper] {
+    background: none;
+    border-radius: 3px;
+    color: var(--color-secondary);
+    font-weight: var(--font-weight-medium);
+    padding: var(--spacing-4) !important;
+    transition: none;
+
+    @mixin wrapper-hover {
+      background: var(--color-gray20);
+      color: var(--color-secondary90);
+    }
+
+    @mixin wrapper-focus {
+      --tui-focus: var(--color-secondary);
+
+      color: var(--color-secondary);
+
+      &::after {
+        border-width: 1px;
+      }
+    }
+  }
+}
+
 [data-appearance="button-form"]:is(button, a) {
   --tui-primary-hover: var(--color-gray20);
   --tui-secondary-hover: var(--color-gray20);

@@ -12,13 +12,14 @@ import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from './+state/effects/auth.effects';
 import { authFeature } from './+state/reducers/auth.reducer';
 import { RouterModule } from '@angular/router';
+import { NotificationsEffects } from './+state/effects/notifications.effects';
 
 @NgModule({
   declarations: [],
   imports: [
     RouterModule,
     StoreModule.forFeature(authFeature),
-    EffectsModule.forFeature([AuthEffects]),
+    EffectsModule.forFeature([AuthEffects, NotificationsEffects]),
   ],
 })
 export class DataAccessAuthModule {}

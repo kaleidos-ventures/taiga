@@ -6,6 +6,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 Copyright (c) 2023-present Kaleidos INC
 */
 @import url("tools/typography.css");
+@import url("taiga-ui/mixins/wrapper.css");
 
 :host {
   align-items: center;
@@ -97,4 +98,34 @@ Copyright (c) 2023-present Kaleidos INC
   &:hover tg-user-avatar {
     --color-border: var(--color-secondary);
   }
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--spacing-16);
+  padding-inline-end: var(--spacing-16);
+}
+
+.count-notifications-wrapper {
+  position: relative;
+}
+
+.count-notifications {
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  background: var(--color-red);
+  block-size: 16px;
+  border-radius: 50%;
+  color: var(--color-white);
+  display: flex;
+  font-size: 0.688rem;
+  font-weight: var(--font-weight-medium);
+  inset-inline-end: 0;
+  justify-content: center;
+  position: absolute;
+  z-index: var(--first-layer);
+}
+
+.count-overflow {
+  font-size: 0.5rem;
 }

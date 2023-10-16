@@ -1,0 +1,90 @@
+<!--
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+-->
+
+<ng-container *transloco="let t">
+  <div
+    class="notification"
+    [class.unread]="!notification.readAt">
+    <ng-container *ngIf="notification.type === 'stories.assign'">
+      <div class="notification-inner">
+        <tg-user-avatar
+          size="m"
+          class="no-border"
+          [color]="notification.content.assignedBy.color"
+          [user]="notification.content.assignedBy"
+          type="light"
+          [rounded]="true"
+          aria-hidden="true"></tg-user-avatar>
+
+        <div class="notification-info">
+          <p
+            class="type"
+            [innerHtml]="
+              t(getTranslationKey(notification), {
+                username: notification.content.assignedBy.fullName
+              })
+            "></p>
+
+          <p>
+            <a
+              [routerLink]="[
+                '/project',
+                notification.content.projects.id,
+                notification.content.projects.slug,
+                'stories',
+                notification.content.story.ref
+              ]">
+              {{ notification.content.story.ref }}
+              {{ notification.content.story.title }}
+            </a>
+          </p>
+
+          <p class="date">{{ notification.createdAt | dateDistance }}</p>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="notification.type === 'stories.unassign'">
+      <div class="notification-inner">
+        <tg-user-avatar
+          size="m"
+          class="no-border"
+          [color]="notification.content.unassignedBy.color"
+          [user]="notification.content.unassignedBy"
+          type="light"
+          [rounded]="true"
+          aria-hidden="true"></tg-user-avatar>
+
+        <div class="notification-info">
+          <p
+            class="type"
+            [innerHtml]="
+              t(getTranslationKey(notification), {
+                username: notification.content.unassignedBy.fullName
+              })
+            "></p>
+
+          <p>
+            <a
+              [routerLink]="[
+                '/project',
+                notification.content.projects.id,
+                notification.content.projects.slug,
+                'stories',
+                notification.content.story.ref
+              ]">
+              {{ notification.content.story.ref }}
+              {{ notification.content.story.title }}
+            </a>
+          </p>
+
+          <p class="date">{{ notification.createdAt | dateDistance }}</p>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>

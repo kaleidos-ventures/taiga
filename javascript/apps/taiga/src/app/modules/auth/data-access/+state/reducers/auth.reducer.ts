@@ -6,22 +6,32 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { createFeature, on } from '@ngrx/store';
+import { createFeature, createSelector, on } from '@ngrx/store';
 import { User } from '@taiga/data';
 import { userSettingsActions } from '~/app/modules/feature-user-settings/data-access/+state/actions/user-settings.actions';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import * as AuthActions from '../actions/auth.actions';
+import { UserActions } from '../actions/user.actions';
+import { NotificationType } from '@taiga/data';
 
 export interface AuthState {
   user: User | null;
   loginError: boolean;
   showResetPasswordConfirmation: boolean;
+  notificationCount: {
+    read: number;
+    total: number;
+    unread: number;
+  } | null;
+  notifications: NotificationType[];
 }
 
 export const initialState: AuthState = {
   user: null,
   loginError: false,
   showResetPasswordConfirmation: false,
+  notificationCount: null,
+  notifications: [],
 };
 
 export const reducer = createImmerReducer(
@@ -73,10 +83,28 @@ export const reducer = createImmerReducer(
     }
 
     return state;
+  }),
+  on(UserActions.setNotificationNumber, (state, { notifications }) => {
+    state.notificationCount = notifications;
+
+    return state;
+  }),
+  on(UserActions.fetchNotificationsSuccess, (state, { notifications }) => {
+    state.notifications = notifications;
+
+    return state;
   })
 );
 
 export const authFeature = createFeature({
   name: 'auth',
   reducer: reducer,
+  extraSelectors: ({ selectNotificationCount }) => ({
+    unreadNotificationsCount: createSelector(
+      selectNotificationCount,
+      (count) => {
+        return count?.unread ?? 0;
+      }
+    ),
+  }),
 });

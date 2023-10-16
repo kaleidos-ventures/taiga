@@ -82,6 +82,33 @@ Copyright (c) 2023-present Kaleidos INC
       </tui-hosted-dropdown>
     </div>
     <div class="right">
+      <div class="header-actions">
+        <tui-hosted-dropdown
+          [content]="notificationsDropdown"
+          [(open)]="openNotificationsDropdown">
+          <div class="count-notifications-wrapper">
+            <span
+              *ngIf="notificationsCount() > 0"
+              class="count-notifications"
+              [class.count-overflow]="notificationsCount() > 99">
+              <ng-container *ngIf="notificationsCount() > 99">+99</ng-container>
+              <ng-container *ngIf="notificationsCount() <= 99">{{
+                notificationsCount()
+              }}</ng-container>
+            </span>
+            <button
+              class="notifications-action"
+              type="button"
+              tuiIconButton
+              appearance="navigation-action"
+              [attr.aria-expanded]="openNotificationsDropdown"
+              aria-haspopup="true"
+              icon="bell"
+              data-test="notifications-button"
+              [attr.aria-label]="t('navigation.notifications.title')"></button>
+          </div>
+        </tui-hosted-dropdown>
+      </div>
       <div class="separator"></div>
       <div class="avatar-holder">
         <tui-hosted-dropdown
@@ -109,6 +136,10 @@ Copyright (c) 2023-present Kaleidos INC
         </tui-hosted-dropdown>
       </div>
     </div>
+
+    <ng-template #notificationsDropdown>
+      <tg-notifications></tg-notifications>
+    </ng-template>
 
     <ng-template #userDropdown>
       <tg-navigation-user-dropdown

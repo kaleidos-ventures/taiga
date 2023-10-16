@@ -9,7 +9,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@taiga/cdk/services/config';
-import { Auth, DeleteInfo, User } from '@taiga/data';
+import { Auth, DeleteInfo, User, NotificationType } from '@taiga/data';
 
 @Injectable({
   providedIn: 'root',
@@ -54,5 +54,19 @@ export class UsersApiService {
 
   public deleteAccount() {
     return this.http.delete(`${this.config.apiUrl}/my/user`);
+  }
+
+  public notificationsCount() {
+    return this.http.get<{
+      read: number;
+      total: number;
+      unread: number;
+    }>(`${this.config.apiUrl}/my/notifications/count`);
+  }
+
+  public notifications() {
+    return this.http.get<NotificationType[]>(
+      `${this.config.apiUrl}/my/notifications`
+    );
   }
 }

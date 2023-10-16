@@ -20,6 +20,8 @@ import { RouterLink } from '@angular/router';
 import { TuiButtonModule, TuiHostedDropdownModule } from '@taiga-ui/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective, TranslocoPipe } from '@ngneat/transloco';
+import { NotificationsComponent } from './notifications/notifications.component';
+import { authFeature } from '~/app/modules/auth/data-access/+state/reducers/auth.reducer';
 @Component({
   selector: 'tg-navigation',
   templateUrl: './navigation.component.html',
@@ -37,14 +39,19 @@ import { TranslocoDirective, TranslocoPipe } from '@ngneat/transloco';
     NavigationUserDropdownComponent,
     NavigationProjectsComponent,
     TranslocoPipe,
+    NotificationsComponent,
   ],
 })
 export class NavigationComponent {
   public openProjectsDropdown = false;
   public openUserDropdown = false;
+  public openNotificationsDropdown = false;
 
   public user$ = this.store.select(selectUser);
   public logged$ = this.user$.pipe(map(() => this.authService.isLogged()));
+  public notificationsCount = this.store.selectSignal(
+    authFeature.unreadNotificationsCount
+  );
 
   constructor(
     private store: Store,

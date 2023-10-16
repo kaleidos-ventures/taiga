@@ -37,3 +37,5 @@ export * from './lib/user-comment.model';
 export * from './lib/delete-info.model';
 export * from './lib/attachment.model.mock';
 export * from './lib/attachment.model';
+export * from './lib/notification.model';
+export * from './lib/notification.model.mock';

@@ -54,6 +54,14 @@
     "a11y": {
       "projects_navigate": "Projects. Press down to navigate",
       "user_menu_navigate": "User: {{ userName }}. Press down to navigate"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "empty": "You don’t have any notification.",
+      "types": {
+        "stories.assign": "<span class='username'>{{username}}</span> assigned you the story",
+        "stories.unassign": "<span class='username'>{{username}}</span> unassigned you from the story"
+      }
     }
   },
   "navigation_projects": {

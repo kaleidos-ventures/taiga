@@ -1,0 +1,62 @@
+/*
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+Copyright (c) 2023-present Kaleidos INC
+*/
+
+:host {
+  &:not(:last-child) {
+    border-block-end: 1px solid var(--color-gray20);
+    padding-block-end: var(--spacing-12);
+  }
+
+  &::ng-deep .username {
+    color: var(--color-secondary);
+  }
+}
+
+.type {
+  color: var(--color-gray80);
+}
+
+.date {
+  color: var(--color-gray70);
+  font-size: var(--font-size-small);
+}
+
+.notification-inner {
+  display: flex;
+  gap: var(--spacing-8);
+  inline-size: 100%;
+  padding: var(--spacing-8);
+}
+
+p {
+  line-height: 21px;
+  margin: 0;
+}
+
+a {
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.unread .notification-inner {
+  background-color: var(--color-gray10);
+  border-radius: 4px;
+  position: relative;
+
+  &::before {
+    aspect-ratio: 1;
+    background-color: var(--color-secondary);
+    block-size: 8px;
+    border-radius: 50%;
+    content: "";
+    inset-block-start: var(--spacing-12);
+    inset-inline-end: var(--spacing-8);
+    position: absolute;
+  }
+}

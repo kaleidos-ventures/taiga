@@ -37,7 +37,7 @@ import {
   Workflow,
   WorkspaceMembership,
 } from '@taiga/data';
-import { distinctUntilChanged, filter, merge } from 'rxjs';
+import { distinctUntilChanged, filter, merge, share } from 'rxjs';
 import {
   selectCurrentProject,
   selectShowBannerOnRevoke,
@@ -226,33 +226,43 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
         }
       });
 
+    const projectMembershipUpdate = this.wsService
+      .userEvents<{ membership: Membership }>('projectmemberships.update')
+      .pipe(
+        filter((data) => {
+          return (
+            data.event.content.membership.project!.id ===
+            this.state.get('project').id
+          );
+        }),
+        share()
+      );
+
+    projectMembershipUpdate
+      .pipe(
+        untilDestroyed(this),
+        filter((data) => {
+          return !data.event.content.membership.role.isAdmin;
+        })
+      )
+      .subscribe((data) => {
+        this.appService.toastNotification({
+          message: 'errors.admin_permission',
+          paramsMessage: {
+            project: data.event.content.membership.project?.name,
+          },
+          status: TuiNotification.Error,
+          closeOnNavigation: false,
+        });
+      });
+
     merge(
-      this.wsService
-        .userEvents<{ membership: Membership }>('projectmemberships.update')
-        .pipe(
-          filter((data) => {
-            return (
-              data.event.content.membership.project!.id ===
-              this.state.get('project').id
-            );
-          })
-        ),
+      projectMembershipUpdate,
       this.wsService.projectEvents('projects.permissions.update'),
       this.wsService.projectEvents('projectroles.update')
     )
       .pipe(untilDestroyed(this))
-      .subscribe((data) => {
-        const content = data.event.content as { membership: Membership };
-        if (!content.membership.role.isAdmin) {
-          this.appService.toastNotification({
-            message: 'errors.admin_permission',
-            paramsMessage: {
-              project: content.membership.project?.name,
-            },
-            status: TuiNotification.Error,
-            closeOnNavigation: false,
-          });
-        }
+      .subscribe(() => {
         this.store.dispatch(
           permissionsUpdate({ id: this.state.get('project').id })
         );

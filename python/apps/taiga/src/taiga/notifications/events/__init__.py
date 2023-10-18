@@ -6,10 +6,12 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from taiga.events import events_manager
-from taiga.notifications.events.content import CreateNotificationContent
+from taiga.notifications.events.content import CreateNotificationContent, ReadNotificationsContent
 from taiga.notifications.models import Notification
+from taiga.users.models import User
 
 CREATE_NOTIFICATION = "notifications.create"
+READ_NOTIFICATIONS = "notifications.read"
 
 
 async def emit_event_when_notifications_are_created(
@@ -23,3 +25,13 @@ async def emit_event_when_notifications_are_created(
                 notification=notification,
             ),
         )
+
+
+async def emit_event_when_notifications_are_read(user: User, notifications: list[Notification]) -> None:
+    await events_manager.publish_on_user_channel(
+        user=user,
+        type=READ_NOTIFICATIONS,
+        content=ReadNotificationsContent(
+            notifications_ids=[n.id for n in notifications],
+        ),
+    )

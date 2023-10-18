@@ -5,17 +5,23 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
+from uuid import UUID
+
 from taiga.base.api import AuthRequest
 from taiga.base.api.permissions import check_permissions
-from taiga.exceptions.api.errors import ERROR_403
+from taiga.base.validators import B64UUID
+from taiga.exceptions import api as ex
+from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.notifications import services as notifications_services
 from taiga.notifications.models import Notification
 from taiga.notifications.serializers import NotificationCountersSerializer, NotificationSerializer
 from taiga.permissions import IsAuthenticated
 from taiga.routers import routes
+from taiga.users.models import User
 
 LIST_MY_NOTIFICATIONS = IsAuthenticated()
 COUNT_MY_NOTIFICATIONS = IsAuthenticated()
+MARK_MY_NOTIFICATIONS_AS_READ = IsAuthenticated()
 
 ##########################################################
 # list notifications
@@ -55,3 +61,37 @@ async def count_my_notifications(request: AuthRequest) -> dict[str, int]:
     """
     await check_permissions(permissions=COUNT_MY_NOTIFICATIONS, user=request.user, obj=None)
     return await notifications_services.count_user_notifications(user=request.user)
+
+
+##########################################################
+# mark notification as read
+##########################################################
+
+
+@routes.notifications.post(
+    "/my/notifications/{id}/read",
+    name="my.notifications.read",
+    summary="Mark notification as read",
+    responses=ERROR_403 | ERROR_404 | ERROR_422,
+    response_model=NotificationSerializer,
+)
+async def mark_my_notification_as_read(id: B64UUID, request: AuthRequest) -> Notification:
+    """
+    Mark a notification as read.
+    """
+    await check_permissions(permissions=MARK_MY_NOTIFICATIONS_AS_READ, user=request.user, obj=None)
+    await get_notification_or_404(user=request.user, id=id)
+    return (await notifications_services.mark_user_notifications_as_read(user=request.user, id=id))[0]
+
+
+##########################################################
+# misc
+##########################################################
+
+
+async def get_notification_or_404(user: User, id: UUID) -> Notification:
+    notification = await notifications_services.get_user_notification(user=user, id=id)
+    if notification is None:
+        raise ex.NotFoundError("Notification does not exist")
+
+    return notification

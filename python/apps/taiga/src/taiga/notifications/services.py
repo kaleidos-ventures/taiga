@@ -4,7 +4,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Copyright (c) 2023-present Kaleidos INC
+
 from collections.abc import Iterable
+from uuid import UUID
 
 from taiga.base.serializers import BaseModel
 from taiga.notifications import events as notifications_events
@@ -31,6 +33,24 @@ async def list_user_notifications(user: User, is_read: bool | None = None) -> li
         filters["is_read"] = is_read
 
     return await notifications_repositories.list_notifications(filters=filters)
+
+
+async def get_user_notification(user: User, id: UUID) -> Notification | None:
+    return await notifications_repositories.get_notification(filters={"owner": user, "id": id})
+
+
+async def mark_user_notifications_as_read(user: User, id: UUID | None = None) -> list[Notification]:
+    filters: NotificationFilters = {"owner": user}
+
+    if id is not None:
+        filters["id"] = id
+
+    notifications = await notifications_repositories.mark_notifications_as_read(filters=filters)
+
+    if notifications:
+        await notifications_events.emit_event_when_notifications_are_read(user=user, notifications=notifications)
+
+    return notifications
 
 
 async def count_user_notifications(user: User) -> dict[str, int]:

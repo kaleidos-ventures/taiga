@@ -944,3 +944,20 @@ Content for:
       "notification": {... "notification object" ...},
   }
   ```
+
+
+#### `notifications.read`
+
+It happens when one or some notifications are marked as read.
+
+Content for:
+- user channel:
+  ```
+  {
+      "notifications_ids": [
+        "notification id 1",
+        "notification id 2",
+        ...
+      ]
+  }
+  ```

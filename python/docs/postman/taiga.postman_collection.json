@@ -3800,7 +3800,7 @@
 							],
 							"query": [
 								{
-									"key": "read",
+									"key": "is_read",
 									"value": "false",
 									"description": "boolean or none",
 									"disabled": true
@@ -3854,6 +3854,49 @@
 									"value": null,
 									"disabled": true
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mark my notification as read",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/notifications/{{notification_id}}/read",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"notifications",
+								"{{notification_id}}",
+								"read"
 							]
 						}
 					},

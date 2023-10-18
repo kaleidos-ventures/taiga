@@ -7,11 +7,12 @@
 
 from asgiref.sync import sync_to_async
 
-from .base import Factory
+from .base import Factory, factory
 
 
 class NotificationFactory(Factory):
     type = "test_notification"
+    owner = factory.SubFactory("tests.utils.factories.UserFactory")
 
     class Meta:
         model = "notifications.Notification"

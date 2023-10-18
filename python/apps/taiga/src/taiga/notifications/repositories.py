@@ -7,8 +7,10 @@
 
 from collections.abc import Iterable
 from typing import Any, TypedDict
+from uuid import UUID
 
 from taiga.base.db.models import QuerySet
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.notifications.models import Notification
 from taiga.users.models import User
 
@@ -20,6 +22,7 @@ DEFAULT_QUERYSET = Notification.objects.select_related("created_by").all()
 
 
 class NotificationFilters(TypedDict, total=False):
+    id: UUID
     owner: User
     is_read: bool
 
@@ -77,6 +80,35 @@ async def list_notifications(
         limit += offset
 
     return [a async for a in qs[offset:limit]]
+
+
+##########################################################
+# get notifications
+##########################################################
+
+
+async def get_notification(
+    filters: NotificationFilters = {},
+) -> Notification | None:
+    qs = await _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+
+    try:
+        return await qs.aget()
+    except Notification.DoesNotExist:
+        return None
+
+
+##########################################################
+# mark notificatiosn as read
+##########################################################
+
+
+async def mark_notifications_as_read(
+    filters: NotificationFilters = {},
+) -> list[Notification]:
+    qs = await _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    await qs.aupdate(read_at=aware_utcnow())
+    return [a async for a in qs.all()]
 
 
 ##########################################################

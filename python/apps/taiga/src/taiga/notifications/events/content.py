@@ -5,9 +5,13 @@
 #
 # Copyright (c) 2023-present Kaleidos INC
 
-from taiga.base.serializers import BaseModel
+from taiga.base.serializers import UUIDB64, BaseModel
 from taiga.notifications.serializers import NotificationSerializer
 
 
 class CreateNotificationContent(BaseModel):
     notification: NotificationSerializer
+
+
+class ReadNotificationsContent(BaseModel):
+    notifications_ids: list[UUIDB64]

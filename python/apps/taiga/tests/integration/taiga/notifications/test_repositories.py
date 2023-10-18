@@ -63,6 +63,39 @@ async def test_list_notifications_filters():
 
 
 ##########################################################
+# get_notification
+##########################################################
+
+
+async def test_get_notification():
+    user1 = await f.create_user()
+    user2 = await f.create_user()
+    notification = await f.create_notification(owner=user1)
+
+    assert await repositories.get_notification(filters={"id": notification.id}) == notification
+    assert await repositories.get_notification(filters={"id": notification.id, "owner": user1}) == notification
+    assert await repositories.get_notification(filters={"id": notification.id, "owner": user2}) is None
+
+
+##########################################################
+# mark notifications as read
+##########################################################
+
+
+async def test_mark_notifications_as_read():
+    user = await f.create_user()
+    n1 = await f.create_notification(owner=user)
+    n2 = await f.create_notification(owner=user)
+    n3 = await f.create_notification(owner=user)
+
+    assert n1.read_at == n2.read_at == n3.read_at is None
+
+    ns = await repositories.mark_notifications_as_read(filters={"owner": user})
+
+    assert ns[0].read_at == ns[1].read_at == ns[2].read_at is not None
+
+
+##########################################################
 # misc
 ##########################################################
 

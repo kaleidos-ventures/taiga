@@ -10882,8 +10882,6 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"// Post-request execution tasks",
-									"",
 									"// Tests",
 									"pm.test(\"HTTP status code is correct\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -10903,6 +10901,11 @@
 									"    // Validate we're not returning more fields than expected",
 									"    var numOfReturnedFields = Object.keys(jsonRes[0]).length;",
 									"    pm.expect(numOfReturnedFields).to.equal(6);",
+									"});",
+									"",
+									"// Post-request execution tasks",
+									"pm.test(\"Environment variable settings\", function () {",
+									"    pm.environment.set(\"notification_id\", pm.response.json()[0].id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -10923,7 +10926,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/notifications?read=false",
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/notifications?is_read=false",
 							"protocol": "{{protocol}}",
 							"host": [
 								"{{domain}}{{port}}{{api_url}}"
@@ -10934,9 +10937,75 @@
 							],
 							"query": [
 								{
-									"key": "read",
+									"key": "is_read",
 									"value": "false"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 my.notiffications.{id}.read",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Post-request execution tasks",
+									"",
+									"// Tests",
+									"pm.test(\"HTTP status code is correct\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"pm.test(\"Response JSON is correct\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"",
+									"    // Validate response API contract for each element",
+									"    pm.expect(jsonRes).to.have.property(\"id\");",
+									"    pm.expect(jsonRes).to.have.property(\"type\");",
+									"    pm.expect(jsonRes).to.have.property(\"createdBy\");",
+									"    pm.expect(jsonRes).to.have.property(\"createdAt\");",
+									"    pm.expect(jsonRes).to.have.property(\"readAt\");",
+									"    pm.expect(jsonRes).to.have.property(\"content\");",
+									"    ",
+									"    // Validate we're not returning more fields than expected",
+									"    var numOfReturnedFields = Object.keys(jsonRes).length;",
+									"    pm.expect(numOfReturnedFields).to.equal(6);",
+									"",
+									"    // notification must be read",
+									"    pm.expect(jsonRes.readAt).to.not.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{domain}}{{port}}{{api_url}}/my/notifications/{{notification_id}}/read",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{domain}}{{port}}{{api_url}}"
+							],
+							"path": [
+								"my",
+								"notifications",
+								"{{notification_id}}",
+								"read"
 							]
 						}
 					},

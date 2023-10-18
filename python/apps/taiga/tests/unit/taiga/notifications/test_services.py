@@ -88,6 +88,61 @@ async def test_list_user_notifications_unread_only():
 
 
 #####################################################################
+# mark_user_notifications_as_read
+#####################################################################
+
+
+async def test_mark_user_notifications_as_read_with_one():
+    user = f.build_user()
+    notification = f.build_notification(owner=user)
+
+    with (
+        patch(
+            "taiga.notifications.services.notifications_repositories", autospec=True
+        ) as fake_notifications_repository,
+        patch("taiga.notifications.services.notifications_events", autospec=True) as fake_notifications_events,
+    ):
+        fake_notifications_repository.mark_notifications_as_read.return_value = [notification]
+
+        notifications = await services.mark_user_notifications_as_read(user=user, id=notification.id)
+
+        assert notifications == [notification]
+
+        fake_notifications_repository.mark_notifications_as_read.assert_called_once_with(
+            filters={"owner": user, "id": notification.id}
+        )
+
+        fake_notifications_events.emit_event_when_notifications_are_read.assert_called_once_with(
+            user=user, notifications=notifications
+        )
+
+
+async def test_mark_user_notifications_as_read_with_many():
+    user = f.build_user()
+    notif1 = f.build_notification(owner=user)
+    notif2 = f.build_notification(owner=user)
+    notif3 = f.build_notification(owner=user)
+
+    with (
+        patch(
+            "taiga.notifications.services.notifications_repositories", autospec=True
+        ) as fake_notifications_repository,
+        patch("taiga.notifications.services.notifications_events", autospec=True) as fake_notifications_events,
+    ):
+        fake_notifications_repository.mark_notifications_as_read.return_value = [notif3, notif2, notif1]
+
+        notifications = await services.mark_user_notifications_as_read(user=user)
+
+        assert notifications == [notif3, notif2, notif1]
+
+        fake_notifications_repository.mark_notifications_as_read.assert_called_once_with(filters={"owner": user})
+
+        fake_notifications_events.emit_event_when_notifications_are_read.assert_called_once_with(
+            user=user, notifications=notifications
+        )
+
+
+#####################################################################
 # count_user_notifications
 #####################################################################
 

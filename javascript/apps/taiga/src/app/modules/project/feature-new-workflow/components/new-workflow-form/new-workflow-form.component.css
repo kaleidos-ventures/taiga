@@ -25,3 +25,7 @@ Copyright (c) 2023-present Kaleidos INC
 .input-wrapper {
   flex: 1;
 }
+
+.max-length {
+  font-size: var(--font-size-small);
+}

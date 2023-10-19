@@ -10,6 +10,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ComponentRef,
   DestroyRef,
   OnDestroy,
   ViewChild,
@@ -18,6 +19,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
+  Observable,
   combineLatest,
   distinctUntilChanged,
   filter,
@@ -25,6 +27,8 @@ import {
   of,
   pairwise,
   startWith,
+  switchMap,
+  tap,
 } from 'rxjs';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
 import { StoryDetailActions } from '../story-detail/data-access/+state/actions/story-detail.actions';
@@ -43,8 +47,9 @@ import {
 import { RxState } from '@rx-angular/state';
 import { Project, Story, StoryDetail, StoryView, Workflow } from '@taiga/data';
 import { filterNil } from '~/app/shared/utils/operators';
-import { selectCurrentWorkflowSlug } from '../feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { ProjectFeatureStoryWrapperFullViewModule } from '../feature-story-wrapper-full-view/project-feature-story-wrapper-full-view.module';
+import { selectRouteParams } from '~/app/router-selectors';
+import { ProjectFeatureViewSetterKanbanComponent } from './project-feature-view-setter.component-kanban.component';
 
 interface ProjectFeatureViewSetterComponentState {
   storyView: StoryView;
@@ -81,6 +86,8 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
   ) as RxState<ProjectFeatureViewSetterComponentState>;
 
   public model$ = this.state.select();
+
+  private kanbanComponent?: ComponentRef<ProjectFeatureViewSetterKanbanComponent>;
   private destroyRef = inject(DestroyRef);
 
   constructor(
@@ -101,10 +108,6 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
         distinctUntilChanged()
       )
     );
-    this.state.connect(
-      'workflowSlug',
-      this.store.select(selectCurrentWorkflowSlug)
-    );
 
     this.state.hold(
       this.state.select('kanbanHost').pipe(distinctUntilChanged(), filterNil()),
@@ -123,20 +126,46 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
       }
     );
 
+    this.state.connect(
+      'workflowSlug',
+      this.store.select(selectRouteParams).pipe(
+        switchMap((params): Observable<string> => {
+          if (params.workflow) {
+            return of(params.workflow as string);
+          }
+
+          if (params.storyRef) {
+            return this.store.select(selectStory).pipe(
+              filterNil(),
+              map((story) => {
+                return story?.workflow.slug ?? 'main';
+              })
+            );
+          }
+
+          return of('main');
+        }),
+        distinctUntilChanged(),
+        tap((workflowSlug) => {
+          this.kanbanComponent?.setInput('workflowSlug', workflowSlug);
+        })
+      )
+    );
+
     combineLatest([
       this.state.select('url'),
       this.route.data,
       this.route.params,
-      this.state.select('workflowSlug'),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([url, data, params, workflowSlug]) => {
-        const isKanbanUrl = url.endsWith(`/kanban/${workflowSlug}`);
-        this.state.connect('isKanban', of(isKanbanUrl));
+      .subscribe(([url, data, params]) => {
+        const project: Project = data.project as Project;
+        const isKanbanUrl = url.includes(`${project.slug}/kanban/`);
+        this.state.set({ isKanban: isKanbanUrl });
 
         if (!isKanbanUrl && !!data.stories) {
           const storyParams = params as StoryParams;
-          const needRedirect = params.slug !== (data.project as Project).slug;
+          const needRedirect = params.slug !== project.slug;
           if (needRedirect) {
             void this.router.navigate(
               [
@@ -176,7 +205,14 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
 
     viewContainerRef.clear();
 
-    viewContainerRef.createComponent(ProjectFeatureViewSetterKanbanComponent);
+    this.kanbanComponent = viewContainerRef.createComponent(
+      ProjectFeatureViewSetterKanbanComponent
+    );
+
+    this.kanbanComponent?.setInput(
+      'workflowSlug',
+      this.state.get('workflowSlug')
+    );
 
     this.cd.markForCheck();
   }

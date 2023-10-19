@@ -6,15 +6,20 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ProjectFeatureKanbanModule } from '../feature-kanban/project-feature-kanban.module';
+import { Workflow } from '@taiga/data';
 
 @Component({
   selector: 'tg-project-feature-view-setter-kanban',
-  template: '<tg-project-feature-kanban></tg-project-feature-kanban>',
+  template:
+    '<tg-project-feature-kanban [workflowSlug]="workflowSlug"></tg-project-feature-kanban>',
   styles: [''],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [ProjectFeatureKanbanModule],
 })
-export class ProjectFeatureViewSetterKanbanComponent {}
+export class ProjectFeatureViewSetterKanbanComponent {
+  @Input()
+  public workflowSlug!: Workflow['slug'];
+}

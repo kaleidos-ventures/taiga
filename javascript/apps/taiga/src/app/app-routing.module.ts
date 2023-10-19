@@ -27,8 +27,9 @@ function isViewSetterKanbaStory(
 ) {
   const story = ':slug/stories/:storyRef';
   const kanban = ':slug/kanban';
+  const workflow = ':slug/kanban/:workflow';
 
-  const urls = [story, kanban];
+  const urls = [story, kanban, workflow];
 
   const findUrl = (it: ActivatedRouteSnapshot): boolean => {
     const finded = !!urls.find((url) => it.routeConfig?.path === url);

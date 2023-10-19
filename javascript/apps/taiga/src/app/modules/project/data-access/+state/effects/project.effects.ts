@@ -9,7 +9,7 @@
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { Store } from '@ngrx/store';
@@ -26,7 +26,7 @@ import {
 } from 'rxjs/operators';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import * as ProjectOverviewActions from '~/app/modules/project/feature-overview/data-access/+state/actions/project-overview.actions';
-import { selectUrl } from '~/app/router-selectors';
+import { selectRouteParams, selectUrl } from '~/app/router-selectors';
 import { AppService } from '~/app/services/app.service';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 import { invitationProjectActions } from '~/app/shared/invite-user-modal/data-access/+state/actions/invitation.action';
@@ -239,6 +239,29 @@ export class ProjectEffects {
       })
     );
   });
+
+  public updateWorkflowSlug$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(projectEventActions.updateWorkflow),
+        concatLatestFrom(() => [
+          this.store.select(selectRouteParams).pipe(filterNil()),
+        ]),
+        filter(([action, params]) => params.workflow !== action.workflow.slug),
+        tap(([action, params]) => {
+          const paramWorkflow = params.workflow as string;
+
+          void this.location.go(
+            this.router.url.replace(
+              `kanban/${paramWorkflow}`,
+              `kanban/${action.workflow.slug}`
+            )
+          );
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   public initAssignUser$ = createEffect(() => {
     return this.actions$.pipe(
@@ -493,6 +516,7 @@ export class ProjectEffects {
     private router: Router,
     private revokeInvitationService: RevokeInvitationService,
     private store: Store,
-    private location: Location
+    private location: Location,
+    private route: ActivatedRoute
   ) {}
 }

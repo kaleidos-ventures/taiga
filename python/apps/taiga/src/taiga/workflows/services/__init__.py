@@ -15,6 +15,7 @@ from taiga.projects.projects import repositories as projects_repositories
 from taiga.projects.projects.models import Project
 from taiga.stories.stories import repositories as stories_repositories
 from taiga.stories.stories import services as stories_services
+from taiga.users.models import User
 from taiga.workflows import events as workflows_events
 from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import Workflow, WorkflowStatus
@@ -296,11 +297,14 @@ async def reorder_workflow_statuses(
 ##########################################################
 
 
-async def delete_workflow_status(workflow_status: WorkflowStatus, target_status_id: UUID | None) -> bool:
+async def delete_workflow_status(
+    workflow_status: WorkflowStatus, deleted_by: User, target_status_id: UUID | None
+) -> bool:
     """
     This method deletes a workflow status, providing the option to first migrating its stories to another workflow
     status of the same workflow.
 
+    :param deleted_by: the user who is deleting the workflow status
     :param workflow_status: the workflow status to delete
     :param target_status_id: the workflow status's id to which move the stories from the status being deleted
         - if not received, all the workflow status and its contained stories will be deleted
@@ -329,6 +333,7 @@ async def delete_workflow_status(workflow_status: WorkflowStatus, target_status_
 
         if stories_to_move:
             await stories_services.reorder_stories(
+                reordered_by=deleted_by,
                 project=workflow_status.project,
                 workflow=workflow_status.workflow,
                 target_status_id=target_status_id,

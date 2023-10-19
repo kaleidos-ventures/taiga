@@ -235,6 +235,8 @@ def list_stories_to_reorder(filters: StoryFilters = {}) -> list[Story]:
     the order of the input references.
     """
     qs = _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    qs = _apply_select_related_to_queryset(qs=qs, select_related=["status", "project", "created_by"])
+    qs = _apply_prefetch_related_to_queryset(qs=qs, prefetch_related=["assignees"])
 
     stories = {s.ref: s for s in qs}
     return [stories[ref] for ref in filters["refs"] if stories.get(ref) is not None]

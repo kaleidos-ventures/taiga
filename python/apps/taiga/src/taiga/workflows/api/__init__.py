@@ -287,6 +287,7 @@ async def delete_workflow_status(
     await check_permissions(permissions=DELETE_WORKFLOW_STATUS, user=request.user, obj=workflow_status)
 
     await workflows_services.delete_workflow_status(
+        deleted_by=request.user,
         workflow_status=workflow_status,
         target_status_id=query_params.move_to,  # type: ignore
     )

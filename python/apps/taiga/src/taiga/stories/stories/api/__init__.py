@@ -11,7 +11,6 @@ from fastapi import Depends, status
 from starlette.responses import Response
 from taiga.base.api import AuthRequest, PaginationQuery, responses, set_pagination
 from taiga.base.api.permissions import check_permissions
-from taiga.base.utils.datetime import aware_utcnow
 from taiga.base.validators import B64UUID
 from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
@@ -157,15 +156,12 @@ async def update_story(
 
     values = form.dict(exclude_unset=True)
     current_version = values.pop("version")
-    if "title" in values:
-        values["title_updated_by"] = request.user
-        values["title_updated_at"] = aware_utcnow()
-
-    if "description" in values:
-        values["description_updated_by"] = request.user
-        values["description_updated_at"] = aware_utcnow()
-
-    return await stories_services.update_story(story=story, current_version=current_version, values=values)
+    return await stories_services.update_story(
+        story=story,
+        updated_by=request.user,
+        current_version=current_version,
+        values=values,
+    )
 
 
 ################################################
@@ -193,6 +189,7 @@ async def reorder_stories(
     await check_permissions(permissions=REORDER_STORIES, user=request.user, obj=workflow)
 
     return await stories_services.reorder_stories(
+        reordered_by=request.user,
         project=workflow.project,
         workflow=workflow,
         target_status_id=form.status,

@@ -11,8 +11,10 @@ from uuid import UUID
 
 from taiga.base.api import Pagination
 from taiga.base.repositories.neighbors import Neighbor
+from taiga.base.utils.datetime import aware_utcnow
 from taiga.projects.projects.models import Project
 from taiga.stories.stories import events as stories_events
+from taiga.stories.stories import notifications as stories_notifications
 from taiga.stories.stories import repositories as stories_repositories
 from taiga.stories.stories.models import Story
 from taiga.stories.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer, StorySummarySerializer
@@ -151,10 +153,11 @@ async def get_story_detail(
 async def update_story(
     story: Story,
     current_version: int,
+    updated_by: User,
     values: dict[str, Any] = {},
 ) -> StoryDetailSerializer:
     # Values to update
-    update_values = await _validate_and_process_values_to_update(story, values)
+    update_values = await _validate_and_process_values_to_update(story=story, updated_by=updated_by, values=values)
 
     # Old neighbors
     old_neighbors = None
@@ -181,47 +184,67 @@ async def update_story(
         updates_attrs=[*update_values],
     )
 
+    # Emit notifications
+    if "status" in update_values:
+        await stories_notifications.notify_when_story_status_change(
+            story=story,
+            status=update_values["status"].name,
+            emitted_by=updated_by,
+        )
+
     return detailed_story
 
 
-async def _validate_and_process_values_to_update(story: Story, values: dict[str, Any]) -> dict[str, Any]:
+async def _validate_and_process_values_to_update(
+    story: Story, updated_by: User, values: dict[str, Any]
+) -> dict[str, Any]:
     output = values.copy()
+
+    if "title" in output:
+        output.update(
+            title_updated_by=updated_by,
+            title_updated_at=aware_utcnow(),
+        )
+
+    if "description" in output:
+        output.update(
+            description_updated_by=updated_by,
+            description_updated_at=aware_utcnow(),
+        )
 
     if status_id := output.pop("status", None):
         status = await workflows_repositories.get_workflow_status(
             filters={"workflow_id": story.workflow_id, "id": status_id}
         )
-
         if not status:
             raise ex.InvalidStatusError("The provided status is not valid.")
-        elif status.id != story.status_id:
-            output["status"] = status
 
-            # Calculate new order
-            output["order"] = await _calculate_next_order(status_id=status.id)
+        if status.id != story.status_id:
+            output.update(status=status, order=await _calculate_next_order(status_id=status.id))
 
     elif workflow_slug := output.pop("workflow", None):
         workflow = await workflows_repositories.get_workflow(
             filters={"project_id": story.project_id, "slug": workflow_slug}, prefetch_related=["statuses"]
         )
-
         if not workflow:
             raise ex.InvalidWorkflowError("The provided workflow is not valid.")
-        elif workflow.slug != story.workflow.slug:
-            output["workflow"] = workflow
 
+        if workflow.slug != story.workflow.slug:
             # Set first status
-            first_status = await workflows_repositories.list_workflow_statuses(
+            first_status_list = await workflows_repositories.list_workflow_statuses(
                 filters={"workflow_id": workflow.id}, order_by=["order"], offset=0, limit=1
             )
 
-            if not first_status:
+            if not first_status_list:
                 raise ex.WorkflowHasNotStatusesError("The provided workflow hasn't any statuses.")
+            else:
+                first_status = first_status_list[0]
 
-            output["status"] = first_status[0]
-
-            # Calculate new order
-            output["order"] = await _calculate_next_order(status_id=first_status[0].id)
+            output.update(
+                workflow=workflow,
+                status=first_status,
+                order=await _calculate_next_order(status_id=first_status.id),
+            )
 
     return output
 
@@ -274,6 +297,7 @@ async def _calculate_offset(
 
 
 async def reorder_stories(
+    reordered_by: User,
     project: Project,
     workflow: Workflow,
     target_status_id: UUID,
@@ -320,8 +344,13 @@ async def reorder_stories(
     # update stories
     stories_to_update_tmp = {s.ref: s for s in stories_to_reorder}
     stories_to_update = []
+    stories_with_changed_status = []
     for i, ref in enumerate(stories_refs):
         story = stories_to_update_tmp[ref]
+
+        if story.status != target_status:
+            stories_with_changed_status.append(story)
+
         story.status = target_status
         story.order = pre_order + (offset * (i + 1))
         stories_to_update.append(story)
@@ -337,6 +366,14 @@ async def reorder_stories(
 
     # event
     await stories_events.emit_when_stories_are_reordered(project=project, reorder=reorder_story_serializer)
+
+    # notifications
+    for story in stories_with_changed_status:
+        await stories_notifications.notify_when_story_status_change(
+            story=story,
+            status=story.status.name,
+            emitted_by=reordered_by,
+        )
 
     return reorder_story_serializer
 

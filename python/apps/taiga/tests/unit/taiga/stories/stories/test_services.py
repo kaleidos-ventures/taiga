@@ -199,6 +199,7 @@ async def test_get_story_detail_no_neighbors():
 
 
 async def test_update_story_ok():
+    user = f.build_user()
     story = f.build_story()
     values = {"title": "new title", "description": "new description"}
     detailed_story = {
@@ -215,12 +216,14 @@ async def test_update_story_ok():
         ) as fake_validate_and_process,
         patch("taiga.stories.stories.services.get_story_detail", autospec=True) as fake_get_story_detail,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+        patch("taiga.stories.stories.services.stories_notifications", autospec=True) as fake_notifications,
     ):
         fake_validate_and_process.return_value = values
         fake_stories_repo.update_story.return_value = True
         fake_get_story_detail.return_value = detailed_story
 
         updated_story = await services.update_story(
+            updated_by=user,
             story=story,
             current_version=story.version,
             values=values,
@@ -229,22 +232,30 @@ async def test_update_story_ok():
         fake_validate_and_process.assert_awaited_once_with(
             story=story,
             values=values,
+            updated_by=user,
         )
         fake_stories_repo.update_story.assert_awaited_once_with(
             id=story.id,
             current_version=story.version,
             values=values,
         )
-        fake_get_story_detail.assert_awaited_once_with(project_id=story.project_id, ref=story.ref, neighbors=None)
+        fake_get_story_detail.assert_awaited_once_with(
+            project_id=story.project_id,
+            ref=story.ref,
+            neighbors=None,
+        )
         fake_stories_events.emit_event_when_story_is_updated.assert_awaited_once_with(
             project=story.project,
             story=updated_story,
             updates_attrs=[*values],
         )
+        fake_notifications.notify_when_story_status_change.assert_not_awaited()
+
         assert updated_story == detailed_story
 
 
 async def test_update_story_workflow_ok():
+    user = f.build_user()
     project = f.build_project()
     old_workflow = f.build_workflow(project=project)
     workflow_status1 = f.build_workflow_status(workflow=old_workflow)
@@ -279,6 +290,7 @@ async def test_update_story_workflow_ok():
         ) as fake_validate_and_process,
         patch("taiga.stories.stories.services.get_story_detail", autospec=True) as fake_get_story_detail,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+        patch("taiga.stories.stories.services.stories_notifications", autospec=True) as fake_notifications,
     ):
         fake_validate_and_process.return_value = values
         fake_stories_repo.list_story_neighbors.return_value = old_neighbors
@@ -286,14 +298,17 @@ async def test_update_story_workflow_ok():
         fake_get_story_detail.return_value = detailed_story
 
         updated_story = await services.update_story(
+            updated_by=user,
             story=story2,
             current_version=story2.version,
             values=values,
         )
+        assert updated_story == detailed_story
 
         fake_validate_and_process.assert_awaited_once_with(
             story=story2,
             values=values,
+            updated_by=user,
         )
         fake_stories_repo.update_story.assert_awaited_once_with(
             id=story2.id,
@@ -308,10 +323,12 @@ async def test_update_story_workflow_ok():
             story=updated_story,
             updates_attrs=[*values],
         )
-        assert updated_story == detailed_story
+
+        fake_notifications.notify_when_story_status_change.assert_awaited_once()
 
 
 async def test_update_story_error_wrong_version():
+    user = f.build_user()
     story = f.build_story()
     values = {"title": "new title"}
 
@@ -322,15 +339,23 @@ async def test_update_story_error_wrong_version():
         ) as fake_validate_and_process,
         patch("taiga.stories.stories.services.get_story_detail", autospec=True) as fake_get_story_detail,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+        patch("taiga.stories.stories.services.stories_notifications", autospec=True) as fake_notifications,
     ):
         fake_validate_and_process.return_value = values
         fake_stories_repo.update_story.return_value = False
 
         with pytest.raises(ex.UpdatingStoryWithWrongVersionError):
-            await services.update_story(story=story, current_version=story.version, values=values)
+            await services.update_story(
+                updated_by=user,
+                story=story,
+                current_version=story.version,
+                values=values,
+            )
+
         fake_validate_and_process.assert_awaited_once_with(
             story=story,
             values=values,
+            updated_by=user,
         )
         fake_stories_repo.update_story.assert_awaited_once_with(
             id=story.id,
@@ -339,6 +364,7 @@ async def test_update_story_error_wrong_version():
         )
         fake_get_story_detail.assert_not_awaited()
         fake_stories_events.emit_event_when_story_is_updated.assert_not_awaited()
+        fake_notifications.notify_when_story_status_change.assert_not_awaited()
 
 
 #######################################################
@@ -347,6 +373,7 @@ async def test_update_story_error_wrong_version():
 
 
 async def test_validate_and_process_values_to_update_ok_without_status():
+    user = f.build_user()
     story = f.build_story()
     values = {"title": "new title", "description": "new description"}
 
@@ -354,15 +381,23 @@ async def test_validate_and_process_values_to_update_ok_without_status():
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
     ):
-        valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
+        valid_values = await services._validate_and_process_values_to_update(
+            story=story, values=values, updated_by=user
+        )
 
         fake_workflows_repo.get_workflow_status.assert_not_awaited()
         fake_stories_repo.list_stories.assert_not_awaited()
 
-        assert valid_values == values
+        assert valid_values["title"] == values["title"]
+        assert "title_updated_at" in valid_values
+        assert "title_updated_by" in valid_values
+        assert valid_values["description"] == values["description"]
+        assert "description_updated_at" in valid_values
+        assert "description_updated_by" in valid_values
 
 
 async def test_validate_and_process_values_to_update_ok_with_status_empty():
+    user = f.build_user()
     story = f.build_story()
     status = f.build_workflow_status()
     values = {"title": "new title", "description": "new description", "status": status.id}
@@ -374,7 +409,9 @@ async def test_validate_and_process_values_to_update_ok_with_status_empty():
         fake_workflows_repo.get_workflow_status.return_value = status
         fake_stories_repo.list_stories.return_value = []
 
-        valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
+        valid_values = await services._validate_and_process_values_to_update(
+            story=story, values=values, updated_by=user
+        )
 
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
             filters={"workflow_id": story.workflow_id, "id": values["status"]},
@@ -387,11 +424,17 @@ async def test_validate_and_process_values_to_update_ok_with_status_empty():
         )
 
         assert valid_values["title"] == values["title"]
+        assert "title_updated_at" in valid_values
+        assert "title_updated_by" in valid_values
+        assert valid_values["description"] == values["description"]
+        assert "description_updated_at" in valid_values
+        assert "description_updated_by" in valid_values
         assert valid_values["status"] == status
         assert valid_values["order"] == services.DEFAULT_ORDER_OFFSET
 
 
 async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
+    user = f.build_user()
     story = f.build_story()
     status = f.build_workflow_status()
     story2 = f.build_story(status=status, order=42)
@@ -404,7 +447,9 @@ async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
         fake_workflows_repo.get_workflow_status.return_value = status
         fake_stories_repo.list_stories.return_value = [story2]
 
-        valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
+        valid_values = await services._validate_and_process_values_to_update(
+            story=story, values=values, updated_by=user
+        )
 
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
             filters={"workflow_id": story.workflow_id, "id": values["status"]},
@@ -417,11 +462,17 @@ async def test_validate_and_process_values_to_update_ok_with_status_not_empty():
         )
 
         assert valid_values["title"] == values["title"]
+        assert "title_updated_at" in valid_values
+        assert "title_updated_by" in valid_values
+        assert valid_values["description"] == values["description"]
+        assert "description_updated_at" in valid_values
+        assert "description_updated_by" in valid_values
         assert valid_values["status"] == status
         assert valid_values["order"] == services.DEFAULT_ORDER_OFFSET + story2.order
 
 
 async def test_validate_and_process_values_to_update_ok_with_same_status():
+    user = f.build_user()
     status = f.build_workflow_status()
     story = f.build_story(status=status)
     values = {"title": "new title", "description": "new description", "status": status.id}
@@ -432,7 +483,9 @@ async def test_validate_and_process_values_to_update_ok_with_same_status():
     ):
         fake_workflows_repo.get_workflow_status.return_value = status
 
-        valid_values = await services._validate_and_process_values_to_update(story=story, values=values)
+        valid_values = await services._validate_and_process_values_to_update(
+            story=story, values=values, updated_by=user
+        )
 
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
             filters={"workflow_id": story.workflow_id, "id": values["status"]},
@@ -440,11 +493,17 @@ async def test_validate_and_process_values_to_update_ok_with_same_status():
         fake_stories_repo.list_stories.assert_not_awaited()
 
         assert valid_values["title"] == values["title"]
+        assert "title_updated_at" in valid_values
+        assert "title_updated_by" in valid_values
+        assert valid_values["description"] == values["description"]
+        assert "description_updated_at" in valid_values
+        assert "description_updated_by" in valid_values
         assert "status" not in valid_values
         assert "order" not in valid_values
 
 
 async def test_validate_and_process_values_to_update_error_wrong_status():
+    user = f.build_user()
     story = f.build_story()
     values = {"title": "new title", "description": "new description", "status": "wrong_status"}
 
@@ -455,7 +514,7 @@ async def test_validate_and_process_values_to_update_error_wrong_status():
         fake_workflows_repo.get_workflow_status.return_value = None
 
         with pytest.raises(ex.InvalidStatusError):
-            await services._validate_and_process_values_to_update(story=story, values=values)
+            await services._validate_and_process_values_to_update(story=story, values=values, updated_by=user)
 
         fake_workflows_repo.get_workflow_status.assert_awaited_once_with(
             filters={"workflow_id": story.workflow_id, "id": "wrong_status"},
@@ -464,6 +523,7 @@ async def test_validate_and_process_values_to_update_error_wrong_status():
 
 
 async def test_validate_and_process_values_to_update_ok_with_workflow():
+    user = f.build_user()
     project = f.build_project()
     workflow1 = f.build_workflow(project=project)
     status1 = f.build_workflow_status(workflow=workflow1)
@@ -482,7 +542,9 @@ async def test_validate_and_process_values_to_update_ok_with_workflow():
         fake_workflows_repo.list_workflow_statuses.return_value = [status2]
         fake_stories_repo.list_stories.return_value = [story2, status3]
 
-        valid_values = await services._validate_and_process_values_to_update(story=story1, values=values)
+        valid_values = await services._validate_and_process_values_to_update(
+            story=story1, values=values, updated_by=user
+        )
 
         fake_workflows_repo.get_workflow.assert_awaited_once_with(
             filters={"project_id": story1.project_id, "slug": workflow2.slug}, prefetch_related=["statuses"]
@@ -502,6 +564,7 @@ async def test_validate_and_process_values_to_update_ok_with_workflow():
 
 
 async def test_validate_and_process_values_to_update_error_wrong_workflow():
+    user = f.build_user()
     story = f.build_story()
     values = {"version": story.version, "workflow": "wrong_workflow"}
 
@@ -512,7 +575,7 @@ async def test_validate_and_process_values_to_update_error_wrong_workflow():
         fake_workflows_repo.get_workflow.return_value = None
 
         with pytest.raises(ex.InvalidWorkflowError):
-            await services._validate_and_process_values_to_update(story=story, values=values)
+            await services._validate_and_process_values_to_update(story=story, values=values, updated_by=user)
 
         fake_workflows_repo.get_workflow.assert_awaited_once_with(
             filters={"project_id": story.project_id, "slug": "wrong_workflow"}, prefetch_related=["statuses"]
@@ -521,6 +584,7 @@ async def test_validate_and_process_values_to_update_error_wrong_workflow():
 
 
 async def test_validate_and_process_values_to_update_error_workflow_without_statuses():
+    user = f.build_user()
     project = f.build_project()
     workflow1 = f.build_workflow(project=project)
     status1 = f.build_workflow_status(workflow=workflow1)
@@ -536,7 +600,7 @@ async def test_validate_and_process_values_to_update_error_workflow_without_stat
         fake_workflows_repo.list_workflow_statuses.return_value = []
 
         with pytest.raises(ex.WorkflowHasNotStatusesError):
-            await services._validate_and_process_values_to_update(story=story, values=values)
+            await services._validate_and_process_values_to_update(story=story, values=values, updated_by=user)
 
         fake_workflows_repo.get_workflow.assert_awaited_once_with(
             filters={"project_id": story.project_id, "slug": workflow2.slug}, prefetch_related=["statuses"]
@@ -609,24 +673,30 @@ async def test_calculate_offset() -> None:
 
 
 async def test_reorder_stories_ok():
+    user = f.build_user()
+    project = f.build_project()
+    workflow = f.build_workflow()
+    target_status = f.build_workflow_status()
+    reorder_story = f.build_story(ref=3)
+    s1 = f.build_story(ref=13)
+    s2 = f.build_story(ref=54)
+    s3 = f.build_story(ref=2)
+
     with (
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+        patch("taiga.stories.stories.services.stories_notifications", autospec=True) as fake_notifications,
     ):
-        target_status = f.build_workflow_status()
         fake_workflows_repo.get_workflow_status.return_value = target_status
-        reorder_story = f.build_story(ref=3)
         fake_stories_repo.get_story.return_value = reorder_story
-        s1 = f.build_story(ref=13)
-        s2 = f.build_story(ref=54)
-        s3 = f.build_story(ref=2)
         fake_stories_repo.list_stories_to_reorder.return_value = [s1, s2, s3]
 
         await services.reorder_stories(
-            project=f.build_project(),
+            reordered_by=user,
+            project=project,
             target_status_id=target_status.id,
-            workflow=f.build_workflow(),
+            workflow=workflow,
             stories_refs=[13, 54, 2],
             reorder={"place": "after", "ref": reorder_story.ref},
         )
@@ -635,9 +705,14 @@ async def test_reorder_stories_ok():
             objs_to_update=[s1, s2, s3], fields_to_update=["status", "order"]
         )
         fake_stories_events.emit_when_stories_are_reordered.assert_awaited_once()
+        assert fake_notifications.notify_when_story_status_change.await_count == 3
 
 
 async def test_reorder_story_workflowstatus_does_not_exist():
+    user = f.build_user()
+    project = f.build_project()
+    workflow = f.build_workflow()
+
     with (
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         pytest.raises(ex.InvalidStatusError),
@@ -645,51 +720,62 @@ async def test_reorder_story_workflowstatus_does_not_exist():
         fake_workflows_repo.get_workflow_status.return_value = None
 
         await services.reorder_stories(
-            project=f.build_project(),
+            reordered_by=user,
+            project=project,
             target_status_id="non-existing",
-            workflow=f.build_workflow(),
+            workflow=workflow,
             stories_refs=[13, 54, 2],
             reorder={"place": "after", "ref": 3},
         )
 
 
 async def test_reorder_story_story_ref_does_not_exist():
+    user = f.build_user()
+    project = f.build_project()
+    workflow = f.build_workflow()
+    target_status = f.build_workflow_status()
+
     with (
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         pytest.raises(ex.InvalidStoryRefError),
     ):
-        target_status = f.build_workflow_status()
         fake_workflows_repo.get_workflow_status.return_value = target_status
 
         fake_stories_repo.get_story.return_value = None
 
         await services.reorder_stories(
-            project=f.build_project(),
+            reordered_by=user,
+            project=project,
             target_status_id=target_status.id,
-            workflow=f.build_workflow(),
+            workflow=workflow,
             stories_refs=[13, 54, 2],
             reorder={"place": "after", "ref": 3},
         )
 
 
 async def test_reorder_story_not_all_stories_exist():
+    user = f.build_user()
+    project = f.build_project()
+    workflow = f.build_workflow()
+    target_status = f.build_workflow_status()
+    reorder_story = f.build_story(ref=3)
+
     with (
         patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_stories_repo,
         pytest.raises(ex.InvalidStoryRefError),
     ):
-        target_status = f.build_workflow_status()
         fake_workflows_repo.get_workflow_status.return_value = target_status
 
-        reorder_story = f.build_story(ref=3)
         fake_stories_repo.get_story.return_value = reorder_story
         fake_stories_repo.list_stories.return_value = [f.build_story]
 
         await services.reorder_stories(
-            project=f.build_project(),
+            reordered_by=user,
+            project=project,
             target_status_id=target_status.id,
-            workflow=f.build_workflow(),
+            workflow=workflow,
             stories_refs=[13, 54, 2],
             reorder={"place": "after", "ref": reorder_story.ref},
         )

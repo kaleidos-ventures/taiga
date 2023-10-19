@@ -345,6 +345,7 @@ async def test_reorder_any_workflow_status_does_not_exist():
 
 
 async def test_delete_workflow_status_moving_stories_ok():
+    user = f.create_user()
     workflow = f.build_workflow()
     workflow_status1 = f.build_workflow_status(workflow=workflow)
     workflow_status2 = f.build_workflow_status(workflow=workflow)
@@ -362,7 +363,9 @@ async def test_delete_workflow_status_moving_stories_ok():
         fake_stories_repo.list_stories.return_value = workflow_status1_stories
         fake_stories_services.reorder_stories.return_value = None
 
-        await services.delete_workflow_status(workflow_status=workflow_status1, target_status_id=workflow_status2.id)
+        await services.delete_workflow_status(
+            workflow_status=workflow_status1, target_status_id=workflow_status2.id, deleted_by=user
+        )
 
         fake_get_workflow_status.assert_awaited_once_with(
             project_id=workflow.project.id, workflow_slug=workflow.slug, id=workflow_status2.id
@@ -374,6 +377,7 @@ async def test_delete_workflow_status_moving_stories_ok():
             order_by=["order"],
         )
         fake_stories_services.reorder_stories.assert_awaited_once_with(
+            reordered_by=user,
             project=workflow_status1.project,
             workflow=workflow,
             target_status_id=workflow_status2.id,
@@ -388,6 +392,7 @@ async def test_delete_workflow_status_moving_stories_ok():
 
 
 async def test_delete_workflow_status_deleting_stories_ok():
+    user = f.create_user()
     workflow = f.build_workflow()
     workflow_status1 = f.build_workflow_status(workflow=workflow)
     workflow_status1_stories = [f.build_story(status=workflow_status1, workflow=workflow)]
@@ -404,7 +409,7 @@ async def test_delete_workflow_status_deleting_stories_ok():
         fake_stories_repo.list_stories.return_value = workflow_status1_stories
         fake_stories_services.reorder_stories.return_value = None
 
-        await services.delete_workflow_status(workflow_status=workflow_status1, target_status_id=None)
+        await services.delete_workflow_status(workflow_status=workflow_status1, target_status_id=None, deleted_by=user)
 
         fake_get_workflow_status.assert_not_awaited()
         fake_stories_repo.list_stories.assert_not_awaited()
@@ -416,6 +421,7 @@ async def test_delete_workflow_status_deleting_stories_ok():
 
 
 async def test_delete_workflow_status_wrong_target_status_ex():
+    user = f.create_user()
     workflow = f.build_workflow()
     workflow_status1 = f.build_workflow_status(workflow=workflow)
     workflow_status2 = f.build_workflow_status(workflow=workflow)
@@ -426,7 +432,9 @@ async def test_delete_workflow_status_wrong_target_status_ex():
     ):
         fake_get_workflow_status.return_value = None
 
-        await services.delete_workflow_status(workflow_status=workflow_status1, target_status_id=workflow_status2.id)
+        await services.delete_workflow_status(
+            workflow_status=workflow_status1, target_status_id=workflow_status2.id, deleted_by=user
+        )
 
         fake_get_workflow_status.assert_awaited_once_with(
             project_id=workflow.project.id, workflow_slug=workflow.slug, id=workflow_status2.id
@@ -434,6 +442,7 @@ async def test_delete_workflow_status_wrong_target_status_ex():
 
 
 async def test_delete_workflow_status_same_target_status_ex():
+    user = f.create_user()
     workflow = f.build_workflow()
     workflow_status1 = f.build_workflow_status(workflow=workflow)
 
@@ -443,7 +452,9 @@ async def test_delete_workflow_status_same_target_status_ex():
     ):
         fake_get_workflow_status.return_value = workflow_status1
 
-        await services.delete_workflow_status(workflow_status=workflow_status1, target_status_id=workflow_status1.id)
+        await services.delete_workflow_status(
+            workflow_status=workflow_status1, target_status_id=workflow_status1.id, deleted_by=user
+        )
 
         fake_get_workflow_status.assert_awaited_once_with(
             project_id=workflow.project.id, workflow_slug=workflow.slug, id=workflow_status1.id

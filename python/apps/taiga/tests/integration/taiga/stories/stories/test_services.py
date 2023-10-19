@@ -37,6 +37,7 @@ async def test_not_reorder_in_empty_status() -> None:
     # | story3   |          |
 
     await services.reorder_stories(
+        reordered_by=project.created_by,
         project=project,
         workflow=workflow,
         target_status_id=status_2.id,
@@ -72,7 +73,11 @@ async def test_not_reorder_in_populated_status() -> None:
     # | story2   |          |
 
     await services.reorder_stories(
-        project=project, workflow=workflow, target_status_id=status_2.id, stories_refs=[story2.ref]
+        reordered_by=project.created_by,
+        project=project,
+        workflow=workflow,
+        target_status_id=status_2.id,
+        stories_refs=[story2.ref],
     )
     # Now should be
     # | status_1 | status_2 |
@@ -103,6 +108,7 @@ async def test_after_in_the_end() -> None:
     # | story2   |          |
 
     await services.reorder_stories(
+        reordered_by=project.created_by,
         project=project,
         workflow=workflow,
         target_status_id=status_2.id,
@@ -138,6 +144,7 @@ async def test_after_in_the_middle() -> None:
     # |          | story3   |
 
     await services.reorder_stories(
+        reordered_by=project.created_by,
         project=project,
         workflow=workflow,
         target_status_id=status_2.id,
@@ -175,6 +182,7 @@ async def test_before_in_the_beginning() -> None:
     # |          | story3   |
 
     await services.reorder_stories(
+        reordered_by=project.created_by,
         project=project,
         workflow=workflow,
         target_status_id=status_2.id,
@@ -212,6 +220,7 @@ async def test_before_in_the_middle() -> None:
     # |          | story3   |
 
     await services.reorder_stories(
+        reordered_by=project.created_by,
         project=project,
         workflow=workflow,
         target_status_id=status_2.id,

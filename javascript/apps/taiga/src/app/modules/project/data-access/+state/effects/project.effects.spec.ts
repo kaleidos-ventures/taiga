@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { randUuid, randCompanyName } from '@ngneat/falso';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -40,6 +40,8 @@ import {
 import { selectCurrentProject } from '../selectors/project.selectors';
 import { ProjectEffects } from './project.effects';
 import { HttpErrorResponse } from '@angular/common/http';
+import { selectRouteParams } from '~/app/router-selectors';
+import { Location } from '@angular/common';
 
 describe('ProjectEffects', () => {
   let actions$: Observable<Action>;
@@ -53,8 +55,12 @@ describe('ProjectEffects', () => {
       provideMockActions(() => actions$),
       { provide: WsService, useValue: WsServiceMock },
       provideMockStore({ initialState: {} }),
+      {
+        provide: Router,
+        useValue: { navigate: jest.fn(), url: '/some-url/kanban/old-slug' },
+      },
     ],
-    mocks: [ProjectApiService, AppService, Router],
+    mocks: [ProjectApiService, AppService, ActivatedRoute, Location],
   });
 
   beforeEach(() => {
@@ -329,6 +335,27 @@ describe('ProjectEffects', () => {
       });
 
       expect(effects.updateWorkflow$).toBeObservable(expected);
+    });
+
+    it('should update workflow slug in the URL', () => {
+      const workflow = WorkflowMockFactory();
+      const location = spectator.inject(Location);
+      const effects = spectator.inject(ProjectEffects);
+
+      const action = projectEventActions.updateWorkflow({
+        workflow: workflow,
+      });
+
+      actions$ = hot('-a', { a: action });
+
+      const params = { workflow: 'old-slug' };
+      store.overrideSelector(selectRouteParams, params);
+
+      expect(effects.updateWorkflowSlug$).toSatisfyOnFlush(() => {
+        expect(location.go).toHaveBeenCalledWith(
+          `/some-url/kanban/${workflow.slug}`
+        );
+      });
     });
   });
 });

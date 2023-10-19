@@ -7,7 +7,12 @@
  */
 
 import { CommonModule, Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  ViewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoDirective } from '@ngneat/transloco';
@@ -30,16 +35,7 @@ import {
   WorkflowStatus,
 } from '@taiga/data';
 import { ModalComponent } from '@taiga/ui/modal/components';
-import {
-  combineLatest,
-  distinctUntilChanged,
-  filter,
-  map,
-  merge,
-  pairwise,
-  skip,
-  take,
-} from 'rxjs';
+import { combineLatest, filter, map, merge, pairwise, take } from 'rxjs';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
@@ -119,6 +115,13 @@ export class ProjectFeatureKanbanComponent {
   @ViewChild(ProjectFeatureStoryWrapperSideViewComponent)
   public projectFeatureStoryWrapperSideViewComponent?: ProjectFeatureStoryWrapperSideViewComponent;
 
+  @Input()
+  public set workflowSlug(workflow: Workflow['slug']) {
+    if (workflow !== this.state.get('workflow')?.slug) {
+      this.store.dispatch(KanbanActions.loadWorkflowKanban({ workflow }));
+    }
+  }
+
   public invitePeopleModal = false;
   public kanbanWidth = 0;
   public model$ = this.state.select();
@@ -145,26 +148,6 @@ export class ProjectFeatureKanbanComponent {
       void this.router.navigate(['403']);
       return;
     }
-
-    // Load on init kanban page. Not on every reload
-    const workflow: Workflow['slug'] = this.route.snapshot.params[
-      'workflow'
-    ] as Workflow['slug'];
-    if (workflow) {
-      this.store.dispatch(KanbanActions.initKanban({ workflow }));
-    }
-
-    this.route.paramMap
-      .pipe(
-        map((params) => {
-          return params.get('workflow') ?? 'main';
-        }),
-        distinctUntilChanged(),
-        skip(1)
-      )
-      .subscribe((workflow: Workflow['slug']) => {
-        this.store.dispatch(KanbanActions.loadWorkflowKanban({ workflow }));
-      });
 
     this.checkInviteModalStatus();
     this.state.connect(

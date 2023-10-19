@@ -71,7 +71,7 @@ describe('ProjectEffects', () => {
     projectApiService.getWorkflow.mockReturnValue(cold('-b|', { b: workflow }));
 
     actions$ = hot('-a', {
-      a: KanbanActions.initKanban({ workflow: workflow.slug }),
+      a: KanbanActions.loadWorkflowKanban({ workflow: workflow.slug }),
     });
 
     const expected = cold('--a', {

@@ -45,7 +45,7 @@ import {
 export class KanbanEffects {
   public loadKanbanWorkflows$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanActions.initKanban, KanbanActions.loadWorkflowKanban),
+      ofType(KanbanActions.loadWorkflowKanban),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
       ]),

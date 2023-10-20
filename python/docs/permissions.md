@@ -17,29 +17,25 @@ Permissions to see `/my/workspaces` (home page)
 This endpoint returns all the projects the user can view; these projects must be "wrapped" by the corresponding workspace, even if the user is not a member of such workspace.
 
 There are two different sets of projects to be seen:
-- workspaces where the user is admin: the user can view and edit all the projects
-- workspaces where the user is not admin or member, but she is member of a project inside the workspace.
+- workspaces where the user is member : the user can view all the projects
+- workspaces where the user is not member, but she is member of a project inside the workspace.
 
 
-Permissions to see `/workspaces/<slug>/projects`
+Permissions to see `/workspaces/<id>/projects`
 ================================================
 
-This endpoint returns all the projects the user can view (\*) in a given workspace. The user must be a member of a workspace to request this endpoint.
+This endpoint returns all the projects the user can view (\*) in a given workspace.
 
-- If the user is workspace admin, this endpoint will return all the projects in the workspace
-- If the user is workspace member, this endpoint will return:
-    - all the projects in the workspace where she is a project member
-    - all the projects in the workspace where shis is not a member, but workspace members are allowed
+- If the user is workspace member, this endpoint will return all the projects in the workspace
 
 
-Permissions to see `/projects/<slug>`
+Permissions to see `/projects/<id>`
 =====================================
 
 This endpoint returns the main details of a project, as well as the permissions of the user over the project.
 
 Regarding "myPermissions":
 - if the user is project admin, it will return edit and administration permissions
-- if the user is project member, it will return the permissions of its role if any
-- if the user is workspace admin, it will return edit permissions
-- if the user is workspace member, it will return project's workspace member permissions if any, or 403
+- if the user is project member, it will return the general permissions
+- if the user is workspace member, it will return project's workspace member permissions
 - if the user is a public member, it will return project's public permissions if any, or 403

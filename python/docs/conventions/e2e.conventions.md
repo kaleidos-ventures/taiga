@@ -26,7 +26,7 @@
 
 ### E2E conventions
 
-- For a new endpont
+- For a new endpoint
 
 - The names of the tests should reflect the HTTP status (200, 400) and the (dot-separated) URI being verified:
 ```

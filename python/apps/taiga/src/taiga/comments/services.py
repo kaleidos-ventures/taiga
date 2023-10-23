@@ -14,6 +14,7 @@ from taiga.base.utils.datetime import aware_utcnow
 from taiga.comments import repositories as comments_repositories
 from taiga.comments.events import EventOnCreateCallable, EventOnDeleteCallable, EventOnUpdateCallable
 from taiga.comments.models import Comment
+from taiga.comments.notifications import NotificationOnCreateCallable
 from taiga.comments.repositories import CommentFilters, CommentOrderBy
 from taiga.stories.stories.models import Story
 from taiga.users.models import User
@@ -28,6 +29,7 @@ async def create_comment(
     text: str,
     created_by: User,
     event_on_create: EventOnCreateCallable | None = None,
+    notification_on_create: NotificationOnCreateCallable | None = None,
 ) -> Comment:
     comment = await comments_repositories.create_comment(
         content_object=content_object,
@@ -37,6 +39,8 @@ async def create_comment(
 
     if event_on_create:
         await event_on_create(comment=comment)
+    if notification_on_create:
+        await notification_on_create(comment=comment, emitted_by=created_by)
 
     return comment
 

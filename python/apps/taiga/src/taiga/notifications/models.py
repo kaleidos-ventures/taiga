@@ -7,6 +7,7 @@
 
 from taiga.base.db import models
 from taiga.base.db.mixins import CreatedMetaInfoMixin
+from taiga.base.utils import json
 
 #######################################################################
 # Base Notification
@@ -37,6 +38,7 @@ class Notification(models.BaseModel, CreatedMetaInfoMixin):
         null=False,
         blank=False,
         default=dict,
+        encoder=json.JSONEncoder,
         verbose_name="content",
     )
 

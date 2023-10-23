@@ -16,6 +16,7 @@ on:
 
 env:
   TAIGA_SECRET_KEY: secret
+  TAIGA_DEBUG: true
 
 jobs:
   test:

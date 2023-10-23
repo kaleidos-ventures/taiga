@@ -41,7 +41,7 @@ async def test_create_comment():
         )
 
 
-async def test_create_comment_and_emit_event_on_create():
+async def test_create_comment_and_emit_event_on_creation():
     project = f.build_project()
     story = f.build_story(project=project)
     fake_event_on_create = AsyncMock()
@@ -66,6 +66,33 @@ async def test_create_comment_and_emit_event_on_create():
             created_by=comment.created_by,
         )
         fake_event_on_create.assert_awaited_once_with(comment=comment)
+
+
+async def test_create_comment_and_notify_on_creation():
+    project = f.build_project()
+    story = f.build_story(project=project)
+    fake_notification_on_create = AsyncMock()
+    comment = f.build_comment()
+
+    with (
+        patch("taiga.comments.services.comments_repositories", autospec=True) as fake_comments_repositories,
+        patch("taiga.comments.models.Comment.project", new_callable=PropertyMock, return_value=project),
+    ):
+        fake_comments_repositories.create_comment.return_value = comment
+
+        await services.create_comment(
+            content_object=story,
+            text=comment.text,
+            created_by=comment.created_by,
+            notification_on_create=fake_notification_on_create,
+        )
+
+        fake_comments_repositories.create_comment.assert_awaited_once_with(
+            content_object=story,
+            text=comment.text,
+            created_by=comment.created_by,
+        )
+        fake_notification_on_create.assert_awaited_once_with(comment=comment, emitted_by=comment.created_by)
 
 
 #####################################################

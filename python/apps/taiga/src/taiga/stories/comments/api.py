@@ -23,7 +23,7 @@ from taiga.exceptions import api as ex
 from taiga.exceptions.api.errors import ERROR_403, ERROR_404, ERROR_422
 from taiga.permissions import HasPerm, IsNotDeleted, IsProjectAdmin, IsRelatedToTheUser
 from taiga.routers import routes
-from taiga.stories.comments import events
+from taiga.stories.comments import events, notifications
 from taiga.stories.stories.api import get_story_or_404
 from taiga.stories.stories.models import Story
 
@@ -60,9 +60,20 @@ async def create_story_comments(
     story = await get_story_or_404(project_id=project_id, ref=ref)
     await check_permissions(permissions=CREATE_STORY_COMMENT, user=request.user, obj=story)
 
-    event_on_create = partial(events.emit_event_when_story_comment_is_created, project=story.project)
+    event_on_create = partial(
+        events.emit_event_when_story_comment_is_created,
+        project=story.project,
+    )
+    notification_on_create = partial(
+        notifications.notify_when_story_comment_is_created,
+        story=story,
+    )
     return await comments_services.create_comment(
-        text=form.text, content_object=story, created_by=request.user, event_on_create=event_on_create
+        text=form.text,
+        content_object=story,
+        created_by=request.user,
+        event_on_create=event_on_create,
+        notification_on_create=notification_on_create,
     )
 
 

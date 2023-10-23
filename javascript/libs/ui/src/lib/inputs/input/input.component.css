@@ -133,6 +133,7 @@ Copyright (c) 2023-present Kaleidos INC
   & .extra-info {
     align-items: flex-start;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
   }
 }

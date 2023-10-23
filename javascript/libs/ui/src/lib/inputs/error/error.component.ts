@@ -50,8 +50,11 @@ export class ErrorComponent implements OnChanges {
     }
 
     const errors = this.fieldService.control?.errors;
+    const errorNames = this.error.split(',').map((it) => it.trim());
+    const hasError = errorNames.some((errorName) => errors?.[errorName]);
     const fieldControl = this.fieldService.control;
-    if (errors && errors[this.error] && fieldControl) {
+
+    if (errors && hasError && fieldControl) {
       const isOnSubmit = fieldControl.updateOn === 'submit';
 
       if (isOnSubmit) {

@@ -7,10 +7,14 @@
 
 from taiga.notifications import services as notifications_services
 from taiga.stories.stories.models import Story
-from taiga.stories.stories.notifications.content import StoryStatusChangeNotificationContent
+from taiga.stories.stories.notifications.content import (
+    StoryDeleteNotificationContent,
+    StoryStatusChangeNotificationContent,
+)
 from taiga.users.models import User
 
 STORIES_STATUS_CHANGE = "stories.status_change"
+STORIES_DELETE = "stories.delete"
 
 
 async def notify_when_story_status_change(story: Story, status: str, emitted_by: User) -> None:
@@ -31,5 +35,26 @@ async def notify_when_story_status_change(story: Story, status: str, emitted_by:
             story=story,
             changed_by=emitted_by,
             status=status,
+        ),
+    )
+
+
+async def notify_when_story_is_deleted(story: Story, emitted_by: User) -> None:
+    """
+    Emit notification when a story is deleted
+    """
+    notified_users = set()
+    if story.created_by:
+        notified_users.add(story.created_by)
+    notified_users.discard(emitted_by)
+
+    await notifications_services.notify_users(
+        type=STORIES_DELETE,
+        emitted_by=emitted_by,
+        notified_users=notified_users,
+        content=StoryDeleteNotificationContent(
+            projects=story.project,
+            story=story,
+            deleted_by=emitted_by,
         ),
     )

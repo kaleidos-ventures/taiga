@@ -9,15 +9,16 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as AuthActions from '../actions/auth.actions';
-import { Store } from '@ngrx/store';
 import { UsersApiService } from '@taiga/api';
-import { exhaustMap, map } from 'rxjs';
+import { catchError, exhaustMap, map } from 'rxjs';
 import { UserActions, UserEventsActions } from '../actions/user.actions';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AppService } from '~/app/services/app.service';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsEffects {
   private actions$ = inject(Actions);
-  private store = inject(Store);
+  private appService = inject(AppService);
   private usersApiService = inject(UsersApiService);
 
   public notificationCount$ = createEffect(() => {
@@ -25,7 +26,9 @@ export class NotificationsEffects {
       ofType(
         AuthActions.setUser,
         AuthActions.loginSuccess,
-        UserEventsActions.newNotification
+        UserEventsActions.newNotification,
+        UserActions.markNotificationAsReadSuccess,
+        UserEventsActions.notificationRead
       ),
       exhaustMap(() => {
         return this.usersApiService.notificationsCount().pipe(
@@ -46,6 +49,24 @@ export class NotificationsEffects {
             return UserActions.fetchNotificationsSuccess({ notifications });
           })
         );
+      })
+    );
+  });
+
+  public markNotificationAsRead$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(UserActions.markNotificationAsRead),
+      exhaustMap(({ notificationId }) => {
+        return this.usersApiService.markNotificationAsRead(notificationId).pipe(
+          map(() => {
+            return UserActions.markNotificationAsReadSuccess();
+          })
+        );
+      }),
+      catchError((error: HttpErrorResponse, source$) => {
+        this.appService.errorManagement(error);
+
+        return source$;
       })
     );
   });

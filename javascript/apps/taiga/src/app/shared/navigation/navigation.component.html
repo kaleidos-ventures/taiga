@@ -138,7 +138,8 @@ Copyright (c) 2023-present Kaleidos INC
     </div>
 
     <ng-template #notificationsDropdown>
-      <tg-notifications></tg-notifications>
+      <tg-notifications
+        (userNavigated)="openNotificationsDropdown = false"></tg-notifications>
     </ng-template>
 
     <ng-template #userDropdown>

@@ -69,4 +69,11 @@ export class UsersApiService {
       `${this.config.apiUrl}/my/notifications`
     );
   }
+
+  public markNotificationAsRead(notificationId: string) {
+    return this.http.post(
+      `${this.config.apiUrl}/my/notifications/${notificationId}/read`,
+      {}
+    );
+  }
 }

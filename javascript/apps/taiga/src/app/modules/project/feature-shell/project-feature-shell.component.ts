@@ -57,6 +57,7 @@ import { setNotificationClosed } from '../feature-overview/data-access/+state/ac
 import { TranslocoDirective } from '@ngneat/transloco';
 import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 import { ProjectNavigationComponent } from '../feature-navigation/project-feature-navigation.component';
+import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
 
 @UntilDestroy()
 @Component({
@@ -122,6 +123,14 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     private route: ActivatedRoute,
     private appService: AppService
   ) {
+    this.route.data.subscribe((data) => {
+      this.store.dispatch(
+        ProjectActions.fetchProjectSuccess({
+          project: data.project as Project,
+        })
+      );
+    });
+
     this.watchProject();
     this.state.connect(
       'project',

@@ -94,6 +94,15 @@ export class AppComponent {
         );
       });
 
+    this.wsService
+      .userEvents<{ notificationsIds: NotificationType['id'][] }>(
+        'notifications.read'
+      )
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(UserEventsActions.notificationRead());
+      });
+
     this.setBannerHeight();
   }
 

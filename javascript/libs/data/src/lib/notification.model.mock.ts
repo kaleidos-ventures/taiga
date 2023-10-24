@@ -6,7 +6,7 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { randPastDate } from '@ngneat/falso';
+import { randPastDate, randUuid } from '@ngneat/falso';
 import { NotificationStoryAssign } from './notification.model';
 import { ProjectMockFactory } from './project.model.mock';
 import { StoryMockFactory } from './story.model.mock';
@@ -20,6 +20,7 @@ export const NotificationMockFactory = (): NotificationStoryAssign => {
   const story = StoryMockFactory();
 
   return {
+    id: randUuid(),
     type: 'stories.assign',
     createdBy: {
       color: createdBy.color,
@@ -33,7 +34,7 @@ export const NotificationMockFactory = (): NotificationStoryAssign => {
         ref: story.ref,
         title: story.title,
       },
-      projects: {
+      project: {
         id: project.id,
         name: project.name,
         slug: project.slug,

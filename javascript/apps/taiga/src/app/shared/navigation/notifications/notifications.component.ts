@@ -6,7 +6,13 @@
  * Copyright (c) 2023-present Kaleidos INC
  */
 
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Output,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { Store } from '@ngrx/store';
@@ -36,6 +42,9 @@ export class NotificationsComponent {
   private state = inject(RxState) as RxState<ComponentState>;
   public model$ = this.state.select();
   public trackByIndex = trackByIndex();
+
+  @Output()
+  public userNavigated = new EventEmitter();
 
   constructor() {
     this.store.dispatch(UserActions.initNotificationSection());

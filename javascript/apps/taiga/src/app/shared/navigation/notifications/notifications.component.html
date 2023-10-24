@@ -26,7 +26,9 @@ Copyright (c) 2023-present Kaleidos INC
     <div class="notifications">
       <ng-container
         *ngFor="let notification of vm.notifications; trackBy: trackByIndex">
-        <tg-notification [notification]="notification"></tg-notification>
+        <tg-notification
+          [notification]="notification"
+          (userNavigated)="userNavigated.emit()"></tg-notification>
       </ng-container>
     </div>
   </ng-container>

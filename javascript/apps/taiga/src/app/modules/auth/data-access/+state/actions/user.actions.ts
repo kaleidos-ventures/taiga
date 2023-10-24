@@ -23,12 +23,17 @@ export const UserActions = createActionGroup({
     'Fetch notifications success': props<{
       notifications: NotificationType[];
     }>(),
+    'Mark notification as read': props<{
+      notificationId: NotificationType['id'];
+    }>(),
+    'Mark notification as read success': emptyProps(),
   },
 });
 
 export const UserEventsActions = createActionGroup({
   source: 'User ws',
   events: {
-    'new notification': props<{ notification: NotificationType }>(),
+    'New notification': props<{ notification: NotificationType }>(),
+    'Notification read': emptyProps(),
   },
 });

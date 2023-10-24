@@ -17,6 +17,10 @@ Copyright (c) 2023-present Kaleidos INC
   }
 }
 
+.notification {
+  cursor: pointer;
+}
+
 .type {
   color: var(--color-gray80);
 }
@@ -24,6 +28,10 @@ Copyright (c) 2023-present Kaleidos INC
 .date {
   color: var(--color-gray70);
   font-size: var(--font-size-small);
+}
+
+.link {
+  font-weight: var(--font-weight-medium);
 }
 
 .notification-inner {
@@ -48,6 +56,10 @@ a {
   background-color: var(--color-gray10);
   border-radius: 4px;
   position: relative;
+
+  .type {
+    font-weight: var(--font-weight-medium);
+  }
 
   &::before {
     aspect-ratio: 1;

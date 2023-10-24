@@ -93,6 +93,17 @@ export const reducer = createImmerReducer(
     state.notifications = notifications;
 
     return state;
+  }),
+  on(UserActions.markNotificationAsRead, (state, { notificationId }) => {
+    const notification = state.notifications.find(
+      (notification) => notification.id === notificationId
+    );
+
+    if (notification && state.notificationCount) {
+      notification.readAt = new Date().toISOString();
+    }
+
+    return state;
   })
 );
 

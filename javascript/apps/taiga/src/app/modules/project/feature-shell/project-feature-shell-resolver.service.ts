@@ -9,11 +9,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { ProjectApiService } from '@taiga/api';
 import { of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { catchError } from 'rxjs/operators';
 import { RevokeInvitationService } from '~/app/services/revoke-invitation.service';
 
 @Injectable({
@@ -21,7 +19,6 @@ import { RevokeInvitationService } from '~/app/services/revoke-invitation.servic
 })
 export class ProjectFeatureShellResolverService {
   constructor(
-    private store: Store,
     private projectApiService: ProjectApiService,
     private revokeInvitationService: RevokeInvitationService
   ) {}
@@ -30,9 +27,6 @@ export class ProjectFeatureShellResolverService {
     const params = route.params as Record<string, string>;
 
     return this.projectApiService.getProject(params['id']).pipe(
-      tap((project) => {
-        this.store.dispatch(ProjectActions.fetchProjectSuccess({ project }));
-      }),
       catchError((httpResponse: HttpErrorResponse) => {
         this.revokeInvitationService.shellResolverRevokeError(httpResponse);
 

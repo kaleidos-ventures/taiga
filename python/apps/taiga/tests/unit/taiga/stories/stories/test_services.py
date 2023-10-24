@@ -793,14 +793,17 @@ async def test_delete_story_fail():
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_story_repo,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+        patch("taiga.stories.stories.services.stories_notifications", autospec=True) as fake_notifications,
     ):
         fake_story_repo.delete_stories.return_value = 0
 
-        await services.delete_story(story=story, deleted_by=user)
-        fake_stories_events.emit_event_when_story_is_deleted.assert_not_awaited()
+        assert not (await services.delete_story(story=story, deleted_by=user))
+
         fake_story_repo.delete_stories.assert_awaited_once_with(
             filters={"id": story.id},
         )
+        fake_stories_events.emit_event_when_story_is_deleted.assert_not_awaited()
+        fake_notifications.notify_when_story_is_deleted.assert_not_awaited()
 
 
 async def test_delete_story_ok():
@@ -810,16 +813,18 @@ async def test_delete_story_ok():
     with (
         patch("taiga.stories.stories.services.stories_repositories", autospec=True) as fake_story_repo,
         patch("taiga.stories.stories.services.stories_events", autospec=True) as fake_stories_events,
+        patch("taiga.stories.stories.services.stories_notifications", autospec=True) as fake_notifications,
     ):
         fake_story_repo.delete_stories.return_value = 1
 
-        await services.delete_story(story=story, deleted_by=user)
-        fake_stories_events.emit_event_when_story_is_deleted.assert_awaited_once_with(
-            project=story.project, ref=story.ref, deleted_by=user
-        )
+        assert await services.delete_story(story=story, deleted_by=user)
         fake_story_repo.delete_stories.assert_awaited_once_with(
             filters={"id": story.id},
         )
+        fake_stories_events.emit_event_when_story_is_deleted.assert_awaited_once_with(
+            project=story.project, ref=story.ref, deleted_by=user
+        )
+        fake_notifications.notify_when_story_is_deleted.assert_awaited_once_with(story=story, emitted_by=user)
 
 
 #######################################################

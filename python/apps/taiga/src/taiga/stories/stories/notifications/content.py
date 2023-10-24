@@ -11,6 +11,15 @@ from taiga.stories.stories.serializers.nested import StoryNestedSerializer
 from taiga.users.serializers.nested import UserNestedSerializer
 
 
+class StoryDeleteNotificationContent(BaseModel):
+    projects: ProjectLinkNestedSerializer
+    story: StoryNestedSerializer
+    deleted_by: UserNestedSerializer
+
+    class Config:
+        orm_mode = True
+
+
 class StoryStatusChangeNotificationContent(BaseModel):
     projects: ProjectLinkNestedSerializer
     story: StoryNestedSerializer

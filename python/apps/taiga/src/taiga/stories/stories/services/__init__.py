@@ -20,7 +20,7 @@ from taiga.stories.stories.models import Story
 from taiga.stories.stories.serializers import ReorderStoriesSerializer, StoryDetailSerializer, StorySummarySerializer
 from taiga.stories.stories.serializers import services as serializers_services
 from taiga.stories.stories.services import exceptions as ex
-from taiga.users.models import AnyUser, User
+from taiga.users.models import User
 from taiga.workflows import repositories as workflows_repositories
 from taiga.workflows.models import Workflow, WorkflowStatus
 
@@ -392,12 +392,15 @@ async def _calculate_next_order(status_id: UUID) -> Decimal:
 ##########################################################
 
 
-async def delete_story(story: Story, deleted_by: AnyUser) -> bool:
+async def delete_story(story: Story, deleted_by: User) -> bool:
     deleted = await stories_repositories.delete_stories(filters={"id": story.id})
     if deleted > 0:
         await stories_events.emit_event_when_story_is_deleted(
             project=story.project, ref=story.ref, deleted_by=deleted_by
         )
+        await stories_notifications.notify_when_story_is_deleted(
+            story=story,
+            emitted_by=deleted_by,
+        )
         return True
-
     return False

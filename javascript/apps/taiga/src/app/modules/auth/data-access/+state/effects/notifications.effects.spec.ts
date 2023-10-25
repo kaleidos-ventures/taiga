@@ -19,7 +19,6 @@ import { NotificationMockFactory } from '@taiga/data';
 import { HttpErrorResponse } from '@angular/common/http';
 
 describe('NotificationsEffects', () => {
-  // Debes configurar tus servicios mock y acciones antes de las pruebas
   let actions$: Observable<Action>;
   let spectator: SpectatorService<NotificationsEffects>;
 

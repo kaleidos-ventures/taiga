@@ -9,6 +9,7 @@
 import { Project } from './project.model';
 import { Story } from './story.model';
 import { User } from './user.model';
+import { UserComment } from './user-comment.model';
 
 export interface Notification {
   id: string;
@@ -46,7 +47,19 @@ export interface NotificationStoryStatusChange extends Notification {
   };
 }
 
+export interface NotificationStoryCommentCreate extends Notification {
+  type: 'story_comment.create';
+  content: {
+    story: Pick<Story, 'ref' | 'title'>;
+    project: Pick<Project, 'id' | 'name' | 'slug'>;
+    status: string;
+    comment: UserComment;
+    commentedBy: Pick<User, 'color' | 'username' | 'fullName'>;
+  };
+}
+
 export type NotificationType =
   | NotificationStoryAssign
   | NotificationStoryUnassign
-  | NotificationStoryStatusChange;
+  | NotificationStoryStatusChange
+  | NotificationStoryCommentCreate;

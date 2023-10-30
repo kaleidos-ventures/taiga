@@ -61,7 +61,8 @@
       "types": {
         "stories.assign": "<span class='highlight'>{{username}}</span> assigned you the story <br/> <a href='{{storyUrl}}'>{{story}}</a>",
         "stories.unassign": "<span class='highlight'>{{username}}</span> unassigned you from the story <br/> <a href='{{storyUrl}}'>{{story}}</a>",
-        "stories.status_change": "<span class='highlight'>{{username}}</span> changed the status of the story <br/> <a href='{{storyUrl}}'>{{story}}</a> to {{status}}"
+        "stories.status_change": "<span class='highlight'>{{username}}</span> changed the status of the story <br/> <a href='{{storyUrl}}'>{{story}}</a> to {{status}}",
+        "story_comment.create": "<span class='highlight'>{{username}}</span> commented on the story <br/> <a href='{{storyUrl}}'>{{story}}</a>"
       }
     }
   },

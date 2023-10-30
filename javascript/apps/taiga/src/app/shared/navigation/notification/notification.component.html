@@ -92,5 +92,32 @@ Copyright (c) 2023-present Kaleidos INC
         </div>
       </div>
     </ng-container>
+    <ng-container *ngIf="notification.type === 'story_comment.create'">
+      <div class="notification-inner">
+        <tg-user-avatar
+          size="m"
+          class="no-border"
+          [color]="notification.content.commentedBy.color"
+          [user]="notification.content.commentedBy"
+          type="light"
+          [rounded]="true"
+          aria-hidden="true"></tg-user-avatar>
+
+        <div class="notification-info">
+          <p
+            class="type"
+            withInternalLink
+            [innerHtml]="
+              t(getTranslationKey(notification), {
+                username: notification.content.commentedBy.fullName,
+                story: getStoryName(notification),
+                storyUrl: getStoryUrl(notification) | getUrl,
+              })
+            "></p>
+
+          <p class="date">{{ notification.createdAt | dateDistance }}</p>
+        </div>
+      </div>
+    </ng-container>
   </div>
 </ng-container>

@@ -41,4 +41,10 @@ Copyright (c) 2023-present Kaleidos INC
   & .workspace-input-project-name {
     inline-size: 278px;
   }
+
+  &::ng-deep {
+    & .input-container {
+      flex-direction: column;
+    }
+  }
 }

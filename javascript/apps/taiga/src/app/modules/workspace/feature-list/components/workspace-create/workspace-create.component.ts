@@ -15,12 +15,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { RandomColorService } from '@taiga/ui/services/random-color/random-color.service';
@@ -35,6 +30,10 @@ import { CommonModule } from '@angular/common';
 import { InputsModule } from '@taiga/ui/inputs';
 import { AvatarComponent } from '@taiga/ui/avatar/avatar.component';
 import { FormDirective } from '@taiga/ui/inputs/form/form.directive';
+import {
+  WorkspaceNameMaxLength,
+  WorkspaceNameValidation,
+} from '~/app/shared/workspace/workspace-name-validation';
 
 @Component({
   selector: 'tg-workspace-create',
@@ -66,6 +65,8 @@ export class WorkspaceCreateComponent implements OnInit {
   public color = 0;
   public createProjectForm!: FormGroup;
   public name = '';
+  public maxLength = WorkspaceNameMaxLength;
+  public submitted = false;
 
   public close() {
     this.store.dispatch(createFormHasError({ hasError: false }));
@@ -76,24 +77,26 @@ export class WorkspaceCreateComponent implements OnInit {
     this.color = RandomColorService.randomColorPicker();
     this.createProjectForm = this.fb.group(
       {
-        projectName: ['', [Validators.required]],
+        workspaceName: ['', WorkspaceNameValidation],
       },
       { updateOn: 'submit' }
     );
   }
 
   public setName(event: Event) {
+    this.submitted = false;
     this.name = (<HTMLInputElement>event.target).value;
   }
 
   public onSubmit() {
     if (this.createProjectForm.invalid) {
+      this.submitted = true;
       (this.firstInput.nativeElement as HTMLElement).focus();
       this.store.dispatch(createFormHasError({ hasError: true }));
     } else {
       this.store.dispatch(
         createWorkspace({
-          name: this.createProjectForm.get('projectName')!.value as string,
+          name: this.createProjectForm.get('workspaceName')!.value as string,
           color: this.color,
         })
       );

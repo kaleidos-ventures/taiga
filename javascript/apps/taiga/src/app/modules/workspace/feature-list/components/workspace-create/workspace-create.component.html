@@ -12,6 +12,7 @@ Copyright (c) 2023-present Kaleidos INC
     (keydown.esc)="close()"
     (ngSubmit)="onSubmit()"
     [attr.aria-invalid]="createProjectForm.invalid"
+    [showFormErrors]="submitted"
     class="workspace-create-padding">
     <tg-ui-avatar
       class="workspace-image"
@@ -28,16 +29,19 @@ Copyright (c) 2023-present Kaleidos INC
         class="input-project"
         (keyup)="setName($event)"
         data-test="workspace-name-input"
-        formControlName="projectName"
+        formControlName="workspaceName"
         #firstInput
         tuiAutoFocus
-        maxlength="40"
+        [maxlength]="maxLength"
         [placeholder]="t('workspace.workspace_name')" />
       <tg-ui-error
         inputError
         error="required">
         {{ t('workspace.error_name_empty') }}
       </tg-ui-error>
+      <tg-ui-error error="pattern">{{
+        t('workspace.error_name_empty')
+      }}</tg-ui-error>
     </tg-ui-input>
     <button
       data-test="workspace-project-form-submit"

@@ -87,15 +87,6 @@ Copyright (c) 2023-present Kaleidos INC
           [content]="notificationsDropdown"
           [(open)]="openNotificationsDropdown">
           <div class="count-notifications-wrapper">
-            <span
-              *ngIf="notificationsCount() > 0"
-              class="count-notifications"
-              [class.count-overflow]="notificationsCount() > 99">
-              <ng-container *ngIf="notificationsCount() > 99">+99</ng-container>
-              <ng-container *ngIf="notificationsCount() <= 99">{{
-                notificationsCount()
-              }}</ng-container>
-            </span>
             <button
               class="notifications-action"
               type="button"
@@ -105,7 +96,19 @@ Copyright (c) 2023-present Kaleidos INC
               aria-haspopup="true"
               icon="bell"
               data-test="notifications-button"
-              [attr.aria-label]="t('navigation.notifications.title')"></button>
+              [attr.aria-label]="t('navigation.notifications.title')">
+              <span
+                *ngIf="notificationsCount() > 0"
+                class="count-notifications"
+                [class.count-overflow]="notificationsCount() > 99">
+                <ng-container *ngIf="notificationsCount() > 99"
+                  >+99</ng-container
+                >
+                <ng-container *ngIf="notificationsCount() <= 99">{{
+                  notificationsCount()
+                }}</ng-container>
+              </span>
+            </button>
           </div>
         </tui-hosted-dropdown>
       </div>

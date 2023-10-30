@@ -120,6 +120,7 @@ Copyright (c) 2023-present Kaleidos INC
   display: flex;
   font-size: 0.688rem;
   font-weight: var(--font-weight-medium);
+  inset-block-start: 0;
   inset-inline-end: 0;
   justify-content: center;
   position: absolute;

@@ -36,6 +36,17 @@ export interface NotificationStoryUnassign extends Notification {
   };
 }
 
+export interface NotificationStoryStatusChange extends Notification {
+  type: 'stories.status_change';
+  content: {
+    story: Pick<Story, 'ref' | 'title'>;
+    projects: Pick<Project, 'id' | 'name' | 'slug'>;
+    status: string;
+    changedBy: Pick<User, 'color' | 'username' | 'fullName'>;
+  };
+}
+
 export type NotificationType =
   | NotificationStoryAssign
-  | NotificationStoryUnassign;
+  | NotificationStoryUnassign
+  | NotificationStoryStatusChange;

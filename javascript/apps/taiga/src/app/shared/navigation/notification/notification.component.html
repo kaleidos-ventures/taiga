@@ -25,26 +25,14 @@ Copyright (c) 2023-present Kaleidos INC
         <div class="notification-info">
           <p
             class="type"
+            withInternalLink
             [innerHtml]="
-              t(getTranslationKey(notification), {
-                username: notification.content.assignedBy.fullName
-              })
-            "></p>
-
-          <p class="link">
-            <a
-              [routerLink]="[
-                '/project',
-                notification.content.project.id,
-                notification.content.project.slug,
-                'stories',
-                notification.content.story.ref
-              ]">
-              #{{ notification.content.story.ref }}
-              {{ notification.content.story.title }}
-            </a>
-          </p>
-
+            t(getTranslationKey(notification), {
+              username: notification.content.assignedBy.fullName,
+              story: getStoryName(notification),
+              storyUrl: getStoryUrl(notification) | getUrl,
+            })
+          "></p>
           <p class="date">{{ notification.createdAt | dateDistance }}</p>
         </div>
       </div>
@@ -63,25 +51,42 @@ Copyright (c) 2023-present Kaleidos INC
         <div class="notification-info">
           <p
             class="type"
+            withInternalLink
+            [innerHtml]="
+            t(getTranslationKey(notification), {
+              username: notification.content.unassignedBy.fullName,
+              story: getStoryName(notification),
+              storyUrl: getStoryUrl(notification) | getUrl,
+            })
+          "></p>
+
+          <p class="date">{{ notification.createdAt | dateDistance }}</p>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="notification.type === 'stories.status_change'">
+      <div class="notification-inner">
+        <tg-user-avatar
+          size="m"
+          class="no-border"
+          [color]="notification.content.changedBy.color"
+          [user]="notification.content.changedBy"
+          type="light"
+          [rounded]="true"
+          aria-hidden="true"></tg-user-avatar>
+
+        <div class="notification-info">
+          <p
+            class="type"
+            withInternalLink
             [innerHtml]="
               t(getTranslationKey(notification), {
-                username: notification.content.unassignedBy.fullName
+                username: notification.content.changedBy.fullName,
+                story: getStoryName(notification),
+                storyUrl: getStoryUrl(notification) | getUrl,
+                status: notification.content.status
               })
             "></p>
-
-          <p class="link">
-            <a
-              [routerLink]="[
-                '/project',
-                notification.content.project.id,
-                notification.content.project.slug,
-                'stories',
-                notification.content.story.ref
-              ]">
-              #{{ notification.content.story.ref }}
-              {{ notification.content.story.title }}
-            </a>
-          </p>
 
           <p class="date">{{ notification.createdAt | dateDistance }}</p>
         </div>

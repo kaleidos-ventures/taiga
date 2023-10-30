@@ -12,8 +12,15 @@ Copyright (c) 2023-present Kaleidos INC
     padding-block-end: var(--spacing-12);
   }
 
-  &::ng-deep .username {
-    color: var(--color-secondary);
+  &::ng-deep {
+    .highlight,
+    .link {
+      color: var(--color-secondary);
+    }
+
+    a {
+      font-weight: var(--font-weight-medium);
+    }
   }
 }
 
@@ -28,10 +35,6 @@ Copyright (c) 2023-present Kaleidos INC
 .date {
   color: var(--color-gray70);
   font-size: var(--font-size-small);
-}
-
-.link {
-  font-weight: var(--font-weight-medium);
 }
 
 .notification-inner {

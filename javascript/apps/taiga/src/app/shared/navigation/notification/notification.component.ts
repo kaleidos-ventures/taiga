@@ -23,6 +23,8 @@ import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { UserActions } from '~/app/modules/auth/data-access/+state/actions/user.actions';
+import { InternalLinkDirective } from '~/app/shared/directives/internal-link/internal-link.directive';
+import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
 
 @Component({
   selector: 'tg-notification',
@@ -33,6 +35,8 @@ import { UserActions } from '~/app/modules/auth/data-access/+state/actions/user.
     UserAvatarComponent,
     DateDistancePipe,
     RouterLink,
+    InternalLinkDirective,
+    getUrlPipe,
   ],
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.css'],
@@ -51,6 +55,18 @@ export class NotificationComponent {
 
   public getTranslationKey(notification: NotificationType): string {
     return `navigation.notifications.types.${notification.type}`;
+  }
+
+  public getStoryName(notification: NotificationType): string {
+    return `#${notification.content.story.ref} ${notification.content.story.title}`;
+  }
+
+  public getStoryUrl(notification: NotificationType): string {
+    if (notification.type === 'stories.status_change') {
+      return `/project/${notification.content.projects.id}/${notification.content.projects.slug}/stories/${notification.content.story.ref}`;
+    } else {
+      return `/project/${notification.content.project.id}/${notification.content.project.slug}/stories/${notification.content.story.ref}`;
+    }
   }
 
   public markAsRead(event: MouseEvent, notification: NotificationType): void {

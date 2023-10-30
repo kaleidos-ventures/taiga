@@ -59,8 +59,9 @@
       "title": "Notifications",
       "empty": "You don’t have any notification.",
       "types": {
-        "stories.assign": "<span class='username'>{{username}}</span> assigned you the story",
-        "stories.unassign": "<span class='username'>{{username}}</span> unassigned you from the story"
+        "stories.assign": "<span class='highlight'>{{username}}</span> assigned you the story <br/> <a href='{{storyUrl}}'>{{story}}</a>",
+        "stories.unassign": "<span class='highlight'>{{username}}</span> unassigned you from the story <br/> <a href='{{storyUrl}}'>{{story}}</a>",
+        "stories.status_change": "<span class='highlight'>{{username}}</span> changed the status of the story <br/> <a href='{{storyUrl}}'>{{story}}</a> to {{status}}"
       }
     }
   },

@@ -694,7 +694,11 @@ export const reducer = createImmerReducer(
   on(
     KanbanApiActions.createStatusSuccess,
     KanbanEventsActions.updateStatus,
-    (state, { status }): KanbanState => {
+    (state, { status, workflow }): KanbanState => {
+      if (workflow !== state.workflow?.slug) {
+        return state;
+      }
+
       state.loadingStatus = false;
 
       state.workflow?.statuses.push(status);
@@ -706,11 +710,15 @@ export const reducer = createImmerReducer(
   on(
     KanbanActions.editStatus,
     KanbanEventsActions.editStatus,
-    (state, { status }): KanbanState => {
-      const statusIndex = state.workflow!.statuses.findIndex(
+    (state, { status, workflow }): KanbanState => {
+      if (workflow !== state.workflow?.slug) {
+        return state;
+      }
+
+      const statusIndex = state.workflow.statuses.findIndex(
         (it) => it.id === status.id
       );
-      state.workflow!.statuses[statusIndex].name = status.name;
+      state.workflow.statuses[statusIndex].name = status.name;
 
       return state;
     }
@@ -729,8 +737,12 @@ export const reducer = createImmerReducer(
   on(
     KanbanApiActions.deleteStatusSuccess,
     KanbanEventsActions.statusDeleted,
-    (state, { status, moveToStatus }): KanbanState => {
-      const statuses = state.workflow!.statuses;
+    (state, { status, moveToStatus, workflow }): KanbanState => {
+      if (workflow !== state.workflow?.slug) {
+        return state;
+      }
+
+      const statuses = state.workflow.statuses;
       const statusIndex = statuses.findIndex((it) => it.id === status);
       if (moveToStatus) {
         const storiesToMove = state.stories[status];

@@ -132,7 +132,6 @@ export const reducer = createImmerReducer(
     if (!state.loadingStories && 'tmpId' in story) {
       state.scrollToStory.push(story.tmpId);
     }
-
     state.stories[story.status.id].push(story);
 
     return state;
@@ -308,8 +307,14 @@ export const reducer = createImmerReducer(
       stories.forEach((story) => {
         if (!state.stories[story.status.id]) {
           state.stories[story.status.id] = [];
+        } else {
+          const storyIndex = state.stories[story.status.id].findIndex(
+            (it) => it.ref === story.ref
+          );
+          if (storyIndex !== -1) {
+            state.stories[story.status.id].splice(storyIndex, 1);
+          }
         }
-
         state.stories[story.status.id].push(story);
       });
 

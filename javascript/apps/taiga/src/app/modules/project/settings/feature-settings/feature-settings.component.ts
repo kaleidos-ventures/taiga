@@ -13,7 +13,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
-import { TuiNotification } from '@taiga-ui/core';
 import { Membership, Project } from '@taiga/data';
 import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
@@ -98,18 +97,10 @@ export class ProjectsSettingsFeatureSettingsComponent {
     projectId?: Project['id'],
     projectSlug?: Project['slug']
   ) {
-    this.appService.toastNotification({
-      message: 'errors.admin_permission',
-      paramsMessage: {
-        project: this.state.get('project').name,
-      },
-      status: TuiNotification.Warning,
-      closeOnNavigation: false,
-    });
-    void this.router.navigate([
-      '/project/',
-      projectId ?? this.state.get('project').id,
-      projectSlug ?? this.state.get('project').slug,
-    ]);
+    void this.router.navigateByUrl(
+      `project/${projectId ?? this.state.get('project').id}/${
+        projectSlug ?? this.state.get('project').slug
+      }/overview`
+    );
   }
 }

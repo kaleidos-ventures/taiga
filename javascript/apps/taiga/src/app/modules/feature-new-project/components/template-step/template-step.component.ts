@@ -161,7 +161,10 @@ export class TemplateStepComponent implements OnInit {
   public initForm() {
     this.templateProjectForm = this.fb.group({
       workspace: ['', Validators.required],
-      name: ['', Validators.required],
+      name: [
+        '',
+        [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)],
+      ],
       description: ['', Validators.maxLength(200)],
       color: [RandomColorService.randomColorPicker(), Validators.required],
       logo: [''],
@@ -228,6 +231,10 @@ export class TemplateStepComponent implements OnInit {
     return data.some((value) => value);
   }
 
+  public setName() {
+    this.formSubmitted = false;
+  }
+
   public createProject() {
     (this.templateProjectForm.get('logo') as FormControl).setErrors(null);
 
@@ -243,8 +250,8 @@ export class TemplateStepComponent implements OnInit {
         logo: this.formValue.logo,
       };
       this.projectData.next(projectFormValue);
-      this.formSubmitted = true;
     }
+    this.formSubmitted = true;
   }
 
   public cancelRedirect() {

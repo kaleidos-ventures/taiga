@@ -28,7 +28,8 @@ Copyright (c) 2023-present Kaleidos INC
       class="template-project-form"
       #form="ngForm"
       [formGroup]="templateProjectForm"
-      (ngSubmit)="createProject()">
+      (ngSubmit)="createProject()"
+      [showFormErrors]="formSubmitted">
       <tg-ui-select
         [label]="t('commons.workspace')"
         type="avatar">
@@ -67,12 +68,16 @@ Copyright (c) 2023-present Kaleidos INC
           data-test="input-name"
           inputRef
           tuiAutoFocus
-          maxlength="80" />
+          maxlength="80"
+          (keyup)="setName()" />
         <ng-container inputError>
           <tg-ui-error
             [enabled]="form.submitted"
             data-test="name-required-error"
             error="required">
+            {{ t('common_project.forms.project_name_error') }}
+          </tg-ui-error>
+          <tg-ui-error error="pattern">
             {{ t('common_project.forms.project_name_error') }}
           </tg-ui-error>
         </ng-container>

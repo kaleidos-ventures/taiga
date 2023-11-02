@@ -357,5 +357,28 @@ describe('ProjectEffects', () => {
         );
       });
     });
+
+    it('fetch project workflow', () => {
+      const project = ProjectMockFactory();
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(ProjectEffects);
+      const workflow = WorkflowMockFactory(3);
+
+      store.overrideSelector(selectCurrentProject, project);
+
+      projectApiService.getWorkflow.mockReturnValue(
+        cold('-b|', { b: workflow })
+      );
+
+      actions$ = hot('-a', {
+        a: projectApiActions.fetchWorkflow({ workflow: workflow.slug }),
+      });
+
+      const expected = cold('--a', {
+        a: projectApiActions.fetchWorkflowSuccess({ workflow }),
+      });
+
+      expect(effects.loadWorkflows$).toBeObservable(expected);
+    });
   });
 });

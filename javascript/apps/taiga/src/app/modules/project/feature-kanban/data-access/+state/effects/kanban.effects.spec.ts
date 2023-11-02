@@ -38,7 +38,7 @@ import {
 import { selectCurrentWorkflowSlug } from '../selectors/kanban.selectors';
 import { KanbanEffects } from './kanban.effects';
 
-describe('ProjectEffects', () => {
+describe('KanbanEffects', () => {
   let actions$: Observable<Action>;
   let spectator: SpectatorService<KanbanEffects>;
   let store: MockStore;
@@ -60,39 +60,20 @@ describe('ProjectEffects', () => {
     store.overrideSelector(selectUser, user);
   });
 
-  it('init kanban', () => {
-    const project = ProjectMockFactory();
-    const projectApiService = spectator.inject(ProjectApiService);
-    const effects = spectator.inject(KanbanEffects);
-    const workflow = WorkflowMockFactory(3);
-
-    store.overrideSelector(selectCurrentProject, project);
-
-    projectApiService.getWorkflow.mockReturnValue(cold('-b|', { b: workflow }));
-
-    actions$ = hot('-a', {
-      a: KanbanActions.loadWorkflowKanban({ workflow: workflow.slug }),
-    });
-
-    const expected = cold('--a', {
-      a: KanbanApiActions.fetchWorkflowSuccess({ workflow }),
-    });
-
-    expect(effects.loadKanbanWorkflows$).toBeObservable(expected);
-  });
-
   it('load stories', () => {
     const projectApiService = spectator.inject(ProjectApiService);
     const effects = spectator.inject(KanbanEffects);
     const stories = [StoryMockFactory()];
     const workflow = WorkflowMockFactory(3);
+    const project = ProjectMockFactory();
+    store.overrideSelector(selectCurrentProject, project);
 
     projectApiService.getAllStories.mockReturnValue(
       cold('-b|', { b: { stories, offset: 0, complete: false } })
     );
 
     actions$ = hot('-a', {
-      a: KanbanActions.initKanban({ workflow: workflow.slug }),
+      a: KanbanActions.loadWorkflowKanban({ workflow: workflow.slug }),
     });
 
     const expected = cold('--a', {

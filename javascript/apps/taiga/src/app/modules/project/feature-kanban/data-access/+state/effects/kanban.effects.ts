@@ -21,7 +21,10 @@ import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
 import { Status, Story } from '@taiga/data';
 import { delay, filter, finalize, map, tap } from 'rxjs';
-import { fetchProject } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  fetchProject,
+  projectApiActions,
+} from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   selectCurrentProject,
   selectCurrentProjectId,
@@ -46,32 +49,17 @@ export class KanbanEffects {
   public loadKanbanWorkflows$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(KanbanActions.loadWorkflowKanban),
-      concatLatestFrom(() => [
-        this.store.select(selectCurrentProject).pipe(filterNil()),
-      ]),
-      fetch({
-        run: (action, project) => {
-          return this.projectApiService
-            .getWorkflow(project.id, action.workflow)
-            .pipe(
-              map((workflow) => {
-                return KanbanApiActions.fetchWorkflowSuccess({ workflow });
-              })
-            );
-        },
-        onError: (action, error: HttpErrorResponse) => {
-          return this.appService.errorManagement(error);
-        },
+      map((action) => {
+        return projectApiActions.fetchWorkflow({ workflow: action.workflow });
       })
     );
   });
 
   public loadKanbanStories$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(KanbanActions.initKanban, KanbanActions.loadWorkflowKanban),
+      ofType(KanbanActions.loadWorkflowKanban),
       concatLatestFrom(() => [
         this.store.select(selectCurrentProject).pipe(filterNil()),
-        this.store.select(selectWorkflow),
       ]),
       fetch({
         run: (action, project) => {
@@ -90,7 +78,7 @@ export class KanbanEffects {
               })
             );
         },
-        onError: (action, error: HttpErrorResponse) => {
+        onError: (_, error: HttpErrorResponse) => {
           return this.appService.errorManagement(error);
         },
       })

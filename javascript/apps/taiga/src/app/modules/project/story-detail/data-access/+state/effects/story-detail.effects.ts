@@ -15,8 +15,11 @@ import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { EMPTY, catchError, concatMap, map, of, tap } from 'rxjs';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { filter, map, tap } from 'rxjs';
+import {
+  projectApiActions,
+  projectEventActions,
+} from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { selectWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
@@ -58,42 +61,13 @@ export class StoryDetailEffects {
         StoryDetailApiActions.fetchStorySuccess,
         StoryDetailApiActions.updateStoryWorkflowSuccess
       ),
-      concatLatestFrom(() => [
-        this.store.select(selectWorkflow),
-        this.store.select(selectCurrentProject).pipe(filterNil()),
-      ]),
-      concatMap(([action, loadedWorkflow, project]) => {
-        const workflow =
-          loadedWorkflow ??
-          project.workflows?.find(
-            (workflow) => workflow.slug === action.story.workflow.slug
-          );
-        if (!workflow?.statuses) {
-          return of(
-            KanbanActions.initKanban({ workflow: action.story.workflow.slug })
-          );
-        }
-        if (workflow?.slug === action.story.workflow.slug) {
-          return of(
-            StoryDetailApiActions.fetchWorkflowSuccess({
-              workflow,
-            })
-          );
-        }
-        return this.projectApiService
-          .getWorkflow(project?.id, action.story.workflow.slug)
-          .pipe(
-            map((workflow) => {
-              return StoryDetailApiActions.fetchWorkflowSuccess({
-                workflow,
-              });
-            }),
-            catchError((httpResponse: HttpErrorResponse) => {
-              this.appService.errorManagement(httpResponse);
-
-              return EMPTY;
-            })
-          );
+      concatLatestFrom(() => [this.store.select(selectWorkflow)]),
+      filter(([action, workflow]) => {
+        return action.story?.workflow?.slug !== workflow?.slug;
+      }),
+      map(([action]) => {
+        const workflow = action.story?.workflow;
+        return projectApiActions.fetchWorkflow({ workflow: workflow?.slug });
       })
     );
   });

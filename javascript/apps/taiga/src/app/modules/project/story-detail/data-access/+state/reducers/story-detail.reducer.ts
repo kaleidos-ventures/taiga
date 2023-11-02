@@ -15,7 +15,10 @@ import {
   UserComment,
   Workflow,
 } from '@taiga/data';
-import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
+import {
+  projectApiActions,
+  projectEventActions,
+} from '~/app/modules/project/data-access/+state/actions/project.actions';
 import {
   KanbanActions,
   KanbanApiActions,
@@ -79,11 +82,15 @@ export const reducer = createImmerReducer(
       state.loadingStory = false;
       state.story = story;
 
+      if (story.workflow.slug === state.workflow?.slug) {
+        state.loadingWorkflow = false;
+      }
+
       return state;
     }
   ),
   on(
-    StoryDetailApiActions.fetchWorkflowSuccess,
+    projectApiActions.fetchWorkflowSuccess,
     (state, { workflow }): StoryDetailState => {
       state.loadingWorkflow = false;
       state.workflow = workflow;

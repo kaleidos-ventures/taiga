@@ -146,6 +146,12 @@ export const projectApiActions = createActionGroup({
     'Delete Workflow Success': props<{
       workflow: Workflow;
     }>(),
+    'Fetch workflow': props<{
+      workflow: Workflow['slug'];
+    }>(),
+    'Fetch workflow Success': props<{
+      workflow: Workflow;
+    }>(),
   },
 });
 

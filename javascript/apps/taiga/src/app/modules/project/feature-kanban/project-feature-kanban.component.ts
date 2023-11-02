@@ -119,11 +119,13 @@ export class ProjectFeatureKanbanComponent {
 
   @Input()
   public set workflowSlug(workflow: Workflow['slug']) {
-    if (workflow !== this.state.get('workflow')?.slug) {
+    if (!this.initalRender || workflow !== this.state.get('workflow')?.slug) {
       this.store.dispatch(KanbanActions.loadWorkflowKanban({ workflow }));
+      this.initalRender = true;
     }
   }
 
+  public initalRender = false;
   public invitePeopleModal = false;
   public kanbanWidth = 0;
   public model$ = this.state.select();

@@ -19,7 +19,6 @@ import {
 export const KanbanActions = createActionGroup({
   source: 'Kanban',
   events: {
-    'Init Kanban': props<{ workflow: Workflow['slug'] }>(),
     'Load Workflow kanban': props<{ workflow: Workflow['slug'] }>(),
     'Open Create Story form': props<{ status: Status['id'] }>(),
     'Close Create Story form': emptyProps(),
@@ -121,7 +120,6 @@ export const KanbanActions = createActionGroup({
 export const KanbanApiActions = createActionGroup({
   source: 'Kanban Api',
   events: {
-    'Fetch Workflow Success': props<{ workflow: Workflow }>(),
     'Fetch Stories Success': props<{
       stories: Story[];
       offset: number;

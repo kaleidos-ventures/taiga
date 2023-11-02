@@ -107,7 +107,6 @@ export const StoryDetailApiActions = createActionGroup({
   source: 'StoryDetail Api',
   events: {
     'Fetch Story Success': props<{ story: StoryDetail }>(),
-    'Fetch Workflow Success': props<{ workflow: Workflow }>(),
     'Update Story Success': props<{ story: StoryDetail }>(),
     'Update Story Workflow Success': props<{ story: StoryDetail }>(),
     'Delete Story Success': props<{

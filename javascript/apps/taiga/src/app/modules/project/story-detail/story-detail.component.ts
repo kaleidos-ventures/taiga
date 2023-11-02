@@ -46,7 +46,14 @@ import {
   UserComment,
   Workflow,
 } from '@taiga/data';
-import { map, merge, pairwise, startWith, take } from 'rxjs';
+import {
+  distinctUntilChanged,
+  map,
+  merge,
+  pairwise,
+  startWith,
+  take,
+} from 'rxjs';
 
 import { TuiScrollbarModule } from '@taiga-ui/core/components/scrollbar';
 import { InputsModule } from '@taiga/ui/inputs';
@@ -250,9 +257,11 @@ export class StoryDetailComponent {
       this.store.select(selectWorkflow).pipe(
         filterNil(),
         map((workflow) => workflow.statuses),
+        distinctUntilChanged(),
         startWith([])
       )
     );
+
     this.state.connect(
       'canEdit',
       this.permissionService.hasPermissions$('story', ['modify'])

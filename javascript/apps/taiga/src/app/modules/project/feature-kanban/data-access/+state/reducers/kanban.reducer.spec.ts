@@ -26,27 +26,6 @@ import * as kanbanReducer from './kanban.reducer';
 import { KanbanState } from './kanban.reducer';
 
 describe('Kanban reducer', () => {
-  it('load a workflow with no stories', () => {
-    const { initialKanbanState } = kanbanReducer;
-    const workflow = WorkflowMockFactory();
-
-    const state = kanbanReducer.kanbanFeature.reducer(
-      {
-        ...initialKanbanState,
-        empty: true,
-        loadingWorkflow: true,
-        workflow,
-      },
-      KanbanApiActions.fetchWorkflowSuccess({
-        workflow,
-      })
-    );
-
-    expect(state.stories[workflow.statuses[0].id]).toEqual([]);
-    expect(state.createStoryForm).toEqual(workflow.statuses[0].id);
-    expect(state.loadingWorkflow).toEqual(false);
-  });
-
   it('load stories', () => {
     const { initialKanbanState } = kanbanReducer;
     const story = StoryMockFactory();

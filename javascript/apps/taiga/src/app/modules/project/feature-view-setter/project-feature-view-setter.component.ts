@@ -152,13 +152,10 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
       )
     );
 
-    combineLatest([
-      this.state.select('url'),
-      this.route.data,
-      this.route.params,
-    ])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([url, data, params]) => {
+    combineLatest([this.route.data, this.route.params])
+      .pipe(takeUntilDestroyed(this.destroyRef), distinctUntilChanged())
+      .subscribe(([data, params]) => {
+        const url = this.state.get('url');
         const project: Project = data.project as Project;
         const isKanbanUrl = url.includes(`${project.slug}/kanban/`);
         this.state.set({ isKanban: isKanbanUrl });

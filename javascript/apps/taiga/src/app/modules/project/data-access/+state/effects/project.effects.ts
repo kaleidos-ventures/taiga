@@ -603,6 +603,34 @@ export class ProjectEffects {
     );
   });
 
+  public loadWorkflows$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ProjectActions.projectApiActions.fetchWorkflow),
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      fetch({
+        run: (action, project) => {
+          return this.projectApiService
+            .getWorkflow(project.id, action.workflow)
+            .pipe(
+              map((workflow) => {
+                return ProjectActions.projectApiActions.fetchWorkflowSuccess({
+                  workflow,
+                });
+              })
+            );
+        },
+        id: (action) => {
+          return action.workflow;
+        },
+        onError: (_, error: HttpErrorResponse) => {
+          return this.appService.errorManagement(error);
+        },
+      })
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private projectApiService: ProjectApiService,

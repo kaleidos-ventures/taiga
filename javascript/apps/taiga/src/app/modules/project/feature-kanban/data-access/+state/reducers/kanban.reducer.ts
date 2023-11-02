@@ -109,15 +109,11 @@ export const initialKanbanState: KanbanState = {
 
 export const reducer = createImmerReducer(
   initialKanbanState,
-  on(
-    KanbanActions.initKanban,
-    KanbanActions.loadWorkflowKanban,
-    (state): KanbanState => {
-      state = { ...initialKanbanState };
+  on(KanbanActions.loadWorkflowKanban, (state): KanbanState => {
+    state = { ...initialKanbanState };
 
-      return state;
-    }
-  ),
+    return state;
+  }),
   on(KanbanActions.openCreateStoryForm, (state, { status }): KanbanState => {
     state.createStoryForm = status;
 
@@ -281,7 +277,7 @@ export const reducer = createImmerReducer(
     }
   ),
   on(
-    KanbanApiActions.fetchWorkflowSuccess,
+    projectApiActions.fetchWorkflowSuccess,
     (state, { workflow }): KanbanState => {
       state.workflow = workflow;
       state.currentWorkflowSlug = workflow.slug;
@@ -852,17 +848,6 @@ export const reducer = createImmerReducer(
       if (state.workflow?.id === workflow.id) {
         state.workflow.name = workflow.name;
         state.workflow.slug = workflow.slug;
-      }
-
-      return state;
-    }
-  ),
-  on(
-    StoryDetailApiActions.fetchWorkflowSuccess,
-    (state, { workflow }): KanbanState => {
-      if (!state.workflow) {
-        state.workflow = workflow;
-        state.currentWorkflowSlug = workflow.slug;
       }
 
       return state;

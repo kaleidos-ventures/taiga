@@ -13,14 +13,11 @@ Copyright (c) 2023-present Kaleidos INC
     [class.unread]="!notification.readAt">
     <ng-container *ngIf="notification.type === 'stories.assign'">
       <div class="notification-inner">
-        <tg-user-avatar
-          size="m"
-          class="no-border"
-          [color]="notification.content.assignedBy.color"
-          [user]="notification.content.assignedBy"
-          type="light"
-          [rounded]="true"
-          aria-hidden="true"></tg-user-avatar>
+        <ng-template
+          *ngTemplateOutlet="
+            tplAvatar;
+            context: { $implicit: notification.content.assignedBy }
+          "></ng-template>
 
         <div class="notification-info">
           <p
@@ -33,22 +30,21 @@ Copyright (c) 2023-present Kaleidos INC
               storyUrl: getStoryUrl(notification) | getUrl,
             })
           "></p>
-          <p class="date">
-            {{ notification.createdAt | date: 'MMMM d, y - h:mm:ss a' }}
-          </p>
+          <ng-template
+            *ngTemplateOutlet="
+              tplDate;
+              context: { $implicit: notification }
+            "></ng-template>
         </div>
       </div>
     </ng-container>
     <ng-container *ngIf="notification.type === 'stories.unassign'">
       <div class="notification-inner">
-        <tg-user-avatar
-          size="m"
-          class="no-border"
-          [color]="notification.content.unassignedBy.color"
-          [user]="notification.content.unassignedBy"
-          type="light"
-          [rounded]="true"
-          aria-hidden="true"></tg-user-avatar>
+        <ng-template
+          *ngTemplateOutlet="
+            tplAvatar;
+            context: { $implicit: notification.content.unassignedBy }
+          "></ng-template>
 
         <div class="notification-info">
           <p
@@ -62,22 +58,21 @@ Copyright (c) 2023-present Kaleidos INC
             })
           "></p>
 
-          <p class="date">
-            {{ notification.createdAt | date: 'MMMM d, y - h:mm:ss a' }}
-          </p>
+          <ng-template
+            *ngTemplateOutlet="
+              tplDate;
+              context: { $implicit: notification }
+            "></ng-template>
         </div>
       </div>
     </ng-container>
     <ng-container *ngIf="notification.type === 'stories.status_change'">
       <div class="notification-inner">
-        <tg-user-avatar
-          size="m"
-          class="no-border"
-          [color]="notification.content.changedBy.color"
-          [user]="notification.content.changedBy"
-          type="light"
-          [rounded]="true"
-          aria-hidden="true"></tg-user-avatar>
+        <ng-template
+          *ngTemplateOutlet="
+            tplAvatar;
+            context: { $implicit: notification.content.changedBy }
+          "></ng-template>
 
         <div class="notification-info">
           <p
@@ -91,23 +86,21 @@ Copyright (c) 2023-present Kaleidos INC
                 status: notification.content.status
               })
             "></p>
-
-          <p class="date">
-            {{ notification.createdAt | date: 'MMMM d, y - h:mm:ss a' }}
-          </p>
+          <ng-template
+            *ngTemplateOutlet="
+              tplDate;
+              context: { $implicit: notification }
+            "></ng-template>
         </div>
       </div>
     </ng-container>
     <ng-container *ngIf="notification.type === 'story_comment.create'">
       <div class="notification-inner">
-        <tg-user-avatar
-          size="m"
-          class="no-border"
-          [color]="notification.content.commentedBy.color"
-          [user]="notification.content.commentedBy"
-          type="light"
-          [rounded]="true"
-          aria-hidden="true"></tg-user-avatar>
+        <ng-template
+          *ngTemplateOutlet="
+            tplAvatar;
+            context: { $implicit: notification.content.commentedBy }
+          "></ng-template>
 
         <div class="notification-info">
           <p
@@ -121,11 +114,63 @@ Copyright (c) 2023-present Kaleidos INC
               })
             "></p>
 
-          <p class="date">
-            {{ notification.createdAt | date: 'MMMM d, y - h:mm:ss a' }}
-          </p>
+          <ng-template
+            *ngTemplateOutlet="
+              tplDate;
+              context: { $implicit: notification }
+            "></ng-template>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="notification.type === 'stories.delete'">
+      <div class="notification-inner">
+        <ng-template
+          *ngTemplateOutlet="
+            tplAvatar;
+            context: { $implicit: notification.content.deletedBy }
+          "></ng-template>
+
+        <div class="notification-info">
+          <p
+            class="type"
+            withInternalLink
+            [innerHtml]="
+              t(getTranslationKey(notification), {
+                username: notification.content.deletedBy.fullName,
+                story: getStoryName(notification),
+              })
+            "></p>
+
+          <ng-template
+            *ngTemplateOutlet="
+              tplDate;
+              context: { $implicit: notification }
+            "></ng-template>
         </div>
       </div>
     </ng-container>
   </div>
+
+  <ng-template
+    #tplAvatar
+    let-user>
+    <tg-user-avatar
+      size="m"
+      class="no-border"
+      [color]="user.color"
+      [user]="user"
+      type="light"
+      [rounded]="true"
+      aria-hidden="true"></tg-user-avatar>
+  </ng-template>
+
+  <ng-template
+    #tplDate
+    let-notificaiton>
+    <p
+      class="date"
+      [attr.title]="notification.createdAt | date: 'MMMM d, y - h:mm:ss a'">
+      {{ notification.createdAt | dateDistance }}
+    </p>
+  </ng-template>
 </ng-container>

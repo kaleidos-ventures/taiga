@@ -58,8 +58,18 @@ export interface NotificationStoryCommentCreate extends Notification {
   };
 }
 
+export interface NotificationStoryDelete extends Notification {
+  type: 'stories.delete';
+  content: {
+    story: Pick<Story, 'ref' | 'title'>;
+    projects: Pick<Project, 'id' | 'name' | 'slug'>;
+    deletedBy: Pick<User, 'color' | 'username' | 'fullName'>;
+  };
+}
+
 export type NotificationType =
   | NotificationStoryAssign
   | NotificationStoryUnassign
   | NotificationStoryStatusChange
-  | NotificationStoryCommentCreate;
+  | NotificationStoryCommentCreate
+  | NotificationStoryDelete;

@@ -1,10 +1,9 @@
 {
-  "workflow": "workflow",
-  "workflows": "workflows",
+  "workflow": "Workflow",
+  "workflows": "Workflows",
   "page_title": "{{projectName}} kanban",
   "workflow_title": "[{{projectName}}] kanban workflow",
   "title": "Kanban",
-  "empty": "The project administrator has not set any status yet.",
   "status_label": "Status {{ statusName }}, Tap left and right arrows to move between statuses.",
   "empty_status": "There are no stories.",
   "add_story": "Add story",
@@ -38,6 +37,7 @@
   "create_status_explanation": "Once the admins of this project set up the kanban, you can start creating stories",
   "delete_workflow": "Delete workflow",
   "edit_workflow_name": "Edit workflow name",
+  "move_to_workflow": "Move story to another workflow:",
   "delete_status_modal": {
     "title": "Delete {{ statusName }} status?",
     "what_to_do_stories": "What do you want to do with the stories in this status?",

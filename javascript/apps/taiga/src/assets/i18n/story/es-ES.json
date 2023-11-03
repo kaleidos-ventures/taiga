@@ -23,6 +23,10 @@
   "empty_description": "Add a description to your story",
   "empty_description_view_permissions": "This story doesn't have a description yet.",
   "edit_description": "Edit description",
+  "move": {
+    "error": "The workflow {{workflow}} does not have any status. Create one and try again.",
+    "confirm": "The story has been moved to the <a href='{{workflowURL}}'> {{workflowName}} </a> workflow"
+  },
   "delete": {
     "delete_story": "Delete Story",
     "confirm": "Are you sure you want to delete this story?",

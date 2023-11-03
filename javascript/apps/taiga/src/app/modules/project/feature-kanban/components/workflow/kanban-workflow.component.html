@@ -64,7 +64,10 @@ Copyright (c) 2023-present Kaleidos INC
   </tg-ui-drag-in-progress>
 </ng-container>
 
-<ng-container *ngIf="!workflow.statuses.length && !openCreateStatusForm">
+<ng-container
+  *ngIf="
+    workflow.statuses && !workflow.statuses.length && !openCreateStatusForm
+  ">
   <tg-kanban-empty
     [userIsAdmin]="userIsAdmin"
     (addStatus)="openCreateStatusForm = true"></tg-kanban-empty>

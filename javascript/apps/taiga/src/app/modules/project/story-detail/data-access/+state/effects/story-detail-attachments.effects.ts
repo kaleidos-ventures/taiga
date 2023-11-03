@@ -53,7 +53,9 @@ export class StoryDetailAttachmentsEffects {
             );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
-          this.appService.toastGenericError(httpResponse);
+          if (httpResponse.status !== 404) {
+            this.appService.toastGenericError(httpResponse);
+          }
         },
       })
     );

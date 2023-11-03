@@ -10,14 +10,16 @@ Copyright (c) 2023-present Kaleidos INC
   display: block;
   inline-size: 440px;
   padding: var(--spacing-16);
+  padding-block-start: 0;
 }
 
 .title {
-  margin-block: 0 var(--spacing-16);
-}
-
-.total-notifications {
-  color: var(--color-gray80);
+  background-color: var(--color-white);
+  inset-block-start: 0;
+  margin: 0;
+  padding-block: var(--spacing-16);
+  position: sticky;
+  z-index: 1;
 }
 
 .notifications {

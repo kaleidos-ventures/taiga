@@ -9,7 +9,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   Output,
@@ -19,11 +18,12 @@ import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { NotificationType } from '@taiga/data';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { UserActions } from '~/app/modules/auth/data-access/+state/actions/user.actions';
 import { InternalLinkDirective } from '~/app/shared/directives/internal-link/internal-link.directive';
 import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
+import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
 
 @Component({
   selector: 'tg-notification',
@@ -35,6 +35,7 @@ import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
     RouterLink,
     InternalLinkDirective,
     getUrlPipe,
+    DateDistancePipe,
   ],
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.css'],
@@ -42,8 +43,6 @@ import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
 })
 export class NotificationComponent {
   private store = inject(Store);
-  private router = inject(Router);
-  private el = inject(ElementRef) as ElementRef<HTMLElement>;
 
   @Input({ required: true })
   public notification!: NotificationType;
@@ -60,7 +59,10 @@ export class NotificationComponent {
   }
 
   public getStoryUrl(notification: NotificationType): string {
-    if (notification.type === 'stories.status_change') {
+    if (
+      notification.type === 'stories.status_change' ||
+      notification.type === 'stories.delete'
+    ) {
       return `/project/${notification.content.projects.id}/${notification.content.projects.slug}/stories/${notification.content.story.ref}`;
     } else {
       return `/project/${notification.content.project.id}/${notification.content.project.slug}/stories/${notification.content.story.ref}`;

@@ -33,7 +33,9 @@ Copyright (c) 2023-present Kaleidos INC
               storyUrl: getStoryUrl(notification) | getUrl,
             })
           "></p>
-          <p class="date">{{ notification.createdAt | dateDistance }}</p>
+          <p class="date">
+            {{ notification.createdAt | date: 'MMMM d, y - h:mm:ss a' }}
+          </p>
         </div>
       </div>
     </ng-container>
@@ -60,7 +62,9 @@ Copyright (c) 2023-present Kaleidos INC
             })
           "></p>
 
-          <p class="date">{{ notification.createdAt | dateDistance }}</p>
+          <p class="date">
+            {{ notification.createdAt | date: 'MMMM d, y - h:mm:ss a' }}
+          </p>
         </div>
       </div>
     </ng-container>
@@ -88,7 +92,9 @@ Copyright (c) 2023-present Kaleidos INC
               })
             "></p>
 
-          <p class="date">{{ notification.createdAt | dateDistance }}</p>
+          <p class="date">
+            {{ notification.createdAt | date: 'MMMM d, y - h:mm:ss a' }}
+          </p>
         </div>
       </div>
     </ng-container>
@@ -115,7 +121,9 @@ Copyright (c) 2023-present Kaleidos INC
               })
             "></p>
 
-          <p class="date">{{ notification.createdAt | dateDistance }}</p>
+          <p class="date">
+            {{ notification.createdAt | date: 'MMMM d, y - h:mm:ss a' }}
+          </p>
         </div>
       </div>
     </ng-container>

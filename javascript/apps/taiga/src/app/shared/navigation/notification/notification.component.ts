@@ -19,7 +19,6 @@ import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { NotificationType } from '@taiga/data';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
-import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { UserActions } from '~/app/modules/auth/data-access/+state/actions/user.actions';
@@ -33,7 +32,6 @@ import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
     CommonModule,
     TranslocoDirective,
     UserAvatarComponent,
-    DateDistancePipe,
     RouterLink,
     InternalLinkDirective,
     getUrlPipe,
@@ -70,8 +68,6 @@ export class NotificationComponent {
   }
 
   public markAsRead(event: MouseEvent, notification: NotificationType): void {
-    this.userNavigated.emit();
-
     if (!notification.readAt) {
       this.store.dispatch(
         UserActions.markNotificationAsRead({ notificationId: notification.id })
@@ -80,13 +76,8 @@ export class NotificationComponent {
 
     const target = event.target as HTMLElement;
 
-    if (!(target instanceof HTMLAnchorElement)) {
-      const link =
-        this.el.nativeElement.querySelector('a')?.getAttribute('href') ?? '';
-
-      if (link) {
-        void this.router.navigateByUrl(link);
-      }
+    if (target instanceof HTMLAnchorElement) {
+      this.userNavigated.emit();
     }
   }
 }

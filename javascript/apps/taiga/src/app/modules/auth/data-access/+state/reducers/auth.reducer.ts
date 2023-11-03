@@ -11,7 +11,7 @@ import { User } from '@taiga/data';
 import { userSettingsActions } from '~/app/modules/feature-user-settings/data-access/+state/actions/user-settings.actions';
 import { createImmerReducer } from '~/app/shared/utils/store';
 import * as AuthActions from '../actions/auth.actions';
-import { UserActions } from '../actions/user.actions';
+import { UserActions, UserEventsActions } from '../actions/user.actions';
 import { NotificationType } from '@taiga/data';
 
 export interface AuthState {
@@ -102,6 +102,11 @@ export const reducer = createImmerReducer(
     if (notification && state.notificationCount) {
       notification.readAt = new Date().toISOString();
     }
+
+    return state;
+  }),
+  on(UserEventsActions.newNotification, (state, { notification }) => {
+    state.notifications.unshift(notification);
 
     return state;
   })

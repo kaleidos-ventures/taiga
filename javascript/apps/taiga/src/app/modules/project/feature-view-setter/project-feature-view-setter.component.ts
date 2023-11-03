@@ -28,6 +28,7 @@ import {
   pairwise,
   startWith,
   switchMap,
+  take,
   tap,
 } from 'rxjs';
 import { RouteHistoryService } from '~/app/shared/route-history/route-history.service';
@@ -57,7 +58,7 @@ interface ProjectFeatureViewSetterComponentState {
   isKanban: boolean;
   kanbanHost: ViewContainerRef | undefined;
   url: string;
-  workflowSlug: Workflow['slug'];
+  workflowSlug?: Workflow['slug'];
 }
 
 interface StoryParams {
@@ -110,7 +111,18 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
     );
 
     this.state.hold(
-      this.state.select('kanbanHost').pipe(distinctUntilChanged(), filterNil()),
+      this.state.select('kanbanHost').pipe(
+        distinctUntilChanged(),
+        filterNil(),
+        switchMap((host) => {
+          // wait until workflowSlug is set
+          return this.state.select('workflowSlug').pipe(
+            filterNil(),
+            take(1),
+            map(() => host)
+          );
+        })
+      ),
       (host) => {
         void this.loadKanban(host);
       }

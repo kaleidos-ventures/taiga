@@ -16,7 +16,11 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@ngneat/transloco';
-import { NotificationType } from '@taiga/data';
+import {
+  NotificationStoryAssign,
+  NotificationStoryUnassign,
+  NotificationType,
+} from '@taiga/data';
 import { UserAvatarComponent } from '~/app/shared/user-avatar/user-avatar.component';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -24,6 +28,7 @@ import { UserActions } from '~/app/modules/auth/data-access/+state/actions/user.
 import { InternalLinkDirective } from '~/app/shared/directives/internal-link/internal-link.directive';
 import { getUrlPipe } from '~/app/shared/pipes/get-url/get-url.pipe';
 import { DateDistancePipe } from '~/app/shared/pipes/date-distance/date-distance.pipe';
+import { selectUser } from '~/app/modules/auth/data-access/+state/selectors/auth.selectors';
 
 @Component({
   selector: 'tg-notification',
@@ -50,8 +55,23 @@ export class NotificationComponent {
   @Output()
   public userNavigated = new EventEmitter();
 
+  public currentUser = this.store.selectSignal(selectUser);
+
   public getTranslationKey(notification: NotificationType): string {
     return `navigation.notifications.types.${notification.type}`;
+  }
+
+  public isAssignedCurrentUser(notification: NotificationStoryAssign) {
+    return (
+      notification.content.assignedTo.username === this.currentUser()?.username
+    );
+  }
+
+  public isUnassignedCurrentUser(notification: NotificationStoryUnassign) {
+    return (
+      notification.content.unassignedTo.username ===
+      this.currentUser()?.username
+    );
   }
 
   public getStoryName(notification: NotificationType): string {

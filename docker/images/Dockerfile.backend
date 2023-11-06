@@ -60,14 +60,16 @@ COPY python/apps/taiga/ /taiga/
 WORKDIR /taiga
 RUN set -eux; \
     python -m pip install -e .; \
-    chown -R taiga:taiga /taiga; \
     python -m taiga i18n compile-catalog; \
     python -m taiga collectstatic; \
     # =====================================
     # clean taiga
     find . -name '__pycache__' -exec rm -r '{}' +; \
     find . -name '*pyc' -exec rm -r '{}' +; \
-    find . -name '*po' -exec rm -r '{}' +;
+    find . -name '*po' -exec rm -r '{}' +; \
+    # =====================================
+    # make taiga own it's directories
+    chown -R taiga:taiga /taiga; 
 
 USER taiga:taiga
 ENTRYPOINT ["python", "-m", "taiga"]

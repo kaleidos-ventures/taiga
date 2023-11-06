@@ -22,16 +22,6 @@ const routes: Routes = [
     },
     children: [
       {
-        path: ':slug/kanban',
-        redirectTo: ':slug/kanban/main',
-        pathMatch: 'full',
-      },
-      {
-        path: 'kanban',
-        redirectTo: 'kanban/main',
-        pathMatch: 'full',
-      },
-      {
         path: ':slug/kanban/:workflow',
         loadChildren: () =>
           import(

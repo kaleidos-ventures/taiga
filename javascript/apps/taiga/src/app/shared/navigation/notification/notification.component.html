@@ -21,15 +21,25 @@ Copyright (c) 2023-present Kaleidos INC
 
         <div class="notification-info">
           <p
+            *ngIf="isAssignedCurrentUser(notification)"
             class="type"
             withInternalLink
-            [innerHtml]="
-            t(getTranslationKey(notification), {
+            [innerHtml]="t(getTranslationKey(notification) + '.self', {
               username: notification.content.assignedBy.fullName,
               story: getStoryName(notification),
               storyUrl: getStoryUrl(notification) | getUrl,
-            })
-          "></p>
+            })"></p>
+          <p
+            *ngIf="!isAssignedCurrentUser(notification)"
+            class="type"
+            withInternalLink
+            [innerHtml]="
+              t(getTranslationKey(notification), {
+                username: notification.content.assignedTo.fullName,
+                story: getStoryName(notification),
+                storyUrl: getStoryUrl(notification) | getUrl
+              })
+            "></p>
           <ng-template
             *ngTemplateOutlet="
               tplDate;
@@ -48,16 +58,27 @@ Copyright (c) 2023-present Kaleidos INC
 
         <div class="notification-info">
           <p
+            *ngIf="isUnassignedCurrentUser(notification)"
             class="type"
             withInternalLink
             [innerHtml]="
-            t(getTranslationKey(notification), {
+            t(getTranslationKey(notification) + '.self', {
               username: notification.content.unassignedBy.fullName,
               story: getStoryName(notification),
               storyUrl: getStoryUrl(notification) | getUrl,
             })
           "></p>
-
+          <p
+            *ngIf="!isUnassignedCurrentUser(notification)"
+            class="type"
+            withInternalLink
+            [innerHtml]="
+            t(getTranslationKey(notification), {
+              username: notification.content.unassignedTo.fullName,
+              story: getStoryName(notification),
+              storyUrl: getStoryUrl(notification) | getUrl,
+            })
+          "></p>
           <ng-template
             *ngTemplateOutlet="
               tplDate;

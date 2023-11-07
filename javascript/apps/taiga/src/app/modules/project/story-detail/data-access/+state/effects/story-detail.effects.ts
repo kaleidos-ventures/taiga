@@ -22,7 +22,10 @@ import {
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
-import { selectWorkflow } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import {
+  selectWorkflow,
+  selectCurrentWorkflowSlug,
+} from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { AppService } from '~/app/services/app.service';
 import { LocalStorageService } from '~/app/shared/local-storage/local-storage.service';
 import { filterNil } from '~/app/shared/utils/operators';
@@ -210,7 +213,10 @@ export class StoryDetailEffects {
     () => {
       return this.actions$.pipe(
         ofType(StoryDetailApiActions.deleteStorySuccess),
-        tap((action) => {
+        concatLatestFrom(() => [
+          this.store.select(selectCurrentWorkflowSlug).pipe(filterNil()),
+        ]),
+        tap(([action, workflow]) => {
           this.appService.toastNotification({
             message: 'delete.confirm_delete',
             paramsMessage: { ref: action.ref },
@@ -220,7 +226,7 @@ export class StoryDetailEffects {
             closeOnNavigation: false,
           });
           void this.router.navigate([
-            `/project/${action.project.id}/${action.project.slug}/kanban`,
+            `/project/${action.project.id}/${action.project.slug}/kanban/${workflow}`,
           ]);
         })
       );

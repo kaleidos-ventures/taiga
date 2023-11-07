@@ -33,7 +33,7 @@ async def notify_when_story_status_change(story: Story, status: str, emitted_by:
         emitted_by=emitted_by,
         notified_users=notified_users,
         content=StoryStatusChangeNotificationContent(
-            projects=story.project,
+            project=story.project,
             story=story,
             changed_by=emitted_by,
             status=status,
@@ -78,7 +78,7 @@ async def notify_when_story_is_deleted(story: Story, emitted_by: User) -> None:
         emitted_by=emitted_by,
         notified_users=notified_users,
         content=StoryDeleteNotificationContent(
-            projects=story.project,
+            project=story.project,
             story=story,
             deleted_by=emitted_by,
         ),

@@ -10,10 +10,12 @@ from taiga.stories.stories.models import Story
 from taiga.stories.stories.notifications.content import (
     StoryDeleteNotificationContent,
     StoryStatusChangeNotificationContent,
+    StoryWorkflowChangeNotificationContent,
 )
 from taiga.users.models import User
 
 STORIES_STATUS_CHANGE = "stories.status_change"
+STORIES_WORKFLOW_CHANGE = "stories.workflow_change"
 STORIES_DELETE = "stories.delete"
 
 
@@ -34,6 +36,29 @@ async def notify_when_story_status_change(story: Story, status: str, emitted_by:
             projects=story.project,
             story=story,
             changed_by=emitted_by,
+            status=status,
+        ),
+    )
+
+
+async def notify_when_story_workflow_change(story: Story, workflow: str, status: str, emitted_by: User) -> None:
+    """
+    Emit notification when a story workflow changes
+    """
+    notified_users = {u async for u in story.assignees.all()}
+    if story.created_by:
+        notified_users.add(story.created_by)
+    notified_users.discard(emitted_by)
+
+    await notifications_services.notify_users(
+        type=STORIES_WORKFLOW_CHANGE,
+        emitted_by=emitted_by,
+        notified_users=notified_users,
+        content=StoryWorkflowChangeNotificationContent(
+            project=story.project,
+            story=story,
+            changed_by=emitted_by,
+            workflow=workflow,
             status=status,
         ),
     )

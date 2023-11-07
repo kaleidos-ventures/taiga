@@ -28,3 +28,14 @@ class StoryStatusChangeNotificationContent(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class StoryWorkflowChangeNotificationContent(BaseModel):
+    project: ProjectLinkNestedSerializer
+    story: StoryNestedSerializer
+    changed_by: UserNestedSerializer
+    status: str
+    workflow: str
+
+    class Config:
+        orm_mode = True

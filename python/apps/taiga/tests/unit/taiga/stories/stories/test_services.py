@@ -250,6 +250,7 @@ async def test_update_story_ok():
             updates_attrs=[*values],
         )
         fake_notifications.notify_when_story_status_change.assert_not_awaited()
+        fake_notifications.notify_when_story_workflow_change.assert_not_awaited()
 
         assert updated_story == detailed_story
 
@@ -324,7 +325,8 @@ async def test_update_story_workflow_ok():
             updates_attrs=[*values],
         )
 
-        fake_notifications.notify_when_story_status_change.assert_awaited_once()
+        fake_notifications.notify_when_story_status_change.assert_not_awaited()
+        fake_notifications.notify_when_story_workflow_change.assert_awaited_once()
 
 
 async def test_update_story_error_wrong_version():
@@ -365,6 +367,7 @@ async def test_update_story_error_wrong_version():
         fake_get_story_detail.assert_not_awaited()
         fake_stories_events.emit_event_when_story_is_updated.assert_not_awaited()
         fake_notifications.notify_when_story_status_change.assert_not_awaited()
+        fake_notifications.notify_when_story_workflow_change.assert_not_awaited()
 
 
 #######################################################

@@ -197,7 +197,14 @@ async def update_story(
     )
 
     # Emit notifications
-    if "status" in update_values:
+    if "workflow" in update_values:
+        await stories_notifications.notify_when_story_workflow_change(
+            story=story,
+            workflow=update_values["workflow"].name,
+            status=update_values["status"].name,
+            emitted_by=updated_by,
+        )
+    elif "status" in update_values:
         await stories_notifications.notify_when_story_status_change(
             story=story,
             status=update_values["status"].name,

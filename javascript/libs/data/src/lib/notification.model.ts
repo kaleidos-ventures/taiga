@@ -41,7 +41,7 @@ export interface NotificationStoryStatusChange extends Notification {
   type: 'stories.status_change';
   content: {
     story: Pick<Story, 'ref' | 'title'>;
-    projects: Pick<Project, 'id' | 'name' | 'slug'>;
+    project: Pick<Project, 'id' | 'name' | 'slug'>;
     status: string;
     changedBy: Pick<User, 'color' | 'username' | 'fullName'>;
   };
@@ -62,7 +62,7 @@ export interface NotificationStoryDelete extends Notification {
   type: 'stories.delete';
   content: {
     story: Pick<Story, 'ref' | 'title'>;
-    projects: Pick<Project, 'id' | 'name' | 'slug'>;
+    project: Pick<Project, 'id' | 'name' | 'slug'>;
     deletedBy: Pick<User, 'color' | 'username' | 'fullName'>;
   };
 }

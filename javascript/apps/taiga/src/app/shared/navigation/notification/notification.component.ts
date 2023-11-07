@@ -79,14 +79,7 @@ export class NotificationComponent {
   }
 
   public getStoryUrl(notification: NotificationType): string {
-    if (
-      notification.type === 'stories.status_change' ||
-      notification.type === 'stories.delete'
-    ) {
-      return `/project/${notification.content.projects.id}/${notification.content.projects.slug}/stories/${notification.content.story.ref}`;
-    } else {
-      return `/project/${notification.content.project.id}/${notification.content.project.slug}/stories/${notification.content.story.ref}`;
-    }
+    return `/project/${notification.content.project.id}/${notification.content.project.slug}/stories/${notification.content.story.ref}`;
   }
 
   public markAsRead(event: MouseEvent, notification: NotificationType): void {

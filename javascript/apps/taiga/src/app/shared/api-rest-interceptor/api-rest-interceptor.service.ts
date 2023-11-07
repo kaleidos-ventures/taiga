@@ -78,7 +78,10 @@ export class ApiRestInterceptorService implements HttpInterceptor {
             (!auth?.token || !auth?.refresh) &&
             !request.url.includes('/auth/token')
           ) {
-            void this.router.navigate(['/logout']);
+            if (this.authService.isLogged()) {
+              void this.router.navigate(['/logout']);
+            }
+
             return EMPTY;
           }
         }
@@ -145,7 +148,9 @@ export class ApiRestInterceptorService implements HttpInterceptor {
           catchError((err: HttpErrorResponse) => {
             this.refreshTokenInProgress = false;
 
-            void this.router.navigate(['/logout']);
+            if (this.authService.isLogged()) {
+              void this.router.navigate(['/logout']);
+            }
 
             return throwError(() => err);
           })

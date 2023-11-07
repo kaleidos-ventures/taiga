@@ -125,6 +125,7 @@ describe('ApiRestInterceptor', () => {
 
     const authService = spectator.inject(AuthService);
     authService.getAuth.mockReturnValue({ token, refresh });
+    authService.isLogged.mockReturnValue(true);
 
     const authInterceptorService = spectator.inject(ApiRestInterceptorService);
     const apiRequest = new HttpRequest('GET', ConfigServiceMock.apiUrl);

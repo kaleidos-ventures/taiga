@@ -35,6 +35,7 @@ import {
   selectWorkflow,
 } from '../selectors/story-detail.selectors';
 import { StoryDetailEffects } from './story-detail.effects';
+import { selectCurrentWorkflowSlug } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 
 describe('StoryDetailEffects', () => {
   let actions$: Observable<Action>;
@@ -230,9 +231,11 @@ describe('StoryDetailEffects', () => {
       a: StoryDetailApiActions.deleteStorySuccess(storyDelete),
     });
 
+    store.overrideSelector(selectCurrentWorkflowSlug, 'main');
+
     expect(effects.deleteStoryRedirect$).toSatisfyOnFlush(() => {
       expect(router.navigate).toHaveBeenCalledWith([
-        `/project/${project.id}/${project.slug}/kanban`,
+        `/project/${project.id}/${project.slug}/kanban/main`,
       ]);
     });
   });

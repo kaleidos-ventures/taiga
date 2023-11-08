@@ -20,6 +20,7 @@ Copyright (c) 2023-present Kaleidos INC
   color: var(--color-gray100);
   font-weight: 500;
   margin: 0;
+  padding-inline-start: var(--spacing-16);
 }
 
 .view-options-list {
@@ -32,6 +33,7 @@ Copyright (c) 2023-present Kaleidos INC
 
 .kanban-header-breadcrumbs {
   padding-block-start: var(--spacing-4);
+  padding-inline-start: var(--spacing-16);
 }
 
 .workflow-form {

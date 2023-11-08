@@ -68,11 +68,11 @@ import {
   kanbanFeature,
 } from './data-access/+state/reducers/kanban.reducer';
 import {
-  selectCurrentWorkflowSlug,
   selectLoadingWorkflow,
+  selectStories,
   selectWorkflow,
 } from './data-access/+state/selectors/kanban.selectors';
-import { KanbanReorderEvent } from './kanban.model';
+import { KanbanReorderEvent, KanbanStory } from './kanban.model';
 import { KanbanHeaderComponent } from './components/kanban-header/kanban-header.component';
 import { MovedWorkflowService } from './services/moved-workflow.service';
 
@@ -87,6 +87,7 @@ interface ComponentState {
   selectedStory: StoryDetail;
   members: Membership[];
   columns: ReturnType<typeof kanbanFeature.selectColums>;
+  stories: KanbanStory[];
 }
 
 @UntilDestroy()
@@ -241,6 +242,13 @@ export class ProjectFeatureKanbanComponent {
       .subscribe((postponed) => {
         this.lockKanban = !!postponed;
       });
+
+    this.state.connect(
+      'stories',
+      this.store
+        .select(selectStories)
+        .pipe(map((stories) => Object.values(stories).flat()))
+    );
   }
 
   public setCloseShortcut() {
@@ -389,50 +397,6 @@ export class ProjectFeatureKanbanComponent {
           });
         this.store.dispatch(ProjectActions.fetchProjectMembers());
         this.unassignRoleMembersWithoutPermissions(permissions as Role);
-      });
-
-    this.wsService
-      .projectEvents<{
-        workflow: Workflow & { stories: Story[] };
-        targetWorkflow: Workflow;
-      }>('workflows.delete')
-      .pipe(
-        untilDestroyed(this),
-        concatLatestFrom(() => [
-          this.store.select(selectCurrentWorkflowSlug).pipe(filterNil()),
-        ])
-      )
-      .subscribe(([eventResponse, workflow]) => {
-        const action = eventResponse.event.content;
-        const { stories, ...wf } = action.workflow;
-        this.store.dispatch(
-          ProjectActions.projectEventActions.deleteWorkflow({
-            workflow: wf,
-            targetWorkflow: action.targetWorkflow,
-            hasOpenStory: this.state.get('showStoryDetail'),
-          })
-        );
-
-        if (workflow === action.targetWorkflow?.slug) {
-          this.movedWorkflow.statuses = action.workflow.statuses;
-
-          const statuses = action.workflow.statuses;
-          statuses.forEach((status) => {
-            this.store.dispatch(
-              KanbanEventsActions.moveStatus({
-                status,
-                workflow: action.targetWorkflow.slug,
-                stories: stories.filter(
-                  (story) => story.status.id === status.id
-                ),
-              })
-            );
-          });
-
-          setTimeout(() => {
-            this.movedWorkflow.statuses = null;
-          }, 500);
-        }
       });
   }
 

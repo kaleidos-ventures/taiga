@@ -15,7 +15,7 @@ from typing import Any, Literal, TypedDict
 from uuid import UUID
 
 from asgiref.sync import sync_to_async
-from taiga.base.db.models import QuerySet
+from taiga.base.db.models import Count, QuerySet
 from taiga.base.repositories import neighbors as neighbors_repositories
 from taiga.base.repositories.neighbors import Neighbor
 from taiga.projects.projects.models import Project, ProjectTemplate
@@ -187,6 +187,7 @@ class WorkflowStatusFilters(TypedDict, total=False):
     workflow_id: UUID
     workflow_slug: str
     project_id: UUID
+    is_empty: bool
 
 
 def _apply_filters_to_workflow_status_queryset(
@@ -203,6 +204,13 @@ def _apply_filters_to_workflow_status_queryset(
 
     if "project_id" in filter_data:
         filter_data["workflow__project_id"] = filter_data.pop("project_id")
+
+    if "is_empty" in filter_data:
+        qs = qs.annotate(num_stories=Count("stories"))
+        if filter_data.pop("is_empty"):
+            filter_data["num_stories"] = 0
+        else:
+            filter_data["num_stories__gt"] = 0
 
     return qs.filter(**filter_data)
 

@@ -6,6 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 import uuid
+from unittest import IsolatedAsyncioTestCase
 
 import pytest
 from asgiref.sync import sync_to_async
@@ -131,18 +132,37 @@ async def test_create_workflow_status():
 ##########################################################
 
 
-async def test_list_workflows_statuses_ok() -> None:
-    workflow = await f.create_workflow()
-    statuses = await repositories.list_workflow_statuses(filters={"workflow_id": workflow.id})
+class ListWorkflowStatuses(IsolatedAsyncioTestCase):
+    async def asyncSetUp(self):
+        self.empty_workflow = await f.create_workflow(statuses=[])
+        self.workflow = await f.create_workflow(statuses=[])
+        self.workflow_status = await f.create_workflow_status(workflow=self.workflow)
+        await f.create_story(status=self.workflow_status, workflow=self.workflow)
+        self.empty_workflow_status = await f.create_workflow_status(workflow=self.workflow)
 
-    assert len(statuses) > 0
+    async def test_list_workflows_statuses_ok(self) -> None:
+        statuses = await repositories.list_workflow_statuses(filters={"workflow_id": self.workflow.id})
+        assert len(statuses) > 0
 
+    async def test_list_no_workflows_statuses(self) -> None:
+        statuses = await repositories.list_workflow_statuses(filters={"workflow_id": self.empty_workflow.id})
+        assert len(statuses) == 0
 
-async def test_list_no_workflows_statuses() -> None:
-    workflow = await f.create_workflow(statuses=[])
-    statuses = await repositories.list_workflow_statuses(filters={"workflow_id": workflow.id})
+    async def test_list_empty_statuses(self) -> None:
+        statuses = await repositories.list_workflow_statuses(
+            filters={"workflow_id": self.workflow.id, "is_empty": True}
+        )
+        assert self.empty_workflow_status in statuses
+        assert self.workflow_status not in statuses
+        assert len(statuses) == 1
 
-    assert len(statuses) == 0
+    async def test_list_not_empty_statuses(self) -> None:
+        statuses = await repositories.list_workflow_statuses(
+            filters={"workflow_id": self.workflow.id, "is_empty": False}
+        )
+        assert self.workflow_status in statuses
+        assert self.empty_workflow_status not in statuses
+        assert len(statuses) == 1
 
 
 ##########################################################

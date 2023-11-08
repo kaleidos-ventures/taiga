@@ -181,10 +181,7 @@ async def delete_workflow(
     workflow = await get_workflow_or_404(project_id=project_id, workflow_slug=workflow_slug)
     await check_permissions(permissions=DELETE_WORKFLOW, user=request.user, obj=workflow)
 
-    await workflows_services.delete_workflow(
-        workflow=workflow,
-        target_workflow_slug=query_params.move_to,
-    )
+    await workflows_services.delete_workflow(workflow=workflow, target_workflow_slug=query_params.move_to)
 
 
 ################################################

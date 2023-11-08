@@ -361,7 +361,7 @@ async def test_delete_workflow_with_target_workflow_with_anchor_status_ok():
         # asserts
         fake_workflows_repo.list_workflow_statuses.assert_has_awaits(
             [
-                call(filters={"workflow_id": deleted_workflow.id}, order_by=["order"]),
+                call(filters={"workflow_id": deleted_workflow.id, "is_empty": False}, order_by=["order"]),
                 call(filters={"workflow_id": target_workflow.id}, order_by=["-order"], offset=0, limit=1),
             ]
         )
@@ -434,7 +434,7 @@ async def test_delete_workflow_with_target_workflow_with_no_anchor_status_ok():
         # asserts
         fake_workflows_repo.list_workflow_statuses.assert_has_awaits(
             [
-                call(filters={"workflow_id": deleted_workflow.id}, order_by=["order"]),
+                call(filters={"workflow_id": deleted_workflow.id, "is_empty": False}, order_by=["order"]),
                 call(filters={"workflow_id": target_workflow.id}, order_by=["-order"], offset=0, limit=1),
             ]
         )

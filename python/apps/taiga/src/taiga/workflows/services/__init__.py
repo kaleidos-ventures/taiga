@@ -188,7 +188,7 @@ async def delete_workflow(workflow: Workflow, target_workflow_slug: str | None =
             raise ex.SameMoveToWorkflow("The to-be-deleted workflow and the target-workflow cannot be the same")
 
         statuses_to_move = await workflows_repositories.list_workflow_statuses(
-            filters={"workflow_id": workflow.id},
+            filters={"workflow_id": workflow.id, "is_empty": False},
             order_by=["order"],
         )
 

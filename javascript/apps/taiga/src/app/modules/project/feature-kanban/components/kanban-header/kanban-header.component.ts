@@ -25,6 +25,7 @@ import {
   updateWorkflow,
 } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { Store } from '@ngrx/store';
+import { KanbanStory } from '~/app/modules/project/feature-kanban/kanban.model';
 
 @Component({
   selector: 'tg-kanban-header',
@@ -49,6 +50,7 @@ export class KanbanHeaderComponent {
   @Input({ required: true }) public project!: Project;
   @Input({ required: true }) public workflows: Workflow[] = [];
   @Input({ required: true }) public workflow!: Workflow;
+  @Input({ required: true }) public stories: KanbanStory[] = [];
 
   public openWorkflowOptions = false;
   public deleteWorkflowModal = false;
@@ -57,6 +59,11 @@ export class KanbanHeaderComponent {
   constructor(private store: Store) {}
 
   public openDeleteWorkflowModal() {
+    if (this.workflow.statuses.length === 0 || this.stories.length === 0) {
+      this.submitDeleteWorkflow(undefined);
+      return;
+    }
+
     this.deleteWorkflowModal = true;
   }
 

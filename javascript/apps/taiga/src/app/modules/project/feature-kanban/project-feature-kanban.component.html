@@ -24,7 +24,8 @@ Copyright (c) 2023-present Kaleidos INC
             *ngIf="vm.workflow"
             [project]="vm.project"
             [workflows]="vm.workflows"
-            [workflow]="vm.workflow"></tg-kanban-header>
+            [workflow]="vm.workflow"
+            [stories]="vm.stories"></tg-kanban-header>
           <div class="kanban-wrapper">
             <ng-container *ngIf="vm.workflow">
               <tg-kanban-workflow

@@ -58,6 +58,11 @@ import { TranslocoDirective } from '@ngneat/transloco';
 import { ContextNotificationComponent } from '@taiga/ui/context-notification/context-notification.component';
 import { ProjectNavigationComponent } from '../feature-navigation/project-feature-navigation.component';
 import * as ProjectActions from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { concatLatestFrom } from '@ngrx/effects';
+import { selectCurrentWorkflowSlug } from '../feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { KanbanEventsActions } from '../feature-kanban/data-access/+state/actions/kanban.actions';
+import { MovedWorkflowService } from '../feature-kanban/services/moved-workflow.service';
+import { selectStory } from '../story-detail/data-access/+state/selectors/story-detail.selectors';
 
 @UntilDestroy()
 @Component({
@@ -117,11 +122,13 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
     private state: RxState<{
       project: Project;
       showBannerOnRevoke: boolean;
+      selectedStory: StoryDetail | null;
     }>,
     private userStorageService: UserStorageService,
     private router: Router,
     private route: ActivatedRoute,
-    private appService: AppService
+    private appService: AppService,
+    private movedWorkflow: MovedWorkflowService
   ) {
     this.route.data.subscribe((data) => {
       this.store.dispatch(
@@ -141,6 +148,8 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       'showBannerOnRevoke',
       this.store.select(selectShowBannerOnRevoke).pipe(filterNil())
     );
+
+    this.state.connect('selectedStory', this.store.select(selectStory));
 
     const project$ = this.state
       .select('project')
@@ -498,6 +507,56 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
       )
       .subscribe(() => {
         this.userLoseMembership();
+      });
+
+    this.wsService
+      .projectEvents<{
+        workflow: Workflow & { stories: Story[] };
+        targetWorkflow: Workflow;
+      }>('workflows.delete')
+      .pipe(
+        untilDestroyed(this),
+        concatLatestFrom(() => [
+          this.store.select(selectCurrentWorkflowSlug).pipe(filterNil()),
+        ])
+      )
+      .subscribe(([eventResponse, workflow]) => {
+        const action = eventResponse.event.content;
+        const { stories, ...wf } = action.workflow;
+
+        this.store.dispatch(
+          ProjectActions.projectEventActions.deleteWorkflow({
+            workflow: wf,
+            targetWorkflow: action.targetWorkflow,
+            hasOpenStory: !!this.state.get('selectedStory'),
+          })
+        );
+
+        if (workflow === action.targetWorkflow?.slug) {
+          this.movedWorkflow.statuses = action.workflow.statuses;
+
+          const statuses = action.workflow.statuses;
+
+          statuses.forEach((status) => {
+            const statusStories = stories.filter(
+              (story) => story.status.id === status.id
+            );
+
+            if (statusStories && statusStories.length > 0) {
+              this.store.dispatch(
+                KanbanEventsActions.moveStatus({
+                  status,
+                  workflow: action.targetWorkflow.slug,
+                  stories: statusStories,
+                })
+              );
+            }
+          });
+
+          setTimeout(() => {
+            this.movedWorkflow.statuses = null;
+          }, 500);
+        }
       });
   }
 

@@ -285,8 +285,8 @@ export class ProjectEffects {
                 }, 500);
 
                 void this.router.navigate([
-                  `project/${project.id}/${project.slug}${
-                    action.moveTo ? `/kanban/${action.moveTo}` : '/overview'
+                  `project/${project.id}/${project.slug}/kanban/${
+                    action.moveTo ? action.moveTo : project.workflows[0].slug
                   }`,
                 ]);
 

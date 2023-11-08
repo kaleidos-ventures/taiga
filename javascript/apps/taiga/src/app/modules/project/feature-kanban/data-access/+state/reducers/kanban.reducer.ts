@@ -368,9 +368,10 @@ export const reducer = createImmerReducer(
     return state;
   }),
   on(KanbanEventsActions.newStory, (state, { story }): KanbanState => {
-    state.stories[story.status.id].push(story);
-
-    state.newEventStories.push(story.ref);
+    if (state.stories[story.status.id]) {
+      state.stories[story.status.id].push(story);
+      state.newEventStories.push(story.ref);
+    }
 
     return state;
   }),

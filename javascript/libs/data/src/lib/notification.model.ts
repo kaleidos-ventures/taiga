@@ -67,9 +67,21 @@ export interface NotificationStoryDelete extends Notification {
   };
 }
 
+export interface NotificationWorkflowChange extends Notification {
+  type: 'stories.workflow_change';
+  content: {
+    story: Pick<Story, 'ref' | 'title'>;
+    project: Pick<Project, 'id' | 'name' | 'slug'>;
+    changedBy: Pick<User, 'color' | 'username' | 'fullName'>;
+    status: string;
+    workflow: string;
+  };
+}
+
 export type NotificationType =
   | NotificationStoryAssign
   | NotificationStoryUnassign
   | NotificationStoryStatusChange
   | NotificationStoryCommentCreate
-  | NotificationStoryDelete;
+  | NotificationStoryDelete
+  | NotificationWorkflowChange;

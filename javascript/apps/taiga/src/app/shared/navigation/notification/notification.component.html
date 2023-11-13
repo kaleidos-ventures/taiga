@@ -170,6 +170,35 @@ Copyright (c) 2023-present Kaleidos INC
         </div>
       </div>
     </ng-container>
+    <ng-container *ngIf="notification.type === 'stories.workflow_change'">
+      <div class="notification-inner">
+        <ng-template
+          *ngTemplateOutlet="
+            tplAvatar;
+            context: { $implicit: notification.content.changedBy }
+          "></ng-template>
+
+        <div class="notification-info">
+          <p
+            class="type"
+            withInternalLink
+            [innerHtml]="
+              t(getTranslationKey(notification), {
+                username: notification.content.changedBy.fullName,
+                story: getStoryName(notification),
+                storyUrl: getStoryUrl(notification) | getUrl,
+                status: notification.content.status,
+                workflow: notification.content.workflow
+              })
+            "></p>
+          <ng-template
+            *ngTemplateOutlet="
+              tplDate;
+              context: { $implicit: notification }
+            "></ng-template>
+        </div>
+      </div>
+    </ng-container>
   </div>
 
   <ng-template

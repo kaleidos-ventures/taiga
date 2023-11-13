@@ -65,7 +65,8 @@
         "stories.unassign": "<span class='highlight'>{{username}}</span> was unassigned to the story <br/> <a href='{{storyUrl}}'>{{story}}</a>",
         "stories.status_change": "<span class='highlight'>{{username}}</span> changed the status of the story <br/> <a href='{{storyUrl}}'>{{story}}</a> to {{status}}",
         "story_comment.create": "<span class='highlight'>{{username}}</span> commented on the story <br/> <a href='{{storyUrl}}'>{{story}}</a>",
-        "stories.delete": "<span class='highlight'>{{username}}</span> deleted the story {{story}}"
+        "stories.delete": "<span class='highlight'>{{username}}</span> deleted the story {{story}}",
+        "stories.workflow_change": "<span class='highlight'>{{username}}</span> moved the story <br/> <a href='{{storyUrl}}'>{{story}}</a> to {{status}}  status on the {{workflow}} workflow."
       }
     }
   },

@@ -167,5 +167,8 @@ export const StoryDetailApiActions = createActionGroup({
     'Delete attachment success': props<{
       id: Attachment['id'];
     }>(),
+    'Fetch workflow Success': props<{
+      workflow: Workflow;
+    }>(),
   },
 });

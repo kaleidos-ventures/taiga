@@ -20,7 +20,7 @@ import {
   WorkflowMockFactory,
 } from '@taiga/data';
 import { cold, hot } from 'jest-marbles';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import { AppService } from '~/app/services/app.service';
@@ -32,10 +32,15 @@ import {
 } from '../actions/story-detail.actions';
 import {
   selectStory,
+  selectStoryView,
   selectWorkflow,
 } from '../selectors/story-detail.selectors';
 import { StoryDetailEffects } from './story-detail.effects';
-import { selectCurrentWorkflowSlug } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import {
+  selectCurrentWorkflowSlug,
+  selectWorkflow as selectKanbanWorkflow,
+} from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { HttpErrorResponse } from '@angular/common/http';
 
 describe('StoryDetailEffects', () => {
   let actions$: Observable<Action>;
@@ -268,5 +273,127 @@ describe('StoryDetailEffects', () => {
     expect(effects.updatesWorkflowStatusAfterDragAndDrop$).toBeObservable(
       expected
     );
+  });
+
+  describe('StoryDetailEffects - loadWorkflow$', () => {
+    it('should fetch workflow for full-view', () => {
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(StoryDetailEffects);
+      const project = ProjectMockFactory();
+      const story = StoryDetailMockFactory();
+      const workflow = WorkflowMockFactory();
+
+      store.overrideSelector(selectCurrentProject, project);
+      store.overrideSelector(selectStoryView, 'full-view');
+      actions$ = hot('-a', {
+        a: StoryDetailApiActions.fetchStorySuccess({ story }),
+      });
+
+      projectApiService.getWorkflow.mockReturnValue(
+        cold('-b|', { b: workflow })
+      );
+
+      const expected = cold('--a', {
+        a: StoryDetailApiActions.fetchWorkflowSuccess({ workflow }),
+      });
+
+      expect(effects.loadWorkflow$).toSatisfyOnFlush(() => {
+        expect(effects.loadWorkflow$).toBeObservable(expected);
+        expect(projectApiService.getWorkflow).toHaveBeenCalledWith(
+          project.id,
+          story.workflow.slug
+        );
+      });
+    });
+
+    it('should reuse kanban workflow', () => {
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(StoryDetailEffects);
+      const project = ProjectMockFactory();
+      const story = StoryDetailMockFactory();
+      const kanbanWorkflow = WorkflowMockFactory();
+      story.workflow = kanbanWorkflow;
+
+      store.overrideSelector(selectCurrentProject, project);
+      store.overrideSelector(selectStoryView, 'modal-view');
+      store.overrideSelector(selectKanbanWorkflow, kanbanWorkflow);
+      actions$ = hot('-a', {
+        a: StoryDetailApiActions.fetchStorySuccess({ story }),
+      });
+
+      projectApiService.getWorkflow.mockReturnValue(
+        cold('-b|', { b: kanbanWorkflow })
+      );
+
+      const expected = cold('--a', {
+        a: StoryDetailApiActions.fetchWorkflowSuccess({
+          workflow: kanbanWorkflow,
+        }),
+      });
+
+      expect(effects.loadWorkflow$).toSatisfyOnFlush(() => {
+        expect(effects.loadWorkflow$).toBeObservable(expected);
+        expect(projectApiService.getWorkflow).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should fetch workflow', () => {
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(StoryDetailEffects);
+      const project = ProjectMockFactory();
+      const story = StoryDetailMockFactory();
+      const workflow = WorkflowMockFactory();
+
+      store.overrideSelector(selectCurrentProject, project);
+      store.overrideSelector(selectStoryView, 'full-view');
+      store.overrideSelector(selectKanbanWorkflow, null);
+      actions$ = hot('-a', {
+        a: StoryDetailApiActions.fetchStorySuccess({ story }),
+      });
+
+      projectApiService.getWorkflow.mockReturnValue(
+        cold('-b|', { b: workflow })
+      );
+
+      const expected = cold('--a', {
+        a: StoryDetailApiActions.fetchWorkflowSuccess({ workflow }),
+      });
+
+      expect(effects.loadWorkflow$).toSatisfyOnFlush(() => {
+        expect(effects.loadWorkflow$).toBeObservable(expected);
+        expect(projectApiService.getWorkflow).toHaveBeenCalledWith(
+          project.id,
+          story.workflow.slug
+        );
+      });
+    });
+
+    it('should handle error', () => {
+      const projectApiService = spectator.inject(ProjectApiService);
+      const appService = spectator.inject(AppService);
+      const effects = spectator.inject(StoryDetailEffects);
+      const project = ProjectMockFactory();
+      const story = StoryDetailMockFactory();
+      const errorResponse = new HttpErrorResponse({ status: 404 });
+
+      store.overrideSelector(selectCurrentProject, project);
+      store.overrideSelector(selectStoryView, 'full-view');
+      actions$ = hot('-a', {
+        a: StoryDetailApiActions.fetchStorySuccess({ story }),
+      });
+
+      projectApiService.getWorkflow.mockReturnValue(
+        cold('-#|', {}, errorResponse)
+      );
+
+      const expected = cold('--a', {
+        a: EMPTY,
+      });
+
+      expect(effects.loadWorkflow$).toSatisfyOnFlush(() => {
+        expect(effects.loadWorkflow$).toBeObservable(expected);
+        expect(appService.errorManagement).toHaveBeenCalledWith(errorResponse);
+      });
+    });
   });
 });

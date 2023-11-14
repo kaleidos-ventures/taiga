@@ -45,38 +45,42 @@ Copyright (c) 2023-present Kaleidos INC
                   <div
                     class="creation-info"
                     [class.no-user]="!vm.story.createdBy">
-                    <ng-container *ngIf="vm.story.createdBy">
-                      <tg-user-avatar
-                        size="m"
-                        class="no-border"
-                        [user]="vm.story.createdBy"
-                        [color]="vm.story.createdBy.color"
-                        type="light"
-                        [rounded]="true"
-                        aria-hidden="true"></tg-user-avatar>
-                    </ng-container>
-                    <tg-nouser-avatar
-                      *ngIf="!vm.story.createdBy"
-                      class="former-user-avatar"></tg-nouser-avatar>
-                    <div>
+                    <div
+                      class="creation-info-tooltip-wrapper"
+                      [tgUiTooltip]="'@' + vm.story.createdBy?.username"
+                      [tgUiTooltipDisabled]="!vm.story.createdBy"
+                      tgUiTooltipPosition="bottom">
+                      <ng-container *ngIf="vm.story.createdBy">
+                        <tg-user-avatar
+                          size="m"
+                          class="no-border"
+                          [user]="vm.story.createdBy"
+                          [color]="vm.story.createdBy.color"
+                          type="light"
+                          [rounded]="true"
+                          aria-hidden="true"></tg-user-avatar>
+                      </ng-container>
+                      <tg-nouser-avatar
+                        *ngIf="!vm.story.createdBy"
+                        class="former-user-avatar"></tg-nouser-avatar>
                       <span
                         *ngIf="vm.story.createdBy"
                         class="creation-info-fullname">
                         {{ vm.story.createdBy.fullName }}
                       </span>
-                      <span
-                        *ngIf="!vm.story.createdBy"
-                        class="former-user-text">
-                        {{ t('commons.former_user') }}
-                      </span>
-                      <span>∙</span>
-                      <span
-                        *ngIf="vm.story.createdAt"
-                        [title]="vm.story.createdAt | date: 'medium'"
-                        class="creation-info-date">
-                        {{ vm.story.createdAt | dateDistance }}
-                      </span>
                     </div>
+                    <span
+                      *ngIf="!vm.story.createdBy"
+                      class="former-user-text">
+                      {{ t('commons.former_user') }}
+                    </span>
+                    <span>∙</span>
+                    <span
+                      *ngIf="vm.story.createdAt"
+                      [title]="vm.story.createdAt | date: 'medium'"
+                      class="creation-info-date">
+                      {{ vm.story.createdAt | dateDistance }}
+                    </span>
                   </div>
                   <tg-story-detail-description
                     [form]="form"

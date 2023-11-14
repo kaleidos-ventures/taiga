@@ -99,6 +99,7 @@ import {
 import { StoryCommentsPaginationDirective } from './directives/story-comments-pagination.directive';
 import { StoryDetaiImageUploadService } from './story-detail-image-upload.service';
 import { MovedWorkflowService } from '../feature-kanban/services/moved-workflow.service';
+import { TooltipDirective } from '@taiga/ui/tooltip';
 
 export interface StoryDetailState {
   project: Project;
@@ -177,6 +178,7 @@ export interface StoryDetailForm {
     DatePipe,
     DateDistancePipe,
     StoryDetailWorkflowComponent,
+    TooltipDirective,
   ],
 })
 export class StoryDetailComponent {

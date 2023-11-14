@@ -70,7 +70,8 @@ Copyright (c) 2023-present Kaleidos INC
   }
 }
 
-.creation-info {
+.creation-info,
+.creation-info-tooltip-wrapper {
   align-items: baseline;
   display: flex;
   gap: var(--spacing-4);

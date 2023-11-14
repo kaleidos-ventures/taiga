@@ -21,6 +21,7 @@ import { Store } from '@ngrx/store';
 import {
   Observable,
   combineLatest,
+  debounceTime,
   distinctUntilChanged,
   filter,
   map,
@@ -100,6 +101,7 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
   ) {
     this.state.connect('storyView', this.store.select(selectStoryView));
     this.state.connect('selectStory', this.store.select(selectStory));
+
     this.state.connect(
       'url',
       this.routerHistory.urlChanged.pipe(
@@ -147,12 +149,7 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
           }
 
           if (params.storyRef) {
-            return this.store.select(selectStory).pipe(
-              filterNil(),
-              map((story) => {
-                return story?.workflow.slug ?? 'main';
-              })
-            );
+            return this.storyWorkflow(Number(params.storyRef));
           }
 
           return of('main');
@@ -165,7 +162,11 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
     );
 
     combineLatest([this.route.data, this.route.params])
-      .pipe(takeUntilDestroyed(this.destroyRef), distinctUntilChanged())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        distinctUntilChanged(),
+        debounceTime(20)
+      )
       .subscribe(([data, params]) => {
         const url = this.state.get('url');
         const project: Project = data.project as Project;
@@ -196,6 +197,17 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
 
   public getActiveRoute(route: ActivatedRouteSnapshot): ActivatedRouteSnapshot {
     return route.firstChild ? this.getActiveRoute(route.firstChild) : route;
+  }
+
+  private storyWorkflow(storyRef: Story['ref']) {
+    return this.store.select(selectStory).pipe(
+      filterNil(),
+      filter((story) => story.ref === storyRef),
+      map((story) => {
+        return story?.workflow.slug ?? 'main';
+      }),
+      take(1)
+    );
   }
 
   private fetchStory(params: StoryParams) {

@@ -15,15 +15,12 @@ import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { filter, map, tap } from 'rxjs';
-import {
-  projectApiActions,
-  projectEventActions,
-} from '~/app/modules/project/data-access/+state/actions/project.actions';
+import { EMPTY, catchError, map, of, switchMap, tap } from 'rxjs';
+import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
 import {
-  selectWorkflow,
+  selectWorkflow as selectKanbanWorkflow,
   selectCurrentWorkflowSlug,
 } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
 import { AppService } from '~/app/services/app.service';
@@ -33,7 +30,11 @@ import {
   StoryDetailActions,
   StoryDetailApiActions,
 } from '../actions/story-detail.actions';
-import { selectStory } from '../selectors/story-detail.selectors';
+import {
+  selectStory,
+  selectStoryView,
+  selectWorkflow,
+} from '../selectors/story-detail.selectors';
 
 @Injectable()
 export class StoryDetailEffects {
@@ -64,13 +65,49 @@ export class StoryDetailEffects {
         StoryDetailApiActions.fetchStorySuccess,
         StoryDetailApiActions.updateStoryWorkflowSuccess
       ),
-      concatLatestFrom(() => [this.store.select(selectWorkflow)]),
-      filter(([action, workflow]) => {
-        return action.story?.workflow?.slug !== workflow?.slug;
+      concatLatestFrom(() => [
+        this.store.select(selectCurrentProject).pipe(filterNil()),
+      ]),
+      switchMap(([action, project]) => {
+        return this.store.select(selectStoryView).pipe(
+          switchMap((view) => {
+            const fetchProject = (workflowSlug: string) => {
+              return this.projectApiService
+                .getWorkflow(project.id, workflowSlug)
+                .pipe(
+                  map((workflow) => {
+                    return StoryDetailApiActions.fetchWorkflowSuccess({
+                      workflow,
+                    });
+                  })
+                );
+            };
+
+            if (view === 'full-view') {
+              return fetchProject(action.story.workflow.slug);
+            } else {
+              return this.store.select(selectKanbanWorkflow).pipe(
+                filterNil(),
+                switchMap((kanbanWorkflow) => {
+                  if (kanbanWorkflow.id === action.story.workflow.id) {
+                    return of(
+                      StoryDetailApiActions.fetchWorkflowSuccess({
+                        workflow: kanbanWorkflow,
+                      })
+                    );
+                  }
+
+                  return fetchProject(action.story.workflow.slug);
+                })
+              );
+            }
+          })
+        );
       }),
-      map(([action]) => {
-        const workflow = action.story?.workflow;
-        return projectApiActions.fetchWorkflow({ workflow: workflow?.slug });
+      catchError((httpResponse: HttpErrorResponse) => {
+        this.appService.errorManagement(httpResponse);
+
+        return EMPTY;
       })
     );
   });

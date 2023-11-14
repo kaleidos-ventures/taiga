@@ -59,24 +59,27 @@ Copyright (c) 2023-present Kaleidos INC
               trackBy: trackByIndex;
               index as i
             ">
-            <tg-user-avatar
-              size="m"
-              class="assigned-user-avatar"
-              [color]="assignedUser.color"
-              [user]="assignedUser"
-              type="light"
-              [rounded]="true"
-              aria-hidden="true"
-              [tgUiTooltip]="assignedUser.fullName"
-              tgUiTooltipPosition="bottom-right"></tg-user-avatar>
-            <label
-              class="assigned-name"
-              [innerHtml]="
-                vm.currentUser.username === assignedUser.username
-                  ? t('commons.your_user', { name: assignedUser.fullName })
-                  : assignedUser.fullName || assignedUser.username
-              ">
-            </label>
+            <div
+              class="assigned-user-tooltip-wrapper"
+              [tgUiTooltip]="'@' + assignedUser.username"
+              tgUiTooltipPosition="bottom">
+              <tg-user-avatar
+                size="m"
+                class="assigned-user-avatar"
+                [color]="assignedUser.color"
+                [user]="assignedUser"
+                type="light"
+                [rounded]="true"
+                aria-hidden="true"></tg-user-avatar>
+              <label
+                class="assigned-name"
+                [innerHtml]="
+                  vm.currentUser.username === assignedUser.username
+                    ? t('commons.your_user', { name: assignedUser.fullName })
+                    : assignedUser.fullName || assignedUser.username
+                ">
+              </label>
+            </div>
             <button
               #assigned
               *hasPermission="['modify']; entity: 'story'"

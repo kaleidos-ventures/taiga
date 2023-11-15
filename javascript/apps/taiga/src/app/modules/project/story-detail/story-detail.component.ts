@@ -365,7 +365,7 @@ export class StoryDetailComponent {
     if (form) {
       const status = this.state
         .get('statuses')
-        .find((status) => status.name === form.status);
+        .find((status) => status.id === form.status);
 
       if (status && this.state.get('story').status.id !== status.id) {
         story.status = status.id;
@@ -390,14 +390,14 @@ export class StoryDetailComponent {
 
     this.form = new FormGroup<StoryDetailForm>({
       title: new FormControl(story.title, { nonNullable: true }),
-      status: new FormControl(story.status.name, { nonNullable: true }),
+      status: new FormControl(story.status.id, { nonNullable: true }),
       description: new FormControl(story.description, { nonNullable: true }),
     });
 
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((form) => {
       const status = this.state
         .get('statuses')
-        .find((status) => status.name === form.status);
+        .find((status) => status.id === form.status);
 
       if (status) {
         const story = this.getStoryUpdate();
@@ -434,7 +434,7 @@ export class StoryDetailComponent {
     if (this.form) {
       this.form.patchValue(
         {
-          status: story.status.name,
+          status: story.status.id,
           title: story.title,
           description: story.description,
         },

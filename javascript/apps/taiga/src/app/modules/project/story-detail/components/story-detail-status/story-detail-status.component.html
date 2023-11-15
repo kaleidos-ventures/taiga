@@ -34,8 +34,9 @@ Copyright (c) 2023-present Kaleidos INC
             *ngFor="let status of vm.statuses; trackBy: trackByStatus"
             tuiOption
             size="s"
-            [class.active-option]="status.name === form.value.status"
-            [value]="status.name">
+            [attr.aria-label]="status.name"
+            [class.active-option]="status.id === form.value.status"
+            [value]="status.id">
             <div class="status-option">
               <div
                 class="status-color"

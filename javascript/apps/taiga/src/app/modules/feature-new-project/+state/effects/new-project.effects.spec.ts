@@ -74,7 +74,7 @@ describe('NewProjectEffects', () => {
 
     expect(effects.createProjectSuccess$).toSatisfyOnFlush(() => {
       expect(router.navigate).toHaveBeenCalledWith(
-        ['/project/', project.id, project.slug, 'kanban'],
+        ['/project/', project.id, project.slug, 'kanban', 'main'],
         { state: { invite: true } }
       );
     });

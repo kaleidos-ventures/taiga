@@ -62,7 +62,13 @@ export class NewProjectEffects {
         ofType(NewProjectActions.createProjectSuccess),
         map((action) => {
           void this.router.navigate(
-            ['/project/', action.project.id, action.project.slug, 'kanban'],
+            [
+              '/project/',
+              action.project.id,
+              action.project.slug,
+              'kanban',
+              'main',
+            ],
             {
               state: { invite: true },
             }

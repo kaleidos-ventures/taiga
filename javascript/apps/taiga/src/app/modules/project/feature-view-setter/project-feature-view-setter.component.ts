@@ -52,6 +52,7 @@ import { filterNil } from '~/app/shared/utils/operators';
 import { ProjectFeatureStoryWrapperFullViewModule } from '../feature-story-wrapper-full-view/project-feature-story-wrapper-full-view.module';
 import { selectRouteParams } from '~/app/router-selectors';
 import { ProjectFeatureViewSetterKanbanComponent } from './project-feature-view-setter.component-kanban.component';
+import { selectCurrentProject } from '../data-access/+state/selectors/project.selectors';
 
 interface ProjectFeatureViewSetterComponentState {
   storyView: StoryView;
@@ -60,6 +61,7 @@ interface ProjectFeatureViewSetterComponentState {
   kanbanHost: ViewContainerRef | undefined;
   url: string;
   workflowSlug?: Workflow['slug'];
+  project: Project;
 }
 
 interface StoryParams {
@@ -101,6 +103,19 @@ export class ProjectFeatureViewSetterComponent implements OnDestroy {
   ) {
     this.state.connect('storyView', this.store.select(selectStoryView));
     this.state.connect('selectStory', this.store.select(selectStory));
+    this.state.connect(
+      'project',
+      this.store.select(selectCurrentProject).pipe(filterNil())
+    );
+
+    if (this.route.snapshot.data['redirect']) {
+      void this.router.navigate(
+        [this.state.get('project')?.workflows?.[0]?.slug],
+        {
+          relativeTo: this.route,
+        }
+      );
+    }
 
     this.state.connect(
       'url',

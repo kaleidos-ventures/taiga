@@ -235,7 +235,7 @@ async def _validate_and_process_values_to_update(
         status = await workflows_repositories.get_workflow_status(
             filters={"workflow_id": story.workflow_id, "id": status_id}
         )
-        if not status:
+        if not status or output.get("workflow", None):
             raise ex.InvalidStatusError("The provided status is not valid.")
 
         if status.id != story.status_id:

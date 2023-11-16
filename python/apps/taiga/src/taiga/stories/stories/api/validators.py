@@ -8,6 +8,7 @@
 from typing import Any
 
 from pydantic import ConstrainedStr, conlist, validator
+from pydantic.class_validators import root_validator
 from pydantic.types import PositiveInt
 from taiga.base.validators import B64UUID, BaseModel
 
@@ -30,6 +31,13 @@ class UpdateStoryValidator(BaseModel):
     description: str | None
     status: B64UUID | None
     workflow: str | None
+
+    @root_validator
+    def status_or_workflow(cls, values: dict[Any, Any]) -> dict[Any, Any]:
+        status = values.get("status")
+        workflow = values.get("workflow")
+        assert not (status and workflow), "It's not allowed to update both the status and workspace"
+        return values
 
 
 class ReorderValidator(BaseModel):

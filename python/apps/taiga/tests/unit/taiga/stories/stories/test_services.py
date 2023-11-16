@@ -614,6 +614,22 @@ async def test_validate_and_process_values_to_update_error_workflow_without_stat
         fake_stories_repo.list_stories.assert_not_awaited()
 
 
+async def test_validate_and_process_values_to_update_error_workflow_and_status():
+    user = f.build_user()
+    project = f.build_project()
+    workflow1 = f.build_workflow(project=project)
+    status1 = f.build_workflow_status(workflow=workflow1)
+    story = f.build_story(project=project, workflow=workflow1, status=status1)
+    workflow2 = f.build_workflow(project=project, statuses=None)
+    values = {"version": story.version, "status": status1, "workflow": workflow2.slug}
+
+    with (patch("taiga.stories.stories.services.workflows_repositories", autospec=True) as fake_workflows_repo,):
+        fake_workflows_repo.get_workflow_status.return_value = workflow2
+
+        with pytest.raises(ex.InvalidStatusError):
+            await services._validate_and_process_values_to_update(story=story, values=values, updated_by=user)
+
+
 #######################################################
 # _calculate_offset
 #######################################################

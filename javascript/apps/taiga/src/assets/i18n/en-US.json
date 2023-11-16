@@ -58,6 +58,8 @@
     "notifications": {
       "title": "Notifications",
       "empty": "You don’t have any notification.",
+      "only_unread": "Show only unread",
+      "all_read": "You have read all your notifications.",
       "types": {
         "stories.assign.self": "<span class='highlight'>{{username}}</span> assigned you the story <br/> <a href='{{storyUrl}}'>{{story}}</a>",
         "stories.unassign.self": "<span class='highlight'>{{username}}</span> unassigned you from the story <br/> <a href='{{storyUrl}}'>{{story}}</a>",

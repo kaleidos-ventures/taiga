@@ -22,6 +22,63 @@ const routes: Routes = [
     },
     children: [
       {
+        path: 'overview',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-overview/project-feature-overview.module'
+          ).then((m) => m.ProjectFeatureOverviewModule),
+        data: {
+          overview: true,
+        },
+      },
+      {
+        path: ':slug/overview',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-overview/project-feature-overview.module'
+          ).then((m) => m.ProjectFeatureOverviewModule),
+        data: {
+          overview: true,
+        },
+      },
+      {
+        path: ':slug/new-workflow',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-new-workflow/project-feature-new-workflow.module'
+          ).then((m) => m.ProjectFeatureNewWorkflowModule),
+        resolve: {
+          project: ProjectAdminResolver,
+        },
+        data: {
+          newKanban: true,
+        },
+      },
+      {
+        path: ':slug/kanban',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          redirect: true,
+          kanban: true,
+        },
+      },
+      {
+        path: 'kanban',
+        loadChildren: () =>
+          import(
+            '~/app/modules/project/feature-view-setter/project-feature-view-setter.module'
+          ).then((m) => m.ProjectFeatureViewSetterModule),
+        canDeactivate: [CanDeactivateGuard],
+        data: {
+          redirect: true,
+          kanban: true,
+        },
+      },
+      {
         path: ':slug/kanban/:workflow',
         loadChildren: () =>
           import(
@@ -89,39 +146,6 @@ const routes: Routes = [
         },
         resolve: {
           project: ProjectAdminResolver,
-        },
-      },
-      {
-        path: 'overview',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/feature-overview/project-feature-overview.module'
-          ).then((m) => m.ProjectFeatureOverviewModule),
-        data: {
-          overview: true,
-        },
-      },
-      {
-        path: ':slug/overview',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/feature-overview/project-feature-overview.module'
-          ).then((m) => m.ProjectFeatureOverviewModule),
-        data: {
-          overview: true,
-        },
-      },
-      {
-        path: ':slug/new-workflow',
-        loadChildren: () =>
-          import(
-            '~/app/modules/project/feature-new-workflow/project-feature-new-workflow.module'
-          ).then((m) => m.ProjectFeatureNewWorkflowModule),
-        resolve: {
-          project: ProjectAdminResolver,
-        },
-        data: {
-          newKanban: true,
         },
       },
     ],

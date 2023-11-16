@@ -360,6 +360,15 @@ async def test_update_story_422_unprocessable_story_ref(client):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
 
 
+async def test_update_story_422_unprocessable_both_workflow_and_status(client):
+    project = await f.create_project()
+
+    data = {"version": 1, "workflow": "workflow-slug", "status": project.b64id}
+    client.login(project.created_by)
+    response = client.patch(f"/projects/{project.b64id}/stories/1", json=data)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, response.text
+
+
 async def test_update_story_404_not_found_project_b64id(client):
     project = await f.create_project()
     story = await f.create_story(project=project)

@@ -15,7 +15,7 @@ export interface Notification {
   id: string;
   createdBy: Pick<User, 'color' | 'username' | 'fullName'>;
   createdAt: string;
-  readAt: string;
+  readAt: string | null;
 }
 
 export interface NotificationStoryAssign extends Notification {

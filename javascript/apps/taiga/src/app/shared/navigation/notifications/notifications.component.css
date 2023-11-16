@@ -14,12 +14,7 @@ Copyright (c) 2023-present Kaleidos INC
 }
 
 .title {
-  background-color: var(--color-white);
-  inset-block-start: 0;
   margin: 0;
-  padding-block: var(--spacing-16);
-  position: sticky;
-  z-index: 1;
 }
 
 .notifications {
@@ -35,4 +30,25 @@ Copyright (c) 2023-present Kaleidos INC
   font-style: italic;
   padding: var(--spacing-8);
   text-align: center;
+}
+
+.header {
+  align-items: center;
+  background-color: var(--color-white);
+  display: flex;
+  inset-block-start: 0;
+  justify-content: space-between;
+  padding-block: var(--spacing-16);
+  position: sticky;
+  z-index: 1;
+}
+
+.switch-notificaction-unread {
+  display: flex;
+  gap: var(--spacing-8);
+
+  .label-text {
+    color: var(--color-secondary);
+    font-weight: var(--font-weight-medium);
+  }
 }

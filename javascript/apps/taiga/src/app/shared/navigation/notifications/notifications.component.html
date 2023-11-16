@@ -8,19 +8,36 @@ Copyright (c) 2023-present Kaleidos INC
 
 <ng-container *transloco="let t">
   <ng-container *ngIf="model$ | async as vm">
-    <h3 class="title">
-      {{ t('navigation.notifications.title') }}
-    </h3>
+    <div class="header">
+      <h3 class="title">
+        {{ t('navigation.notifications.title') }}
+      </h3>
+
+      <label class="switch-notificaction-unread">
+        <span class="label-text">{{
+          t('navigation.notifications.only_unread')
+        }}</span>
+        <tui-toggle
+          [(ngModel)]="showUnread"
+          [ngModelOptions]="{ standalone: true }"></tui-toggle>
+      </label>
+    </div>
 
     <div
-      *ngIf="!vm.notifications.length"
+      *ngIf="!vm.filterNotifications.length && !vm.showUnread"
       class="empty">
       {{ t('navigation.notifications.empty') }}
     </div>
 
+    <div
+      *ngIf="!vm.filterNotifications.length && vm.showUnread"
+      class="empty">
+      {{ t('navigation.notifications.all_read') }}
+    </div>
+
     <div class="notifications">
       <ng-container
-        *ngFor="let notification of vm.notifications; trackBy: trackByIndex">
+        *ngFor="let notification of vm.filterNotifications; trackBy: trackById">
         <tg-notification
           [notification]="notification"
           (userNavigated)="userNavigated.emit()"></tg-notification>

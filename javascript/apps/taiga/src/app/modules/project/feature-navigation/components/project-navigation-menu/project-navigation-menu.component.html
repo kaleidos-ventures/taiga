@@ -175,7 +175,10 @@ Copyright (c) 2023-present Kaleidos INC
                     class="submenu-option">
                     <a
                       class="submenu-option-item"
-                      routerLinkActive="submenu-option-item-active"
+                      [class.submenu-option-item-active]="
+                        currentWorkflow() === workflow.slug &&
+                        (isKanbanUrl || storyIsOpen())
+                      "
                       [routerLink]="[
                         '/project',
                         project.id,

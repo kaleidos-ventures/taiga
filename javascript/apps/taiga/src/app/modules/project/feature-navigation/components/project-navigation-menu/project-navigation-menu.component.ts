@@ -9,15 +9,18 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   Input,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -33,6 +36,12 @@ import { TooltipComponent } from '@taiga/ui/tooltip/tooltip.component';
 import { HasPermissionDirective } from '~/app/shared/directives/has-permissions/has-permission.directive';
 import { ProjectNavWorkflowMenuStylesDirective } from './project-navigation-menu-styles.directive';
 import { ProjectNavWorkflowMenuPositionDirective } from './project-navigation-menu.directive';
+import { selectCurrentWorkflowSlug } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { selectUrl } from '~/app/router-selectors';
+import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filterNil } from '~/app/shared/utils/operators';
+import { selectStory } from '~/app/modules/project/story-detail/data-access/+state/selectors/story-detail.selectors';
 
 interface ProjectMenuDialog {
   hover: boolean;
@@ -57,6 +66,7 @@ const cssValue = getComputedStyle(document.documentElement);
   standalone: true,
   templateUrl: './project-navigation-menu.component.html',
   styleUrls: ['./project-navigation-menu.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TuiSvgModule,
     RouterModule,
@@ -115,6 +125,10 @@ export class ProjectNavigationMenuComponent {
   public collapseText = true;
   public activeSection = false;
   public openworkflowsDropdown = false;
+  public currentWorkflow = this.store.selectSignal(selectCurrentWorkflowSlug);
+  public currentUrl = this.store.selectSignal(selectUrl);
+  public storyIsOpen = this.store.selectSignal(selectStory);
+  public isKanbanUrl = false;
 
   public dialog: ProjectMenuDialog = {
     open: false,
@@ -130,8 +144,33 @@ export class ProjectNavigationMenuComponent {
   };
 
   private dialogCloseTimeout?: ReturnType<typeof setTimeout>;
+  private destroyRef = inject(DestroyRef);
 
-  constructor(private cd: ChangeDetectorRef, private store: Store) {}
+  constructor(
+    private cd: ChangeDetectorRef,
+    private store: Store,
+    private router: Router
+  ) {
+    this.store
+      .select(selectCurrentWorkflowSlug)
+      .pipe(takeUntilDestroyed(this.destroyRef), filterNil())
+      .subscribe((workflowSlug) => {
+        this.isKanbanUrl = this.currentUrl().includes(
+          `/kanban/${workflowSlug}`
+        );
+      });
+
+    this.router.events
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        filter((evt) => evt instanceof NavigationEnd)
+      )
+      .subscribe((evt) => {
+        this.isKanbanUrl = (evt as NavigationEnd).url.includes(
+          `/kanban/${this.currentWorkflow()}`
+        );
+      });
+  }
 
   public initDialog(
     el: HTMLElement,

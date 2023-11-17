@@ -15,7 +15,7 @@ import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { EMPTY, of } from 'rxjs';
+import { EMPTY, combineLatest, of } from 'rxjs';
 import {
   catchError,
   exhaustMap,
@@ -274,34 +274,57 @@ export class ProjectEffects {
       ]),
       pessimisticUpdate({
         run: (action, project) => {
-          return this.projectApiService
-            .deleteWorkflow(project.id, action.workflow.slug, action.moveTo)
-            .pipe(
-              map(() => {
-                this.movedWorkflow.statuses = action.workflow.statuses;
+          const afterDeleteWorkflows = project.workflows.filter(
+            (w) => w.slug !== action.workflow.slug
+          );
 
-                setTimeout(() => {
-                  this.movedWorkflow.statuses = null;
-                }, 500);
+          let workflowRename$ = of(project.workflows[0].slug);
 
-                void this.router.navigate([
-                  `project/${project.id}/${project.slug}/kanban/${
-                    action.moveTo ? action.moveTo : project.workflows[0].slug
-                  }`,
-                ]);
+          if (
+            afterDeleteWorkflows.length === 1 &&
+            afterDeleteWorkflows[0].name !== 'Main'
+          ) {
+            workflowRename$ = this.projectApiService
+              .updateWorkflow('Main', afterDeleteWorkflows[0].slug, project.id)
+              .pipe(
+                map((result) => {
+                  return result.slug;
+                })
+              );
+          }
 
-                this.appService.toastNotification({
-                  message: 'errors.deleted_workflow',
-                  paramsMessage: { name: action.workflow.name },
-                  status: TuiNotification.Info,
-                  autoClose: true,
-                });
+          const deleteWorkflow$ = this.projectApiService.deleteWorkflow(
+            project.id,
+            action.workflow.slug,
+            action.moveTo
+          );
 
-                return ProjectActions.projectApiActions.deleteWorkflowSuccess({
-                  workflow: action.workflow,
-                });
-              })
-            );
+          return combineLatest([workflowRename$, deleteWorkflow$]).pipe(
+            map(([workflowSlug]) => {
+              this.movedWorkflow.statuses = action.workflow.statuses;
+
+              setTimeout(() => {
+                this.movedWorkflow.statuses = null;
+              }, 500);
+
+              void this.router.navigate([
+                `project/${project.id}/${project.slug}/kanban/${
+                  action.moveTo ? action.moveTo : workflowSlug
+                }`,
+              ]);
+
+              this.appService.toastNotification({
+                message: 'errors.deleted_workflow',
+                paramsMessage: { name: action.workflow.name },
+                status: TuiNotification.Info,
+                autoClose: true,
+              });
+
+              return ProjectActions.projectApiActions.deleteWorkflowSuccess({
+                workflow: action.workflow,
+              });
+            })
+          );
         },
         onError: (_, httpResponse: HttpErrorResponse) => {
           return this.appService.errorManagement(httpResponse);

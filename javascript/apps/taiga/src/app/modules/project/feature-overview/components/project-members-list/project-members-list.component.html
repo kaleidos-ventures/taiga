@@ -34,7 +34,7 @@ Copyright (c) 2023-present Kaleidos INC
     *ngIf="members.length && !paginate"
     [attr.aria-label]="t('project_overview.members.title')">
     <li
-      *ngFor="let member of members; trackBy: trackById.bind(this)"
+      *ngFor="let member of previewMembers; trackBy: trackById.bind(this)"
       class="member-item"
       data-test="member-item"
       [class.pending-state]="animationPendingState && checkAnimation(member)"

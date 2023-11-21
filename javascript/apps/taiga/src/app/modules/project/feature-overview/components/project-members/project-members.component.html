@@ -38,10 +38,10 @@ Copyright (c) 2023-present Kaleidos INC
       </ng-container>
     </h2>
     <tg-project-members-list
-      *ngIf="vm.previewMembers.length"
+      *ngIf="vm.members.length"
       [user]="vm.user"
       [showAcceptInvitationButton]="vm.notificationClosed"
-      [members]="vm.previewMembers"
+      [members]="vm.members"
       [invitationsToAnimate]="vm.invitationsToAnimate"
       [membersToAnimate]="vm.membersToAnimate"
       (hasAcceptedInvitation)="acceptInvitationId()"></tg-project-members-list>

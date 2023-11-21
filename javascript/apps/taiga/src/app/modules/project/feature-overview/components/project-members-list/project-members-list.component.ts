@@ -43,6 +43,7 @@ import { leaveProject } from '~/app/modules/project/data-access/+state/actions/p
 import { capitalizePipe } from '~/app/shared/pipes/capitalize/capitalize.pipe';
 import { BadgeComponent } from '@taiga/ui/badge/badge.component';
 import { CommonModule } from '@angular/common';
+import { MEMBERS_PAGE_SIZE } from '~/app/modules/project/feature-overview/feature-overview.constants';
 
 @Component({
   selector: 'tg-project-members-list',
@@ -144,6 +145,8 @@ export class ProjectMembersListComponent implements OnChanges {
   public leaveProjectDropdown = false;
   public totalAdmins = 0;
 
+  public previewMembers: (Membership | Invitation)[] = [];
+
   public trackById(_index: number, member: Membership | Invitation) {
     const user = this.getUser(member);
 
@@ -239,8 +242,10 @@ export class ProjectMembersListComponent implements OnChanges {
 
   public calculateTotalAdmins() {
     this.totalAdmins = this.members.filter(
-      (member) => member.role?.isAdmin
+      (member) => member.role?.isAdmin && !this.isPending(member)
     ).length;
+
+    this.previewMembers = this.members.slice(0, MEMBERS_PAGE_SIZE);
   }
 
   public ngOnChanges(changes: SimpleChanges): void {

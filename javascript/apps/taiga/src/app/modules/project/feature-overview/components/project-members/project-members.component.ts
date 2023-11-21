@@ -95,7 +95,6 @@ export class ProjectMembersComponent {
         loading: !state.members.length,
         viewAllMembers:
           state.totalMemberships + state.totalInvitations > MEMBERS_PAGE_SIZE,
-        previewMembers: membersAndInvitations.slice(0, MEMBERS_PAGE_SIZE),
         members: membersAndInvitations,
         pending: state.invitations.length,
         currentMember,

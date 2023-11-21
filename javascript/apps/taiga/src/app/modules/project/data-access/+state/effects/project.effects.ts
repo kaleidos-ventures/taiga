@@ -15,7 +15,7 @@ import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { EMPTY, combineLatest, of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import {
   catchError,
   exhaustMap,
@@ -278,7 +278,7 @@ export class ProjectEffects {
             (w) => w.slug !== action.workflow.slug
           );
 
-          let workflowRename$ = of(project.workflows[0].slug);
+          let workflowRename$ = of(action.moveTo ?? 'main');
 
           if (
             afterDeleteWorkflows.length === 1 &&
@@ -299,8 +299,9 @@ export class ProjectEffects {
             action.moveTo
           );
 
-          return combineLatest([workflowRename$, deleteWorkflow$]).pipe(
-            map(([workflowSlug]) => {
+          return deleteWorkflow$.pipe(
+            switchMap(() => workflowRename$),
+            map((workflowSlug) => {
               this.movedWorkflow.statuses = action.workflow.statuses;
 
               setTimeout(() => {
@@ -308,9 +309,7 @@ export class ProjectEffects {
               }, 500);
 
               void this.router.navigate([
-                `project/${project.id}/${project.slug}/kanban/${
-                  action.moveTo ? action.moveTo : workflowSlug
-                }`,
+                `project/${project.id}/${project.slug}/kanban/${workflowSlug}`,
               ]);
 
               this.appService.toastNotification({

@@ -383,54 +383,95 @@ describe('ProjectEffects', () => {
     });
   });
 
-  it('deleteWorkflow$', () => {
-    const workflow = WorkflowMockFactory();
-    const workflow2 = WorkflowMockFactory();
-    const project = ProjectMockFactory();
+  describe('deleteWorkflow$', () => {
+    it('delete without rename', () => {
+      const workflow = WorkflowMockFactory();
+      const workflow2 = WorkflowMockFactory();
+      const workflow3 = WorkflowMockFactory();
+      const project = ProjectMockFactory();
 
-    project.workflows = [workflow, workflow2];
+      project.workflows = [workflow, workflow2, workflow3];
 
-    const workflowRenameResult = {
-      ...workflow2,
-      slug: 'new-slug',
-    };
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(ProjectEffects);
+      const router = spectator.inject(Router);
 
-    const projectApiService = spectator.inject(ProjectApiService);
-    const effects = spectator.inject(ProjectEffects);
-    const router = spectator.inject(Router);
+      const deleteWorkflow$ = cold('-d', { d: null });
 
-    const workflowRename$ = cold('-c', { c: workflowRenameResult });
-    const deleteWorkflow$ = cold('-d', { d: null });
+      store.overrideSelector(selectCurrentProject, project);
+      projectApiService.deleteWorkflow.mockReturnValue(deleteWorkflow$);
 
-    store.overrideSelector(selectCurrentProject, project);
-    projectApiService.updateWorkflow.mockReturnValue(workflowRename$);
-    projectApiService.deleteWorkflow.mockReturnValue(deleteWorkflow$);
+      const action = deleteWorkflow({ workflow, moveTo: workflow2.slug });
 
-    const action = deleteWorkflow({ workflow });
+      actions$ = hot('-a', { a: action });
 
-    actions$ = hot('-a', { a: action });
+      expect(effects.deleteWorkflow$).toSatisfyOnFlush(() => {
+        expect(projectApiService.deleteWorkflow).toHaveBeenCalledWith(
+          project.id,
+          workflow.slug,
+          workflow2.slug
+        );
+        const expected = cold('--a', {
+          a: projectApiActions.deleteWorkflowSuccess({ workflow }),
+        });
 
-    expect(effects.deleteWorkflow$).toSatisfyOnFlush(() => {
-      expect(projectApiService.updateWorkflow).toHaveBeenCalledWith(
-        'Main',
-        workflow2.slug,
-        project.id
-      );
+        expect(effects.deleteWorkflow$).toBeObservable(expected);
 
-      expect(projectApiService.deleteWorkflow).toHaveBeenCalledWith(
-        project.id,
-        workflow.slug,
-        undefined
-      );
-      const expected = cold('--a', {
-        a: projectApiActions.deleteWorkflowSuccess({ workflow }),
+        expect(router.navigate).toHaveBeenCalledWith([
+          `project/${project.id}/${project.slug}/kanban/${workflow2.slug}`,
+        ]);
       });
+    });
 
-      expect(effects.deleteWorkflow$).toBeObservable(expected);
+    it('new wf name', () => {
+      const workflow = WorkflowMockFactory();
+      const workflow2 = WorkflowMockFactory();
+      const project = ProjectMockFactory();
 
-      expect(router.navigate).toHaveBeenCalledWith([
-        `project/${project.id}/${project.slug}/kanban/${workflowRenameResult.slug}`,
-      ]);
+      project.workflows = [workflow, workflow2];
+
+      const workflowRenameResult = {
+        ...workflow2,
+        slug: 'new-slug',
+      };
+
+      const projectApiService = spectator.inject(ProjectApiService);
+      const effects = spectator.inject(ProjectEffects);
+      const router = spectator.inject(Router);
+
+      const workflowRename$ = cold('-c', { c: workflowRenameResult });
+      const deleteWorkflow$ = cold('-d', { d: null });
+
+      store.overrideSelector(selectCurrentProject, project);
+      projectApiService.updateWorkflow.mockReturnValue(workflowRename$);
+      projectApiService.deleteWorkflow.mockReturnValue(deleteWorkflow$);
+
+      const action = deleteWorkflow({ workflow });
+
+      actions$ = hot('-a', { a: action });
+
+      expect(effects.deleteWorkflow$).toSatisfyOnFlush(() => {
+        expect(projectApiService.updateWorkflow).toHaveBeenCalledWith(
+          'Main',
+          workflow2.slug,
+          project.id
+        );
+
+        expect(projectApiService.deleteWorkflow).toHaveBeenCalledWith(
+          project.id,
+          workflow.slug,
+          undefined
+        );
+        const expected = cold('--a', {
+          a: projectApiActions.deleteWorkflowSuccess({ workflow }),
+        });
+
+        expect(effects.deleteWorkflow$).toBeObservable(expected);
+
+        expect(router.navigate).toHaveBeenCalledWith([
+          `project/${project.id}/${project.slug}/kanban/${workflowRenameResult.slug}`,
+        ]);
+      });
     });
   });
 });

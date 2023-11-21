@@ -23,14 +23,14 @@ Copyright (c) 2023-present Kaleidos INC
       </label>
     </div>
 
-    <div
-      *ngIf="!vm.filterNotifications.length && !vm.showUnread"
-      class="empty">
-      {{ t('navigation.notifications.empty') }}
-    </div>
+    <ng-container *ngIf="!vm.notifications.length">
+      <div class="empty">
+        {{ t('navigation.notifications.empty') }}
+      </div>
+    </ng-container>
 
     <div
-      *ngIf="!vm.filterNotifications.length && vm.showUnread"
+      *ngIf="vm.notifications.length && vm.showUnread"
       class="empty">
       {{ t('navigation.notifications.all_read') }}
     </div>

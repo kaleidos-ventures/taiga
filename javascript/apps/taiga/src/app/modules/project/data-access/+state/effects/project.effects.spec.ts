@@ -463,7 +463,10 @@ describe('ProjectEffects', () => {
           undefined
         );
         const expected = cold('--a', {
-          a: projectApiActions.deleteWorkflowSuccess({ workflow }),
+          a: projectApiActions.deleteWorkflowSuccess({
+            workflow,
+            renamedWorkflow: workflowRenameResult,
+          }),
         });
 
         expect(effects.deleteWorkflow$).toBeObservable(expected);

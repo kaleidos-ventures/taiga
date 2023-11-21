@@ -40,6 +40,7 @@ import {
 } from '../selectors/project.selectors';
 import { MovedWorkflowService } from '~/app/modules/project/feature-kanban/services/moved-workflow.service';
 import { selectCurrentWorkflowSlug } from '~/app/modules/project/feature-kanban/data-access/+state/selectors/kanban.selectors';
+import { Workflow } from '@taiga/data';
 
 @Injectable()
 export class ProjectEffects {
@@ -279,6 +280,7 @@ export class ProjectEffects {
           );
 
           let workflowRename$ = of(action.moveTo ?? 'main');
+          let renamedWorkflow: Workflow;
 
           if (
             afterDeleteWorkflows.length === 1 &&
@@ -287,8 +289,11 @@ export class ProjectEffects {
             workflowRename$ = this.projectApiService
               .updateWorkflow('Main', afterDeleteWorkflows[0].slug, project.id)
               .pipe(
-                map((result) => {
-                  return result.slug;
+                tap((response) => {
+                  renamedWorkflow = response;
+                }),
+                map((response) => {
+                  return response.slug;
                 })
               );
           }
@@ -321,6 +326,7 @@ export class ProjectEffects {
 
               return ProjectActions.projectApiActions.deleteWorkflowSuccess({
                 workflow: action.workflow,
+                renamedWorkflow,
               });
             })
           );

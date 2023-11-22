@@ -6,6 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from collections.abc import Iterable
+from datetime import datetime
 from uuid import UUID
 
 from taiga.base.serializers import BaseModel
@@ -57,3 +58,7 @@ async def count_user_notifications(user: User) -> dict[str, int]:
     total = await notifications_repositories.count_notifications(filters={"owner": user})
     read = await notifications_repositories.count_notifications(filters={"owner": user, "is_read": True})
     return {"total": total, "read": read, "unread": total - read}
+
+
+async def clean_read_notifications(before: datetime) -> int:
+    return await notifications_repositories.delete_notifications(filters={"is_read": True, "read_before": before})

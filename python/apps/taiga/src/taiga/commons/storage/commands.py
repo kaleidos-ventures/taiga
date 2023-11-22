@@ -27,7 +27,7 @@ def clean_storaged_objects(
         settings.STORAGE.DAYS_TO_STORE_DELETED_STORAGED_OBJECTS,
         "--days",
         "-d",
-        help="Number of days to store deleted storaged objects",
+        help="Delete all storaged object deleted before the specified days",
     ),
 ) -> None:
     total_deleted = run_async_as_sync(

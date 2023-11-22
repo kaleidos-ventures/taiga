@@ -13,6 +13,7 @@ class TaskQueueSettings(BaseSettings):
     TASKS_MODULES_PATHS: set[str] = {
         "taiga.commons.storage.tasks",
         "taiga.emails.tasks",
+        "taiga.notifications.tasks",
         "taiga.projects.projects.tasks",
         "taiga.tokens.tasks",
         "taiga.users.tasks",

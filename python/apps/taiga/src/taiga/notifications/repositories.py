@@ -6,6 +6,7 @@
 # Copyright (c) 2023-present Kaleidos INC
 
 from collections.abc import Iterable
+from datetime import datetime
 from typing import Any, TypedDict
 from uuid import UUID
 
@@ -25,6 +26,7 @@ class NotificationFilters(TypedDict, total=False):
     id: UUID
     owner: User
     is_read: bool
+    read_before: datetime
 
 
 async def _apply_filters_to_queryset(
@@ -36,6 +38,9 @@ async def _apply_filters_to_queryset(
     if "is_read" in filter_data:
         is_read = filter_data.pop("is_read")
         filter_data["read_at__isnull"] = not is_read
+    if "read_before" in filter_data:
+        read_before = filter_data.pop("read_before")
+        filter_data["read_at__lt"] = read_before
 
     return qs.filter(**filter_data)
 
@@ -109,6 +114,17 @@ async def mark_notifications_as_read(
     qs = await _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
     await qs.aupdate(read_at=aware_utcnow())
     return [a async for a in qs.all()]
+
+
+##########################################################
+# delete notifications
+##########################################################
+
+
+async def delete_notifications(filters: NotificationFilters = {}) -> int:
+    qs = await _apply_filters_to_queryset(qs=DEFAULT_QUERYSET, filters=filters)
+    count, _ = await qs.adelete()
+    return count
 
 
 ##########################################################

@@ -27,10 +27,6 @@ Copyright (c) 2023-present Kaleidos INC
 .crumb {
   padding: var(--spacing-4);
   white-space: nowrap;
-
-  &:first-of-type {
-    padding-inline-start: 0;
-  }
 }
 
 .crumb-divider {

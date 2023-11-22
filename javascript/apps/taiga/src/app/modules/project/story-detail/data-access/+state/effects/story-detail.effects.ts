@@ -15,7 +15,7 @@ import { fetch, pessimisticUpdate } from '@ngrx/router-store/data-persistence';
 import { Store } from '@ngrx/store';
 import { TuiNotification } from '@taiga-ui/core';
 import { ProjectApiService } from '@taiga/api';
-import { EMPTY, catchError, map, of, switchMap, tap } from 'rxjs';
+import { EMPTY, catchError, map, of, switchMap, take, tap } from 'rxjs';
 import { projectEventActions } from '~/app/modules/project/data-access/+state/actions/project.actions';
 import { selectCurrentProject } from '~/app/modules/project/data-access/+state/selectors/project.selectors';
 import { KanbanActions } from '~/app/modules/project/feature-kanban/data-access/+state/actions/kanban.actions';
@@ -70,6 +70,7 @@ export class StoryDetailEffects {
       ]),
       switchMap(([action, project]) => {
         return this.store.select(selectStoryView).pipe(
+          take(1),
           switchMap((view) => {
             const fetchProject = (workflowSlug: string) => {
               return this.projectApiService
@@ -88,6 +89,7 @@ export class StoryDetailEffects {
             } else {
               return this.store.select(selectKanbanWorkflow).pipe(
                 filterNil(),
+                take(1),
                 switchMap((kanbanWorkflow) => {
                   if (kanbanWorkflow.id === action.story.workflow.id) {
                     return of(

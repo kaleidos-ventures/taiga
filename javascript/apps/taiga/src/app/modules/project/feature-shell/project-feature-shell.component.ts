@@ -188,7 +188,7 @@ export class ProjectFeatureShellComponent implements OnDestroy, AfterViewInit {
             [`project/${project.id}/${project.slug}/new-workflow`],
             { replaceUrl: true }
           );
-        } else if (isOverview) {
+        } else if (isOverview || this.router.url.endsWith(project.id)) {
           void this.router.navigate(
             [`project/${project.id}/${project.slug}/overview`],
             { replaceUrl: true }

@@ -32,6 +32,10 @@ const routes: Routes = [
         },
       },
       {
+        path: ':slug',
+        redirectTo: ':slug/overview',
+      },
+      {
         path: ':slug/overview',
         loadChildren: () =>
           import(

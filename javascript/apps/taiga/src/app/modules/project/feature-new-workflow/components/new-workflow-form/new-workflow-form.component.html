@@ -42,14 +42,14 @@ Copyright (c) 2023-present Kaleidos INC
 
     <button
       tuiButton
-      data-test="status-create"
+      data-test="workflow-create"
       appearance="primary"
       type="submit">
       {{ workflow ? t('commons.save') : t('kanban.create_workflow.save') }}
     </button>
     <button
       (click)="cancelEdit()"
-      data-test="cancel-edit-status"
+      data-test="cancel-edit-workflow"
       tuiButton
       type="button"
       appearance="tertiary">

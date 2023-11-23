@@ -165,6 +165,7 @@ Copyright (c) 2023-present Kaleidos INC
                 </div>
                 <ol
                   [attr.aria-label]="t('common_project.workflow.workflow_list')"
+                  data-test="workflow-list"
                   class="submenu"
                   *ngIf="!collapsed">
                   <li
@@ -403,6 +404,7 @@ Copyright (c) 2023-present Kaleidos INC
       [routerLink]="['/project', project.id, project.slug, 'new-workflow']"
       *ngIf="project.userIsAdmin"
       class="create-workflow"
+      data-test="create-workflow"
       size="m"
       appearance="action-button-2"
       variant="dark"

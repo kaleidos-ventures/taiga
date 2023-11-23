@@ -43,7 +43,7 @@ Copyright (c) 2023-present Kaleidos INC
         t('kanban.status_options_tooltip', { name: workflow.name })
       "
       icon="more-vertical"
-      data-test="status-options"
+      data-test="workflow-options"
       class="status-options-menu-button"
       appearance="action-button-2"
       tuiIconButton
@@ -54,7 +54,7 @@ Copyright (c) 2023-present Kaleidos INC
     <tui-data-list class="view-options-list">
       <button
         class="option-btn"
-        data-test="edit-status-btn"
+        data-test="edit-workflow-btn"
         tuiOption
         type="button"
         (click)="toggleEditWorkflowForm()">
@@ -70,7 +70,7 @@ Copyright (c) 2023-present Kaleidos INC
       <button
         (click)="openDeleteWorkflowModal()"
         class="option-btn option-delete"
-        data-test="delete-status-btn"
+        data-test="delete-workflow-btn"
         tuiOption
         type="button">
         <div class="option-container">

@@ -24,3 +24,9 @@ export const createStory = (statusName: string, title: string) => {
     cy.getBySel('story-ref').should('be.visible');
   });
 };
+
+export const createWorkflow = (title: string) => {
+  cy.getBySel('create-workflow').click();
+  cy.getBySel('create-workflow-input').type(title);
+  cy.getBySel('workflow-create').click();
+};

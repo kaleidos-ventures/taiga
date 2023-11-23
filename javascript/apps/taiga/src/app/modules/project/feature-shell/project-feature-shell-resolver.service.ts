@@ -8,7 +8,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { ProjectApiService } from '@taiga/api';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -20,7 +20,8 @@ import { RevokeInvitationService } from '~/app/services/revoke-invitation.servic
 export class ProjectFeatureShellResolverService {
   constructor(
     private projectApiService: ProjectApiService,
-    private revokeInvitationService: RevokeInvitationService
+    private revokeInvitationService: RevokeInvitationService,
+    private router: Router
   ) {}
 
   public resolve(route: ActivatedRouteSnapshot) {
@@ -29,6 +30,10 @@ export class ProjectFeatureShellResolverService {
     return this.projectApiService.getProject(params['id']).pipe(
       catchError((httpResponse: HttpErrorResponse) => {
         this.revokeInvitationService.shellResolverRevokeError(httpResponse);
+
+        if (httpResponse.status === 422) {
+          void this.router.navigate(['/not-found']);
+        }
 
         return of(null);
       })

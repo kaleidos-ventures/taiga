@@ -29,6 +29,7 @@ import {
   KanbanStoryA11y,
 } from '~/app/modules/project/feature-kanban/kanban.model';
 import { KanbanState } from '../data-access/+state/reducers/kanban.reducer';
+import { ShortcutsService } from '@taiga/cdk/services/shortcuts';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +38,8 @@ export class A11yDragService {
   constructor(
     private store: Store,
     private translocoService: TranslocoService,
-    private liveAnnouncer: LiveAnnouncer
+    private liveAnnouncer: LiveAnnouncer,
+    public shortcutsService: ShortcutsService
   ) {}
 
   public inProgress = false;
@@ -53,6 +55,93 @@ export class A11yDragService {
 
       this.dragOrDropStoryA11y();
       this.events();
+      this.shortcutsService.setScope('cancel-dnd');
+      this.shortcutsService
+        .task('cancel', {}, 'cancel-dnd')
+        .pipe(
+          take(1),
+          takeUntil(this.onDestroy),
+          tap((e) => {
+            e.event.stopPropagation();
+          }),
+          switchMap(() => this.store.select(selectKanbanState).pipe(take(1)))
+        )
+        .subscribe((state) => {
+          const storyA11y = state.activeA11yDragDropStory;
+          const story = findStory(state, (it) => it.ref === this.storyRef);
+
+          if (!storyA11y || !story) {
+            return;
+          }
+
+          // Manage focus
+          // Get current story element
+          const statuses = Array.from(
+            document.querySelectorAll<HTMLElement>('tg-kanban-status')
+          );
+
+          const currentStatus = statuses.find((status) => {
+            return (
+              status.getAttribute('data-id') ===
+              storyA11y.initialPosition?.status
+            );
+          });
+
+          const currentStatusData: KanbanStory['status'] = {
+            id: currentStatus!.getAttribute('data-id')!,
+            color: Number(currentStatus!.getAttribute('data-color'))!,
+            name: currentStatus!.getAttribute('data-name')!,
+          };
+
+          this.finish();
+          this.store.dispatch(
+            KanbanActions.cancelDragStoryA11y({
+              story: storyA11y,
+              status: currentStatusData,
+            })
+          );
+
+          const announcementDrop = this.translocoService.translate(
+            'kanban.dropped_live_announce',
+            {
+              title: story.title,
+            }
+          );
+
+          const announcementReorderCancelled = this.translocoService.translate(
+            'kanban.reorder_cancelled_live_announce'
+          );
+
+          const announcement = `${announcementDrop}. ${announcementReorderCancelled}`;
+
+          this.liveAnnouncer.announce(announcement, 'assertive').then(
+            () => {
+              setTimeout(() => {
+                const currentStatusStories = Array.from(
+                  currentStatus!.querySelectorAll<HTMLElement>(
+                    'tg-kanban-story'
+                  )
+                );
+
+                const currentStory = currentStatusStories.at(
+                  storyA11y.initialPosition.index!
+                );
+
+                if (currentStory) {
+                  currentStory
+                    .querySelector<HTMLElement>(
+                      '.story-kanban-ref-focus .story-title'
+                    )!
+                    .focus();
+                }
+                this.liveAnnouncer.clear();
+              }, 50);
+            },
+            () => {
+              // error
+            }
+          );
+        });
       this.inProgress = true;
 
       return {
@@ -64,96 +153,9 @@ export class A11yDragService {
   }
 
   public events() {
-    const keyEscape$ = fromEvent<KeyboardEvent>(document.body, 'keydown').pipe(
-      filter((event) => event.code === 'Escape')
-    );
     const keySpace$ = fromEvent<KeyboardEvent>(document.body, 'keydown').pipe(
       filter((event) => event.code == 'Space')
     );
-
-    // On press escape anywhere
-    keyEscape$
-      .pipe(
-        take(1),
-        takeUntil(this.onDestroy),
-        tap((e) => {
-          e.stopPropagation();
-        }),
-        switchMap(() => this.store.select(selectKanbanState).pipe(take(1)))
-      )
-      .subscribe((state) => {
-        const storyA11y = state.activeA11yDragDropStory;
-        const story = findStory(state, (it) => it.ref === this.storyRef);
-
-        if (!storyA11y || !story) {
-          return;
-        }
-
-        // Manage focus
-        // Get current story element
-        const statuses = Array.from(
-          document.querySelectorAll<HTMLElement>('tg-kanban-status')
-        );
-
-        const currentStatus = statuses.find((status) => {
-          return (
-            status.getAttribute('data-id') === storyA11y.initialPosition?.status
-          );
-        });
-
-        const currentStatusData: KanbanStory['status'] = {
-          id: currentStatus!.getAttribute('data-id')!,
-          color: Number(currentStatus!.getAttribute('data-color'))!,
-          name: currentStatus!.getAttribute('data-name')!,
-        };
-
-        this.finish();
-        this.store.dispatch(
-          KanbanActions.cancelDragStoryA11y({
-            story: storyA11y,
-            status: currentStatusData,
-          })
-        );
-
-        const announcementDrop = this.translocoService.translate(
-          'kanban.dropped_live_announce',
-          {
-            title: story.title,
-          }
-        );
-
-        const announcementReorderCancelled = this.translocoService.translate(
-          'kanban.reorder_cancelled_live_announce'
-        );
-
-        const announcement = `${announcementDrop}. ${announcementReorderCancelled}`;
-
-        this.liveAnnouncer.announce(announcement, 'assertive').then(
-          () => {
-            setTimeout(() => {
-              const currentStatusStories = Array.from(
-                currentStatus!.querySelectorAll<HTMLElement>('tg-kanban-story')
-              );
-
-              const currentStory = currentStatusStories.at(
-                storyA11y.initialPosition.index!
-              );
-
-              if (currentStory) {
-                currentStory
-                  .querySelector<HTMLElement>(
-                    '.story-kanban-ref-focus .story-title'
-                  )!
-                  .focus();
-              }
-              this.liveAnnouncer.clear();
-            }, 50);
-          },
-          () => {
-            // error
-          }
-        );
-      });
 
     // On press space
     keySpace$.pipe(takeUntil(this.onDestroy), take(1)).subscribe((e) => {
